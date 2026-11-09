@@ -487,31 +487,53 @@ const songLookupCache=new Map();
 function songLookupNormalized(value){return String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
 function songLookupAlreadySaved(title,artist){return memberSongs.some(song=>song.id!==memberEditing?.id&&songLookupNormalized(song.title)===songLookupNormalized(title)&&songLookupNormalized(song.artist)===songLookupNormalized(artist))}
 function songLookupUpdateDuplicate(){const form=document.getElementById('member-form'),notice=document.getElementById('song-duplicate-notice');if(form&&notice)notice.hidden=!songLookupAlreadySaved(form.elements.title.value,form.elements.artist.value)}
-function songLookupInput(field){songLookupUpdateDuplicate();clearTimeout(songLookupTimer);const form=document.getElementById('member-form'),box=document.getElementById('song-lookup-results');if(!form||!box)return;const query=form.elements[field].value.trim(),sequence=++songLookupSequence;if(query.length<2){box.hidden=true;box.replaceChildren();return}box.hidden=false;box.textContent='Searching songs…';songLookupTimer=setTimeout(()=>songLookupSearch(query,field,sequence),650)}
-async function songLookupSearch(query,field,sequence){
-const box=document.getElementById('song-lookup-results'),cacheKey=field+':'+query.toLowerCase();
+
+function songLookupInput(field){
+songLookupUpdateDuplicate();clearTimeout(songLookupTimer);
+const form=document.getElementById('member-form'),box=document.getElementById('song-lookup-results');if(!form||!box)return;
+const title=form.elements.title.value.trim(),artist=form.elements.artist.value.trim(),sequence=++songLookupSequence;
+if(title.length<2&&artist.length<2){box.hidden=true;box.replaceChildren();return}
+box.hidden=false;box.textContent='Finding matching songs…';
+songLookupTimer=setTimeout(()=>songLookupSearch(title,artist,sequence),650);
+}
+async function songLookupSearch(title,artist,sequence){
+const box=document.getElementById('song-lookup-results'),combined=title.length>=2&&artist.length>=2;
+const cacheKey='v2:'+title.toLowerCase()+'|'+artist.toLowerCase();
+const normalized=value=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const matchesInput=(value,term)=>normalized(value).includes(normalized(term));
 try{
 let matches=songLookupCache.get(cacheKey);
 if(!matches){
 const delay=Math.max(0,1100-(Date.now()-songLookupLastRequest));if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
 if(sequence!==songLookupSequence)return;
 songLookupLastRequest=Date.now();
-const searchQuery=(field==='title'?'recording:':'artist:')+query.replace(/[^a-zA-Z0-9 '-]/g,' ').trim();
-const response=await fetch('https://musicbrainz.org/ws/2/recording/?query='+encodeURIComponent(searchQuery)+'&fmt=json&limit=25',{headers:{Accept:'application/json'}});
+const safe=value=>value.replace(/[^a-zA-Z0-9 '-]/g,' ').trim();
+const searchQuery=combined?'recording:"'+safe(title)+'" AND artist:"'+safe(artist)+'"':title.length>=2?'recording:'+safe(title):'artist:'+safe(artist);
+const url='https://musicbrainz.org/ws/2/recording/?query='+encodeURIComponent(searchQuery)+'&fmt=json&limit=50';
+const response=await fetch(url,{headers:{Accept:'application/json'}});
 if(!response.ok)throw Error('Lookup temporarily unavailable');
 const data=await response.json(),seen=new Set();
-matches=(data.recordings||[]).map(item=>({title:item.title||'',artist:(item['artist-credit']||[]).map(c=>typeof c==='string'?c:c.name||'').join('')})).filter(item=>{const key=songLookupNormalized(item.title)+'|'+songLookupNormalized(item.artist);if(!item.title||!item.artist||seen.has(key))return false;seen.add(key);return true});
-matches.sort((x,y)=>Number((field==='title'?y.title:y.artist).toLowerCase().startsWith(query.toLowerCase()))-Number((field==='title'?x.title:x.artist).toLowerCase().startsWith(query.toLowerCase())));
+matches=(data.recordings||[]).map(item=>({title:item.title||'',artist:(item['artist-credit']||[]).map(c=>typeof c==='string'?c:c.name||'').join('')})).filter(item=>{
+const key=songLookupNormalized(item.title)+'|'+songLookupNormalized(item.artist);
+if(!item.title||!item.artist||seen.has(key))return false;
+if(title.length>=2&&!matchesInput(item.title,title))return false;
+if(artist.length>=2&&!matchesInput(item.artist,artist))return false;
+seen.add(key);return true;
+});
+matches.sort((x,y)=>{
+const score=item=>(normalized(item.title)===normalized(title)?8:0)+(normalized(item.artist)===normalized(artist)?8:0)+(normalized(item.title).startsWith(normalized(title))?3:0)+(normalized(item.artist).startsWith(normalized(artist))?3:0)+(songLookupAlreadySaved(item.title,item.artist)?1:0);
+return score(y)-score(x);
+});
 songLookupCache.set(cacheKey,matches);if(songLookupCache.size>50)songLookupCache.delete(songLookupCache.keys().next().value);
 }
 if(sequence!==songLookupSequence||!box)return;
 box.replaceChildren();box.hidden=false;
-if(!matches.length){box.textContent='No matches found. You can still enter a song manually.';return}
-for(const item of matches.slice(0,8)){
+if(!matches.length){box.textContent='No matching title and artist found. You can still enter the song manually.';return}
+for(const item of matches.slice(0,5)){
 const button=document.createElement('button');button.type='button';button.style.cssText='display:block;width:100%;text-align:left;padding:10px 12px;border:0;border-bottom:1px solid #777;background:transparent;color:inherit;cursor:pointer';
-const title=document.createElement('strong');title.textContent=item.title;
-const artist=document.createElement('small');artist.textContent=item.artist;artist.style.cssText='display:block;opacity:.8';
-button.append(title,artist);
+const heading=document.createElement('strong');heading.textContent=item.title;
+const sub=document.createElement('small');sub.textContent=item.artist;sub.style.cssText='display:block;opacity:.8';
+button.append(heading,sub);
 if(songLookupAlreadySaved(item.title,item.artist)){const note=document.createElement('small');note.textContent='Already in My Songs';note.style.cssText='display:block;color:#f4cb73';button.append(note)}
 button.addEventListener('click',()=>{const form=document.getElementById('member-form');form.elements.title.value=item.title;form.elements.artist.value=item.artist;box.hidden=true;box.replaceChildren();++songLookupSequence;songLookupUpdateDuplicate()});
 box.append(button);
