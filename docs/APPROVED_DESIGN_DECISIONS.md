@@ -40,7 +40,13 @@ Last updated: 2026-11-09. This is the agreed design reference. Do not silently r
 - Recognition should reflect genuine participation, not payment or staff privileges. Exact medal artwork, thresholds, rules, and database design still need approval.
 - Do not build medals or change permissions until the Profile UI is finished and approved.
 
-## Current correction required
+## Implementation status (2026-11-09)
+- Mobile Profile cards now open focused modal dialogs rather than expanding inline; desktop sections remain expanded. Phone verification still pending.
+- Supabase display-badge catalog and per-member badge assignments created separately from real platform roles and verification decisions.
+- Founder test account assigned 14 display badges (role labels, verification labels, review and venue achievements) for visual testing. These are test awards, not verified accomplishments.
+- Profile includes database-backed labels, an Awards & Achievements text-preview card, and owner-controlled Remove buttons for badges. Future service-medal artwork remains unimplemented.
+
+## Earlier correction (implemented; phone verification pending)
 - Existing mobile Profile cards were implemented as HTML `<details>` accordions. **This was a mistake** and contradicts the approved popup navigation.
 - Replace inline expansion with actual focused popup windows on mobile, retaining desktop's expanded presentation.
 - Verify layout and close/back behavior on phone before considering Profile complete.
