@@ -50,3 +50,5 @@ Last updated: 2026-11-09. This is the agreed design reference. Do not silently r
 - Existing mobile Profile cards were implemented as HTML `<details>` accordions. **This was a mistake** and contradicts the approved popup navigation.
 - Replace inline expansion with actual focused popup windows on mobile, retaining desktop's expanded presentation.
 - Verify layout and close/back behavior on phone before considering Profile complete.
+
+- Mobile song category results: tap song title/artist to open a focused song-details popup with key, tempo, notes, Edit, Delete and bottom Close. Keep the category list compact; desktop retains existing controls. Profile card gaps target 6px.
