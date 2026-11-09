@@ -14,9 +14,9 @@ Last updated: 2026-11-09. This is the agreed design reference. Do not silently r
 - **Tap anywhere on a card to open a separate focused popup/window**. Cards must NOT expand inline into long accordion sections.
 - Popups can be near-full-screen, scroll their own content, and have a clearly labeled **Close button at the bottom**. No X close buttons.
 - The main Profile page should remain compact and easy to navigate.
-- Profile header: avatar/name/verification/role, then two matching **Edit Profile** and **Management** buttons in a separate full-width row beneath profile details.
+- Profile header: avatar/name/verification/role, then two **exactly matching** Edit Profile and Management buttons (same dimensions, border, background, padding and alignment) in a separate full-width row beneath profile details.
 - Profile cards: About Me, Privacy & Visibility, My Karaoke Songs, Favorite Venues, My Reviews, Account.
-- My Karaoke Songs popup retains tabs (My Songs, Favorites, Want to Sing, Duets), Add Song, song actions, and existing records.
+- My Karaoke Songs mobile popup initially shows only **four category tiles** (My Songs, Favorites, Want to Sing, Duets) and a full-width Add Song button. No song list on opening. Tapping a category opens its song list; a Categories back button returns to the tiles. Preserve existing song editing, favorites, notes and data. Desktop may retain tabs and expanded list.
 - Keep dark red, black, and cream branding; avoid crowded, inconsistent buttons or excessive empty vertical space.
 
 ## Desktop website
