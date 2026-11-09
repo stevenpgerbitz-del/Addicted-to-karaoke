@@ -521,13 +521,16 @@ if(artist.length>=2&&!matchesInput(item.artist,artist))return false;
 seen.add(key);return true;
 });
 matches.sort((x,y)=>{
-const score=item=>(normalized(item.title)===normalized(title)?8:0)+(normalized(item.artist)===normalized(artist)?8:0)+(normalized(item.title).startsWith(normalized(title))?3:0)+(normalized(item.artist).startsWith(normalized(artist))?3:0)+(songLookupAlreadySaved(item.title,item.artist)?1:0);
+const score=item=>{
+const t=normalized(item.title),a=normalized(item.artist),qt=normalized(title),qa=normalized(artist);
+return (qt&&t===qt?100:0)+(qa&&a===qa?100:0)+(qt&&t.startsWith(qt)?25:0)+(qa&&a.startsWith(qa)?25:0)+(qt?Math.max(0,20-(t.length-qt.length)):0)+(qa?Math.max(0,20-(a.length-qa.length)):0)+(songLookupAlreadySaved(item.title,item.artist)?2:0);
+};
 return score(y)-score(x);
 });
 songLookupCache.set(cacheKey,matches);if(songLookupCache.size>50)songLookupCache.delete(songLookupCache.keys().next().value);
 }
 if(sequence!==songLookupSequence||!box)return;
-box.replaceChildren();box.hidden=false;
+box.replaceChildren();box.hidden=false;box.scrollTop=0;
 if(!matches.length){box.textContent='No matching title and artist found. You can still enter the song manually.';return}
 for(const item of matches.slice(0,5)){
 const button=document.createElement('button');button.type='button';button.style.cssText='display:block;width:100%;text-align:left;padding:10px 12px;border:0;border-bottom:1px solid #777;background:transparent;color:inherit;cursor:pointer';
@@ -570,7 +573,7 @@ const fields='<p id="member-wizard-progress" style="font-weight:bold">Step 1 of 
 '<section data-song-wizard-step="1"><h4>Find Your Song</h4><p style="font-size:.85rem">Start typing a title or artist for live suggestions. Manual entry is always available.</p>'+
 '<label>Song Title<input autocomplete="off" oninput="songLookupInput(&quot;title&quot;)" name="title" maxlength="200" value="'+memberEsc(song?.title||'')+'"></label>'+
 '<label>Artist<input autocomplete="off" oninput="songLookupInput(&quot;artist&quot;)" name="artist" maxlength="200" value="'+memberEsc(song?.artist||'')+'"></label>'+
-'<div id="song-lookup-results" role="region" aria-label="Song suggestions" hidden style="max-height:240px;overflow:auto;border:1px solid #777;border-radius:8px;margin-bottom:12px"></div>'+
+'<div id="song-lookup-results" role="region" aria-label="Song suggestions" hidden style="max-height:390px;overflow:auto;border:1px solid #777;border-radius:8px;margin-bottom:12px"></div>'+
 '<p id="song-duplicate-notice" role="status" hidden style="color:#f4cb73">Already in My Songs — edit your existing song instead.</p></section>'+
 '<section data-song-wizard-step="2" hidden><h4>Organize Your Song</h4>'+
 '<label>List<select name="list_type"><option value="my_songs">My Songs</option><option value="want_to_sing">Want to Sing</option><option value="duets">Duets</option></select></label>'+
