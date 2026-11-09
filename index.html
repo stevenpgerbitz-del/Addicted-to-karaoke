@@ -518,22 +518,10 @@ const matchesInput=(value,term)=>normalized(value).includes(normalized(term));
 try{
 let matches=songLookupCache.get(cacheKey);
 if(!matches){
-const delay=Math.max(0,1100-(Date.now()-songLookupLastRequest));if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
 if(sequence!==songLookupSequence)return;
-songLookupLastRequest=Date.now();
-const safe=value=>value.replace(/[^a-zA-Z0-9 '-]/g,' ').trim();
-const searchQuery=combined?'recording:"'+safe(title)+'" AND artist:"'+safe(artist)+'"':title.length>=2?'recording:'+safe(title):'artist:'+safe(artist);
-const url='https://musicbrainz.org/ws/2/recording/?query='+encodeURIComponent(searchQuery)+'&fmt=json&limit=50';
-const response=await fetch(url,{headers:{Accept:'application/json'}});
-if(!response.ok)throw Error('Lookup temporarily unavailable');
-const data=await response.json(),seen=new Set();
-matches=(data.recordings||[]).map(item=>({title:item.title||'',artist:(item['artist-credit']||[]).map(c=>typeof c==='string'?c:c.name||'').join('')})).filter(item=>{
-const key=songLookupNormalized(item.title)+'|'+songLookupNormalized(item.artist);
-if(!item.title||!item.artist||seen.has(key))return false;
-if(title.length>=2&&!matchesInput(item.title,title))return false;
-if(artist.length>=2&&!matchesInput(item.artist,artist))return false;
-seen.add(key);return true;
-});
+const result=await authClient.functions.invoke('song-lookup',{body:{title,artist}});
+if(result.error||result.data?.error)throw Error(result.data?.error||'Lookup unavailable');
+matches=Array.isArray(result.data?.results)?result.data.results:[];
 matches.sort((x,y)=>{
 const score=item=>{
 const t=normalized(item.title),a=normalized(item.artist),qt=normalized(title),qa=normalized(artist);
