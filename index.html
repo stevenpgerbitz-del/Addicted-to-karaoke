@@ -1139,19 +1139,25 @@ async function managementBackupFileSelected(input){
 }
 async function managementBackupRestore(){
  if(!managementBackupPending||!managementRestoreSelection.size)return;
- const selected=[...managementRestoreSelection];if(selected.includes('review_ratings')&&!selected.includes('reviews')){managementBackupStatus('Select Reviews along with Review Ratings.');return}
- if(!confirm('Restore ONLY '+selected.join(', ')+' to the LIVE database? Matching records will be overwritten. Extra records will not be deleted. This is partial recovery.'))return;
+ const selected=[...managementRestoreSelection];
+ if(selected.some(table=>table!=='venues')){
+  managementBackupStatus('Safe restore is currently available for Venues only. Other categories remain protected while their recovery safeguards are built.');
+  return;
+ }
  try{
   await managementBackupFounder();
-  const data=managementBackupPending;managementBackupStatus('Restoring records…');
-  const order=['venues','kjs','venue_schedules','venue_photos','reviews','review_ratings'];
-  for(const table of order){
-   if(!managementRestoreSelection.has(table))continue;
-   const rows=data.tables[table];const conflict=table==='review_ratings'?'review_id,category':'id';
-   for(let i=0;i<rows.length;i+=100){const {error}=await authClient.from(table).upsert(rows.slice(i,i+100),{onConflict:conflict});if(error)throw Error(table+': '+error.message)}
-  }
-  managementBackupStatus('Restore writes completed. Verify records in Venue Management before relying on this snapshot.');managementBackupPending=null;document.getElementById('management-backup-preview').hidden=true;
- }catch(e){managementBackupStatus('Restore stopped: '+e.message+'. Some earlier tables may have been updated; check the database.')}
+  const rows=managementBackupPending.tables.venues||[];
+  if(!rows.length){managementBackupStatus('No venues in this backup to restore.');return}
+  managementBackupStatus('Checking live venue IDs (no changes yet)…');
+  const preview=await authClient.rpc('atk_restore_missing_venues',{p_rows:rows,p_dry_run:true});
+  if(preview.error)throw Error(preview.error.message);
+  const info=preview.data;
+  const message='Restore preview: '+info.missing+' missing venue(s) will be added. '+info.existing_or_duplicate+' already present or duplicated in backup will be skipped. No existing venues will be overwritten. Continue?';
+  if(!confirm(message)){managementBackupStatus('Restore cancelled; no changes made.');return}
+  const result=await authClient.rpc('atk_restore_missing_venues',{p_rows:rows,p_dry_run:false});
+  if(result.error)throw Error(result.error.message);
+  managementBackupStatus('Venue restore completed: '+result.data.inserted+' added, '+result.data.existing_or_duplicate+' already present or duplicate. Existing venues were not overwritten.');
+ }catch(e){managementBackupStatus('Restore stopped: '+e.message+'. No existing venue records were overwritten.')}
 }
 
 function managementResetNavigation(){for(const id of ['management-history','management-backups','management-member-details','management-venue-details','management-users','management-venues']){const el=document.getElementById(id);if(el)el.hidden=true}const tools=document.querySelector('#management-dialog>.management-tools');if(tools)tools.hidden=false;document.getElementById('management-title').hidden=false;document.querySelector('#management-dialog>p').hidden=false}
@@ -1244,4 +1250,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.10-47";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.10-48";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
