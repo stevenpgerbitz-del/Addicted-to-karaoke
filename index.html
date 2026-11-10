@@ -945,7 +945,7 @@ async function managementBackupDownload(){
 }
 function managementBackupCancel(){managementBackupPending=null;document.getElementById('management-backup-preview').hidden=true;document.getElementById('management-backup-file').value='';managementBackupStatus('Restore cancelled.')}
 async function managementBackupFileSelected(input){
- managementBackupCancel();const file=input.files&&input.files[0];if(!file)return;
+ const file=input.files&&input.files[0];managementBackupCancel();if(!file)return;
  try{
   await managementBackupFounder();if(file.size>20*1024*1024)throw Error('File exceeds 20 MB.');
   const data=JSON.parse(await file.text());
