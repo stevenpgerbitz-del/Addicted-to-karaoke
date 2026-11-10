@@ -431,7 +431,7 @@ window.tab=function(name){
  if(name==='about')return;
  const v=sampleVenues.find(x=>x.id===selectedVenue);
  const content=document.getElementById('content');
- if(name==='about')content.innerHTML=`<div class="heading"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><text x="12" y="17" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="currentColor" stroke="none">i</text></svg><h2>About This Venue</h2></div><p class="description">Sample karaoke venue in ${v.city}, Iowa. This listing is fictional and is provided to test browsing and filters.</p><p>Genre: ${v.genre} · Sample review rating: ${v.rating.toFixed(1)} / 5</p><hr class="rule"><h3 class="amenity-title"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:25px;height:25px;vertical-align:-4px;margin-right:5px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3 6 1.5 1.5L7 4.5M3 12l1.5 1.5L7 10.5M3 18l1.5 1.5L7 16.5"/></svg>Amenities</h3><div class="amenities venue-live-amenities" aria-live="polite">Loading amenities…</div><div class="night venue-live-schedule">Loading karaoke schedule…</div>`;
+ if(name==='about')content.innerHTML=`<div class="heading"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><text x="12" y="17" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="currentColor" stroke="none">i</text></svg><h2>About This Venue</h2></div><p class="description">Sample karaoke venue in ${v.city}, Iowa. This listing is fictional and is provided to test browsing and filters.</p><p>Genre: ${v.genre} · Sample review rating: ${(Number.isFinite(v.rating)?v.rating.toFixed(1):'Not rated')} / 5</p><hr class="rule"><h3 class="amenity-title"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:25px;height:25px;vertical-align:-4px;margin-right:5px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3 6 1.5 1.5L7 4.5M3 12l1.5 1.5L7 10.5M3 18l1.5 1.5L7 16.5"/></svg>Amenities</h3><div class="amenities venue-live-amenities" aria-live="polite">Loading amenities…</div><div class="night venue-live-schedule">Loading karaoke schedule…</div>`;
  else if(name==='reviews')content.innerHTML=`<h2>Reviews</h2><p class="description">Illustrative average: ★ ${v.rating.toFixed(1)} / 5. Individual reviews have not been added for this sample venue.</p>`;
  else if(name==='photos')content.innerHTML=`<h2>Photos</h2><p class="description">Photo gallery for this sample venue is not available yet.</p>`;
  else if(name==='schedule')content.innerHTML=`<h2>Schedule</h2><p class="description">No sample events scheduled for ${v.name} yet.</p>`;
@@ -445,9 +445,9 @@ function openVenue(id){
  identity.querySelector('img').src=v.image;
  const tagline=identity.querySelector('.tagline');tagline.textContent=v.tagline||'';tagline.hidden=!v.tagline;
  const chips=identity.querySelector('.chips');
- const genres=Array.isArray(v.genres)&&v.genres.length?v.genres:(v.genre?[v.genre]:[]);chips.replaceChildren();genres.forEach((genre)=>{const chip=document.createElement('span');chip.className='chip';chip.textContent=genre;chips.appendChild(chip)});const ratingChip=document.createElement('span');ratingChip.className='chip';ratingChip.textContent=Number.isFinite(v.rating)?`★ ${v.rating.toFixed(1)} rating`:'☆ No ratings yet';chips.appendChild(ratingChip);
+ const genres=Array.isArray(v.genres)&&v.genres.length?v.genres:(v.genre?[v.genre]:[]);chips.replaceChildren();genres.forEach((genre)=>{const chip=document.createElement('span');chip.className='chip';chip.textContent=genre;chips.appendChild(chip)});const ratingChip=document.createElement('span');ratingChip.className='chip';ratingChip.textContent=Number.isFinite(v.rating)?`★ ${v.rating.toFixed(1)} rating`:'☆ No ratings yet';chips.appendChild(ratingChip);if(v.publication_status==='under_review'){const notice=document.createElement('span');notice.className='chip';notice.textContent='ⓘ Information under review';notice.setAttribute('aria-label','Venue information is under review');chips.appendChild(notice)}
  document.querySelector('#venue-screen .addr b').textContent=`${v.address}, ${v.city}, IA`;
- document.querySelector('#venue-screen .addr small').textContent='Fictional Iowa sample venue';
+ document.querySelector('#venue-screen .addr small').textContent=v.databaseId?'Venue listing':'Fictional Iowa sample venue';
  const lb=document.querySelector('.lb-title');if(lb)lb.textContent=v.name+' · Photos';
  navigate('venue');
 }
@@ -459,7 +459,7 @@ function filterVenues(){
  let visible=0;
  document.querySelectorAll('#find-results .venue-teaser').forEach(card=>{
  const v=sampleVenues.find(x=>x.id===card.dataset.venue);
- const match=(!q||[v.name,v.city,v.region,v.genre].join(' ').toLowerCase().includes(q))&&(!region||v.region===region)&&(!genre||v.genre===genre)&&v.rating>=rating;
+ const match=(!q||[v.name,v.city,v.region,v.genre].join(' ').toLowerCase().includes(q))&&(!region||v.region===region)&&(!genre||v.genre===genre)&&(rating===0||(Number.isFinite(v.rating)&&v.rating>=rating));
  card.hidden=!match;if(match)visible++;
  });
  document.getElementById('no-results').hidden=visible>0;
@@ -492,7 +492,7 @@ async function supabaseRead(path){
 async function loadLiveVenues(){
  connectionNotice('Connecting to Supabase…');
  try{
-  const venues=await supabaseRead('venues?select=id,name,slug,city,state,address_line1,genres,tagline,description&published=eq.true&order=name.asc');
+  const venues=await supabaseRead('venues?select=id,name,slug,city,state,address_line1,genres,tagline,description,publication_status&published=eq.true&order=name.asc');
   if(!Array.isArray(venues)||!venues.length)throw new Error('No published venues returned');
   const reviews=await supabaseRead('reviews?select=id,venue_id,review_ratings(score)&status=eq.approved');
   const averages=new Map();
@@ -509,7 +509,7 @@ async function loadLiveVenues(){
    const v=sampleVenues.find(x=>x.id===id);
    if(!v)continue;
    matched++;
-   v.name=row.name;v.city=row.city;v.tagline=row.tagline||'';v.genres=Array.isArray(row.genres)?row.genres:[];
+   v.name=row.name;v.city=row.city;v.tagline=row.tagline||'';v.publication_status=row.publication_status||'published';v.genres=Array.isArray(row.genres)?row.genres:[];
    v.address=row.address_line1||'Address not available';
    v.genre=(row.genres||[])[0]||'Other';
    const a=averages.get(row.id);
@@ -957,4 +957,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.10-08";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.10-09";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
