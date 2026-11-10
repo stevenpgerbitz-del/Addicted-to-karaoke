@@ -408,7 +408,7 @@ padding:13px 3px!important;min-height:66px
 <div id="atk-backup-download" hidden><p><strong>Content backup (partial recovery only).</strong> Downloads venue, KJ, schedule and review records. This is not a complete system backup.</p><div class="management-detail-card"><strong>Recovery coverage</strong><p>Included: venues, KJs, venue schedules, venue photos (database records only), reviews and ratings.</p><p>Not included: sign-in accounts, passwords, sessions, member profiles, administrator roles, account verification, badge records, song data, audit history or uploaded image files.</p><p><strong>Important:</strong> A complete recovery also needs a protected database backup, authentication backup and Storage files. Do not use System Wipe until those have been independently verified.</p></div><div class="management-pages"><button type="button" onclick="managementBackupDownload()">Download Backup</button></div></div>
 <div id="atk-backup-restore" hidden><p>Select a local JSON snapshot to inspect before restoring.</p><div class="management-pages"><button type="button" onclick="document.getElementById('management-backup-file').click()">Choose Backup File</button></div>
 <input type="file" id="management-backup-file" accept=".json,application/json" hidden onchange="managementBackupFileSelected(this)">
-<div id="management-backup-preview" hidden><p id="management-backup-summary"></p><p><strong>Select content to restore</strong> (nothing selected by default). Related records may require parent records.</p><div id="management-restore-selection" class="atk-wipe-grid"></div><p id="management-restore-count">0 of 6 selected</p><div class="management-pages"><button type="button" onclick="managementBackupCancel()">Cancel</button><button type="button" id="management-restore-submit" disabled onclick="managementBackupRestore()">Restore Selected Data</button></div></div></div>
+<div id="management-backup-preview" hidden><p id="management-backup-summary"></p><p><strong>Select content to restore</strong> (nothing selected by default). Related records may require parent records.</p><div id="management-restore-selection" class="atk-wipe-grid" tabindex="-1"></div><p id="management-restore-count">0 of 6 selected</p><div class="management-pages"><button type="button" onclick="managementBackupCancel()">Cancel</button><button type="button" id="management-restore-submit" disabled onclick="managementBackupRestore()">Restore Selected Data</button></div></div></div>
 <div id="atk-backup-wipe" hidden><p>Tap tiles to select categories. No data will be deleted; System Wipe remains disabled until complete backups and protected audit history are verified.</p><div class="atk-wipe-grid" id="atk-wipe-grid"></div><p id="atk-wipe-count">0 selected</p><div class="management-pages"><button type="button" disabled title="System Wipe is not yet enabled">Continue (Unavailable)</button></div></div>
 </div>
 <p id="management-backup-status" role="status"></p>
@@ -1004,9 +1004,13 @@ async function managementBackupDownload(){
   managementBackupStatus('Partial content backup downloaded. This is NOT a full-system recovery backup. Preserve it securely; accounts, permissions, audit history and image files are excluded.');
  }catch(e){managementBackupStatus('Backup failed: '+e.message)}
 }
-function managementBackupCancel(){managementRestoreSelection.clear();managementBackupPending=null;managementRestoreSelection.clear();document.getElementById('management-backup-preview').hidden=true;document.getElementById('management-backup-file').value='';managementBackupStatus('Restore cancelled.')}
+function managementBackupCancel(){managementRestoreSelection.clear();managementBackupPending=null;managementRestoreSelection.clear();document.getElementById('management-backup-preview').hidden=true;document.getElementById('management-backup-file').value='';document.querySelector('#atk-backup-restore > p').hidden=false;document.querySelector('#atk-backup-restore > .management-pages').hidden=false;managementBackupStatus('Restore cancelled.')}
 async function managementBackupFileSelected(input){
- const file=input.files&&input.files[0];managementBackupCancel();if(!file)return;
+ const file=input.files&&input.files[0];if(!file)return;
+ // Keep the selected file and the management dialog intact while the native picker returns.
+ managementRestoreSelection.clear();managementBackupPending=null;
+ document.getElementById('management-backup-preview').hidden=true;
+ managementBackupStatus('Loading backup…');
  try{
   await managementBackupFounder();if(file.size>20*1024*1024)throw Error('File exceeds 20 MB.');
   const data=JSON.parse(await file.text());
@@ -1014,7 +1018,14 @@ async function managementBackupFileSelected(input){
   for(const table of managementBackupTables){if(!Array.isArray(data.tables[table]))throw Error('Missing backup table: '+table);if(data.tables[table].some(row=>!row||typeof row!=='object'||Array.isArray(row)))throw Error('Invalid records in '+table)}
   managementBackupPending=data;managementRestoreSelection.clear();managementRestoreRenderSelection();
   document.getElementById('management-backup-summary').textContent='Created: '+data.created_at+' • '+managementBackupTables.map(t=>t+': '+data.tables[t].length).join(' • ')+'. PARTIAL CONTENT ONLY: authentication, roles, profiles, audit history and image files cannot be restored with this file. Restore updates matching IDs and inserts missing records. Existing extra records are NOT deleted.';
-  document.getElementById('management-backup-preview').hidden=false;managementBackupStatus('Review this snapshot before restoring.');
+  document.getElementById('management-backup-preview').hidden=false;
+  document.querySelector('#atk-backup-restore > p').hidden=true;
+  document.querySelector('#atk-backup-restore > .management-pages').hidden=true;
+  const dialog=document.getElementById('management-dialog');
+  if(!dialog.open)dialog.showModal();
+  dialog.scrollTop=0;
+  document.getElementById('management-restore-selection').focus({preventScroll:true});
+  managementBackupStatus('Backup loaded. Choose the categories to restore.');
  }catch(e){managementBackupStatus('Cannot load backup: '+e.message)}
 }
 async function managementBackupRestore(){
