@@ -431,7 +431,7 @@ window.tab=function(name){
  if(selectedVenue==='velvet')return;
  const v=sampleVenues.find(x=>x.id===selectedVenue);
  const content=document.getElementById('content');
- if(name==='about')content.innerHTML=`<h2>About ${v.name}</h2><p class="description">Sample karaoke venue in ${v.city}, Iowa. This listing is fictional and is provided to test browsing and filters.</p><p>Genre: ${v.genre} · Sample review rating: ${v.rating.toFixed(1)} / 5</p>`;
+ if(name==='about')content.innerHTML=`<h2>About ${v.name}</h2><p class="description">Sample karaoke venue in ${v.city}, Iowa. This listing is fictional and is provided to test browsing and filters.</p><p>Genre: ${v.genre} · Sample review rating: ${v.rating.toFixed(1)} / 5</p><hr class="rule"><h3 class="amenity-title">Amenities</h3><div class="amenities venue-live-amenities" aria-live="polite">Loading amenities…</div>`;
  else if(name==='reviews')content.innerHTML=`<h2>Reviews</h2><p class="description">Illustrative average: ★ ${v.rating.toFixed(1)} / 5. Individual reviews have not been added for this sample venue.</p>`;
  else if(name==='photos')content.innerHTML=`<h2>Photos</h2><p class="description">Photo gallery for this sample venue is not available yet.</p>`;
  else if(name==='schedule')content.innerHTML=`<h2>Schedule</h2><p class="description">No sample events scheduled for ${v.name} yet.</p>`;
