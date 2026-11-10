@@ -947,12 +947,12 @@ let managementBackupPending=null,managementRestoreSelection=new Set();
 const managementRestoreGroups=[['venues','Venues'],['kjs','KJ Profiles'],['venue_schedules','Karaoke Schedules'],['venue_photos','Venue Photo Records'],['reviews','Reviews'],['review_ratings','Review Ratings']];
 function managementRestoreRenderSelection(){
  const host=document.getElementById('management-restore-selection');host.replaceChildren();
- const available=managementRestoreGroups.filter(([table])=>(managementBackupPending?.tables[table]?.length||0)>0);
+ const available=managementRestoreGroups;
  for(const [table,label] of available){
   const selected=managementRestoreSelection.has(table),tile=document.createElement('button');
   tile.type='button';tile.className='mv-amenity-option atk-restore-tile'+(selected?' selected':'');
   tile.setAttribute('aria-pressed',String(selected));
-  tile.textContent=label+' ('+managementBackupPending.tables[table].length+')';
+  tile.textContent=label+' ('+(managementBackupPending?.tables[table]?.length||0)+')';
   tile.onclick=()=>{if(selected)managementRestoreSelection.delete(table);else managementRestoreSelection.add(table);managementRestoreRenderSelection()};
   host.append(tile);
  }
@@ -1149,4 +1149,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.10-36";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.10-37";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
