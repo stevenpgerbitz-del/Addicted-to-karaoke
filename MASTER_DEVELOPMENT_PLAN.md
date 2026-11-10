@@ -2,6 +2,13 @@
 Updated: 2026-11-10
 Status: Working plan; implement and test one step at a time.
 
+## Non-negotiable UI design standards — apply to EVERY feature
+- All action buttons use the established ATK **red** styling, including Cancel, Save Changes, Confirm, Restore, and Close. Keep buttons visually consistent in size, spacing, and alignment; do not introduce gray secondary buttons.
+- Whenever users choose from multiple options, use the existing **Amenities-style selectable square tiles**. Tap the square itself to select or deselect. No checkboxes, radio buttons, separate Select buttons, or Select All button.
+- Arrange selectable squares in tidy, compact responsive rows/grids; adapt column count and spacing for phone, app-like mobile use and desktop. Avoid oversized dialogs and controls.
+- Maintain the established modal conventions: Close button at bottom, no X icons, no Go Back buttons, and use in-app themed confirmations rather than native browser dialogs.
+- Reuse existing shared visual patterns rather than independently restyling each new feature. Check this section before implementing or reviewing ANY screen.
+
 ## Priority 1 — System Maintenance: complete recovery BEFORE new role features
 1. Full-system backup: cover venues, KJs, schedules, venue photo metadata AND actual storage objects, reviews and ratings, songs, profiles, roles, verification, claims, and protected administrative history. Address authentication accounts/credentials separately with a realistic secure recovery plan; never imply a partial content JSON is a full backup.
 2. Selective restore: preview counts (missing, existing, intentionally deleted, conflicts), restore selected categories and dependencies, avoid overwriting live records, prevent duplicate reviews/ratings, preserve referential integrity.
