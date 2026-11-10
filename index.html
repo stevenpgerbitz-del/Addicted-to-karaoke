@@ -575,6 +575,21 @@ async function showLiveVenueReviews(){
   console.warn('Venue reviews could not load',err);
  }
 }
+let publicDescriptionRequest=0;
+async function renderPublicVenueDescription(){
+ const request=++publicDescriptionRequest,venueId=selectedVenue,panel=document.getElementById('content'),description=panel.querySelector('.description');
+ if(!description)return;
+ try{
+  const venue=sampleVenues.find(v=>v.id===venueId);
+  if(!venue)throw Error('Venue unavailable');
+  if(!venue.databaseId&&window.liveVenueLoadPromise)await window.liveVenueLoadPromise;
+  if(!venue.databaseId)throw Error('No database listing');
+  const rows=await supabaseRead('venues?select=description&id=eq.'+encodeURIComponent(venue.databaseId)+'&published=eq.true');
+  if(!Array.isArray(rows)||rows.length!==1)throw Error('Description unavailable');
+  if(request!==publicDescriptionRequest||selectedVenue!==venueId||!description.isConnected||document.querySelector('[data-tab="about"]')?.getAttribute('aria-selected')!=='true')return;
+  description.textContent=rows[0].description?.trim()||'No venue description has been posted yet.';
+ }catch(e){console.warn('Public venue description unavailable',e)}
+}
 let publicAmenityRequest=0;
 async function renderPublicVenueAmenities(){
  const request=++publicAmenityRequest;
@@ -616,7 +631,7 @@ window.tab=function(name){
  if(name==='reviews'){
   document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===name)));
   showLiveVenueReviews();
- }else{++reviewRequestSequence;++publicAmenityRequest;++publicScheduleRequest;previousVenueTab(name);if(name==='about'){renderPublicVenueAmenities();renderPublicVenueSchedule();}}
+ }else{++reviewRequestSequence;++publicAmenityRequest;++publicScheduleRequest;++publicDescriptionRequest;previousVenueTab(name);if(name==='about'){renderPublicVenueDescription();renderPublicVenueAmenities();renderPublicVenueSchedule();}}
 };
 // Retain the existing initial venue loader, but expose its completion to the review tab.
 
