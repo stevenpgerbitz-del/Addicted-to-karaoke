@@ -405,7 +405,7 @@ padding:13px 3px!important;min-height:66px
 <button type="button" class="management-entry" disabled aria-disabled="true" title="Unavailable until full backup and restore verification" style="opacity:.45;cursor:not-allowed;filter:grayscale(1)">System Wipe<small>Unavailable — awaiting verified full-system recovery</small></button></div>
 <div id="atk-backup-panel" hidden>
 <h3 id="atk-backup-panel-title"></h3>
-<div id="atk-backup-download" hidden><p>Download venue, KJ, schedule and review records. Accounts, permissions and uploaded files are not included yet.</p><div class="management-pages"><button type="button" onclick="managementBackupDownload()">Download Backup</button></div></div>
+<div id="atk-backup-download" hidden><p><strong>Content backup (partial recovery only).</strong> Downloads venue, KJ, schedule and review records. This is not a complete system backup.</p><div class="management-detail-card"><strong>Recovery coverage</strong><p>Included: venues, KJs, venue schedules, venue photos (database records only), reviews and ratings.</p><p>Not included: sign-in accounts, passwords, sessions, member profiles, administrator roles, account verification, badge records, song data, audit history or uploaded image files.</p><p><strong>Important:</strong> A complete recovery also needs a protected database backup, authentication backup and Storage files. Do not use System Wipe until those have been independently verified.</p></div><div class="management-pages"><button type="button" onclick="managementBackupDownload()">Download Backup</button></div></div>
 <div id="atk-backup-restore" hidden><p>Select a local JSON snapshot to inspect before restoring.</p><div class="management-pages"><button type="button" onclick="document.getElementById('management-backup-file').click()">Choose Backup File</button></div>
 <input type="file" id="management-backup-file" accept=".json,application/json" hidden onchange="managementBackupFileSelected(this)">
 <div id="management-backup-preview" hidden><p id="management-backup-summary"></p><div class="management-pages"><button type="button" onclick="managementBackupCancel()">Cancel</button><button type="button" onclick="managementBackupRestore()">Restore Selected Data</button></div></div></div>
@@ -996,10 +996,10 @@ async function managementBackupDownload(){
  try{
   await managementBackupFounder();managementBackupStatus('Reading database records…');
   const tables={};for(const table of managementBackupTables)tables[table]=await managementBackupRows(table);
-  const snapshot={format:'addicted-to-karaoke-content-backup',version:1,created_at:new Date().toISOString(),build:typeof SITE_BUILD_VERSION!=='undefined'?SITE_BUILD_VERSION:'unknown',tables};
+  const snapshot={format:'addicted-to-karaoke-content-backup',version:1,created_at:new Date().toISOString(),build:typeof SITE_BUILD_VERSION!=='undefined'?SITE_BUILD_VERSION:'unknown',recovery_scope:'partial-content-only',excluded:['authentication accounts and credentials','member profiles','platform roles','verification and badges','song data','audit history','storage objects'],table_counts:Object.fromEntries(Object.entries(tables).map(([name,rows])=>[name,rows.length])),tables};
   const blob=new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ATK_Content_Backup_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-  managementBackupStatus('Backup download started. Keep the file in a safe location. This excludes logins and uploaded image files.');
+  managementBackupStatus('Partial content backup downloaded. This is NOT a full-system recovery backup. Preserve it securely; accounts, permissions, audit history and image files are excluded.');
  }catch(e){managementBackupStatus('Backup failed: '+e.message)}
 }
 function managementBackupCancel(){managementBackupPending=null;document.getElementById('management-backup-preview').hidden=true;document.getElementById('management-backup-file').value='';managementBackupStatus('Restore cancelled.')}
@@ -1011,7 +1011,7 @@ async function managementBackupFileSelected(input){
   if(data.format!=='addicted-to-karaoke-content-backup'||data.version!==1||!data.tables)throw Error('Not a supported Addicted to Karaoke backup.');
   for(const table of managementBackupTables){if(!Array.isArray(data.tables[table]))throw Error('Missing backup table: '+table);if(data.tables[table].some(row=>!row||typeof row!=='object'||Array.isArray(row)))throw Error('Invalid records in '+table)}
   managementBackupPending=data;
-  document.getElementById('management-backup-summary').textContent='Created: '+data.created_at+' • '+managementBackupTables.map(t=>t+': '+data.tables[t].length).join(' • ')+'. Restore updates matching IDs and inserts missing records. Existing extra records are NOT deleted.';
+  document.getElementById('management-backup-summary').textContent='Created: '+data.created_at+' • '+managementBackupTables.map(t=>t+': '+data.tables[t].length).join(' • ')+'. PARTIAL CONTENT ONLY: authentication, roles, profiles, audit history and image files cannot be restored with this file. Restore updates matching IDs and inserts missing records. Existing extra records are NOT deleted.';
   document.getElementById('management-backup-preview').hidden=false;managementBackupStatus('Review this snapshot before restoring.');
  }catch(e){managementBackupStatus('Cannot load backup: '+e.message)}
 }
@@ -1120,4 +1120,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.10-32";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.10-33";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
