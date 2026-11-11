@@ -26,6 +26,15 @@ Role roster and rejoining accounts (Build 90.2): Full content backup now stores 
 
 Existing member permissions as inspected 2026-11-11: Mr Steve = Founder, Steven Gerbitz = Member, Aqua Liz = Moderator (not Super Admin). Do not silently elevate access; backups capture actual roles at the time they are created.
 
+## Future enhancement — Backup Inspector (deferred, user-approved idea 2026-11-11)
+- Add a **read-only** "Inspect Backup" option in System Maintenance: choose a locally downloaded ATK JSON backup and analyze it without uploading, restoring, or mutating database records.
+- Use the established compact Amenities-style selectable tiles to show categories and counts (e.g., 5 venues, 4 reviews, 3 members and roles); tapping a category reveals the actual records saved in that file.
+- For venues show venue names; for reviews show related venue and the review summary where available; for member-role snapshots show **member numbers/IDs and assigned roles only** (no stage names, plaintext emails, or passwords in current role roster).
+- Surface filename, creation date, build number, declared backup scope and format; compare declared counts to actual records; validate IDs, duplicates, relationships and required fields, showing actionable warnings for incomplete or unsupported files.
+- Distinguish structural consistency from independently verifiable integrity. Future generated backups may include a checksum, but don't claim existing backups are tamper-proof or a complete disaster recovery package.
+- Support Full Backup, Single Venue, Members & Roles Only, and older supported snapshot formats. No automatic restore or changes.
+- **Not a current priority.** Keep existing Backup/Restore and Go Live flows unchanged until deliberately scheduled for implementation.
+
 ## Priority 2 — Signup and first-run wizard
 - Ask “How do you enjoy karaoke?” Singer / KJ / Venue Owner during onboarding.
 - Assign basic self-declared role badges immediately; verified/certified badges remain separate and require admin approval.
