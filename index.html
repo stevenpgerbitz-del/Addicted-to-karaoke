@@ -1190,7 +1190,7 @@ function atkWizardRender(){
   info.textContent=['Review launch readiness.','Verify configuration, security and recovery.','Resolve any remaining launch blockers.','Launch remains unavailable until checks are verified.'][page];if(page===3)next.textContent='Close';
  }
 }
-async async function atkWizardNext(){
+async function atkWizardNext(){
  const message=document.getElementById('atk-wizard-message');
  try{
   await managementBackupFounder();
