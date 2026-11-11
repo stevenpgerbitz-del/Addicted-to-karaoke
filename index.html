@@ -1192,7 +1192,7 @@ function atkWizardRender(){
  const dialog=document.getElementById('management-dialog');if(dialog)dialog.scrollTop=0;
  document.getElementById('atk-wizard-title').textContent=atkWizardStages[type][page];
  document.getElementById('atk-wizard-bars').innerHTML=Array.from({length:4},(_,i)=>'<i class="'+(i<=page?'active':'')+'"></i>').join('');
- document.getElementById('atk-wizard-previous').hidden=page===0;
+ document.getElementById('atk-wizard-previous').hidden=page===0;document.getElementById('atk-wizard-previous').textContent='Previous';
  const next=document.getElementById('atk-wizard-next');next.disabled=false;next.textContent=page===3?'Finish':'Next';document.getElementById('atk-wizard-previous').textContent='Previous';document.getElementById('atk-wizard-actions').hidden=false;document.getElementById('atk-wizard-bars').hidden=false;
  const message=document.getElementById('atk-wizard-message');message.textContent='';document.getElementById('atk-wizard-next').hidden=false;
  const info=document.createElement('p');body.appendChild(info);
@@ -1241,23 +1241,21 @@ function atkWizardRender(){
    return;
   }
   const typeLabel=data.backup_scope?.type==='venue'?'Venue backup'+(data.backup_scope.venue_name?' — '+data.backup_scope.venue_name:''):data.backup_scope?.type==='all_supported_content'?'All supported content backup':data.recovery_scope==='partial-content-only'?(venueRows.length===1?'Single-venue content snapshot':'Content snapshot ('+venueRows.length+' venues)'):'Backup ('+(data.recovery_scope||'unknown scope')+')';
-  info.textContent='Detected: '+typeLabel+'. '+venueRows.length+' venues, '+(counts.reviews||0)+' reviews, '+(counts.review_ratings||0)+' ratings in this file.';
+  info.textContent=data.backup_scope?.type==='venue'?typeLabel:'Content backup · '+venueRows.length+' '+(venueRows.length===1?'venue':'venues');
   const missingReviews=(managementBackupDiffCounts.reviews?.missing||0),changedReviews=(managementBackupDiffCounts.reviews?.changed||0),changedRatings=(managementBackupDiffCounts.review_ratings?.changed||0),otherChanges=Object.entries(managementBackupDiffCounts).reduce((total,[table,stat])=>total+(table==='venues'?0:stat.missing+stat.changed),0);
   if(page===1&&!missing.length){
    const hasChanges=otherChanges>0||changed.length>0;
    const backupName=data.backup_scope?.type==='venue'?data.backup_scope.venue_name:(venueRows.length===1?venueRows[0].name:'');
-   info.textContent=hasChanges?'Backup checked — no missing venues.':backupName?backupName+' is already on the website.':'Backup checked — everything is already on the website.';
+   info.textContent=backupName||'Backup checked';
    const result=document.createElement('p');
-   result.textContent=hasChanges?'Some existing records differ. This restore cannot overwrite them or restore reviews independently. No changes were made.':'Everything matches. Nothing to restore.';
+   result.textContent=hasChanges?'No missing venues to add. Existing records will not be changed.':'Already on the website. Nothing to restore.';
    body.appendChild(result);
    next.hidden=true;document.getElementById('atk-wizard-previous').textContent='Choose Another Backup';
    return;
   }
-  const note=document.createElement('p');note.textContent=missing.length?'Missing venues available to restore: '+missing.length+'.':'No missing venues. The backup does not need to add any of its venues.';body.appendChild(note);
-  const details=document.createElement('p');details.style.fontSize='.88em';
-  details.textContent=[changed.length?changed.length+' existing venue(s) have differences (not overwritten).':'',missingReviews?missingReviews+' review(s) missing from the site.':'',changedReviews?changedReviews+' review(s) changed.':'',changedRatings?changedRatings+' rating(s) changed.':''].filter(Boolean).join(' ') || 'No venue or review changes detected.';
-  body.appendChild(details);
   if(page===1){
+   const note=document.createElement('p');note.textContent='Choose what to restore.';body.appendChild(note);
+   if(changed.length){const caution=document.createElement('p');caution.style.fontSize='.88em';caution.textContent='Other existing venues will not be changed.';body.appendChild(caution)}
    const selected=new Set(managementRestoreRecordSelection);
    const heading=document.createElement('h4');heading.className='atk-restore-choice-heading';heading.textContent='Select what to restore';body.appendChild(heading);
    const grid=document.createElement('div');grid.className='atk-restore-choice-grid';body.appendChild(grid);
@@ -1614,4 +1612,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-87.12";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-87.13";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
