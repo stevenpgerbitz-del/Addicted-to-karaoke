@@ -1669,7 +1669,10 @@ function atkInspectorAnalyze(data){
    for(const [index,row] of rows.entries()){
     if(!row||typeof row!=='object'||Array.isArray(row)){issues.push('Invalid '+key+' record #'+(index+1)+'.');continue}
     const identity=key==='review_ratings'?String(row.review_id||'')+'|'+String(row.category||''):String(row.id||'');
-    if(!identity||identity==='|'||identity==='undefined')issues.push('Missing ID in '+key+' record #'+(index+1)+'.');
+    if(key==='review_ratings'&&(!row.review_id||!row.category))issues.push('Missing review ID or rating category in record #'+(index+1)+'.');
+    else if(!identity||identity==='|'||identity==='undefined')issues.push('Missing ID in '+key+' record #'+(index+1)+'.');
+    if(['reviews','venue_schedules','venue_photos'].includes(key)&&!row.venue_id)issues.push('Missing venue link in '+key+' record #'+(index+1)+'.');
+    if(key==='venues'&&!row.name)issues.push('Venue record #'+(index+1)+' has no name.');
     if(ids.has(identity))issues.push('Duplicate record in '+key+': '+identity.slice(0,40)+'.');
     ids.add(identity);
    }
@@ -2137,4 +2140,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-92";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-92.1";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
