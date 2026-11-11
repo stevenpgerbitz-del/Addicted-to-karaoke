@@ -537,6 +537,7 @@ padding:13px 3px!important;min-height:66px
 #atk-wizard .atk-file-picker-copy small{font-size:12px;color:#e0b9b0;font-weight:400;line-height:1.4}
 #atk-wizard .atk-file-picker-chevron{font-size:28px;line-height:1;color:#e6b2a9}
 #atk-wizard .atk-restore-choice-heading{font-size:15px;color:#f2dfd3;margin:18px 0 10px;font-weight:700}
+#atk-wizard .atk-restore-confirm-question{font-size:19px;line-height:1.5;font-weight:700;color:#f6e7df;margin:22px 0 10px}#atk-wizard .atk-restore-confirm-note{font-size:14px;color:#ddbeb5;line-height:1.5;margin-bottom:22px}
 #atk-wizard .atk-restore-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 16px}
 #atk-wizard .atk-restore-choice{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:10px;min-width:0;min-height:140px;padding:14px 12px;text-align:left;border:1px solid #85504d;border-radius:12px;background:#301b1d;color:#f5e4d2;cursor:pointer;box-sizing:border-box}
 #atk-wizard .atk-restore-choice.selected{background:#63262b;border:2px solid #f1a49a;padding:13px 11px;box-shadow:inset 0 0 0 1px #b56057}
@@ -1226,6 +1227,19 @@ function atkWizardRender(){
   next.hidden=false;
   const data=managementBackupPending;if(!data){info.textContent='Choose a backup first.';return}
   const counts=data.table_counts||{},venueRows=data.tables.venues||[],missing=(managementRestoreDiffRows.venues||[]).filter(d=>d.type==='missing'),changed=(managementRestoreDiffRows.venues||[]).filter(d=>d.type==='changed');
+  if(page===2){
+   document.getElementById('atk-wizard-title').textContent='Confirm Restore';
+   const venues=venueRows.filter(v=>managementRestoreRecordSelection.has(String(v.id))&&missing.some(d=>d.key===String(v.id)));
+   const venueIds=new Set(venues.map(v=>String(v.id)));
+   const reviews=managementRestoreInclude.has('reviews')?data.tables.reviews.filter(r=>venueIds.has(String(r.venue_id))):[];
+   const names=venues.length===1?(venues[0].name||'this venue'):venues.length===2?venues.map(v=>v.name||'Unnamed venue').join(' and '):venues.length+' venues';
+   const reviewText=reviews.length?' and '+reviews.length+' '+(reviews.length===1?'review':'reviews'):'';
+   info.textContent='Restore '+names+reviewText+'?';
+   info.className='atk-restore-confirm-question';
+   const note=document.createElement('p');note.textContent='Existing records will stay unchanged.';note.className='atk-restore-confirm-note';body.appendChild(note);
+   next.textContent='Restore Now';
+   return;
+  }
   const typeLabel=data.backup_scope?.type==='venue'?'Venue backup'+(data.backup_scope.venue_name?' — '+data.backup_scope.venue_name:''):data.backup_scope?.type==='all_supported_content'?'All supported content backup':data.recovery_scope==='partial-content-only'?(venueRows.length===1?'Single-venue content snapshot':'Content snapshot ('+venueRows.length+' venues)'):'Backup ('+(data.recovery_scope||'unknown scope')+')';
   info.textContent='Detected: '+typeLabel+'. '+venueRows.length+' venues, '+(counts.reviews||0)+' reviews, '+(counts.review_ratings||0)+' ratings in this file.';
   const missingReviews=(managementBackupDiffCounts.reviews?.missing||0),changedReviews=(managementBackupDiffCounts.reviews?.changed||0),changedRatings=(managementBackupDiffCounts.review_ratings?.changed||0),otherChanges=Object.entries(managementBackupDiffCounts).reduce((total,[table,stat])=>total+(table==='venues'?0:stat.missing+stat.changed),0);
@@ -1262,17 +1276,6 @@ function atkWizardRender(){
    const includeReviews=managementRestoreInclude.has('reviews');
    addChoice('Reviews & ratings','Optional · For selected venues',reviewIcon,includeReviews,()=>{if(includeReviews){managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}else{managementRestoreInclude.add('reviews');managementRestoreInclude.add('review_ratings')}atkWizardRender()});
    const reason=document.createElement('textarea');reason.rows=2;reason.placeholder='Reason for restore (required)';reason.value=document.getElementById('atk-restore-reason').value;reason.oninput=()=>document.getElementById('atk-restore-reason').value=reason.value;reason.style.cssText='width:100%;box-sizing:border-box;padding:12px;background:#301b1d;color:white;border:1px solid #8c5552;border-radius:9px';body.appendChild(reason);next.textContent='Review Restore';
-  }else{
-   const venues=venueRows.filter(v=>managementRestoreRecordSelection.has(String(v.id))&&missing.some(d=>d.key===String(v.id)));
-   const ids=new Set(venues.map(v=>String(v.id)));
-   const selectedReviews=managementRestoreInclude.has('reviews')?data.tables.reviews.filter(r=>ids.has(String(r.venue_id))):[];
-   const reviewIds=new Set(selectedReviews.map(r=>String(r.id)));
-   const selectedRatings=managementRestoreInclude.has('review_ratings')?data.tables.review_ratings.filter(r=>reviewIds.has(String(r.review_id))):[];
-   info.textContent='Confirm the following restore:';
-   const p=document.createElement('p');p.textContent=venues.length+' '+(venues.length===1?'venue':'venues')+': '+venues.map(v=>v.name).join(', ')+'.';body.appendChild(p);
-   const counts=document.createElement('p');counts.textContent=selectedReviews.length+' reviews and '+selectedRatings.length+' ratings will be restored.'+(selectedReviews.length===0?' No reviews are included for this venue in the selected backup.':'');body.appendChild(counts);
-   const safety=document.createElement('p');safety.textContent='Existing records will not be overwritten or deleted.';safety.style.fontSize='.9em';body.appendChild(safety);
-   next.textContent='Confirm Restore';
   }
  }else if(type==='wipe'){
   info.textContent='System Wipe is locked until complete recovery of authentication, roles, audit history and uploaded files has been verified. No data will be erased.';if(page===3)next.disabled=true;
@@ -1611,4 +1614,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-87.11";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-87.12";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
