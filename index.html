@@ -389,6 +389,14 @@ padding:13px 3px!important;min-height:66px
 #management-dialog[open]>section:not([hidden]){padding-right:3px}
 #management-dialog[open]>section:not([hidden]) .atk-wipe-grid{max-height:none;overflow:visible}
 #atk-maintenance-cancel{margin-top:12px}
+</style><style>
+/* Keep individual restore records below category tiles without a nested scroll trap. */
+#management-restore-selection{max-height:none!important;overflow:visible!important;align-content:start}
+#management-restore-selection .atk-restore-records{grid-column:1/-1;min-width:0;width:100%}
+#management-restore-selection .atk-restore-records .atk-restore-tile{display:block;width:100%;max-width:100%;box-sizing:border-box;text-align:left;min-height:68px}
+#management-restore-selection .atk-restore-records .atk-restore-tile.selected{background:#722022;border:2px solid #e78b81}
+#management-restore-selection .atk-restore-records .atk-restore-tile:disabled{opacity:.65}
+#management-backup-preview{min-height:0}
 </style><style>#management-restore-selection{max-height:38dvh;gap:9px;padding:2px}#management-restore-selection .atk-restore-tile{min-height:64px;justify-content:center;text-align:center;font-weight:600;padding:10px 8px;background:#301b1d;border:1px solid #8c5552;border-radius:10px}#management-restore-selection .atk-restore-tile.selected{background:#722022;border:2px solid #e78b81}#management-backup-preview .atk-restore-heading{margin:12px 0 8px}#management-backup-summary{font-size:13px;line-height:1.4;margin:10px 0}</style><style>
 /* Mobile-safe System Maintenance sizing, without changing other management views. */
 #management-dialog:has(#management-backups:not([hidden])){
@@ -1066,16 +1074,16 @@ function managementRestoreRenderSelection(){
   host.append(tile);
  }
  if(managementRestoreOpenTable){
-  const table=managementRestoreOpenTable,section=document.createElement('div');section.style.cssText='grid-column:1/-1;padding:12px 0';
+  const table=managementRestoreOpenTable,section=document.createElement('div');section.className='atk-restore-records';section.style.cssText='grid-column:1/-1;min-width:0;width:100%;box-sizing:border-box;padding:12px 0';
   const title=document.createElement('strong');title.textContent=managementRestoreGroups.find(g=>g[0]===table)?.[1]+' — individual differences';section.append(title);
   const rows=managementRestoreDiffRows[table]||[];
   if(!rows.length){const p=document.createElement('p');p.textContent='No differences in this category.';section.append(p)}
   for(const item of rows){
    const button=document.createElement('button');button.type='button';button.className='mv-amenity-option atk-restore-tile';
-   button.style.cssText='display:block;width:100%;text-align:left;margin-top:8px;white-space:normal';
+   button.style.cssText='display:block;width:100%;text-align:left;margin-top:8px;white-space:normal;box-sizing:border-box;min-height:68px';
    const eligible=table==='venues'&&item.type==='missing',checked=managementRestoreRecordSelection.has(item.key);
-   button.disabled=!eligible;button.setAttribute('aria-pressed',String(checked));
-   const name=document.createElement('strong');name.textContent=(eligible?(checked?'☑ ':'□ '):'')+item.name;
+   button.disabled=!eligible;button.setAttribute('aria-pressed',String(checked));if(checked)button.classList.add('selected');
+   const name=document.createElement('strong');name.textContent=item.name;
    const status=document.createElement('small');status.textContent=item.type==='missing'?'Missing from current system':item.type==='changed'?'Changed — protected from overwrite':'Only in current system — not in backup';
    status.style.cssText='display:block;margin-top:5px;font-weight:400';
    button.append(name,status);
@@ -1348,4 +1356,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-62";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-63";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
