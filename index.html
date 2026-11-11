@@ -1120,7 +1120,7 @@ async function memberSavePrivacy(){if(!memberProfile||!authUser)return;const cha
 const managementBackupTables=['venues','kjs','venue_schedules','venue_photos','reviews','review_ratings'];
 // Access recovery is deliberately separate from venue recovery. Account matching uses auth UUIDs, never stage names.
 let managementAccountPreview=null,managementAccountWarning='';
-let managementRejoinPreview=null,managementRejoinSelectedId='';
+let managementRejoinPreview=null,managementRejoinSelectedId='',managementRejoinCompletedMessage='';
 let managementBackupPending=null,managementRestoreSelection=new Set(),managementBackupDiffCounts={},managementRestoreRecordSelection=new Set(),managementRestoreOpenTable=null,managementRestoreDiffRows={};
 const managementRestoreGroups=[['venues','Venues'],['kjs','KJ Profiles'],['venue_schedules','Karaoke Schedules'],['venue_photos','Venue Photo Records'],['reviews','Reviews'],['review_ratings','Review Ratings']];
 const managementRestoreInclude=new Set();
@@ -1219,7 +1219,7 @@ function atkWizardStart(type){
  atkWizardType=type;atkWizardPage=0;atkWizardSnapshot=null;atkWizardVenueId='';atkWizardCompleted=false;
  document.getElementById('atk-backup-home').hidden=true;document.getElementById('atk-backup-panel').hidden=true;document.getElementById('atk-lifecycle-panel').hidden=true;document.getElementById('atk-backup-footer').hidden=true;
  document.getElementById('atk-wizard').hidden=false;
- if(type==='restore'){managementBackupPending=null;document.getElementById('management-backup-file').value=''}
+ if(type==='restore'){managementBackupPending=null;managementRejoinCompletedMessage='';document.getElementById('management-backup-file').value=''}
  if(type==='live'){
   atkLiveCleanupVenues=false;atkLiveBackupReady=false;atkLiveBackupAcknowledged=false;
   atkLiveBackupCounts='';atkLiveStatus=null;atkLiveReason='';atkLiveConfirmation='';atkLiveResult=null;
@@ -1234,7 +1234,7 @@ function atkWizardStart(type){
 function atkWizardReset(){
  // Always discard wizard UI when returning to System Maintenance or closing it.
  atkWizardType='';atkWizardPage=0;atkWizardSnapshot=null;atkWizardVenueId='';atkWizardCompleted=false;
- managementBackupPending=null;managementAccountPreview=null;managementAccountWarning='';managementRejoinPreview=null;managementRejoinSelectedId='';managementRestoreRecordSelection.clear();managementRestoreInclude.clear();
+ managementBackupPending=null;managementAccountPreview=null;managementAccountWarning='';managementRejoinPreview=null;managementRejoinSelectedId='';managementRejoinCompletedMessage='';managementRestoreRecordSelection.clear();managementRestoreInclude.clear();
  document.getElementById('atk-wizard').hidden=true;
  document.getElementById('atk-wizard-body').replaceChildren();
  document.getElementById('atk-wizard-message').textContent='';
@@ -1289,8 +1289,8 @@ function atkWizardRender(){
  }else if(type==='restore'){
   document.getElementById('atk-wizard-bars').innerHTML=Array.from({length:3},(_,i)=>'<i class="'+(i<=page?'active':'')+'"></i>').join('');
   if(atkWizardCompleted){
-   document.getElementById('atk-wizard-title').textContent='✓ Restore Complete';
-   info.textContent='Selected backup records were restored. You can close this screen.';
+   document.getElementById('atk-wizard-title').textContent=managementRejoinCompletedMessage?'✓ Position Restored':'✓ Restore Complete';
+   info.textContent=managementRejoinCompletedMessage||'Selected backup records were restored. You can close this screen.';
    document.getElementById('atk-wizard-actions').hidden=true;
    document.getElementById('atk-wizard-bars').hidden=true;
    return;
@@ -1415,7 +1415,7 @@ function atkWizardRender(){
    const note=document.createElement('small');note.textContent='Only venue content can be cleared here, because its backup and recovery path is available. Other data is not eligible for pre-launch deletion.';body.append(note);
    next.textContent='Continue';
   }else if(page===1){
-   info.textContent='A fresh backup is required whether you clear test venues or keep all data. It contains venue/review content and the identity, role and verification status of each member.';
+   info.textContent='A fresh backup is required whether you clear test venues or keep all data. It contains venue/review content and a minimal role roster with email fingerprints; it does not include member names or passwords.';
    const count=document.createElement('p');count.textContent=atkLiveStatus.venues+' venue(s), '+atkLiveStatus.reviews+' review(s), '+atkLiveStatus.members+' member(s).';body.append(count);
    const download=document.createElement('button');download.type='button';download.className='atk-file-picker-button';
    download.textContent=atkLiveBackupReady?'✓ Download again':'Download Pre-launch Backup';download.onclick=atkLiveDownloadBackup;body.append(download);
@@ -1547,7 +1547,7 @@ async function managementBackupDownload(selectedTables){
   const tables=selectedTables||{};if(!selectedTables)for(const table of managementBackupTables)tables[table]=await managementBackupRows(table);
   const ids={venues:new Set(tables.venues.map(r=>r.id)),reviews:new Set(tables.reviews.map(r=>r.id))};
   const integrity={missing_venue_for_review:tables.reviews.filter(r=>r.venue_id&&!ids.venues.has(r.venue_id)).length,missing_review_for_rating:tables.review_ratings.filter(r=>r.review_id&&!ids.reviews.has(r.review_id)).length,missing_venue_for_photo:tables.venue_photos.filter(r=>r.venue_id&&!ids.venues.has(r.venue_id)).length,missing_venue_for_schedule:tables.venue_schedules.filter(r=>r.venue_id&&!ids.venues.has(r.venue_id)).length};
-  const snapshot={format:'addicted-to-karaoke-content-backup',version:1,created_at:new Date().toISOString(),build:typeof SITE_BUILD_VERSION!=='undefined'?SITE_BUILD_VERSION:'unknown',recovery_scope:atkWizardVenueId?'partial-content-only':'content-plus-member-access',excluded:['authentication passwords, credentials and deleted accounts','member biographies','song data','audit history','storage objects and uploaded image files'],recovery_dependencies:{venues:['reviews','venue_photos','venue_schedules'],reviews:['review_ratings'],storage_objects:'not included; photo metadata alone cannot recover images'},integrity_check:integrity,table_counts:Object.fromEntries(Object.entries(tables).map(([name,rows])=>[name,rows.length])),tables};
+  const snapshot={format:'addicted-to-karaoke-content-backup',version:1,created_at:new Date().toISOString(),build:typeof SITE_BUILD_VERSION!=='undefined'?SITE_BUILD_VERSION:'unknown',recovery_scope:atkWizardVenueId?'partial-content-only':'content-plus-member-access',excluded:['authentication passwords, credentials and deleted accounts','member names, biographies and email addresses','song data','audit history','storage objects and uploaded image files'],recovery_dependencies:{venues:['reviews','venue_photos','venue_schedules'],reviews:['review_ratings'],storage_objects:'not included; photo metadata alone cannot recover images'},integrity_check:integrity,table_counts:Object.fromEntries(Object.entries(tables).map(([name,rows])=>[name,rows.length])),tables};
   if(Object.values(integrity).some(n=>n>0))throw Error('Backup integrity check failed: '+JSON.stringify(integrity)+'. No incomplete backup was downloaded.');
   if(!atkWizardVenueId){
    const access=await authClient.rpc('founder_export_member_access');
@@ -1693,7 +1693,8 @@ async function managementBackupRestore(){
    const result=await authClient.rpc('founder_reinstate_rejoined_role',{...params,p_dry_run:false});
    if(result.error||!result.data?.applied)throw Error('Role was not restored: '+(result.error?.message||'Server confirmation missing'));
    managementRestoreInclude.delete('rejoined_role');managementRejoinSelectedId='';
-   managementBackupStatus(candidate.stage_name+' was granted the original '+String(candidate.backup_role).replace(/_/g,' ')+' role. Other accounts and verification badges were not changed.');
+   managementRejoinCompletedMessage=candidate.stage_name+' now has the saved '+String(candidate.backup_role).replace(/_/g,' ')+' position again. No passwords, profile information or verification badges were changed.';
+   managementBackupStatus(managementRejoinCompletedMessage);
    return true;
   }
   if(managementRestoreInclude.has('member_access')){
@@ -1835,4 +1836,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-90.1";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-90.2";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
