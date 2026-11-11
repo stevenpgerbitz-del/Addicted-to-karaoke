@@ -1279,21 +1279,36 @@ function managementRestoreConfirm(info,rows){
 async function managementBackupRestore(){
  if(!managementBackupPending||!managementRestoreRecordSelection.size)return;
  try{
-  await managementBackupFounder();const reason=document.getElementById('atk-restore-reason').value.trim();if(reason.length<5)throw Error('Enter a restore reason of at least 5 characters.');
-  const rows=(managementBackupPending.tables.venues||[]).filter(row=>managementRestoreRecordSelection.has(String(row.id))&&managementRestoreDiffRows.venues?.some(item=>item.key===String(row.id)&&item.type==='missing'));
-  if(!rows.length){managementBackupStatus('No venues in this backup to restore.');return}
-  managementBackupStatus('Checking live venue IDs (no changes yet)…');
-  const preview=await authClient.rpc('atk_restore_missing_venues',{p_rows:rows,p_dry_run:true});
-  if(preview.error)throw Error(preview.error.message);
-  const info=preview.data;
-  if(!await managementRestoreConfirm(info,rows)){managementBackupStatus('Restore cancelled; no changes made.');return}
-  const result=await authClient.rpc('atk_restore_missing_venues',{p_rows:rows,p_dry_run:false});
-  if(result.error)throw Error(result.error.message);
-  const audit=await authClient.rpc('founder_log_maintenance',{p_action:'content_restore_completed',p_reason:reason,p_details:{inserted:result.data.inserted,existing_or_duplicate:result.data.existing_or_duplicate,venue_ids:rows.map(r=>r.id)}});if(audit.error)managementBackupStatus('Restore completed, but audit logging failed: '+audit.error.message);
-  managementBackupStatus('Venue restore completed: '+result.data.inserted+' added, '+result.data.existing_or_duplicate+' already present or duplicate. Existing venues were not overwritten.');
-  managementRestoreRecordSelection.clear();await managementBackupShowDiff(managementBackupPending);
-  managementBackupStatus('Venue restore completed: '+result.data.inserted+' added, '+result.data.existing_or_duplicate+' already present or duplicate. Comparison refreshed; existing venues were not overwritten.');
- }catch(e){managementBackupStatus('Restore stopped: '+e.message+'. No existing venue records were overwritten.')}
+  await managementBackupFounder();
+  const reason=document.getElementById('atk-restore-reason').value.trim();
+  if(reason.length<5)throw Error('Enter a restore reason of at least 5 characters.');
+  const venues=managementBackupPending.tables.venues.filter(v=>managementRestoreRecordSelection.has(String(v.id))&&managementRestoreDiffRows.venues?.some(d=>d.key===String(v.id)&&d.type==='missing'));
+  if(!venues.length)throw Error('No missing venues selected.');
+  const bundles=venues.map(venue=>{
+   const reviews=managementBackupPending.tables.reviews.filter(r=>r.venue_id===venue.id);
+   const ids=new Set(reviews.map(r=>r.id));
+   return {p_venue:venue,p_reviews:reviews,p_ratings:managementBackupPending.tables.review_ratings.filter(r=>ids.has(r.review_id)),p_schedules:managementBackupPending.tables.venue_schedules.filter(r=>r.venue_id===venue.id),p_photos:managementBackupPending.tables.venue_photos.filter(r=>r.venue_id===venue.id)};
+  });
+  managementBackupStatus('Validating venue and related records (read-only)…');
+  for(const bundle of bundles){const check=await authClient.rpc('atk_restore_venue_bundle',{...bundle,p_dry_run:true});if(check.error)throw Error(check.error.message)}
+  const totals=bundles.reduce((a,b)=>({reviews:a.reviews+b.p_reviews.length,ratings:a.ratings+b.p_ratings.length,schedules:a.schedules+b.p_schedules.length,photos:a.photos+b.p_photos.length}),{reviews:0,ratings:0,schedules:0,photos:0});
+  const message='Restore '+bundles.length+' missing venue(s), '+totals.reviews+' reviews, '+totals.ratings+' ratings, '+totals.schedules+' schedules and '+totals.photos+' photo records? Existing records will not be overwritten. Actual image files are not included.';
+  if(!confirm(message)){managementBackupStatus('Restore cancelled.');return}
+  let restored=0;
+  for(const bundle of bundles){
+   const result=await authClient.rpc('atk_restore_venue_bundle',{...bundle,p_dry_run:false});
+   if(result.error)throw Error('Restored '+restored+' venue(s), then stopped: '+result.error.message);
+   restored++;
+  }
+  const audit=await authClient.rpc('founder_log_maintenance',{p_action:'content_restore_completed',p_reason:reason,p_details:{venue_ids:venues.map(v=>v.id),venues:restored,...totals}});
+  managementRestoreRecordSelection.clear();
+  await managementBackupShowDiff(managementBackupPending);
+  const remaining=Object.values(managementBackupDiffCounts).reduce((n,d)=>n+d.missing+d.changed+d.onlyLive,0);
+  document.getElementById('management-backup-preview').hidden=remaining===0;
+  document.getElementById('atk-restore-empty').hidden=remaining!==0;
+  document.getElementById('atk-backup-footer').hidden=remaining===0;
+  managementBackupStatus('Restored '+restored+' venue(s) and their related records.'+(audit.error?' Audit logging failed: '+audit.error.message:''));
+ }catch(e){managementBackupStatus('Restore stopped: '+e.message)}
 }
 
 function managementResetNavigation(){for(const id of ['management-history','management-backups','management-member-details','management-venue-details','management-users','management-venues']){const el=document.getElementById(id);if(el)el.hidden=true}const tools=document.querySelector('#management-dialog>.management-tools');if(tools)tools.hidden=false;document.getElementById('management-title').hidden=false;document.querySelector('#management-dialog>p').hidden=false}
@@ -1390,4 +1405,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-80";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-81";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
