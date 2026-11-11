@@ -1636,9 +1636,12 @@ async function managementBackupFileSelected(input){
     const access=await authClient.rpc('founder_restore_member_access',{p_accounts:data.member_access,p_reason:'Preview member access backup',p_dry_run:true});
     if(access.error)managementAccountWarning=access.error.message;
     else managementAccountPreview=access.data;
+    const rejoin=await authClient.rpc('founder_preview_rejoined_roles',{p_accounts:data.member_access});
+    if(rejoin.error)managementAccountWarning+=(managementAccountWarning?' · ':'')+'Rejoin matching: '+rejoin.error.message;
+    else managementRejoinPreview=rejoin.data;
   }
   document.getElementById('management-backup-summary').textContent='These numbers show differences between the backup file and the current system. A difference may be missing, changed, or present only in the live system. Not all differences can be restored yet.';
-  const differences=Object.values(managementBackupDiffCounts).reduce((sum,d)=>sum+d.missing+d.changed+d.onlyLive,0)+(managementAccountPreview?.changed||0);
+  const differences=Object.values(managementBackupDiffCounts).reduce((sum,d)=>sum+d.missing+d.changed+d.onlyLive,0)+(managementAccountPreview?.changed||0)+(managementRejoinPreview?.eligible||0);
   document.getElementById('management-backup-preview').hidden=differences===0;
   document.getElementById('atk-restore-empty').hidden=differences!==0;
   document.getElementById('atk-backup-footer').hidden=atkWizardType==='restore';
@@ -1673,11 +1676,26 @@ function managementRestoreConfirm(info,rows){
  });
 }
 async function managementBackupRestore(){
- if(!managementBackupPending||(!managementRestoreRecordSelection.size&&!managementRestoreInclude.has('member_access')))return false;
+ if(!managementBackupPending||(!managementRestoreRecordSelection.size&&!managementRestoreInclude.has('member_access')&&!managementRestoreInclude.has('rejoined_role')))return false;
  try{
   await managementBackupFounder();
   const reason=document.getElementById('atk-restore-reason').value.trim();
   if(reason.length<5)throw Error('Enter a restore reason of at least 5 characters.');
+  if(managementRestoreInclude.has('rejoined_role')){
+   if(managementRestoreRecordSelection.size||managementRestoreInclude.has('member_access'))throw Error('Restore each returning member role separately from venues and existing accounts.');
+   const candidate=managementRejoinPreview?.items?.find(x=>x.old_user_id===managementRejoinSelectedId);
+   if(!candidate)throw Error('Select one verified returning member first.');
+   const accounts=managementBackupPending.member_access;
+   if(!Array.isArray(accounts))throw Error('This backup has no member role roster.');
+   const params={p_accounts:accounts,p_old_user_id:candidate.old_user_id,p_new_user_id:candidate.new_user_id,p_reason:reason,p_confirmation:'RESTORE ROLE'};
+   const check=await authClient.rpc('founder_reinstate_rejoined_role',{...params,p_dry_run:true});
+   if(check.error||!check.data?.eligible)throw Error('Returning member role validation failed: '+(check.error?.message||'Member not eligible'));
+   const result=await authClient.rpc('founder_reinstate_rejoined_role',{...params,p_dry_run:false});
+   if(result.error||!result.data?.applied)throw Error('Role was not restored: '+(result.error?.message||'Server confirmation missing'));
+   managementRestoreInclude.delete('rejoined_role');managementRejoinSelectedId='';
+   managementBackupStatus(candidate.stage_name+' was granted the original '+String(candidate.backup_role).replace(/_/g,' ')+' role. Other accounts and verification badges were not changed.');
+   return true;
+  }
   if(managementRestoreInclude.has('member_access')){
    if(managementRestoreRecordSelection.size)throw Error('Restore venues and member access separately for safer verification.');
    const accounts=managementBackupPending.member_access;
@@ -1817,4 +1835,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-90";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-90.1";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
