@@ -518,12 +518,12 @@ padding:13px 3px!important;min-height:66px
 </div>
 <div id="auth-profile" hidden>
 <section class="member-hero"><div class="member-avatar-wrap"><div class="member-avatar" id="member-avatar">🎤</div><button type="button" class="member-camera" onclick="document.getElementById('member-avatar-input').click()" aria-label="Upload profile photo">📷</button><input type="file" id="member-avatar-input" accept="image/png,image/jpeg,image/webp" hidden onchange="memberUploadAvatar(this)"></div><div><div class="member-name-line"><div class="member-identity-line"><h2 id="auth-display-name">My Profile</h2><span id="member-verified" hidden class="member-verified-check" aria-label="Verified account" title="Verified account">✓</span></div></div><span id="member-founder" hidden class="founder-badge">★ Founder</span><div id="member-badge-labels" class="profile-badge-labels" aria-label="Member badges"></div><p class="member-muted">Your karaoke stage</p><p id="member-avatar-status" class="member-muted" role="status"></p></div><div class="profile-action-grid"><button type="button" class="profile-action" onclick="memberEdit()"><svg class="profile-ui-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16 4a2 2 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>Edit Profile</button><button type="button" id="management-open" class="profile-action" hidden onclick="managementOpen()"><svg class="profile-ui-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Management</button></div><div style="text-align:center;font-size:11px;color:#bca6a2;margin-top:8px">Build <span data-build-version></span></div></section>
-<dialog id="management-dialog" class="management-dialog" aria-labelledby="management-title"><h2 id="management-title">Management Portal</h2><p>Manage venues, members, reviews, and system settings.</p><div class="management-tools"><button type="button" class="management-entry" onclick="managementVenuesOpen()"><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M6 9a6 6 0 0 0 12 0M12 15v6m-4 0h8"/></svg> Venue Management<small>Venue listings, search and filters</small></button><button type="button" class="management-entry" onclick="managementUsersOpen()"><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 5"/></svg> User Management<small>Registered members, search and filters</small></button><div><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg> Review Management<small>Coming next: review moderation</small></div><button type="button" class="management-entry" onclick="managementHistoryOpen()"><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg> Activity Log<small>Protected record of administrative changes</small></button><button type="button" class="management-entry" onclick="managementBackupOpen()">♻ System Maintenance<small>Backup, restore, and system wipe</small></button></div><section id="management-history" hidden><h2>Activity History</h2><p>Read-only administrative activity. History is not included in content restores or wipe selections.</p><div class="mv-amenities-grid" id="atk-history-categories" aria-label="Report categories"></div><label class="atk-history-field">Search activity<input id="atk-history-search" type="search" placeholder="Name, action, reason..." oninput="atkHistoryRender()"></label><div class="atk-history-filters"><label>Action<select id="atk-history-action" onchange="atkHistoryRender()"><option value="all">All actions</option></select></label><label>Order<select id="atk-history-sort" onchange="atkHistoryRender()"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label><label>From<input type="date" id="atk-history-from" onchange="atkHistoryRender()"></label><label>To<input type="date" id="atk-history-to" onchange="atkHistoryRender()"></label></div><p id="atk-history-count" aria-live="polite"></p><div id="management-history-list" role="status">Loading history…</div></section><style>#atk-backup-form[hidden],#atk-backup-complete[hidden],#atk-backup-footer[hidden],#atk-lifecycle-panel[hidden],#atk-backup-home[hidden],#atk-backup-panel[hidden]{display:none!important}</style><section id="management-backups" hidden><h2>System Maintenance</h2><p>Protect your data before inviting testers.</p>
+<dialog id="management-dialog" class="management-dialog" aria-labelledby="management-title"><h2 id="management-title">Management Portal</h2><p>Manage venues, members, reviews, and system settings.</p><div class="management-tools"><button type="button" class="management-entry" onclick="managementVenuesOpen()"><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M6 9a6 6 0 0 0 12 0M12 15v6m-4 0h8"/></svg> Venue Management<small>Venue listings, search and filters</small></button><button type="button" class="management-entry" onclick="managementUsersOpen()"><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 5"/></svg> User Management<small>Registered members, search and filters</small></button><div><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg> Review Management<small>Coming next: review moderation</small></div><button type="button" class="management-entry" onclick="managementHistoryOpen()"><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg> Activity Log<small>Protected record of administrative changes</small></button><button type="button" class="management-entry" onclick="managementBackupOpen()">♻ System Maintenance<small>Backup, restore, and launch preparation</small></button></div><section id="management-history" hidden><h2>Activity History</h2><p>Read-only administrative activity. History is not included in content restores or wipe selections.</p><div class="mv-amenities-grid" id="atk-history-categories" aria-label="Report categories"></div><label class="atk-history-field">Search activity<input id="atk-history-search" type="search" placeholder="Name, action, reason..." oninput="atkHistoryRender()"></label><div class="atk-history-filters"><label>Action<select id="atk-history-action" onchange="atkHistoryRender()"><option value="all">All actions</option></select></label><label>Order<select id="atk-history-sort" onchange="atkHistoryRender()"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label><label>From<input type="date" id="atk-history-from" onchange="atkHistoryRender()"></label><label>To<input type="date" id="atk-history-to" onchange="atkHistoryRender()"></label></div><p id="atk-history-count" aria-live="polite"></p><div id="management-history-list" role="status">Loading history…</div></section><style>#atk-backup-form[hidden],#atk-backup-complete[hidden],#atk-backup-footer[hidden],#atk-lifecycle-panel[hidden],#atk-backup-home[hidden],#atk-backup-panel[hidden]{display:none!important}</style><section id="management-backups" hidden><h2>System Maintenance</h2><p>Protect your data before inviting testers.</p>
 <div class="management-tools atk-backup-home" id="atk-backup-home">
-<button type="button" class="management-entry" onclick="atkWizardStart('backup')">Backup<small>Download a local snapshot of venue and review data</small></button>
+<button type="button" class="management-entry" onclick="atkWizardStart('backup')">Backup<small>Download content plus member accounts and roles</small></button>
 <button type="button" class="management-entry" onclick="atkWizardStart('restore')">Restore<small>Choose a saved snapshot and preview its records</small></button>
 <button type="button" class="management-entry" onclick="managementHistoryOpen()">Activity History<small>Founder-only read-only administrative records</small></button>
-<button type="button" class="management-entry" onclick="atkWizardStart('wipe')">System Wipe<small>Unavailable — awaiting verified full-system recovery</small></button><button type="button" class="management-entry" onclick="atkWizardStart('live')">Prepare to Go Live<small>Development mode · Launch readiness and security checklist</small></button></div>
+<button type="button" class="management-entry" onclick="atkWizardStart('live')">Prepare to Go Live<small>Development mode · Launch readiness and security checklist</small></button></div>
 <div id="atk-wizard" hidden><div class="atk-wizard-bars" id="atk-wizard-bars"></div><h3 id="atk-wizard-title"></h3><p id="atk-wizard-description"></p><div id="atk-wizard-body"></div><p id="atk-wizard-message" role="status"></p><div class="management-pages atk-wizard-buttons" id="atk-wizard-actions"><button type="button" id="atk-wizard-previous" onclick="atkWizardPrevious()">Previous</button><button type="button" id="atk-wizard-next" onclick="atkWizardNext()">Next</button></div></div>
 <style>
 #atk-wizard[hidden],#atk-wizard-actions[hidden],#atk-wizard-bars[hidden],#atk-wizard-previous[hidden],#atk-wizard-next[hidden]{display:none!important}#atk-wizard{max-width:440px;margin:auto}#atk-wizard-body{max-height:48dvh;overflow:auto}#atk-wizard-body select{display:block;width:100%;min-height:44px;margin:10px 0;padding:8px;border-radius:9px;background:#301b1d;color:white;border:1px solid #8c5552}.atk-wizard-bars{display:flex;gap:6px;margin:12px 0 18px}.atk-wizard-bars i{height:6px;flex:1;background:#503032;border-radius:8px}.atk-wizard-bars i.active{background:#e43d3d}.atk-wizard-buttons{display:flex;gap:8px;flex-wrap:wrap}.atk-wizard-buttons button{flex:1;min-height:42px}#atk-wizard-message{font-size:13px;line-height:1.5}
@@ -1118,6 +1118,8 @@ async function memberSavePrivacy(){if(!memberProfile||!authUser)return;const cha
 
 // Founder-only local content snapshots. No privileged credentials are stored in the browser.
 const managementBackupTables=['venues','kjs','venue_schedules','venue_photos','reviews','review_ratings'];
+// Access recovery is deliberately separate from venue recovery. Account matching uses auth UUIDs, never stage names.
+let managementAccountPreview=null,managementAccountWarning='';
 let managementBackupPending=null,managementRestoreSelection=new Set(),managementBackupDiffCounts={},managementRestoreRecordSelection=new Set(),managementRestoreOpenTable=null,managementRestoreDiffRows={};
 const managementRestoreGroups=[['venues','Venues'],['kjs','KJ Profiles'],['venue_schedules','Karaoke Schedules'],['venue_photos','Venue Photo Records'],['reviews','Reviews'],['review_ratings','Review Ratings']];
 const managementRestoreInclude=new Set();
@@ -1190,7 +1192,7 @@ function managementLifecycleBack(){document.getElementById('atk-lifecycle-panel'
 function managementBackupResetView(){const form=document.getElementById('atk-backup-form'),complete=document.getElementById('atk-backup-complete');if(form)form.hidden=false;if(complete)complete.hidden=true;const reason=document.getElementById('atk-backup-reason');if(reason)reason.value=''}
 
 let atkWizardType='',atkWizardPage=0,atkWizardSnapshot=null,atkWizardVenueId='',atkWizardCompleted=false;
-const atkWizardStages={backup:['Choose Content','Scan & Prepare','Verify Backup','Create Backup'],restore:['Select Backup','Scan & Compare','Verify & Confirm','Restore Data'],wipe:['Select Content','Check Recovery','Verify Safeguards','System Wipe'],live:['Launch Readiness','Run Checks','Review Findings','Go Live']};
+const atkWizardStages={backup:['Choose Content','Scan & Prepare','Verify Backup','Create Backup'],restore:['Select Backup','Scan & Compare','Verify & Confirm','Restore Data'],live:['Select Cleanup','Check Recovery','Review Launch','Go Live']};
 function atkWizardStart(type){
  atkWizardType=type;atkWizardPage=0;atkWizardSnapshot=null;atkWizardVenueId='';atkWizardCompleted=false;
  document.getElementById('atk-backup-home').hidden=true;document.getElementById('atk-backup-panel').hidden=true;document.getElementById('atk-lifecycle-panel').hidden=true;document.getElementById('atk-backup-footer').hidden=true;
@@ -1201,7 +1203,7 @@ function atkWizardStart(type){
 function atkWizardReset(){
  // Always discard wizard UI when returning to System Maintenance or closing it.
  atkWizardType='';atkWizardPage=0;atkWizardSnapshot=null;atkWizardVenueId='';atkWizardCompleted=false;
- managementBackupPending=null;managementRestoreRecordSelection.clear();managementRestoreInclude.clear();
+ managementBackupPending=null;managementAccountPreview=null;managementAccountWarning='';managementRestoreRecordSelection.clear();managementRestoreInclude.clear();
  document.getElementById('atk-wizard').hidden=true;
  document.getElementById('atk-wizard-body').replaceChildren();
  document.getElementById('atk-wizard-message').textContent='';
@@ -1237,15 +1239,15 @@ function atkWizardRender(){
  }
  if(type==='backup'){
   if(page===0){
-   info.textContent='Choose all supported content or a single venue with its related reviews, ratings, schedules and photo records.';
+   info.textContent='All content backups also include registered member identities, roles and verification status. A single-venue backup contains only that venue and its related records.';
    const label=document.createElement('label');label.textContent='Backup scope';body.appendChild(label);
-   const select=document.createElement('select');select.id='atk-wizard-scope';select.innerHTML='<option value="all">All supported content</option><option value="venue">One venue and associated records</option>';body.appendChild(select);
+   const select=document.createElement('select');select.id='atk-wizard-scope';select.innerHTML='<option value="all">Content + Members & Roles</option><option value="venue">One venue and associated records</option>';body.appendChild(select);
    const venue=document.createElement('select');venue.id='atk-wizard-venue';venue.hidden=true;body.appendChild(venue);
    select.onchange=()=>{venue.hidden=select.value!=='venue'};
    managementBackupFounder().then(()=>managementBackupRows('venues')).then(rows=>{venue.replaceChildren(...rows.map(r=>{const o=document.createElement('option');o.value=String(r.id);o.textContent=r.name||r.venue_name||String(r.id);return o}));if(atkWizardVenueId)venue.value=atkWizardVenueId}).catch(e=>message.textContent=e.message);
   }else if(page===1){info.textContent='Records scanned: '+Object.entries(atkWizardSnapshot||{}).map(([k,v])=>k+': '+v.length).join(', ')}
   else {info.textContent='Content backup includes '+Object.entries(atkWizardSnapshot||{}).map(([k,v])=>k+' ('+v.length+')').join(', ');if(page===2){const reason=document.createElement('textarea');reason.id='atk-wizard-backup-reason';reason.rows=3;reason.placeholder='Reason for backup (at least 5 characters)';reason.style.cssText='width:100%;box-sizing:border-box;min-height:90px;padding:12px;border-radius:9px;background:#301b1d;color:white;border:1px solid #8c5552';reason.value=document.getElementById('atk-backup-reason').value;reason.oninput=()=>{document.getElementById('atk-backup-reason').value=reason.value};body.appendChild(reason)}else next.textContent='Download Backup'}
-  message.textContent='Partial content backup only: accounts, permissions, audit history and uploaded image files are not included.';
+  message.textContent=atkWizardVenueId?'Single-venue backup. Account roles are not included.':'Member accounts, roles and verification are included. Passwords, audit history, song libraries and uploaded image files are not included. Keep this backup private.';
  }else if(type==='restore'){
   document.getElementById('atk-wizard-bars').innerHTML=Array.from({length:3},(_,i)=>'<i class="'+(i<=page?'active':'')+'"></i>').join('');
   if(atkWizardCompleted){
@@ -1266,9 +1268,9 @@ function atkWizardRender(){
    const reviews=managementRestoreInclude.has('reviews')?data.tables.reviews.filter(r=>venueIds.has(String(r.venue_id))):[];
    const names=venues.length===1?(venues[0].name||'this venue'):venues.length===2?venues.map(v=>v.name||'Unnamed venue').join(' and '):venues.length+' venues';
    const reviewText=reviews.length?' and '+reviews.length+' '+(reviews.length===1?'review':'reviews'):'';
-   info.textContent='Are you sure you want to restore '+names+reviewText+'?';
+   info.textContent=managementRestoreInclude.has('member_access')?'Restore the original roles and verification status for '+managementAccountPreview.changed+' existing member account(s)? The Founder identity is protected.':'Are you sure you want to restore '+names+reviewText+'?';
    info.className='atk-restore-confirm-question';
-   const note=document.createElement('p');note.textContent='Existing records will stay unchanged.';note.className='atk-restore-confirm-note';body.appendChild(note);
+   const note=document.createElement('p');note.textContent=managementRestoreInclude.has('member_access')?'Member accounts and passwords are not recreated. Existing display names are not overwritten.':'Existing records will stay unchanged.';note.className='atk-restore-confirm-note';body.appendChild(note);
    next.textContent='Restore Now';
    return;
   }
@@ -1278,12 +1280,12 @@ function atkWizardRender(){
    const summary=document.createElement('div');summary.className='atk-restore-file-summary';
    const verified=document.createElement('div');verified.className='atk-restore-file-verified';verified.textContent='✓ Backup file verified';
    const amount=document.createElement('strong');amount.className='atk-restore-file-count';amount.textContent=venueRows.length+' '+(venueRows.length===1?'venue':'venues');
-   const details=document.createElement('div');details.className='atk-restore-file-details';details.textContent=(counts.reviews||0)+' reviews · '+(counts.review_ratings||0)+' ratings';
+   const details=document.createElement('div');details.className='atk-restore-file-details';details.textContent=(counts.reviews||0)+' reviews · '+(counts.review_ratings||0)+' ratings'+(data.account_count!=null?' · '+data.account_count+' members':'');
    const scope=document.createElement('small');scope.className='atk-restore-file-kind';scope.textContent=typeLabel;
    summary.append(verified,amount,details,scope);body.appendChild(summary);
   }
   const missingReviews=(managementBackupDiffCounts.reviews?.missing||0),changedReviews=(managementBackupDiffCounts.reviews?.changed||0),changedRatings=(managementBackupDiffCounts.review_ratings?.changed||0),otherChanges=Object.entries(managementBackupDiffCounts).reduce((total,[table,stat])=>total+(table==='venues'?0:stat.missing+stat.changed),0);
-  if(page===1&&!missing.length){
+  if(page===1&&!missing.length&&!(managementAccountPreview?.changed>0)){
    const hasChanges=otherChanges>0||changed.length>0;
    const backupName=data.backup_scope?.type==='venue'?data.backup_scope.venue_name:(venueRows.length===1?venueRows[0].name:'');
    info.textContent='';
@@ -1310,8 +1312,19 @@ function atkWizardRender(){
    const venueIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h16v11H4zM3 9l9-6 9 6M9 20v-7h6v7"/></svg>';
    const reviewIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.2.9-4.5 4.3 1 6.2L12 17.1 6.6 20l1-6.2-4.5-4.3 6.2-.9L12 3z"/></svg>';
    for(const diff of missing){const venue=venueRows.find(v=>String(v.id)===diff.key);if(!venue)continue;addChoice(venue.name||'Unnamed venue','Missing venue · Add to website',venueIcon,selected.has(diff.key),()=>{if(managementRestoreRecordSelection.has(diff.key)){managementRestoreRecordSelection.delete(diff.key);if(!managementRestoreRecordSelection.size){managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}}else managementRestoreRecordSelection.add(diff.key);atkWizardRender()})}
-   const includeReviews=managementRestoreInclude.has('reviews');
-   addChoice('Reviews & ratings','Optional · For selected venues',reviewIcon,includeReviews,()=>{if(includeReviews){managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}else if(!managementRestoreRecordSelection.size){managementRestoreWarning('Select the venue first, or select the venue and reviews together. Reviews cannot be restored without their venue.','Venue Required');return}else{managementRestoreInclude.add('reviews');managementRestoreInclude.add('review_ratings')}atkWizardRender()});
+   if(missing.length){
+    const includeReviews=managementRestoreInclude.has('reviews');
+    addChoice('Reviews & ratings','Optional · For selected venues',reviewIcon,includeReviews,()=>{if(includeReviews){managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}else if(!managementRestoreRecordSelection.size){managementRestoreWarning('Select the venue first, or select the venue and reviews together. Reviews cannot be restored without their venue.','Venue Required');return}else{managementRestoreInclude.add('reviews');managementRestoreInclude.add('review_ratings')}atkWizardRender()});
+   }
+   if(managementAccountPreview?.changed>0){
+    const active=managementRestoreInclude.has('member_access');
+    addChoice('Members & Roles',managementAccountPreview.changed+' account access difference(s) · restore exact roles by account ID',reviewIcon,active,()=>{
+      if(active)managementRestoreInclude.delete('member_access');
+      else {managementRestoreInclude.clear();managementRestoreRecordSelection.clear();managementRestoreInclude.add('member_access')}
+      atkWizardRender();
+    });
+   }
+   if(managementAccountWarning){const warning=document.createElement('small');warning.textContent='Member access recovery unavailable: '+managementAccountWarning;body.append(warning)}
    const reason=document.createElement('textarea');reason.rows=2;reason.className='atk-restore-reason';reason.placeholder='Reason for restore (required)';reason.value=document.getElementById('atk-restore-reason').value;reason.oninput=()=>document.getElementById('atk-restore-reason').value=reason.value;reason.style.cssText='width:100%;box-sizing:border-box;padding:12px;background:#301b1d;color:white;border:1px solid #8c5552;border-radius:9px';body.appendChild(reason);next.textContent='Review Restore';
   }
  }else if(type==='wipe'){
@@ -1348,7 +1361,7 @@ async function atkWizardNext(){
   if(atkWizardType==='restore'){
    if(atkWizardCompleted){atkWizardCancel();return}
    if(atkWizardPage===0)throw Error('Choose a backup file to continue.');
-   if(atkWizardPage===1){if(!managementRestoreRecordSelection.size)throw Error('Select at least one missing venue to restore.');if(document.getElementById('atk-restore-reason').value.trim().length<5)throw Error('Enter a restore reason of at least five characters.');atkWizardPage=2;atkWizardRender();return}
+   if(atkWizardPage===1){if(!managementRestoreRecordSelection.size&&!managementRestoreInclude.has('member_access'))throw Error('Select a missing venue or Members & Roles to restore.');if(document.getElementById('atk-restore-reason').value.trim().length<5)throw Error('Enter a restore reason of at least five characters.');atkWizardPage=2;atkWizardRender();return}
    if(atkWizardPage===2){const success=await managementBackupRestore();if(success){atkWizardCompleted=true;atkWizardRender()}else message.textContent=document.getElementById('management-backup-status').textContent||'Restore was not completed.';return}
   }
   if(atkWizardType==='wipe'&&atkWizardPage===3)return;
@@ -1409,12 +1422,18 @@ async function managementBackupDownload(selectedTables){
   const tables=selectedTables||{};if(!selectedTables)for(const table of managementBackupTables)tables[table]=await managementBackupRows(table);
   const ids={venues:new Set(tables.venues.map(r=>r.id)),reviews:new Set(tables.reviews.map(r=>r.id))};
   const integrity={missing_venue_for_review:tables.reviews.filter(r=>r.venue_id&&!ids.venues.has(r.venue_id)).length,missing_review_for_rating:tables.review_ratings.filter(r=>r.review_id&&!ids.reviews.has(r.review_id)).length,missing_venue_for_photo:tables.venue_photos.filter(r=>r.venue_id&&!ids.venues.has(r.venue_id)).length,missing_venue_for_schedule:tables.venue_schedules.filter(r=>r.venue_id&&!ids.venues.has(r.venue_id)).length};
-  const snapshot={format:'addicted-to-karaoke-content-backup',version:1,created_at:new Date().toISOString(),build:typeof SITE_BUILD_VERSION!=='undefined'?SITE_BUILD_VERSION:'unknown',recovery_scope:'partial-content-only',excluded:['authentication accounts and credentials','member profiles','platform roles','verification and badges','song data','audit history','storage objects'],recovery_dependencies:{venues:['reviews','venue_photos','venue_schedules'],reviews:['review_ratings'],storage_objects:'not included; photo metadata alone cannot recover images'},integrity_check:integrity,table_counts:Object.fromEntries(Object.entries(tables).map(([name,rows])=>[name,rows.length])),tables};
+  const snapshot={format:'addicted-to-karaoke-content-backup',version:1,created_at:new Date().toISOString(),build:typeof SITE_BUILD_VERSION!=='undefined'?SITE_BUILD_VERSION:'unknown',recovery_scope:atkWizardVenueId?'partial-content-only':'content-plus-member-access',excluded:['authentication passwords, credentials and deleted accounts','member biographies','song data','audit history','storage objects and uploaded image files'],recovery_dependencies:{venues:['reviews','venue_photos','venue_schedules'],reviews:['review_ratings'],storage_objects:'not included; photo metadata alone cannot recover images'},integrity_check:integrity,table_counts:Object.fromEntries(Object.entries(tables).map(([name,rows])=>[name,rows.length])),tables};
   if(Object.values(integrity).some(n=>n>0))throw Error('Backup integrity check failed: '+JSON.stringify(integrity)+'. No incomplete backup was downloaded.');
-  const audit=await authClient.rpc('founder_log_maintenance',{p_action:'content_backup_requested',p_reason:reason,p_details:{scope:'partial-content-only',table_counts:snapshot.table_counts}});if(audit.error)throw Error('Could not record backup request: '+audit.error.message);
+  if(!atkWizardVenueId){
+   const access=await authClient.rpc('founder_export_member_access');
+   if(access.error||!Array.isArray(access.data))throw Error('Member-role backup unavailable: '+(access.error?.message||'No account directory was returned')+'. No incomplete backup will be downloaded.');
+   snapshot.member_access=access.data;
+   snapshot.account_count=access.data.length;
+  }
+  const audit=await authClient.rpc('founder_log_maintenance',{p_action:'content_backup_requested',p_reason:reason,p_details:{scope:snapshot.recovery_scope,table_counts:snapshot.table_counts,account_count:snapshot.account_count||0}});if(audit.error)throw Error('Could not record backup request: '+audit.error.message);
   const chosenVenue=selectedTables&&atkWizardVenueId&&tables.venues.length===1?tables.venues[0]:null;const backupScope=chosenVenue?{type:'venue',venue_id:String(chosenVenue.id),venue_name:chosenVenue.name}:{type:'all_supported_content'};snapshot.backup_scope=backupScope;
   const blob=new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;const venuePart=chosenVenue?String(chosenVenue.name||'Venue').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,55)||'Venue':'';a.download=(chosenVenue?'ATK_Venue_'+venuePart+'_Backup_':'ATK_All_Content_Backup_')+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;const venuePart=chosenVenue?String(chosenVenue.name||'Venue').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,55)||'Venue':'';a.download=(chosenVenue?'ATK_Venue_'+venuePart+'_Backup_':'ATK_Content_and_Members_Backup_')+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
   document.getElementById('atk-backup-form').hidden=true;document.getElementById('atk-backup-complete').hidden=false;document.getElementById('atk-backup-footer').hidden=true;managementBackupStatus('');
  }catch(e){managementBackupStatus('Backup failed: '+e.message)}
 }
@@ -1480,14 +1499,21 @@ async function managementBackupFileSelected(input){
  try{
   await managementBackupFounder();if(file.size>20*1024*1024)throw Error('File exceeds 20 MB.');
   const data=JSON.parse(await file.text());
+  managementAccountPreview=null;managementAccountWarning='';
+  if(data.member_access!==undefined&&(!Array.isArray(data.member_access)||data.account_count!==data.member_access.length))throw Error('Member account backup record count is invalid.');
   if(data.format!=='addicted-to-karaoke-content-backup'||data.version!==1||!data.tables)throw Error('Not a supported Addicted to Karaoke backup.');
   for(const table of managementBackupTables){if(!Array.isArray(data.tables[table]))throw Error('Missing backup table: '+table);if(data.tables[table].some(row=>!row||typeof row!=='object'||Array.isArray(row)))throw Error('Invalid records in '+table)}
   managementBackupValidateSnapshot(data);
   managementBackupPending=data;managementRestoreSelection.clear();managementRestoreRecordSelection.clear();managementRestoreOpenTable=null;managementRestoreRenderSelection();
   managementBackupStatus('Comparing backup against live database (read-only)…');
   await managementBackupShowDiff(data);
+  if(Array.isArray(data.member_access)&&data.member_access.length){
+    const access=await authClient.rpc('founder_restore_member_access',{p_accounts:data.member_access,p_reason:'Preview member access backup',p_dry_run:true});
+    if(access.error)managementAccountWarning=access.error.message;
+    else managementAccountPreview=access.data;
+  }
   document.getElementById('management-backup-summary').textContent='These numbers show differences between the backup file and the current system. A difference may be missing, changed, or present only in the live system. Not all differences can be restored yet.';
-  const differences=Object.values(managementBackupDiffCounts).reduce((sum,d)=>sum+d.missing+d.changed+d.onlyLive,0);
+  const differences=Object.values(managementBackupDiffCounts).reduce((sum,d)=>sum+d.missing+d.changed+d.onlyLive,0)+(managementAccountPreview?.changed||0);
   document.getElementById('management-backup-preview').hidden=differences===0;
   document.getElementById('atk-restore-empty').hidden=differences!==0;
   document.getElementById('atk-backup-footer').hidden=atkWizardType==='restore';
@@ -1522,11 +1548,25 @@ function managementRestoreConfirm(info,rows){
  });
 }
 async function managementBackupRestore(){
- if(!managementBackupPending||!managementRestoreRecordSelection.size)return;
+ if(!managementBackupPending||(!managementRestoreRecordSelection.size&&!managementRestoreInclude.has('member_access')))return false;
  try{
   await managementBackupFounder();
   const reason=document.getElementById('atk-restore-reason').value.trim();
   if(reason.length<5)throw Error('Enter a restore reason of at least 5 characters.');
+  if(managementRestoreInclude.has('member_access')){
+   if(managementRestoreRecordSelection.size)throw Error('Restore venues and member access separately for safer verification.');
+   const accounts=managementBackupPending.member_access;
+   if(!Array.isArray(accounts)||!accounts.length)throw Error('This backup does not contain member access data.');
+   const preview=await authClient.rpc('founder_restore_member_access',{p_accounts:accounts,p_reason:reason,p_dry_run:true});
+   if(preview.error)throw Error('Member recovery validation failed: '+preview.error.message);
+   if(!preview.data?.changed)throw Error('Member roles already match this backup.');
+   const result=await authClient.rpc('founder_restore_member_access',{p_accounts:accounts,p_reason:reason,p_dry_run:false});
+   if(result.error||!result.data?.applied)throw Error('Member recovery failed: '+(result.error?.message||'No confirmation from server'));
+   managementRestoreInclude.delete('member_access');
+   managementAccountPreview={...result.data,changed:0};
+   managementBackupStatus('Recovered permissions for '+result.data.changed+' account(s). Founder protected. Account credentials untouched.');
+   return true;
+  }
   const venues=managementBackupPending.tables.venues.filter(v=>managementRestoreRecordSelection.has(String(v.id))&&managementRestoreDiffRows.venues?.some(d=>d.key===String(v.id)&&d.type==='missing'));
   if(!venues.length)throw Error('No missing venues selected. Restore the parent venue before its reviews.');
   const bundles=venues.map(venue=>{
@@ -1652,4 +1692,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-87.17";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-88";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
