@@ -1250,8 +1250,29 @@ function managementBackupResetView(){const form=document.getElementById('atk-bac
 let atkWizardType='',atkWizardPage=0,atkWizardSnapshot=null,atkWizardVenueId='',atkWizardCompleted=false,atkWizardBackupScope='all',atkWizardMemberCount=0;
 // Go Live is an explicit Founder-only transition. Optional cleanup is OFF by default.
 let atkLiveCleanupVenues=false,atkLiveBackupReady=false,atkLiveBackupAcknowledged=false;
-let atkLiveBackupCounts='',atkLiveStatus=null,atkLiveReason='',atkLiveConfirmation='',atkLiveResult=null;
-function atkLiveCounts(s){return JSON.stringify([s?.venues,s?.reviews,s?.ratings,s?.photo_records,s?.members,s?.founders]);}
+let atkLiveBackupCounts='',atkLiveStatus=null,atkLivePreview=null,atkLiveReason='',atkLiveConfirmation='',atkLiveResult=null;
+function atkLiveCounts(s){return JSON.stringify([s?.venues,s?.reviews,s?.ratings,s?.schedules,s?.photo_records,s?.kjs,s?.songs,s?.members,s?.roles,s?.founders]);}
+function atkLiveCountSummary(counts){
+ return Object.entries(counts||{}).map(([key,value])=>String(value)+' '+String(key).replace(/_/g,' ')).join(' · ');
+}
+function atkLivePreviewBox(parent,preview){
+ if(!preview)return;
+ const deletes=document.createElement('div');
+ deletes.style.cssText='border:1px solid #88524a;background:#311d1d;border-radius:10px;padding:12px;margin:12px 0';
+ const title=document.createElement('strong');
+ title.textContent=preview.cleanup_selected?'Selected for wipe':'Selected for wipe: none';
+ deletes.appendChild(title);
+ const deletion=document.createElement('p');deletion.style.cssText='font-size:13px;line-height:1.5;margin:7px 0 9px';
+ deletion.textContent=preview.cleanup_selected?atkLiveCountSummary(preview.will_delete):'All content will be kept.';deletes.appendChild(deletion);
+ const protectedTitle=document.createElement('strong');protectedTitle.textContent='Protected — not wiped';deletes.appendChild(protectedTitle);
+ const protectedText=document.createElement('p');protectedText.style.cssText='font-size:13px;line-height:1.5;margin:7px 0 0';
+ protectedText.textContent=atkLiveCountSummary(preview.will_preserve);deletes.appendChild(protectedText);
+ if(!preview.cleanup_safe_to_activate){
+  const warning=document.createElement('p');warning.style.cssText='color:#ffd3c7;font-weight:700;font-size:12px';
+  warning.textContent=preview.warning||'Wipe is blocked until recovery is verified.';deletes.appendChild(warning);
+ }
+ parent.appendChild(deletes);
+}
 async function atkLiveDownloadBackup(){
  try{
   await managementBackupFounder();
@@ -1269,7 +1290,7 @@ async function atkLiveDownloadBackup(){
   atkWizardRender();
  }catch(e){document.getElementById('atk-wizard-message').textContent='Backup not ready: '+e.message}
 }
-const atkWizardStages={backup:['Choose Content','Scan & Prepare','Verify Backup','Create Backup'],restore:['Select Backup','Scan & Compare','Verify & Confirm','Restore Data'],live:['Select Cleanup','Check Recovery','Review Launch','Go Live']};
+const atkWizardStages={backup:['Choose Content','Scan & Prepare','Verify Backup','Create Backup'],restore:['Select Backup','Scan & Compare','Verify & Confirm','Restore Data'],live:['Select Wipe Content','Check Recovery','Review Launch','Go Live']};
 function atkWizardStart(type){
  atkWizardType=type;atkWizardPage=0;atkWizardSnapshot=null;atkWizardVenueId='';atkWizardBackupScope='all';atkWizardMemberCount=0;atkWizardCompleted=false;
  document.getElementById('atk-backup-home').hidden=true;document.getElementById('atk-backup-panel').hidden=true;document.getElementById('atk-lifecycle-panel').hidden=true;document.getElementById('atk-backup-footer').hidden=true;
@@ -1277,7 +1298,7 @@ function atkWizardStart(type){
  if(type==='restore'){managementBackupPending=null;managementRejoinCompletedMessage='';document.getElementById('management-backup-file').value=''}
  if(type==='live'){
   atkLiveCleanupVenues=false;atkLiveBackupReady=false;atkLiveBackupAcknowledged=false;
-  atkLiveBackupCounts='';atkLiveStatus=null;atkLiveReason='';atkLiveConfirmation='';atkLiveResult=null;
+  atkLiveBackupCounts='';atkLiveStatus=null;atkLivePreview=null;atkLiveReason='';atkLiveConfirmation='';atkLiveResult=null;
   authClient.rpc('founder_launch_readiness').then(({data,error})=>{
    if(atkWizardType!=='live')return;
    if(error){document.getElementById('atk-wizard-message').textContent=error.message;return}
@@ -1463,22 +1484,24 @@ function atkWizardRender(){
    tile.setAttribute('aria-pressed',String(atkLiveCleanupVenues));
    const text=document.createElement('span');text.className='atk-restore-choice-copy';
    const heading=document.createElement('strong');heading.textContent='Test Venues & Reviews';
-   const sub=document.createElement('small');sub.textContent=atkLiveStatus.venues+' venues · '+atkLiveStatus.reviews+' reviews · includes related ratings and schedules';
+   const sub=document.createElement('small');sub.textContent=atkLiveStatus.venues+' venues · '+atkLiveStatus.reviews+' reviews · '+atkLiveStatus.ratings+' ratings · related schedules';
    text.append(heading,sub);tile.append(text);tile.onclick=()=>{
-    atkLiveCleanupVenues=!atkLiveCleanupVenues;
+    atkLiveCleanupVenues=!atkLiveCleanupVenues;atkLivePreview=null;
     atkLiveBackupReady=false;atkLiveBackupAcknowledged=false;atkWizardRender();
    };grid.append(tile);
-   const note=document.createElement('small');note.textContent='Only venue content can be cleared here, because its backup and recovery path is available. Other data is not eligible for pre-launch deletion.';body.append(note);
+   const note=document.createElement('small');note.textContent='Accounts, roles, song lists, KJ profiles and Activity History are protected. A total account-and-files wipe is not supported because those records cannot yet be completely recovered.';body.append(note);
    next.textContent='Continue';
   }else if(page===1){
-   info.textContent='A fresh backup is required whether you clear test venues or keep all data. It contains venue/review content and a minimal role roster with email fingerprints; it does not include member names or passwords.';
+   info.textContent='First review the read-only wipe preview. Then download a fresh pre-launch backup whether you choose to wipe test venues or keep everything.';
+   atkLivePreviewBox(body,atkLivePreview);
    const count=document.createElement('p');count.textContent=atkLiveStatus.venues+' venue(s), '+atkLiveStatus.reviews+' review(s), '+atkLiveStatus.members+' member(s).';body.append(count);
    const download=document.createElement('button');download.type='button';download.className='atk-file-picker-button';
    download.textContent=atkLiveBackupReady?'✓ Download again':'Download Pre-launch Backup';download.onclick=atkLiveDownloadBackup;body.append(download);
    const warning=document.createElement('small');warning.textContent='Keep the file somewhere safe. Passwords, deleted accounts and uploaded image bytes are not in this JSON backup.';body.append(warning);
-   next.disabled=!atkLiveBackupReady;
+   next.disabled=!atkLiveBackupReady||!atkLivePreview?.cleanup_safe_to_activate;
   }else if(page===2){
-   info.textContent=atkLiveCleanupVenues?'Review: clear '+atkLiveStatus.venues+' venues and '+atkLiveStatus.reviews+' reviews, then activate Production Mode.':'Review: keep all existing venues, reviews, members and other data; activate Production Mode.';
+   info.textContent=atkLiveCleanupVenues?'Review the selected pre-launch wipe before any Production Mode activation.':'No wipe selected. Existing content will be preserved when Production Mode is activated.';
+   atkLivePreviewBox(body,atkLivePreview);
    const ack=document.createElement('label');ack.style.cssText='display:flex;align-items:flex-start;gap:10px;margin:12px 0';
    const box=document.createElement('input');box.type='checkbox';box.checked=atkLiveBackupAcknowledged;
    box.style.cssText='width:20px;height:20px;flex:none;margin-top:2px';box.onchange=()=>{atkLiveBackupAcknowledged=box.checked;next.disabled=!box.checked||atkLiveReason.trim().length<5};
@@ -1538,9 +1561,17 @@ async function atkWizardNext(){
   }
   if(atkWizardType==='live'){
    if(!atkLiveStatus||atkLiveStatus.phase!=='development')throw Error('Launch status is not ready.');
+   if(atkWizardPage===0){
+    const preview=await authClient.rpc('founder_preview_launch_cleanup',{p_cleanup_venues:atkLiveCleanupVenues});
+    if(preview.error||!preview.data?.preview_only)throw Error('Cannot verify wipe preview: '+(preview.error?.message||'No dry-run confirmation'));
+    atkLivePreview=preview.data;
+   }
+   if(atkWizardPage>=1&&!atkLivePreview?.cleanup_safe_to_activate)
+    throw Error(atkLivePreview?.warning||'Cleanup remains blocked until recovery is verified.');
    if(atkWizardPage===1&&!atkLiveBackupReady)throw Error('Download your pre-launch backup before continuing.');
    if(atkWizardPage===2&&(!atkLiveBackupAcknowledged||atkLiveReason.trim().length<5))throw Error('Confirm the backup is saved and enter a launch reason.');
    if(atkWizardPage===3){
+    if(!atkLivePreview||atkLivePreview.cleanup_selected!==atkLiveCleanupVenues)throw Error('Preview the wipe selection first.');
     if(atkLiveConfirmation!=='GO LIVE')throw Error('Type GO LIVE exactly to confirm.');
     const latest=await authClient.rpc('founder_launch_readiness');
     if(latest.error)throw Error(latest.error.message);
@@ -2163,4 +2194,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-93.1";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-94";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
