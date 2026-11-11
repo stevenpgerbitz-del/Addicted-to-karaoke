@@ -26,17 +26,23 @@ Role roster and rejoining accounts (Build 90.2): Full content backup now stores 
 
 Existing member permissions as inspected 2026-11-11: Mr Steve = Founder, Steven Gerbitz = Member, Aqua Liz = Moderator (not Super Admin). Do not silently elevate access; backups capture actual roles at the time they are created.
 
-## Backup Inspector — Build 92.1 (implemented, pending phone acceptance)
+## Backup Inspector — Build 93 (implemented, pending phone acceptance)
 - Add a **read-only** "Inspect Backup" option in System Maintenance: choose a locally downloaded ATK JSON backup and analyze it without uploading, restoring, or mutating database records.
 - Use the established compact Amenities-style selectable tiles to show categories and counts (e.g., 5 venues, 4 reviews, 3 members and roles); tapping a category reveals the actual records saved in that file.
 - For venues show venue names; for reviews show related venue and the review summary where available; for member-role snapshots show **member numbers/IDs and assigned roles only** (no stage names, plaintext emails, or passwords in current role roster).
 - Surface filename, creation date, build number, declared backup scope and format; compare declared counts to actual records; validate IDs, duplicates, relationships and required fields, showing actionable warnings for incomplete or unsupported files.
 - Distinguish structural consistency from independently verifiable integrity. Future generated backups may include a checksum, but don't claim existing backups are tamper-proof or a complete disaster recovery package.
 - Support Full Backup, Single Venue, Members & Roles Only, and older supported snapshot formats. No automatic restore or changes.
-- **Implemented in Build 92.1:** Admin → System Maintenance → Inspect Backup opens a read-only local JSON picker. The mobile-friendly Amenities-style tiles show counts for included venues, reviews, ratings, schedules, photo metadata, KJs, and members/roles. Selecting a tile expands a record-level list. Summary includes filename, snapshot date, scope and build number; validation compares declared counts, duplicate IDs and parent relationships, reporting warnings without changing the database.
+- **Implemented in Build 93:** Admin → System Maintenance → Inspect Backup opens a read-only local JSON picker. The mobile-friendly Amenities-style tiles show counts for included venues, reviews, ratings, schedules, photo metadata, KJs, and members/roles. Selecting a tile expands a record-level list. Summary includes filename, snapshot date, scope and build number; validation compares declared counts, duplicate IDs and parent relationships, reporting warnings without changing the database.
 - Supports Full Backup, Single Venue, Members & Roles Only, and older version-1 content backups. Member-role detail is shown by member number and saved role, not email or stage name. No restore or upload path in inspector.
 - **Verification performed:** all 9 script blocks parse; standalone analyzer samples cover supported formats, invalid files, mismatched counts and orphan reviews; isolated DOM-like interaction test confirmed Members & Roles tile expansion. **Phone/Chrome visual acceptance is still pending.**
 - Structural validation does not prove authenticity, tamper resistance or excluded data recovery.
+
+### Build 93 — Android Backup Inspector file-picker lifecycle fix
+- User's 14-second Pixel/Chrome recording showed: Admin → System Maintenance → Inspect Backup → Choose Backup File → Android Downloads → selecting a file abruptly returns to the profile page, without inspector results. Build 92.1 confirmed on screen.
+- Root cause found: `authRefresh()` closed the Management dialog **unconditionally** on any Supabase authentication callback; Android file picker resume can trigger same-user token/session refresh. Build 93 preserves an existing Founder-authorized Management dialog when the authenticated user ID has not changed, while closing it for a signed-out or different user.
+- The local inspector also reopens its pane after the native file picker/async read if the browser dismissed the dialog, only when the current authenticated user matches the authorized dialog owner.
+- Tested three refresh cases (same account preserves; changed account/signout closes), native-picker dialog recovery with authorized vs changed identity, and JavaScript syntax across nine script blocks. **Actual Android Chrome user retest pending.** No restore, database write, or Go Live action performed.
 
 ## Priority 2 — Signup and first-run wizard
 - Ask “How do you enjoy karaoke?” Singer / KJ / Venue Owner during onboarding.
