@@ -44,6 +44,11 @@ Existing member permissions as inspected 2026-11-11: Mr Steve = Founder, Steven 
 - The local inspector also reopens its pane after the native file picker/async read if the browser dismissed the dialog, only when the current authenticated user matches the authorized dialog owner.
 - Tested three refresh cases (same account preserves; changed account/signout closes), native-picker dialog recovery with authorized vs changed identity, and JavaScript syntax across nine script blocks. **Actual Android Chrome user retest pending.** No restore, database write, or Go Live action performed.
 
+### GitHub Pages deployment incident — November 11, 2026
+- GitHub Actions/Pages experienced a documented service incident 20:48–21:21 UTC on 2026-11-11 (https://www.githubstatus.com/).
+- Page deployment run #215 (commit 167d0a5, Build 93) failed during workflow startup; run #216 (documentation commit 3666078) also failed without executing its build jobs.
+- GitHub declined direct retries of both runs (run cannot be retried). This documentation-only commit requests a new Pages deployment after GitHub reported recovery; **no application code or database content changes**.
+
 ## Priority 2 — Signup and first-run wizard
 - Ask “How do you enjoy karaoke?” Singer / KJ / Venue Owner during onboarding.
 - Assign basic self-declared role badges immediately; verified/certified badges remain separate and require admin approval.
