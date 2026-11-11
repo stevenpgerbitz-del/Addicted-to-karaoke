@@ -570,7 +570,7 @@ padding:13px 3px!important;min-height:66px
 
 </style><div id="atk-lifecycle-panel" hidden><h3>Prepare to Go Live</h3><p><strong>Current phase: Development</strong></p><p>Before launch, we must verify full database, account, role, audit-history and uploaded-file recovery.</p><p>Then we'll test selective system wipe, a separate Founder-only history reset, and Founder account protection.</p><p><strong>Launch is locked until recovery safeguards are verified.</strong> No data will be changed here.</p><div class="management-pages"><button type="button" onclick="managementLifecycleBack()">Cancel</button></div></div><div id="atk-backup-panel" hidden>
 <h3 id="atk-backup-panel-title"></h3>
-<div id="atk-backup-download" hidden><div id="atk-backup-complete" hidden role="status" style="padding:18px 8px;text-align:center"><h3 style="margin:0 0 12px">Backup Completed</h3><p>Your backup has been prepared for download.</p><p style="font-size:13px;line-height:1.5">Full content backups include member identities, roles and verification. Authentication credentials, audit history and uploaded image files remain excluded.</p></div><div id="atk-backup-form"><p>Download a snapshot of venues, KJs, schedules, reviews and ratings.</p><label for="atk-backup-reason" style="display:block;margin:12px 0 7px">Reason for backup (required)</label><textarea id="atk-backup-reason" rows="3" maxlength="500" placeholder="Why are you creating this backup?" style="display:block;width:100%;min-height:94px;box-sizing:border-box;resize:vertical;padding:12px;border-radius:10px;border:1px solid #8c5552;background:#301b1d;color:#fff;font:inherit;line-height:1.4"></textarea><p style="font-size:13px;line-height:1.5;margin:14px 0"><strong>Recovery scope:</strong> Full content snapshots include member IDs, roles and verification. Passwords, audit history and uploaded image bytes are not included. Keep this private backup in a safe location.</p><div class="management-pages"><button type="button" onclick="managementBackupDownload()">Download Backup</button></div></div></div>
+<div id="atk-backup-download" hidden><div id="atk-backup-complete" hidden role="status" style="padding:18px 8px;text-align:center"><h3 style="margin:0 0 12px">Backup Completed</h3><p>Your backup has been prepared for download.</p><p style="font-size:13px;line-height:1.5">Full content backups include saved roles and email fingerprints (not names, email addresses or passwords). Audit history and uploaded image files remain excluded.</p></div><div id="atk-backup-form"><p>Download a snapshot of venues, KJs, schedules, reviews and ratings.</p><label for="atk-backup-reason" style="display:block;margin:12px 0 7px">Reason for backup (required)</label><textarea id="atk-backup-reason" rows="3" maxlength="500" placeholder="Why are you creating this backup?" style="display:block;width:100%;min-height:94px;box-sizing:border-box;resize:vertical;padding:12px;border-radius:10px;border:1px solid #8c5552;background:#301b1d;color:#fff;font:inherit;line-height:1.4"></textarea><p style="font-size:13px;line-height:1.5;margin:14px 0"><strong>Recovery scope:</strong> Full content snapshots include member IDs, roles, verification status and email fingerprints, but no member names, email addresses or passwords. Audit history and uploaded image bytes remain excluded. Keep this private backup in a safe location.</p><div class="management-pages"><button type="button" onclick="managementBackupDownload()">Download Backup</button></div></div></div>
 <div id="atk-backup-restore" hidden><p>Select a local JSON snapshot to inspect before restoring.</p><div class="management-pages"><button type="button" onclick="document.getElementById('management-backup-file').click()">Choose Backup File</button></div>
 <input type="file" id="management-backup-file" accept=".json,application/json" hidden onchange="managementBackupFileSelected(this)">
 <div id="atk-restore-empty" hidden role="status" style="text-align:center;padding:22px 8px"><h3>Nothing to Restore</h3><p>The backup matches the current content records. No changes are needed.</p></div><div id="management-backup-preview" hidden><label for="atk-restore-reason">Reason for restore (required)</label><textarea id="atk-restore-reason" rows="3" maxlength="500" placeholder="Why are you restoring these records?" style="display:block;width:100%;min-height:94px;box-sizing:border-box;resize:vertical;padding:12px;border-radius:10px;border:1px solid #8c5552;background:#301b1d;color:#fff;font:inherit;line-height:1.4"></textarea><p id="management-backup-summary"></p><div id="management-backup-diff" class="atk-backup-diff" role="region" aria-label="Backup versus live data comparison"></div><p class="atk-restore-heading"><strong>Select content to restore</strong></p><div id="management-restore-selection" class="atk-wipe-grid" tabindex="-1"></div><p id="management-restore-count">0 of 6 selected</p><div class="management-pages"><button type="button" id="management-restore-submit" disabled onclick="managementBackupRestore()">Restore Selected Data</button></div></div></div>
@@ -1120,6 +1120,7 @@ async function memberSavePrivacy(){if(!memberProfile||!authUser)return;const cha
 const managementBackupTables=['venues','kjs','venue_schedules','venue_photos','reviews','review_ratings'];
 // Access recovery is deliberately separate from venue recovery. Account matching uses auth UUIDs, never stage names.
 let managementAccountPreview=null,managementAccountWarning='';
+let managementRejoinPreview=null,managementRejoinSelectedId='';
 let managementBackupPending=null,managementRestoreSelection=new Set(),managementBackupDiffCounts={},managementRestoreRecordSelection=new Set(),managementRestoreOpenTable=null,managementRestoreDiffRows={};
 const managementRestoreGroups=[['venues','Venues'],['kjs','KJ Profiles'],['venue_schedules','Karaoke Schedules'],['venue_photos','Venue Photo Records'],['reviews','Reviews'],['review_ratings','Review Ratings']];
 const managementRestoreInclude=new Set();
@@ -1233,7 +1234,7 @@ function atkWizardStart(type){
 function atkWizardReset(){
  // Always discard wizard UI when returning to System Maintenance or closing it.
  atkWizardType='';atkWizardPage=0;atkWizardSnapshot=null;atkWizardVenueId='';atkWizardCompleted=false;
- managementBackupPending=null;managementAccountPreview=null;managementAccountWarning='';managementRestoreRecordSelection.clear();managementRestoreInclude.clear();
+ managementBackupPending=null;managementAccountPreview=null;managementAccountWarning='';managementRejoinPreview=null;managementRejoinSelectedId='';managementRestoreRecordSelection.clear();managementRestoreInclude.clear();
  document.getElementById('atk-wizard').hidden=true;
  document.getElementById('atk-wizard-body').replaceChildren();
  document.getElementById('atk-wizard-message').textContent='';
@@ -1276,7 +1277,7 @@ function atkWizardRender(){
  }
  if(type==='backup'){
   if(page===0){
-   info.textContent='All content backups also include registered member identities, roles and verification status. A single-venue backup contains only that venue and its related records.';
+   info.textContent='All content backups also include a minimal member role roster for returning accounts, without names, email addresses or passwords. A single-venue backup contains only that venue and its related records.';
    const label=document.createElement('label');label.textContent='Backup scope';body.appendChild(label);
    const select=document.createElement('select');select.id='atk-wizard-scope';select.innerHTML='<option value="all">Content + Members & Roles</option><option value="venue">One venue and associated records</option>';body.appendChild(select);
    const venue=document.createElement('select');venue.id='atk-wizard-venue';venue.hidden=true;body.appendChild(venue);
@@ -1284,7 +1285,7 @@ function atkWizardRender(){
    managementBackupFounder().then(()=>managementBackupRows('venues')).then(rows=>{venue.replaceChildren(...rows.map(r=>{const o=document.createElement('option');o.value=String(r.id);o.textContent=r.name||r.venue_name||String(r.id);return o}));if(atkWizardVenueId)venue.value=atkWizardVenueId}).catch(e=>message.textContent=e.message);
   }else if(page===1){info.textContent='Records scanned: '+Object.entries(atkWizardSnapshot||{}).map(([k,v])=>k+': '+v.length).join(', ')}
   else {info.textContent='Content backup includes '+Object.entries(atkWizardSnapshot||{}).map(([k,v])=>k+' ('+v.length+')').join(', ');if(page===2){const reason=document.createElement('textarea');reason.id='atk-wizard-backup-reason';reason.rows=3;reason.placeholder='Reason for backup (at least 5 characters)';reason.style.cssText='width:100%;box-sizing:border-box;min-height:90px;padding:12px;border-radius:9px;background:#301b1d;color:white;border:1px solid #8c5552';reason.value=document.getElementById('atk-backup-reason').value;reason.oninput=()=>{document.getElementById('atk-backup-reason').value=reason.value};body.appendChild(reason)}else next.textContent='Download Backup'}
-  message.textContent=atkWizardVenueId?'Single-venue backup. Account roles are not included.':'Member accounts, roles and verification are included. Passwords, audit history, song libraries and uploaded image files are not included. Keep this backup private.';
+  message.textContent=atkWizardVenueId?'Single-venue backup. Account roles are not included.':'Role roster includes account IDs, email fingerprints, saved positions and verification state — no names, email addresses or passwords. Audit history, song libraries and image files are not included. Keep this backup private.';
  }else if(type==='restore'){
   document.getElementById('atk-wizard-bars').innerHTML=Array.from({length:3},(_,i)=>'<i class="'+(i<=page?'active':'')+'"></i>').join('');
   if(atkWizardCompleted){
@@ -1305,9 +1306,9 @@ function atkWizardRender(){
    const reviews=managementRestoreInclude.has('reviews')?data.tables.reviews.filter(r=>venueIds.has(String(r.venue_id))):[];
    const names=venues.length===1?(venues[0].name||'this venue'):venues.length===2?venues.map(v=>v.name||'Unnamed venue').join(' and '):venues.length+' venues';
    const reviewText=reviews.length?' and '+reviews.length+' '+(reviews.length===1?'review':'reviews'):'';
-   info.textContent=managementRestoreInclude.has('member_access')?'Restore the original roles and verification status for '+managementAccountPreview.changed+' existing member account(s)? The Founder identity is protected.':'Are you sure you want to restore '+names+reviewText+'?';
+   info.textContent=managementRestoreInclude.has('rejoined_role')?'Restore the saved '+String(managementRejoinPreview.items.find(m=>m.old_user_id===managementRejoinSelectedId)?.backup_role||'').replace(/_/g,' ')+' position to this returning, email-verified member? The Founder role cannot be restored here.':managementRestoreInclude.has('member_access')?'Restore the original roles and verification status for '+managementAccountPreview.changed+' existing member account(s)? The Founder identity is protected.':'Are you sure you want to restore '+names+reviewText+'?';
    info.className='atk-restore-confirm-question';
-   const note=document.createElement('p');note.textContent=managementRestoreInclude.has('member_access')?'Member accounts and passwords are not recreated. Existing display names are not overwritten.':'Existing records will stay unchanged.';note.className='atk-restore-confirm-note';body.appendChild(note);
+   const note=document.createElement('p');note.textContent=managementRestoreInclude.has('rejoined_role')?'You are explicitly approving this one member. No password, user profile, verification badge or other account will be restored.':managementRestoreInclude.has('member_access')?'Member accounts and passwords are not recreated. Existing display names are not overwritten.':'Existing records will stay unchanged.';note.className='atk-restore-confirm-note';body.appendChild(note);
    next.textContent='Restore Now';
    return;
   }
@@ -1322,7 +1323,7 @@ function atkWizardRender(){
    summary.append(verified,amount,details,scope);body.appendChild(summary);
   }
   const missingReviews=(managementBackupDiffCounts.reviews?.missing||0),changedReviews=(managementBackupDiffCounts.reviews?.changed||0),changedRatings=(managementBackupDiffCounts.review_ratings?.changed||0),otherChanges=Object.entries(managementBackupDiffCounts).reduce((total,[table,stat])=>total+(table==='venues'?0:stat.missing+stat.changed),0);
-  if(page===1&&!missing.length&&!(managementAccountPreview?.changed>0)){
+  if(page===1&&!missing.length&&!(managementAccountPreview?.changed>0)&&!(managementRejoinPreview?.eligible>0)){
    const hasChanges=otherChanges>0||changed.length>0;
    const backupName=data.backup_scope?.type==='venue'?data.backup_scope.venue_name:(venueRows.length===1?venueRows[0].name:'');
    info.textContent='';
@@ -1348,7 +1349,7 @@ function atkWizardRender(){
    };
    const venueIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h16v11H4zM3 9l9-6 9 6M9 20v-7h6v7"/></svg>';
    const reviewIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.2.9-4.5 4.3 1 6.2L12 17.1 6.6 20l1-6.2-4.5-4.3 6.2-.9L12 3z"/></svg>';
-   for(const diff of missing){const venue=venueRows.find(v=>String(v.id)===diff.key);if(!venue)continue;addChoice(venue.name||'Unnamed venue','Missing venue · Add to website',venueIcon,selected.has(diff.key),()=>{if(managementRestoreRecordSelection.has(diff.key)){managementRestoreRecordSelection.delete(diff.key);if(!managementRestoreRecordSelection.size){managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}}else managementRestoreRecordSelection.add(diff.key);atkWizardRender()})}
+   for(const diff of missing){const venue=venueRows.find(v=>String(v.id)===diff.key);if(!venue)continue;addChoice(venue.name||'Unnamed venue','Missing venue · Add to website',venueIcon,selected.has(diff.key),()=>{if(managementRestoreRecordSelection.has(diff.key)){managementRestoreRecordSelection.delete(diff.key);if(!managementRestoreRecordSelection.size){managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}}else {managementRestoreRecordSelection.add(diff.key);managementRejoinSelectedId='';managementRestoreInclude.delete('rejoined_role')}atkWizardRender()})}
    if(missing.length){
     const includeReviews=managementRestoreInclude.has('reviews');
     addChoice('Reviews & ratings','Optional · For selected venues',reviewIcon,includeReviews,()=>{if(includeReviews){managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}else if(!managementRestoreRecordSelection.size){managementRestoreWarning('Select the venue first, or select the venue and reviews together. Reviews cannot be restored without their venue.','Venue Required');return}else{managementRestoreInclude.add('reviews');managementRestoreInclude.add('review_ratings')}atkWizardRender()});
@@ -1358,9 +1359,22 @@ function atkWizardRender(){
     const accessIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>';
     addChoice('Members & Roles',managementAccountPreview.changed+' account access difference(s) · restore exact roles by account ID',accessIcon,active,()=>{
       if(active)managementRestoreInclude.delete('member_access');
-      else {managementRestoreInclude.clear();managementRestoreRecordSelection.clear();managementRestoreInclude.add('member_access')}
+      else {managementRestoreInclude.clear();managementRestoreRecordSelection.clear();managementRejoinSelectedId='';managementRestoreInclude.add('member_access')}
       atkWizardRender();
     });
+   }
+   if(managementRejoinPreview?.eligible>0){
+    const rejoinIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="4"/><path d="M2 21v-2a8 8 0 0 1 16 0v2M19 6v7m-3-3h6"/></svg>';
+    const help=document.createElement('small');help.textContent='Returning members — select the person whose original role you want to approve. New accounts must have a verified matching email.';body.append(help);
+    for(const member of managementRejoinPreview.items){
+     const active=managementRestoreInclude.has('rejoined_role')&&managementRejoinSelectedId===member.old_user_id;
+     const role=String(member.backup_role).replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase());
+     addChoice(member.stage_name||'Returning Member','Rejoined member · Restore '+role,rejoinIcon,active,()=>{
+      if(active){managementRestoreInclude.delete('rejoined_role');managementRejoinSelectedId=''}
+      else{managementRestoreInclude.clear();managementRestoreRecordSelection.clear();managementRejoinSelectedId=member.old_user_id;managementRestoreInclude.add('rejoined_role')}
+      atkWizardRender();
+     });
+    }
    }
    if(managementRestoreInclude.has('member_access')&&managementAccountPreview?.items?.length){
     const list=document.createElement('div');list.style.cssText='font-size:12px;line-height:1.45;margin:6px 0;padding:8px 10px;background:#281718;border:1px solid #714a46;border-radius:10px';
@@ -1455,7 +1469,7 @@ async function atkWizardNext(){
   if(atkWizardType==='restore'){
    if(atkWizardCompleted){atkWizardCancel();return}
    if(atkWizardPage===0)throw Error('Choose a backup file to continue.');
-   if(atkWizardPage===1){if(!managementRestoreRecordSelection.size&&!managementRestoreInclude.has('member_access'))throw Error('Select a missing venue or Members & Roles to restore.');if(document.getElementById('atk-restore-reason').value.trim().length<5)throw Error('Enter a restore reason of at least five characters.');atkWizardPage=2;atkWizardRender();return}
+   if(atkWizardPage===1){if(!managementRestoreRecordSelection.size&&!managementRestoreInclude.has('member_access')&&!managementRestoreInclude.has('rejoined_role'))throw Error('Choose a venue or member role to restore.');if(managementRestoreInclude.has('rejoined_role')&&!managementRejoinSelectedId)throw Error('Select a returning member first.');if(document.getElementById('atk-restore-reason').value.trim().length<5)throw Error('Enter a restore reason of at least five characters.');atkWizardPage=2;atkWizardRender();return}
    if(atkWizardPage===2){const success=await managementBackupRestore();if(success){atkWizardCompleted=true;atkWizardRender()}else message.textContent=document.getElementById('management-backup-status').textContent||'Restore was not completed.';return}
   }
   if(atkWizardType==='live'){
@@ -1610,7 +1624,7 @@ async function managementBackupFileSelected(input){
  try{
   await managementBackupFounder();if(file.size>20*1024*1024)throw Error('File exceeds 20 MB.');
   const data=JSON.parse(await file.text());
-  managementAccountPreview=null;managementAccountWarning='';
+  managementAccountPreview=null;managementAccountWarning='';managementRejoinPreview=null;managementRejoinSelectedId='';
   if(data.member_access!==undefined&&(!Array.isArray(data.member_access)||data.account_count!==data.member_access.length))throw Error('Member account backup record count is invalid.');
   if(data.format!=='addicted-to-karaoke-content-backup'||data.version!==1||!data.tables)throw Error('Not a supported Addicted to Karaoke backup.');
   for(const table of managementBackupTables){if(!Array.isArray(data.tables[table]))throw Error('Missing backup table: '+table);if(data.tables[table].some(row=>!row||typeof row!=='object'||Array.isArray(row)))throw Error('Invalid records in '+table)}
@@ -1803,4 +1817,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-89.2";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-90";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
