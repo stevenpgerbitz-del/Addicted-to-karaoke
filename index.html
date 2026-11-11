@@ -1234,14 +1234,19 @@ async function managementBackupFileSelected(input){
   managementBackupStatus('Comparison complete. Review differences, then choose categories to restore.');
  }catch(e){managementBackupStatus('Cannot load backup: '+e.message)}
 }
-function managementRestoreConfirm(info){
+function managementRestoreConfirm(info,rows){
  return new Promise(resolve=>{
   const overlay=document.getElementById('atk-restore-confirm');
   const detail=document.getElementById('atk-restore-confirm-detail');
   const yes=document.getElementById('atk-restore-confirm-yes');
   const no=document.getElementById('atk-restore-confirm-no');
   const previous=document.activeElement;
-  detail.textContent=info.missing+' missing venue(s) to restore · '+info.existing_or_duplicate+' already present or duplicated.';
+  detail.replaceChildren();
+  const prompt=document.createElement('p');prompt.textContent='Are you sure you want to restore the following?';detail.append(prompt);
+  const names=document.createElement('ul');names.style.cssText='margin:12px 0 4px;padding-left:22px;line-height:1.7';
+  for(const row of rows){const item=document.createElement('li');item.textContent=row.name||'Unnamed venue';names.append(item)}
+  detail.append(names);
+  if(info.existing_or_duplicate){const warning=document.createElement('p');warning.textContent=info.existing_or_duplicate+' selected venue(s) already exist and will be skipped.';detail.append(warning)}
   overlay.hidden=false;
   const finish=accepted=>{overlay.hidden=true;yes.removeEventListener('click',onYes);no.removeEventListener('click',onNo);overlay.removeEventListener('keydown',onKey);if(previous&&previous.isConnected)previous.focus({preventScroll:true});resolve(accepted)};
   const onYes=()=>finish(true),onNo=()=>finish(false);
@@ -1259,7 +1264,7 @@ async function managementBackupRestore(){
   const preview=await authClient.rpc('atk_restore_missing_venues',{p_rows:rows,p_dry_run:true});
   if(preview.error)throw Error(preview.error.message);
   const info=preview.data;
-  if(!await managementRestoreConfirm(info)){managementBackupStatus('Restore cancelled; no changes made.');return}
+  if(!await managementRestoreConfirm(info,rows)){managementBackupStatus('Restore cancelled; no changes made.');return}
   const result=await authClient.rpc('atk_restore_missing_venues',{p_rows:rows,p_dry_run:false});
   if(result.error)throw Error(result.error.message);
   managementBackupStatus('Venue restore completed: '+result.data.inserted+' added, '+result.data.existing_or_duplicate+' already present or duplicate. Existing venues were not overwritten.');
@@ -1358,4 +1363,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-64";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-65";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
