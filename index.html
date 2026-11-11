@@ -1050,7 +1050,7 @@ async function memberSavePrivacy(){if(!memberProfile||!authUser)return;const cha
 
 // Founder-only local content snapshots. No privileged credentials are stored in the browser.
 const managementBackupTables=['venues','kjs','venue_schedules','venue_photos','reviews','review_ratings'];
-let managementBackupPending=null,managementRestoreSelection=new Set();
+let managementBackupPending=null,managementRestoreSelection=new Set(),managementBackupDiffCounts={};
 const managementRestoreGroups=[['venues','Venues'],['kjs','KJ Profiles'],['venue_schedules','Karaoke Schedules'],['venue_photos','Venue Photo Records'],['reviews','Reviews'],['review_ratings','Review Ratings']];
 function managementRestoreRenderSelection(){
  const host=document.getElementById('management-restore-selection');host.replaceChildren();
@@ -1059,7 +1059,7 @@ function managementRestoreRenderSelection(){
   const selected=managementRestoreSelection.has(table),tile=document.createElement('button');
   tile.type='button';tile.className='mv-amenity-option atk-restore-tile'+(selected?' selected':'');
   tile.setAttribute('aria-pressed',String(selected));
-  tile.textContent=label+' ('+(managementBackupPending?.tables[table]?.length||0)+')';
+  const heading=document.createElement('strong');heading.textContent=label+' ('+(managementBackupPending?.tables[table]?.length||0)+')';const detail=document.createElement('small');const diff=managementBackupDiffCounts[table];detail.textContent=diff?(diff.missing||diff.changed||diff.onlyLive?[(diff.missing?diff.missing+' missing':''),(diff.changed?diff.changed+' changed':''),(diff.onlyLive?diff.onlyLive+' live only':'')].filter(Boolean).join(' · '):'No differences'):'Not compared';tile.append(heading,detail);tile.style.display='flex';tile.style.flexDirection='column';tile.style.alignItems='flex-start';tile.style.gap='5px';
   tile.onclick=()=>{if(selected)managementRestoreSelection.delete(table);else managementRestoreSelection.add(table);managementRestoreRenderSelection()};
   host.append(tile);
  }
@@ -1128,37 +1128,34 @@ async function managementBackupDownload(){
   managementBackupStatus('Partial content backup downloaded. This is NOT a full-system recovery backup. Preserve it securely; accounts, permissions, audit history and image files are excluded.');
  }catch(e){managementBackupStatus('Backup failed: '+e.message)}
 }
-function managementBackupCancel(){managementRestoreSelection.clear();managementBackupPending=null;managementRestoreSelection.clear();document.getElementById('management-backup-preview').hidden=true;document.getElementById('management-backup-file').value='';document.querySelector('#atk-backup-restore > p').hidden=false;document.querySelector('#atk-backup-restore > .management-pages').hidden=false;managementBackupStatus('Restore cancelled.')}
+function managementBackupCancel(){managementRestoreSelection.clear();managementBackupPending=null;managementBackupDiffCounts={};document.getElementById('management-backup-preview').hidden=true;document.getElementById('management-backup-file').value='';document.querySelector('#atk-backup-restore > p').hidden=false;document.querySelector('#atk-backup-restore > .management-pages').hidden=false;managementBackupStatus('Restore cancelled.')}
 // Read-only snapshot comparison. A matching ID with changed content is never overwritten by restore.
 function managementBackupCanonical(value){
  if(Array.isArray(value))return value.map(managementBackupCanonical);
  if(value&&typeof value==='object')return Object.fromEntries(Object.keys(value).sort().map(k=>[k,managementBackupCanonical(value[k])]));
  return value;
 }
+function managementBackupRecordKey(table,row){
+ return table==='review_ratings'?String(row.review_id)+'|'+String(row.category):String(row.id);
+}
 async function managementBackupShowDiff(snapshot){
- const host=document.getElementById('management-backup-diff');
- host.replaceChildren();
- const title=document.createElement('strong');title.textContent='Backup compared with live data';host.append(title);
- const explanation=document.createElement('p');explanation.textContent='Read-only comparison by record ID. Changed records are flagged, not overwritten. Live-only records are not deleted.';host.append(explanation);
- for(const [table,label] of managementRestoreGroups){
+ managementBackupDiffCounts={};
+ for(const [table] of managementRestoreGroups){
   const backed=snapshot.tables[table]||[],live=await managementBackupRows(table);
-  const liveById=new Map(live.filter(row=>row.id!=null).map(row=>[String(row.id),row]));
-  const backupIds=new Set(backed.filter(row=>row.id!=null).map(row=>String(row.id)));
-  let missing=0,changed=0,identical=0,unknown=0;
+  const liveById=new Map(live.map(row=>[managementBackupRecordKey(table,row),row]));
+  const backupIds=new Set(backed.map(row=>managementBackupRecordKey(table,row)));
+  let missing=0,changed=0,identical=0;
   for(const row of backed){
-   if(row.id==null){unknown++;continue}
-   const current=liveById.get(String(row.id));
+   const current=liveById.get(managementBackupRecordKey(table,row));
    if(!current)missing++;
    else if(JSON.stringify(managementBackupCanonical(row))!==JSON.stringify(managementBackupCanonical(current)))changed++;
    else identical++;
   }
-  const onlyLive=live.filter(row=>row.id!=null&&!backupIds.has(String(row.id))).length;
-  const line=document.createElement('div');line.className='atk-backup-diff-row';
-  const name=document.createElement('strong');name.textContent=label;line.append(name);
-  const detail=document.createElement('span');detail.textContent='Backup '+backed.length+' · Live '+live.length+' · Missing '+missing+' · Changed '+changed+' · Same '+identical+' · Live only '+onlyLive+(unknown?' · No ID '+unknown:'');line.append(detail);
-  host.append(line);
+  const onlyLive=live.filter(row=>!backupIds.has(managementBackupRecordKey(table,row))).length;
+  managementBackupDiffCounts[table]={missing,changed,identical,onlyLive};
  }
- const note=document.createElement('p');note.textContent='This partial backup excludes authentication, roles, audit history and actual uploaded files. Differences shown here do not guarantee all related records are restorable yet.';host.append(note);
+ const host=document.getElementById('management-backup-diff');host.replaceChildren();host.hidden=true;
+ managementRestoreRenderSelection();
 }
 function managementBackupValidateSnapshot(data){
  const keys={venues:r=>r.id,kjs:r=>r.id,venue_schedules:r=>r.id,venue_photos:r=>r.id,reviews:r=>r.id,review_ratings:r=>r.review_id+'|'+r.category};
@@ -1185,7 +1182,7 @@ function managementBackupValidateSnapshot(data){
 async function managementBackupFileSelected(input){
  const file=input.files&&input.files[0];if(!file)return;
  // Keep the selected file and the management dialog intact while the native picker returns.
- managementRestoreSelection.clear();managementBackupPending=null;
+ managementRestoreSelection.clear();managementBackupPending=null;managementBackupDiffCounts={};
  document.getElementById('management-backup-preview').hidden=true;
  managementBackupStatus('Loading backup…');
  try{
@@ -1335,4 +1332,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-59";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-60";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
