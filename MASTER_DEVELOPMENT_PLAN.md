@@ -16,7 +16,7 @@ Status: Working plan; implement and test one step at a time.
 4. Pre-launch cleanup lives **inside Go Live**, not as a separate System Wipe entry. Nothing is selected by default. Only venue content is eligible for cleanup; accounts, permissions, song lists, image bytes and audit history are never wiped by the launch flow. A local backup must be downloaded and acknowledged; an additional database-side snapshot is stored transactionally before cleanup. Launch requires an exact Founder-only confirmation, and cleanup cannot be repeated after Production Mode is active. End-to-end recovery testing must still precede real-world destructive use.
 5. System Maintenance UI: one admin entry with Backup, Restore, Activity History and Prepare to Go Live. No standalone System Wipe option. Keep established red controls, compact mobile dialogs, Close at bottom, no native browser confirmation and no X icons.
 6. Review moderation roadmap: soft-delete/tombstones, suspicious-review review queue, audit logging, bulk moderation.
-Current milestone: Build **2026.11.11-91** integrates Founder-only member access backup and atomic role/verification recovery keyed by account UUID, while preserving the approved venue + review restore flow. The Go Live wizard supports an optional venue-content cleanup, pre-launch JSON download, Founder confirmation and atomic server-side snapshot/production phase transition. **No actual launch/cleanup has been triggered.**
+Prior completed milestone: Build **2026.11.11-91** integrates Founder-only member access backup and atomic role/verification recovery keyed by account UUID, while preserving the approved venue + review restore flow. The Go Live wizard supports an optional venue-content cleanup, pre-launch JSON download, Founder confirmation and atomic server-side snapshot/production phase transition. **No actual launch/cleanup has been triggered.**
 
 Test status: backend role-backup/read-only-diff checks passed for 3 accounts (0 live changes, 1 detected in a simulated altered backup); all 9 inline JavaScript blocks parse. Browser/mobile end-to-end testing and a controlled backup → cleanup → restore test are still required. Downloaded JSON does **not** recreate deleted Supabase Auth accounts/passwords or include uploaded image bytes, full song libraries or protected audit history; do not represent it as a catastrophic full-system backup. This wider disaster-recovery scope remains a separate security milestone.
 
@@ -48,6 +48,18 @@ Existing member permissions as inspected 2026-11-11: Mr Steve = Founder, Steven 
 - GitHub Actions/Pages experienced a documented service incident 20:48–21:21 UTC on 2026-11-11 (https://www.githubstatus.com/).
 - Page deployment run #215 (commit 167d0a5, Build 93) failed during workflow startup; run #216 (documentation commit 3666078) also failed without executing its build jobs.
 - GitHub declined direct retries of both runs (run cannot be retried). This documentation-only commit requests a new Pages deployment after GitHub reported recovery; **no application code or database content changes**.
+
+## Confirmed sequence — November 11, 2026
+1. **Finish System Wipe and Go Live first**: Founder-only preview, category impact, safe backup, guarded cleanup, recovery tests, and production activation controls. Keep the *actual* destructive wipe and Production Mode activation deferred until the site is genuinely ready to open.
+2. **User Management second**: roles, member administration, account verification, permissions, and mobile layout.
+3. **Review Management third**: a larger moderation project (queue, spam, bulk actions, soft deletion, auditing). Do not start it while the first two priorities are unfinished.
+
+### Build 94 — safer pre-launch preview
+- Added backend Founder-authorized read-only `founder_preview_launch_cleanup`, which reports the exact content that would be deleted and preserved without making changes.
+- Added a clearly grouped, mobile-friendly preview to the Go Live wizard: selected venue/review/rating/schedule/photo metadata counts, plus protected member accounts, profiles, roles, song lists, KJ records and Activity History.
+- Counts are refreshed and checked before activation; selecting or deselecting cleanup invalidates earlier backup acknowledgment. Added server-side refusal to delete venue photo metadata if real uploaded image bytes are not recoverable from the current JSON backup.
+- Tests: preview of selected wipe showed 7 venues, 10 reviews and 70 ratings; preview of no wipe showed zero deletions. Three member accounts, nine saved songs and history remained protected. Tested wizard stage transition and nine inline script blocks. No actual wipe or Go Live was executed.
+- Important: this is a **venue-content pre-launch wipe**, not a universal reset of users, songs, accounts, photos and credentials. Full catastrophic recovery (including uploaded files and deleted authentication accounts), and end-to-end recovery testing, remain before any real destructive launch.
 
 ## Priority 2 — Signup and first-run wizard
 - Ask “How do you enjoy karaoke?” Singer / KJ / Venue Owner during onboarding.
