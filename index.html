@@ -1184,9 +1184,22 @@ function atkWizardStart(type){
  if(type==='restore'){managementBackupPending=null;document.getElementById('management-backup-file').value=''}
  atkWizardRender();
 }
+function atkWizardReset(){
+ // Always discard wizard UI when returning to System Maintenance or closing it.
+ atkWizardType='';atkWizardPage=0;atkWizardSnapshot=null;atkWizardVenueId='';atkWizardCompleted=false;
+ managementBackupPending=null;managementRestoreRecordSelection.clear();managementRestoreInclude.clear();
+ document.getElementById('atk-wizard').hidden=true;
+ document.getElementById('atk-wizard-body').replaceChildren();
+ document.getElementById('atk-wizard-message').textContent='';
+ document.getElementById('management-backup-preview').hidden=true;
+ document.getElementById('management-backup-file').value='';
+ document.getElementById('atk-backup-footer').hidden=true;
+ managementBackupStatus('');
+}
 function atkWizardCancel(){
- document.getElementById('atk-wizard').hidden=true;document.getElementById('atk-backup-home').hidden=false;document.getElementById('atk-backup-footer').hidden=false;
- document.getElementById('management-backup-preview').hidden=true;atkWizardType='';atkWizardSnapshot=null;
+ atkWizardReset();
+ document.getElementById('atk-backup-home').hidden=false;
+ const dialog=document.getElementById('management-dialog');if(dialog)dialog.scrollTop=0;
 }
 function atkWizardRender(){
  const type=atkWizardType,page=atkWizardPage,body=document.getElementById('atk-wizard-body');body.replaceChildren();
@@ -1333,13 +1346,14 @@ function atkWizardPrevious(){if(atkWizardPage>0){atkWizardPage--;atkWizardRender
 
 function managementBackupView(view){
  if(view==='wipe')return; // Deliberately no wipe navigation until recovery safeguards are verified.
+ if(!view)atkWizardReset(); // A fresh maintenance menu must never coexist with the prior wizard.
  if(view==='backup'){managementBackupResetView();document.getElementById('atk-backup-footer').hidden=false;}
  if(view==='restore'){document.getElementById('atk-restore-empty').hidden=true;document.getElementById('management-backup-preview').hidden=true;document.querySelector('#atk-backup-restore > p').hidden=false;document.querySelector('#atk-backup-restore > .management-pages').hidden=false;document.getElementById('management-backup-file').value='';document.getElementById('atk-backup-footer').hidden=false;managementBackupStatus('');}
  const panel=document.getElementById('atk-backup-panel');
  panel.hidden=!view;document.getElementById('atk-backup-home').hidden=!!view;
  for(const type of ['backup','restore','wipe'])document.getElementById('atk-backup-'+(type==='backup'?'download':type)).hidden=view!==type;
  document.getElementById('atk-backup-panel-title').textContent=view?({backup:'Backup',restore:'Restore',wipe:'System Wipe'}[view]):'';
- 
+ if(!view)document.getElementById('atk-backup-footer').hidden=true;
  if(view==='wipe')atkWipeRender();
 }
 function atkWipeRender(){
@@ -1365,7 +1379,7 @@ function atkHistoryExport(){if(!atkHistoryFiltered.length){alert('No matching re
 
 function managementBackupStatus(message){document.getElementById('management-backup-status').textContent=message}
 async function managementBackupOpen(){
- try{await managementBackupFounder();managementResetNavigation();document.querySelector('#management-dialog>.management-tools').hidden=true;document.getElementById('management-title').hidden=true;document.querySelector('#management-dialog>p').hidden=true;document.getElementById('management-backups').hidden=false;document.getElementById('atk-lifecycle-panel').hidden=true;document.getElementById('atk-backup-footer').hidden=false;managementBackupView('');managementBackupStatus('Ready to download a local backup.');}catch(e){alert(e.message)}
+ try{await managementBackupFounder();managementResetNavigation();document.querySelector('#management-dialog>.management-tools').hidden=true;document.getElementById('management-title').hidden=true;document.querySelector('#management-dialog>p').hidden=true;document.getElementById('management-backups').hidden=false;document.getElementById('atk-lifecycle-panel').hidden=true;managementBackupView('');managementBackupStatus('');const dialog=document.getElementById('management-dialog');if(dialog)dialog.scrollTop=0;}catch(e){alert(e.message)}
 }
 async function managementBackupRows(table){
  const all=[];for(let start=0;;start+=500){
@@ -1531,7 +1545,7 @@ async function managementBackupRestore(){
 }
 
 function managementResetNavigation(){for(const id of ['management-history','management-backups','management-member-details','management-venue-details','management-users','management-venues']){const el=document.getElementById(id);if(el)el.hidden=true}const tools=document.querySelector('#management-dialog>.management-tools');if(tools)tools.hidden=false;document.getElementById('management-title').hidden=false;document.querySelector('#management-dialog>p').hidden=false}
-function managementCloseLevel(){const dialog=document.getElementById('management-dialog');if(!document.getElementById('management-history').hidden){dialog.close();managementResetNavigation();return}if(!document.getElementById('management-backups').hidden){dialog.close();managementResetNavigation();return}if(!document.getElementById('management-member-details').hidden){managementMemberBack();return}if(!document.getElementById('management-venue-details').hidden){managementVenueDetailBack();return}if(!document.getElementById('management-users').hidden){managementUsersBack();return}if(!document.getElementById('management-venues').hidden){managementVenuesBack();return}dialog.close();managementResetNavigation()}
+function managementCloseLevel(){const dialog=document.getElementById('management-dialog');if(!document.getElementById('management-history').hidden){dialog.close();managementResetNavigation();return}if(!document.getElementById('management-backups').hidden){atkWizardReset();dialog.close();managementResetNavigation();return}if(!document.getElementById('management-member-details').hidden){managementMemberBack();return}if(!document.getElementById('management-venue-details').hidden){managementVenueDetailBack();return}if(!document.getElementById('management-users').hidden){managementUsersBack();return}if(!document.getElementById('management-venues').hidden){managementVenuesBack();return}dialog.close();managementResetNavigation()}
 async function managementOpen(){if(!authClient||!authUser)return;const result=await authClient.rpc('is_platform_founder');if(result.error||result.data!==true){document.getElementById('management-open').hidden=true;alert('Management access is unavailable for this account.');return;}managementResetNavigation();document.getElementById('management-dialog').showModal();}
 
 // Admin venue listing: read-only first phase; no changes to approved public pages.
@@ -1624,4 +1638,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-87.15";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-87.16";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
