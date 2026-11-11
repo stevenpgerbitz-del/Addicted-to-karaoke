@@ -493,6 +493,12 @@ padding:13px 3px!important;min-height:66px
  overflow:visible!important;overflow-wrap:normal!important;word-break:normal!important;
 }
 </style><style>
+#atk-restore-warning[hidden]{display:none!important}
+#atk-restore-warning{position:fixed;inset:0;z-index:2147483001;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+#atk-restore-warning .atk-restore-confirm-card{box-sizing:border-box;width:min(100%,360px);max-height:calc(100dvh - 36px);overflow-y:auto;background:#211012;color:#f6e8dc;border:1px solid #b87570;border-radius:16px;padding:20px 18px;box-shadow:0 16px 55px #000a}
+#atk-restore-warning h3{font-family:Georgia,serif;font-size:22px;margin:0 0 12px;color:#ffe5c8}
+#atk-restore-warning p{font-size:15px;line-height:1.5;margin:0 0 18px}
+#atk-restore-warning-close{min-height:48px;cursor:pointer}
 #atk-restore-confirm[hidden]{display:none!important}
 #atk-restore-confirm{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
 #atk-restore-confirm .atk-restore-confirm-card{box-sizing:border-box;width:min(100%,420px);background:#211012;color:#f6e8dc;border:1px solid #b87570;border-radius:16px;padding:22px 18px;box-shadow:0 16px 55px #000a}
