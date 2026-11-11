@@ -536,6 +536,11 @@ padding:13px 3px!important;min-height:66px
 #atk-wizard .atk-file-picker-copy strong{font-size:16px;font-weight:700;line-height:1.2}
 #atk-wizard .atk-file-picker-copy small{font-size:12px;color:#e0b9b0;font-weight:400;line-height:1.4}
 #atk-wizard .atk-file-picker-chevron{font-size:28px;line-height:1;color:#e6b2a9}
+#atk-wizard .atk-restore-file-summary{border:1px solid #a36b63;border-radius:13px;background:#382022;padding:16px 17px;margin:4px 0 17px;display:flex;flex-direction:column;gap:5px}
+#atk-wizard .atk-restore-file-verified{font-size:13px;font-weight:700;color:#f1d3bd;letter-spacing:.01em}
+#atk-wizard .atk-restore-file-count{font-size:28px;line-height:1.22;font-weight:800;color:#fff0df}
+#atk-wizard .atk-restore-file-details{font-size:15px;line-height:1.4;color:#ead4c7}
+#atk-wizard .atk-restore-file-kind{font-size:12px;line-height:1.4;color:#d8b0a3;overflow-wrap:anywhere}
 #atk-wizard .atk-restore-choice-heading{font-size:15px;color:#f2dfd3;margin:18px 0 10px;font-weight:700}
 #atk-wizard .atk-restore-confirm-question{font-size:19px;line-height:1.5;font-weight:700;color:#f6e7df;margin:22px 0 10px}#atk-wizard .atk-restore-confirm-note{font-size:14px;color:#ddbeb5;line-height:1.5;margin-bottom:22px}
 #atk-wizard .atk-restore-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 16px}
@@ -1103,7 +1108,7 @@ let managementBackupPending=null,managementRestoreSelection=new Set(),management
 const managementRestoreGroups=[['venues','Venues'],['kjs','KJ Profiles'],['venue_schedules','Karaoke Schedules'],['venue_photos','Venue Photo Records'],['reviews','Reviews'],['review_ratings','Review Ratings']];
 const managementRestoreInclude=new Set();
 function managementRestoreWarningClose(){document.getElementById('atk-restore-warning').hidden=true}
-function managementRestoreWarning(){const box=document.getElementById('atk-restore-warning');box.hidden=false;document.getElementById('atk-restore-warning-close').focus({preventScroll:true})}
+function managementRestoreWarning(message,title){const box=document.getElementById('atk-restore-warning');document.getElementById('atk-restore-warning-title').textContent=title||'Cannot Restore Reviews';document.getElementById('atk-restore-warning-message').textContent=message||'These reviews belong to a venue that does not currently exist. Restore the parent venue first, then select the reviews.';box.hidden=false;document.getElementById('atk-restore-warning-close').focus({preventScroll:true})}
 function managementRestoreRenderSelection(){
  const host=document.getElementById('management-restore-selection');host.replaceChildren();
  const selectedVenues=(managementBackupPending?.tables?.venues||[]).filter(v=>managementRestoreRecordSelection.has(String(v.id)));
@@ -1241,12 +1246,20 @@ function atkWizardRender(){
    return;
   }
   const typeLabel=data.backup_scope?.type==='venue'?'Venue backup'+(data.backup_scope.venue_name?' — '+data.backup_scope.venue_name:''):data.backup_scope?.type==='all_supported_content'?'All supported content backup':data.recovery_scope==='partial-content-only'?(venueRows.length===1?'Single-venue content snapshot':'Content snapshot ('+venueRows.length+' venues)'):'Backup ('+(data.recovery_scope||'unknown scope')+')';
-  info.textContent=data.backup_scope?.type==='venue'?typeLabel:'Content backup · '+venueRows.length+' '+(venueRows.length===1?'venue':'venues');
+  if(page===1){
+   info.hidden=true;
+   const summary=document.createElement('div');summary.className='atk-restore-file-summary';
+   const verified=document.createElement('div');verified.className='atk-restore-file-verified';verified.textContent='✓ Backup file verified';
+   const amount=document.createElement('strong');amount.className='atk-restore-file-count';amount.textContent=venueRows.length+' '+(venueRows.length===1?'venue':'venues');
+   const details=document.createElement('div');details.className='atk-restore-file-details';details.textContent=(counts.reviews||0)+' reviews · '+(counts.review_ratings||0)+' ratings';
+   const scope=document.createElement('small');scope.className='atk-restore-file-kind';scope.textContent=typeLabel;
+   summary.append(verified,amount,details,scope);body.appendChild(summary);
+  }
   const missingReviews=(managementBackupDiffCounts.reviews?.missing||0),changedReviews=(managementBackupDiffCounts.reviews?.changed||0),changedRatings=(managementBackupDiffCounts.review_ratings?.changed||0),otherChanges=Object.entries(managementBackupDiffCounts).reduce((total,[table,stat])=>total+(table==='venues'?0:stat.missing+stat.changed),0);
   if(page===1&&!missing.length){
    const hasChanges=otherChanges>0||changed.length>0;
    const backupName=data.backup_scope?.type==='venue'?data.backup_scope.venue_name:(venueRows.length===1?venueRows[0].name:'');
-   info.textContent=backupName||'Backup checked';
+   info.textContent='';
    const result=document.createElement('p');
    result.textContent=hasChanges?'No missing venues to add. Existing records will not be changed.':'Already on the website. Nothing to restore.';
    body.appendChild(result);
@@ -1254,7 +1267,6 @@ function atkWizardRender(){
    return;
   }
   if(page===1){
-   const note=document.createElement('p');note.textContent='Choose what to restore.';body.appendChild(note);
    if(changed.length){const caution=document.createElement('p');caution.style.fontSize='.88em';caution.textContent='Other existing venues will not be changed.';body.appendChild(caution)}
    const selected=new Set(managementRestoreRecordSelection);
    const heading=document.createElement('h4');heading.className='atk-restore-choice-heading';heading.textContent='Select what to restore';body.appendChild(heading);
@@ -1270,9 +1282,9 @@ function atkWizardRender(){
    };
    const venueIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h16v11H4zM3 9l9-6 9 6M9 20v-7h6v7"/></svg>';
    const reviewIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.2.9-4.5 4.3 1 6.2L12 17.1 6.6 20l1-6.2-4.5-4.3 6.2-.9L12 3z"/></svg>';
-   for(const diff of missing){const venue=venueRows.find(v=>String(v.id)===diff.key);if(!venue)continue;addChoice(venue.name||'Unnamed venue','Missing venue · Add to website',venueIcon,selected.has(diff.key),()=>{if(managementRestoreRecordSelection.has(diff.key))managementRestoreRecordSelection.delete(diff.key);else managementRestoreRecordSelection.add(diff.key);atkWizardRender()})}
+   for(const diff of missing){const venue=venueRows.find(v=>String(v.id)===diff.key);if(!venue)continue;addChoice(venue.name||'Unnamed venue','Missing venue · Add to website',venueIcon,selected.has(diff.key),()=>{if(managementRestoreRecordSelection.has(diff.key)){managementRestoreRecordSelection.delete(diff.key);if(!managementRestoreRecordSelection.size){managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}}else managementRestoreRecordSelection.add(diff.key);atkWizardRender()})}
    const includeReviews=managementRestoreInclude.has('reviews');
-   addChoice('Reviews & ratings','Optional · For selected venues',reviewIcon,includeReviews,()=>{if(includeReviews){managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}else{managementRestoreInclude.add('reviews');managementRestoreInclude.add('review_ratings')}atkWizardRender()});
+   addChoice('Reviews & ratings','Optional · For selected venues',reviewIcon,includeReviews,()=>{if(includeReviews){managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}else if(!managementRestoreRecordSelection.size){managementRestoreWarning('Select the venue first, or select the venue and reviews together. Reviews cannot be restored without their venue.','Venue Required');return}else{managementRestoreInclude.add('reviews');managementRestoreInclude.add('review_ratings')}atkWizardRender()});
    const reason=document.createElement('textarea');reason.rows=2;reason.placeholder='Reason for restore (required)';reason.value=document.getElementById('atk-restore-reason').value;reason.oninput=()=>document.getElementById('atk-restore-reason').value=reason.value;reason.style.cssText='width:100%;box-sizing:border-box;padding:12px;background:#301b1d;color:white;border:1px solid #8c5552;border-radius:9px';body.appendChild(reason);next.textContent='Review Restore';
   }
  }else if(type==='wipe'){
@@ -1612,4 +1624,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-87.14";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-87.15";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
