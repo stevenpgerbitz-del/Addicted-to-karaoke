@@ -1212,7 +1212,7 @@ async function atkWizardNext(){
     atkWizardSnapshot=tables;
    }
    if(atkWizardPage===2&&document.getElementById('atk-backup-reason').value.trim().length<5)throw Error('Enter a reason of at least five characters.');
-   if(atkWizardPage===3){await managementBackupDownload(atkWizardSnapshot);return}
+   if(atkWizardPage===3){await managementBackupDownload(atkWizardSnapshot);document.getElementById('atk-wizard-message').textContent=document.getElementById('management-backup-status').textContent||'Backup downloaded. Check your downloads.';return}
   }
   if(atkWizardType==='restore'){
    if(atkWizardPage===0&&!managementBackupPending)throw Error('Choose and scan a backup first.');
@@ -1364,7 +1364,8 @@ async function managementBackupFileSelected(input){
   dialog.scrollTop=0;
   if(differences)document.getElementById('management-restore-selection').focus({preventScroll:true});
   managementBackupStatus(differences?'Comparison complete. Review differences, then choose categories to restore.':'');
- }catch(e){managementBackupStatus('Cannot load backup: '+e.message)}
+  if(atkWizardType==='restore'&&!document.getElementById('atk-wizard').hidden){atkWizardPage=1;atkWizardRender();}
+ }catch(e){managementBackupStatus('Cannot load backup: '+e.message);if(atkWizardType==='restore')document.getElementById('atk-wizard-message').textContent=e.message}
 }
 function managementRestoreConfirm(info,rows){
  return new Promise(resolve=>{
