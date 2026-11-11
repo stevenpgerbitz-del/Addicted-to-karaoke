@@ -1170,6 +1170,9 @@ async function memberSavePrivacy(){if(!memberProfile||!authUser)return;const cha
 
 // Founder-only local content snapshots. No privileged credentials are stored in the browser.
 const managementBackupTables=['venues','kjs','venue_schedules','venue_photos','reviews','review_ratings'];
+// Keep management open through token refresh or Android file-picker resume,
+// but close it if the authenticated identity actually changes.
+let managementDialogOwnerId=null;
 // Access recovery is deliberately separate from venue recovery. Account matching uses auth UUIDs, never stage names.
 let managementAccountPreview=null,managementAccountWarning='';
 let managementRejoinPreview=null,managementRejoinSelectedId='',managementRejoinCompletedMessage='';
@@ -1781,8 +1784,27 @@ function atkInspectorRender(file,analysis){
  document.getElementById('atk-inspector-file-label').textContent='Choose Another Backup';
  document.getElementById('atk-inspector-status').textContent=analysis.issues.length?'Backup loaded with warnings. Tap a category to inspect its records.':'Backup opened. Tap a category to inspect its records.';
 }
+function atkInspectorEnsureVisible(){
+ const dialog=document.getElementById('management-dialog');
+ if(dialog.open)return true;
+ // Android may dismiss a native <dialog> while selecting a file. Reopen it
+ // only for the same authenticated account that was authorized to view management.
+ if(!authUser||managementDialogOwnerId!==authUser.id)return false;
+ managementResetNavigation();
+ document.querySelector('#management-dialog>.management-tools').hidden=true;
+ document.getElementById('management-title').hidden=true;
+ document.querySelector('#management-dialog>p').hidden=true;
+ document.getElementById('management-backups').hidden=false;
+ document.getElementById('atk-backup-home').hidden=true;
+ document.getElementById('atk-inspector').hidden=false;
+ document.getElementById('atk-wizard').hidden=true;
+ document.getElementById('atk-backup-footer').hidden=true;
+ dialog.showModal();
+ return true;
+}
 async function atkInspectorLoad(input){
  const file=input.files?.[0];if(!file)return;
+ if(!atkInspectorEnsureVisible())return;
  const status=document.getElementById('atk-inspector-status');status.textContent='Checking backup file…';
  document.getElementById('atk-inspector-summary').hidden=true;
  atkInspectorCurrent=null;atkInspectorSelected='';
@@ -1791,6 +1813,7 @@ async function atkInspectorLoad(input){
   if(!/\.json$/i.test(file.name))throw Error('Choose a JSON backup file.');
   const data=JSON.parse(await file.text());
   const analysis=atkInspectorAnalyze(data);
+  if(!atkInspectorEnsureVisible())return;
   atkInspectorRender(file,analysis);
  }catch(e){
   status.textContent='Cannot inspect this backup: '+(e?.message||'Unreadable file');
@@ -2048,7 +2071,7 @@ async function managementBackupRestore(){
 
 function managementResetNavigation(){for(const id of ['management-history','management-backups','management-member-details','management-venue-details','management-users','management-venues']){const el=document.getElementById(id);if(el)el.hidden=true}const tools=document.querySelector('#management-dialog>.management-tools');if(tools)tools.hidden=false;document.getElementById('management-title').hidden=false;document.querySelector('#management-dialog>p').hidden=false}
 function managementCloseLevel(){const dialog=document.getElementById('management-dialog');if(!document.getElementById('management-history').hidden){dialog.close();managementResetNavigation();return}if(!document.getElementById('management-backups').hidden){atkWizardReset();dialog.close();managementResetNavigation();return}if(!document.getElementById('management-member-details').hidden){managementMemberBack();return}if(!document.getElementById('management-venue-details').hidden){managementVenueDetailBack();return}if(!document.getElementById('management-users').hidden){managementUsersBack();return}if(!document.getElementById('management-venues').hidden){managementVenuesBack();return}dialog.close();managementResetNavigation()}
-async function managementOpen(){if(!authClient||!authUser)return;const result=await authClient.rpc('is_platform_founder');if(result.error||result.data!==true){document.getElementById('management-open').hidden=true;alert('Management access is unavailable for this account.');return;}managementResetNavigation();document.getElementById('management-dialog').showModal();}
+async function managementOpen(){if(!authClient||!authUser)return;const result=await authClient.rpc('is_platform_founder');if(result.error||result.data!==true){document.getElementById('management-open').hidden=true;alert('Management access is unavailable for this account.');return;}managementResetNavigation();managementDialogOwnerId=authUser.id;document.getElementById('management-dialog').showModal();}
 
 // Admin venue listing: read-only first phase; no changes to approved public pages.
 let managementVenuePage=1,managementVenueTotal=0,managementVenueTimer=null,managementVenueRequest=0;
@@ -2131,7 +2154,7 @@ async function managementUsersLoad(){const seq=++managementUserRequest;const sta
 let authClient=null,authUser=null;
 function authStatus(message){document.getElementById('auth-status').textContent=message||''}
 function authMode(mode){['login','register','reset','newpassword'].forEach(x=>document.getElementById('auth-'+x).hidden=x!==mode);document.getElementById('auth-title').textContent=({login:'Welcome Back!',register:'Join the Stage!',reset:'Reset Password',newpassword:'New Password'})[mode];authStatus('')}
-function authRefresh(){const managementButton=document.getElementById('management-open');if(managementButton)managementButton.hidden=true;const managementDialog=document.getElementById('management-dialog');if(managementDialog?.open)managementDialog.close();const badge=document.getElementById('member-founder');if(badge)badge.hidden=true;const verified=document.getElementById('member-verified');if(verified)verified.hidden=true;memberLoadedUser=null;const logged=!!authUser;document.getElementById('auth-guest').hidden=logged;document.getElementById('auth-profile').hidden=!logged;const nav=document.querySelector('#unified-nav [data-page="signin"] span');if(nav)nav.textContent=logged?'Profile':'Sign In';if(logged){document.getElementById('auth-title').textContent='My Profile';document.getElementById('auth-display-name').textContent=authUser.user_metadata?.display_name||authUser.user_metadata?.full_name||'Member';document.getElementById('auth-display-email').textContent=authUser.email||'';const atkLoginProviders=[...new Set([...(authUser.identities||[]).map(identity=>identity.provider).filter(Boolean),authUser.app_metadata?.provider].filter(Boolean))];document.getElementById('auth-display-provider').textContent=atkLoginProviders.includes('google')?'Connected via Google':atkLoginProviders.includes('email')?'Account created with email':atkLoginProviders.length?'Connected via '+atkLoginProviders.join(', '):'Sign-in method unavailable';document.getElementById('auth-founder-badge').hidden=authUser.id!=='491e4116-52cc-4b4a-837f-cb5a28e74e53';const membershipEl=document.getElementById('auth-display-membership');membershipEl.textContent='Loading membership…';const membershipUserId=authUser.id;authClient.from('atk_membership_numbers').select('member_number,joined_at').eq('user_id',membershipUserId).maybeSingle().then(({data,error})=>{if(authUser?.id!==membershipUserId)return;membershipEl.textContent=error?'Membership details unavailable':data?'Member #'+String(data.member_number).padStart(6,'0')+' · Member since '+new Date(data.joined_at).toLocaleDateString(undefined,{month:'long',year:'numeric'}):'Membership details unavailable';});document.getElementById('auth-display-name').textContent=authUser.id==='491e4116-52cc-4b4a-837f-cb5a28e74e53'?'Mr Steve':(memberProfile?.stage_name||authUser.user_metadata?.display_name||'Member');memberLoad().catch(e=>{document.getElementById('member-song-list').textContent='Profile error: '+e.message})}}
+function authRefresh(){const managementButton=document.getElementById('management-open');if(managementButton)managementButton.hidden=true;const managementDialog=document.getElementById('management-dialog');if(managementDialog?.open&&(!authUser||managementDialogOwnerId!==authUser.id)){managementDialog.close();managementDialogOwnerId=null;}const badge=document.getElementById('member-founder');if(badge)badge.hidden=true;const verified=document.getElementById('member-verified');if(verified)verified.hidden=true;memberLoadedUser=null;const logged=!!authUser;document.getElementById('auth-guest').hidden=logged;document.getElementById('auth-profile').hidden=!logged;const nav=document.querySelector('#unified-nav [data-page="signin"] span');if(nav)nav.textContent=logged?'Profile':'Sign In';if(logged){document.getElementById('auth-title').textContent='My Profile';document.getElementById('auth-display-name').textContent=authUser.user_metadata?.display_name||authUser.user_metadata?.full_name||'Member';document.getElementById('auth-display-email').textContent=authUser.email||'';const atkLoginProviders=[...new Set([...(authUser.identities||[]).map(identity=>identity.provider).filter(Boolean),authUser.app_metadata?.provider].filter(Boolean))];document.getElementById('auth-display-provider').textContent=atkLoginProviders.includes('google')?'Connected via Google':atkLoginProviders.includes('email')?'Account created with email':atkLoginProviders.length?'Connected via '+atkLoginProviders.join(', '):'Sign-in method unavailable';document.getElementById('auth-founder-badge').hidden=authUser.id!=='491e4116-52cc-4b4a-837f-cb5a28e74e53';const membershipEl=document.getElementById('auth-display-membership');membershipEl.textContent='Loading membership…';const membershipUserId=authUser.id;authClient.from('atk_membership_numbers').select('member_number,joined_at').eq('user_id',membershipUserId).maybeSingle().then(({data,error})=>{if(authUser?.id!==membershipUserId)return;membershipEl.textContent=error?'Membership details unavailable':data?'Member #'+String(data.member_number).padStart(6,'0')+' · Member since '+new Date(data.joined_at).toLocaleDateString(undefined,{month:'long',year:'numeric'}):'Membership details unavailable';});document.getElementById('auth-display-name').textContent=authUser.id==='491e4116-52cc-4b4a-837f-cb5a28e74e53'?'Mr Steve':(memberProfile?.stage_name||authUser.user_metadata?.display_name||'Member');memberLoad().catch(e=>{document.getElementById('member-song-list').textContent='Profile error: '+e.message})}}
 function authError(err){authStatus(err?.message||'Unable to complete the request. Please try again.')}
 async function authGoogle(){if(!authClient)return authStatus('Authentication library could not load. Open this page with an internet connection.');authStatus('Opening Google Sign-In…');const {error}=await authClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0].split('?')[0]}});if(error)authError(error)}
 function validateStageName(raw){const name=raw.trim().replace(/\s+/g,' ');if(name.length<3||name.length>30)return 'Display name must be 3–30 characters.';if(/[<>\u0000-\u001f]/.test(name))return 'Please use a different display name.';if(/\b(admin|super\s*admin|moderator|official\s*support|addicted\s*to\s*karaoke)\b/i.test(name))return 'That name could be mistaken for an official account.';const blocked=['fuck','shit','bitch','cunt','nigger','faggot','retard'];const normalized=name.toLowerCase().replace(/[^a-z]/g,'');if(blocked.some(word=>normalized.includes(word)))return 'Please choose a name without profanity or derogatory language.';return ''}
@@ -2140,4 +2163,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-92.1";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-93";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
