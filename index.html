@@ -1160,6 +1160,28 @@ async function managementBackupShowDiff(snapshot){
  }
  const note=document.createElement('p');note.textContent='This partial backup excludes authentication, roles, audit history and actual uploaded files. Differences shown here do not guarantee all related records are restorable yet.';host.append(note);
 }
+function managementBackupValidateSnapshot(data){
+ const keys={venues:r=>r.id,kjs:r=>r.id,venue_schedules:r=>r.id,venue_photos:r=>r.id,reviews:r=>r.id,review_ratings:r=>r.review_id+'|'+r.category};
+ for(const table of managementBackupTables){
+  const rows=data.tables[table],seen=new Set();
+  if(data.table_counts&&data.table_counts[table]!==rows.length)throw Error('Record count mismatch for '+table+'.');
+  for(const row of rows){
+   const key=keys[table](row);
+   if(!key||key==='undefined'||key.startsWith('undefined|'))throw Error('Missing record identity in '+table+'.');
+   if(seen.has(String(key)))throw Error('Duplicate record in '+table+': '+key);
+   seen.add(String(key));
+  }
+ }
+ const venues=new Set(data.tables.venues.map(r=>r.id)),reviews=new Set(data.tables.reviews.map(r=>r.id));
+ const checks={
+  missing_venue_for_review:data.tables.reviews.filter(r=>r.venue_id&&!venues.has(r.venue_id)).length,
+  missing_review_for_rating:data.tables.review_ratings.filter(r=>r.review_id&&!reviews.has(r.review_id)).length,
+  missing_venue_for_photo:data.tables.venue_photos.filter(r=>r.venue_id&&!venues.has(r.venue_id)).length,
+  missing_venue_for_schedule:data.tables.venue_schedules.filter(r=>r.venue_id&&!venues.has(r.venue_id)).length
+ };
+ if(Object.values(checks).some(Boolean))throw Error('Backup has missing related records: '+JSON.stringify(checks));
+ if(data.integrity_check&&Object.keys(checks).some(k=>data.integrity_check[k]!==checks[k]))throw Error('Backup integrity summary does not match its records.');
+}
 async function managementBackupFileSelected(input){
  const file=input.files&&input.files[0];if(!file)return;
  // Keep the selected file and the management dialog intact while the native picker returns.
@@ -1171,6 +1193,7 @@ async function managementBackupFileSelected(input){
   const data=JSON.parse(await file.text());
   if(data.format!=='addicted-to-karaoke-content-backup'||data.version!==1||!data.tables)throw Error('Not a supported Addicted to Karaoke backup.');
   for(const table of managementBackupTables){if(!Array.isArray(data.tables[table]))throw Error('Missing backup table: '+table);if(data.tables[table].some(row=>!row||typeof row!=='object'||Array.isArray(row)))throw Error('Invalid records in '+table)}
+  managementBackupValidateSnapshot(data);
   managementBackupPending=data;managementRestoreSelection.clear();managementRestoreRenderSelection();
   managementBackupStatus('Comparing backup against live database (read-only)…');
   await managementBackupShowDiff(data);
@@ -1312,4 +1335,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-58";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-59";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
