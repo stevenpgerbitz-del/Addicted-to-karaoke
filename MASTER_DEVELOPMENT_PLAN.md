@@ -67,6 +67,15 @@ Existing member permissions as inspected 2026-11-11: Mr Steve = Founder, Steven 
 - Permit multiple roles and later changes; choosing Venue Owner never grants venue ownership or management privileges.
 - Guide KJs to create profiles and add hosting locations/schedules; guide owners to venue claim workflow.
 
+### Build 95.1 — New Member Signup & Onboarding
+- The existing email/password and Google sign-in interfaces remain in place. Confirmed new members receive a 3-step welcome wizard on first signed-in profile load: Welcome → Karaoke Interests → Review & Finish.
+- Self-declared interests are **Singer**, **KJ / Host**, and **Venue Owner**. Multiple choices are allowed, shown in mobile-friendly Amenities-style selectable tiles. Skip Setup saves default empty interests; manual re-entry from Profile → My Karaoke Interests allows editing later.
+- PostgreSQL `member_profiles.karaoke_interests text[]` stores a restricted subset of those choices, and `onboarding_completed_at` ensures the wizard only appears for new members. All three existing profiles were marked complete and retained empty interests, avoiding any interruption to existing accounts.
+- These are **self-declared interests only** and never authorize Founder, Admin, Super Admin, verified KJ, or venue-ownership permissions. Claims and certification stay separately reviewed.
+- Existing email registration still requires confirmation when configured in Supabase Auth. This work does **not** implement public review submission or change review moderation policy; review creation is a later step.
+- Verification: 9 inline JavaScript blocks parse; simulated new-member Google redirect, three-step flow, multi-select, save, skip, existing-member edit cancel, and checks that no privileged role RPC executes all passed. **Android acceptance testing pending.**
+- Scope remains account onboarding only; actual Go Live activation and destructive wipe stay deferred.
+
 ## Priority 3 — KJ profiles and hosting schedules
 - KJs can search for a venue, attach their KJ profile, and submit their own karaoke days and start/end times.
 - If venue is missing, KJ may create a basic venue listing, starting in Submitted status for review; listing creator is NOT venue owner.
