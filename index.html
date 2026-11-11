@@ -1167,7 +1167,7 @@ function atkWizardRender(){
  document.getElementById('atk-wizard-bars').innerHTML=Array.from({length:4},(_,i)=>'<i class="'+(i<=page?'active':'')+'"></i>').join('');
  document.getElementById('atk-wizard-previous').hidden=page===0;
  const next=document.getElementById('atk-wizard-next');next.disabled=false;next.textContent=page===3?'Finish':'Next';
- const message=document.getElementById('atk-wizard-message');message.textContent='';
+ const message=document.getElementById('atk-wizard-message');message.textContent='';document.getElementById('atk-wizard-next').hidden=false;
  const info=document.createElement('p');body.appendChild(info);
  if(type==='backup'&&atkWizardCompleted){document.getElementById('atk-wizard-title').textContent='✓ Backup Download Started';info.textContent='Your content backup download was requested. Check your browser downloads for the saved file.';const detail=document.createElement('p');detail.textContent='Included: '+Object.entries(atkWizardSnapshot||{}).map(([k,v])=>k+' ('+v.length+')').join(', ');body.appendChild(detail);next.textContent='Close';document.getElementById('atk-wizard-previous').hidden=true;message.textContent='Keep this file somewhere safe. This content backup does not include accounts, roles, audit history or uploaded image files.';return}
  if(type==='backup'){
@@ -1182,9 +1182,25 @@ function atkWizardRender(){
   else {info.textContent='Content backup includes '+Object.entries(atkWizardSnapshot||{}).map(([k,v])=>k+' ('+v.length+')').join(', ');if(page===2){const reason=document.createElement('textarea');reason.id='atk-wizard-backup-reason';reason.rows=3;reason.placeholder='Reason for backup (at least 5 characters)';reason.style.cssText='width:100%;box-sizing:border-box;min-height:90px;padding:12px;border-radius:9px;background:#301b1d;color:white;border:1px solid #8c5552';reason.value=document.getElementById('atk-backup-reason').value;reason.oninput=()=>{document.getElementById('atk-backup-reason').value=reason.value};body.appendChild(reason)}else next.textContent='Download Backup'}
   message.textContent='Partial content backup only: accounts, permissions, audit history and uploaded image files are not included.';
  }else if(type==='restore'){
-  if(page===0){info.textContent=managementBackupPending?'Backup loaded.':'Choose a backup file to scan.';const btn=document.createElement('button');btn.textContent='Choose Backup File';btn.onclick=()=>document.getElementById('management-backup-file').click();body.appendChild(btn)}
-  else if(page===1||page===2){info.textContent='Compare differences and select records below. Missing parent venues must be selected before their reviews.';const preview=document.getElementById('management-backup-preview');if(!preview.hidden)body.appendChild(preview)}
-  else{info.textContent='Restore only the selected missing venues and explicitly selected related records.';next.textContent='Restore Selected Data'}
+  document.getElementById('atk-wizard-bars').innerHTML=Array.from({length:3},(_,i)=>'<i class="'+(i<=page?'active':'')+'"></i>').join('');
+  if(atkWizardCompleted){document.getElementById('atk-wizard-title').textContent='Restore Complete';info.textContent='The selected venue records were restored. You can safely close this screen.';next.textContent='Close';document.getElementById('atk-wizard-previous').hidden=true;return}
+  if(page===0){info.textContent='Choose an Addicted to Karaoke backup. We will identify its contents and compare it with your website automatically.';const btn=document.createElement('button');btn.type='button';btn.textContent='Choose Backup File';btn.onclick=()=>document.getElementById('management-backup-file').click();body.appendChild(btn);next.hidden=true;return}
+  next.hidden=false;
+  const data=managementBackupPending;if(!data){info.textContent='Choose a backup first.';return}
+  const counts=data.table_counts||{},venueRows=data.tables.venues||[],missing=(managementRestoreDiffRows.venues||[]).filter(d=>d.type==='missing'),changed=(managementRestoreDiffRows.venues||[]).filter(d=>d.type==='changed');
+  const typeLabel=data.recovery_scope==='partial-content-only'?(venueRows.length===1?'Single-venue content backup':'Content backup ('+venueRows.length+' venues)'):'Backup ('+(data.recovery_scope||'unknown scope')+')';
+  info.textContent='Detected: '+typeLabel+'. '+venueRows.length+' venues, '+(counts.reviews||0)+' reviews, '+(counts.review_ratings||0)+' ratings in this file.';
+  const note=document.createElement('p');note.textContent=missing.length+' venues can be added. '+changed.length+' venues differ but cannot be overwritten by this restore. Records already on the website will not be deleted.';body.appendChild(note);
+  if(page===1){
+   const selected=new Set(managementRestoreRecordSelection);
+   if(!missing.length){const p=document.createElement('p');p.textContent='No missing venues to restore. This version cannot overwrite existing venues or add reviews to existing venues.';body.appendChild(p)}
+   for(const diff of missing){const venue=venueRows.find(v=>String(v.id)===diff.key);if(!venue)continue;const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:10px;margin:12px 0;padding:12px;border:1px solid #8c5552;border-radius:9px';const check=document.createElement('input');check.type='checkbox';check.checked=selected.has(diff.key);check.onchange=()=>{if(check.checked)managementRestoreRecordSelection.add(diff.key);else managementRestoreRecordSelection.delete(diff.key)};const text=document.createElement('span');text.textContent=(venue.name||'Unnamed venue')+' — missing from website';label.append(check,text);body.appendChild(label)}
+   const include=document.createElement('label');include.style.cssText='display:flex;align-items:center;gap:10px;margin:12px 0';const box=document.createElement('input');box.type='checkbox';box.checked=managementRestoreInclude.has('reviews');box.onchange=()=>{if(box.checked){managementRestoreInclude.add('reviews');managementRestoreInclude.add('review_ratings')}else{managementRestoreInclude.delete('reviews');managementRestoreInclude.delete('review_ratings')}};include.append(box,document.createTextNode('Include reviews and their ratings for selected venues'));body.appendChild(include);
+   const reason=document.createElement('textarea');reason.rows=2;reason.placeholder='Reason for restore (required)';reason.value=document.getElementById('atk-restore-reason').value;reason.oninput=()=>document.getElementById('atk-restore-reason').value=reason.value;reason.style.cssText='width:100%;box-sizing:border-box;padding:12px;background:#301b1d;color:white;border:1px solid #8c5552;border-radius:9px';body.appendChild(reason);next.textContent='Review Restore';
+  }else{
+   const venues=venueRows.filter(v=>managementRestoreRecordSelection.has(String(v.id))&&missing.some(d=>d.key===String(v.id)));
+   const p=document.createElement('p');p.textContent='Restore '+venues.length+' missing venue(s): '+venues.map(v=>v.name).join(', ')+'. '+(managementRestoreInclude.has('reviews')?'Their reviews and ratings will be included.':'Reviews and ratings will not be included.')+' Existing website records will remain unchanged.';body.appendChild(p);next.textContent='Restore Selected Data';
+  }
  }else if(type==='wipe'){
   info.textContent='System Wipe is locked until complete recovery of authentication, roles, audit history and uploaded files has been verified. No data will be erased.';if(page===3)next.disabled=true;
  }else{
@@ -1217,9 +1233,10 @@ async function atkWizardNext(){
    if(atkWizardPage===3){await managementBackupDownload(atkWizardSnapshot);const status=document.getElementById('management-backup-status').textContent;if(status&&status.startsWith('Backup failed:'))throw Error(status);atkWizardCompleted=true;atkWizardRender();return}
   }
   if(atkWizardType==='restore'){
-   if(atkWizardPage===0&&!managementBackupPending)throw Error('Choose and scan a backup first.');
-   if(atkWizardPage===2&&!managementRestoreRecordSelection.size)throw Error('Select records to restore.');
-   if(atkWizardPage===3){await managementBackupRestore();return}
+   if(atkWizardCompleted){atkWizardCancel();return}
+   if(atkWizardPage===0)throw Error('Choose a backup file to continue.');
+   if(atkWizardPage===1){if(!managementRestoreRecordSelection.size)throw Error('Select at least one missing venue to restore.');if(document.getElementById('atk-restore-reason').value.trim().length<5)throw Error('Enter a restore reason of at least five characters.');atkWizardPage=2;atkWizardRender();return}
+   if(atkWizardPage===2){await managementBackupRestore();const status=document.getElementById('management-backup-status').textContent;if(status.startsWith('Restored ')){atkWizardCompleted=true;atkWizardRender()}else message.textContent=status||'Restore was not completed.';return}
   }
   if(atkWizardType==='wipe'&&atkWizardPage===3)return;
   if(atkWizardPage===3){atkWizardCancel();return}
@@ -1518,4 +1535,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-87.4";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-87.5";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
