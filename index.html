@@ -523,7 +523,7 @@ padding:13px 3px!important;min-height:66px
 <button type="button" class="management-entry" onclick="atkWizardStart('backup')">Backup<small>Download content plus member accounts and roles</small></button>
 <button type="button" class="management-entry" onclick="atkWizardStart('restore')">Restore<small>Choose a saved snapshot and preview its records</small></button>
 <button type="button" class="management-entry" onclick="managementHistoryOpen()">Activity History<small>Founder-only read-only administrative records</small></button>
-<button type="button" class="management-entry" onclick="atkWizardStart('live')">Prepare to Go Live<small>Development mode · Launch readiness and security checklist</small></button></div>
+<button type="button" class="management-entry" onclick="atkWizardStart('live')">Prepare to Go Live<small>Optional pre-launch cleanup, backup and production activation</small></button></div>
 <div id="atk-wizard" hidden><div class="atk-wizard-bars" id="atk-wizard-bars"></div><h3 id="atk-wizard-title"></h3><p id="atk-wizard-description"></p><div id="atk-wizard-body"></div><p id="atk-wizard-message" role="status"></p><div class="management-pages atk-wizard-buttons" id="atk-wizard-actions"><button type="button" id="atk-wizard-previous" onclick="atkWizardPrevious()">Previous</button><button type="button" id="atk-wizard-next" onclick="atkWizardNext()">Next</button></div></div>
 <style>
 #atk-wizard[hidden],#atk-wizard-actions[hidden],#atk-wizard-bars[hidden],#atk-wizard-previous[hidden],#atk-wizard-next[hidden]{display:none!important}#atk-wizard{max-width:440px;margin:auto}#atk-wizard-body{max-height:48dvh;overflow:auto}#atk-wizard-body select{display:block;width:100%;min-height:44px;margin:10px 0;padding:8px;border-radius:9px;background:#301b1d;color:white;border:1px solid #8c5552}.atk-wizard-bars{display:flex;gap:6px;margin:12px 0 18px}.atk-wizard-bars i{height:6px;flex:1;background:#503032;border-radius:8px}.atk-wizard-bars i.active{background:#e43d3d}.atk-wizard-buttons{display:flex;gap:8px;flex-wrap:wrap}.atk-wizard-buttons button{flex:1;min-height:42px}#atk-wizard-message{font-size:13px;line-height:1.5}
@@ -1192,12 +1192,42 @@ function managementLifecycleBack(){document.getElementById('atk-lifecycle-panel'
 function managementBackupResetView(){const form=document.getElementById('atk-backup-form'),complete=document.getElementById('atk-backup-complete');if(form)form.hidden=false;if(complete)complete.hidden=true;const reason=document.getElementById('atk-backup-reason');if(reason)reason.value=''}
 
 let atkWizardType='',atkWizardPage=0,atkWizardSnapshot=null,atkWizardVenueId='',atkWizardCompleted=false;
+// Go Live is an explicit Founder-only transition. Optional cleanup is OFF by default.
+let atkLiveCleanupVenues=false,atkLiveBackupReady=false,atkLiveBackupAcknowledged=false;
+let atkLiveBackupCounts='',atkLiveStatus=null,atkLiveReason='',atkLiveConfirmation='',atkLiveResult=null;
+function atkLiveCounts(s){return JSON.stringify([s?.venues,s?.reviews,s?.ratings,s?.photo_records,s?.members,s?.founders]);}
+async function atkLiveDownloadBackup(){
+ try{
+  await managementBackupFounder();
+  const status=await authClient.rpc('founder_launch_readiness');
+  if(status.error||status.data?.phase!=='development')throw Error(status.error?.message||'Go Live is no longer in Development Mode.');
+  // This reuses the approved content backup (including Founder-protected account access).
+  const form=document.getElementById('atk-backup-reason');
+  form.value='Pre-launch protection backup before Go Live';
+  document.getElementById('atk-backup-complete').hidden=true;
+  atkWizardVenueId='';
+  await managementBackupDownload();
+  if(document.getElementById('atk-backup-complete').hidden)throw Error(document.getElementById('management-backup-status').textContent||'Download was not started.');
+  atkLiveBackupCounts=atkLiveCounts(status.data);
+  atkLiveBackupReady=true;atkLiveBackupAcknowledged=false;atkLiveStatus=status.data;
+  atkWizardRender();
+ }catch(e){document.getElementById('atk-wizard-message').textContent='Backup not ready: '+e.message}
+}
 const atkWizardStages={backup:['Choose Content','Scan & Prepare','Verify Backup','Create Backup'],restore:['Select Backup','Scan & Compare','Verify & Confirm','Restore Data'],live:['Select Cleanup','Check Recovery','Review Launch','Go Live']};
 function atkWizardStart(type){
  atkWizardType=type;atkWizardPage=0;atkWizardSnapshot=null;atkWizardVenueId='';atkWizardCompleted=false;
  document.getElementById('atk-backup-home').hidden=true;document.getElementById('atk-backup-panel').hidden=true;document.getElementById('atk-lifecycle-panel').hidden=true;document.getElementById('atk-backup-footer').hidden=true;
  document.getElementById('atk-wizard').hidden=false;
  if(type==='restore'){managementBackupPending=null;document.getElementById('management-backup-file').value=''}
+ if(type==='live'){
+  atkLiveCleanupVenues=false;atkLiveBackupReady=false;atkLiveBackupAcknowledged=false;
+  atkLiveBackupCounts='';atkLiveStatus=null;atkLiveReason='';atkLiveConfirmation='';atkLiveResult=null;
+  authClient.rpc('founder_launch_readiness').then(({data,error})=>{
+   if(atkWizardType!=='live')return;
+   if(error){document.getElementById('atk-wizard-message').textContent=error.message;return}
+   atkLiveStatus=data;atkWizardRender();
+  });
+ }
  atkWizardRender();
 }
 function atkWizardReset(){
@@ -1230,6 +1260,13 @@ function atkWizardRender(){
  const next=document.getElementById('atk-wizard-next');next.disabled=false;next.textContent=page===3?'Finish':'Next';document.getElementById('atk-wizard-previous').textContent='Previous';document.getElementById('atk-wizard-actions').hidden=false;document.getElementById('atk-wizard-bars').hidden=false;
  const message=document.getElementById('atk-wizard-message');message.textContent='';document.getElementById('atk-wizard-next').hidden=false;
  const info=document.createElement('p');body.appendChild(info);
+ if(type==='live'&&atkWizardCompleted){
+  document.getElementById('atk-wizard-title').textContent='✓ Production Mode Active';
+  info.textContent='Go Live completed. '+(atkLiveResult?.cleanup_venues?'Selected pre-launch venue data was cleared after a recovery snapshot was saved.':'All existing content was preserved.')+' Accounts, roles and history remain protected.';
+  document.getElementById('atk-wizard-actions').hidden=true;
+  document.getElementById('atk-wizard-bars').hidden=true;
+  return;
+ }
  if(type==='backup'&&atkWizardCompleted){
   document.getElementById('atk-wizard-title').textContent='✓ Backup Download Started';
   info.textContent='Your backup download was started. Check your browser downloads for the file.';
@@ -1327,10 +1364,52 @@ function atkWizardRender(){
    if(managementAccountWarning){const warning=document.createElement('small');warning.textContent='Member access recovery unavailable: '+managementAccountWarning;body.append(warning)}
    const reason=document.createElement('textarea');reason.rows=2;reason.className='atk-restore-reason';reason.placeholder='Reason for restore (required)';reason.value=document.getElementById('atk-restore-reason').value;reason.oninput=()=>document.getElementById('atk-restore-reason').value=reason.value;reason.style.cssText='width:100%;box-sizing:border-box;padding:12px;background:#301b1d;color:white;border:1px solid #8c5552;border-radius:9px';body.appendChild(reason);next.textContent='Review Restore';
   }
- }else if(type==='wipe'){
-  info.textContent='System Wipe is locked until complete recovery of authentication, roles, audit history and uploaded files has been verified. No data will be erased.';if(page===3)next.disabled=true;
- }else{
-  info.textContent=['Review launch readiness.','Verify configuration, security and recovery.','Resolve any remaining launch blockers.','Launch remains unavailable until checks are verified.'][page];if(page===3)next.textContent='Close';
+ }else if(type==='live'){
+  if(!atkLiveStatus){info.textContent='Checking launch readiness and Founder permissions…';next.disabled=true;return}
+  if(atkLiveStatus.phase==='production'){
+   info.textContent='Production Mode is already active. The pre-launch cleanup cannot be repeated.';
+   next.hidden=true;document.getElementById('atk-wizard-bars').hidden=true;return;
+  }
+  if(page===0){
+   info.textContent='Choose what to clear before launch. Nothing is selected by default. Member accounts, roles, uploaded image files, song lists and Activity History will be protected.';
+   const grid=document.createElement('div');grid.className='atk-restore-choice-grid';body.appendChild(grid);
+   const tile=document.createElement('button');tile.type='button';
+   tile.className='atk-restore-choice'+(atkLiveCleanupVenues?' selected':'');
+   tile.setAttribute('aria-pressed',String(atkLiveCleanupVenues));
+   const text=document.createElement('span');text.className='atk-restore-choice-copy';
+   const heading=document.createElement('strong');heading.textContent='Test Venues & Reviews';
+   const sub=document.createElement('small');sub.textContent=atkLiveStatus.venues+' venues · '+atkLiveStatus.reviews+' reviews · includes related ratings and schedules';
+   text.append(heading,sub);tile.append(text);tile.onclick=()=>{
+    atkLiveCleanupVenues=!atkLiveCleanupVenues;
+    atkLiveBackupReady=false;atkLiveBackupAcknowledged=false;atkWizardRender();
+   };grid.append(tile);
+   const note=document.createElement('small');note.textContent='Only venue content can be cleared here, because its backup and recovery path is available. Other data is not eligible for pre-launch deletion.';body.append(note);
+   next.textContent='Continue';
+  }else if(page===1){
+   info.textContent='A fresh backup is required whether you clear test venues or keep all data. It contains venue/review content and the identity, role and verification status of each member.';
+   const count=document.createElement('p');count.textContent=atkLiveStatus.venues+' venue(s), '+atkLiveStatus.reviews+' review(s), '+atkLiveStatus.members+' member(s).';body.append(count);
+   const download=document.createElement('button');download.type='button';download.className='atk-file-picker-button';
+   download.textContent=atkLiveBackupReady?'✓ Download again':'Download Pre-launch Backup';download.onclick=atkLiveDownloadBackup;body.append(download);
+   const warning=document.createElement('small');warning.textContent='Keep the file somewhere safe. Passwords, deleted accounts and uploaded image bytes are not in this JSON backup.';body.append(warning);
+   next.disabled=!atkLiveBackupReady;
+  }else if(page===2){
+   info.textContent=atkLiveCleanupVenues?'Review: clear '+atkLiveStatus.venues+' venues and '+atkLiveStatus.reviews+' reviews, then activate Production Mode.':'Review: keep all existing venues, reviews, members and other data; activate Production Mode.';
+   const ack=document.createElement('label');ack.style.cssText='display:flex;align-items:flex-start;gap:10px;margin:12px 0';
+   const box=document.createElement('input');box.type='checkbox';box.checked=atkLiveBackupAcknowledged;
+   box.style.cssText='width:20px;height:20px;flex:none;margin-top:2px';box.onchange=()=>{atkLiveBackupAcknowledged=box.checked;next.disabled=!box.checked||atkLiveReason.trim().length<5};
+   const span=document.createElement('span');span.textContent='I saved the downloaded backup and understand that selected cleanup will remove records.';ack.append(box,span);body.append(ack);
+   const reason=document.createElement('textarea');reason.rows=2;reason.placeholder='Reason for launch (required)';reason.className='atk-restore-reason';
+   reason.style.cssText='width:100%;box-sizing:border-box;background:#301b1d;color:white;border:1px solid #8c5552;border-radius:9px;padding:10px';
+   reason.value=atkLiveReason;reason.oninput=()=>{atkLiveReason=reason.value;next.disabled=!atkLiveBackupAcknowledged||atkLiveReason.trim().length<5};body.append(reason);
+   next.textContent='Final Confirmation';next.disabled=!atkLiveBackupAcknowledged||atkLiveReason.trim().length<5;
+  }else{
+   info.textContent='This final action activates Production Mode'+(atkLiveCleanupVenues?' and removes the selected test venues and reviews':' without deleting any content')+'. It cannot be repeated. Type GO LIVE to confirm.';
+   const confirm=document.createElement('input');confirm.type='text';confirm.placeholder='GO LIVE';confirm.autocomplete='off';
+   confirm.value=atkLiveConfirmation;
+   confirm.style.cssText='width:100%;min-height:44px;box-sizing:border-box;background:#301b1d;color:white;border:1px solid #8c5552;border-radius:9px;padding:10px';
+   confirm.oninput=()=>{atkLiveConfirmation=confirm.value;next.disabled=atkLiveConfirmation!=='GO LIVE'};body.append(confirm);
+   next.textContent='Activate Production';next.disabled=atkLiveConfirmation!=='GO LIVE';
+  }
  }
 }
 async function atkWizardNext(){
@@ -1364,7 +1443,24 @@ async function atkWizardNext(){
    if(atkWizardPage===1){if(!managementRestoreRecordSelection.size&&!managementRestoreInclude.has('member_access'))throw Error('Select a missing venue or Members & Roles to restore.');if(document.getElementById('atk-restore-reason').value.trim().length<5)throw Error('Enter a restore reason of at least five characters.');atkWizardPage=2;atkWizardRender();return}
    if(atkWizardPage===2){const success=await managementBackupRestore();if(success){atkWizardCompleted=true;atkWizardRender()}else message.textContent=document.getElementById('management-backup-status').textContent||'Restore was not completed.';return}
   }
-  if(atkWizardType==='wipe'&&atkWizardPage===3)return;
+  if(atkWizardType==='live'){
+   if(!atkLiveStatus||atkLiveStatus.phase!=='development')throw Error('Launch status is not ready.');
+   if(atkWizardPage===1&&!atkLiveBackupReady)throw Error('Download your pre-launch backup before continuing.');
+   if(atkWizardPage===2&&(!atkLiveBackupAcknowledged||atkLiveReason.trim().length<5))throw Error('Confirm the backup is saved and enter a launch reason.');
+   if(atkWizardPage===3){
+    if(atkLiveConfirmation!=='GO LIVE')throw Error('Type GO LIVE exactly to confirm.');
+    const latest=await authClient.rpc('founder_launch_readiness');
+    if(latest.error)throw Error(latest.error.message);
+    if(atkLiveCounts(latest.data)!==atkLiveBackupCounts)throw Error('Site data changed since the backup. Go back and download a fresh pre-launch backup.');
+    document.getElementById('atk-wizard-next').disabled=true;
+    const result=await authClient.rpc('founder_activate_site',{
+     p_reason:atkLiveReason.trim(),p_confirmation:atkLiveConfirmation,
+     p_cleanup_venues:atkLiveCleanupVenues,p_backup_acknowledged:atkLiveBackupAcknowledged
+    });
+    if(result.error||!result.data?.success)throw Error(result.error?.message||'Production activation was not confirmed.');
+    atkLiveResult=result.data;atkWizardCompleted=true;atkWizardRender();return;
+   }
+  }
   if(atkWizardPage===3){atkWizardCancel();return}
   atkWizardPage++;atkWizardRender();
  }catch(e){message.textContent=e.message}
@@ -1692,4 +1788,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-88";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-89";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
