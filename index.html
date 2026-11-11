@@ -550,9 +550,56 @@ padding:13px 3px!important;min-height:66px
 .atk-welcome-edit{display:block;width:100%;margin:11px 0 14px}
 </style>
 
+
+<dialog id="atk-kj-dialog" class="atk-kj-dialog" aria-labelledby="atk-kj-title" aria-modal="true">
+ <div class="atk-kj-progress" id="atk-kj-progress"></div>
+ <h2 id="atk-kj-title">My Hosting Venues</h2>
+ <div id="atk-kj-body"></div>
+ <p id="atk-kj-status" role="status"></p>
+ <div class="atk-kj-actions">
+  <button type="button" onclick="atkKjClose()">Close</button>
+  <button type="button" id="atk-kj-next" onclick="atkKjNext()" hidden>Continue</button>
+ </div>
+</dialog>
+<style>
+#atk-kj-dialog{width:min(440px,calc(100vw - 28px));max-height:89dvh;overflow-y:auto;box-sizing:border-box;padding:18px 16px 15px;border:1px solid #98524b;border-radius:15px;background:#210f13;color:#f5e4d2;box-shadow:0 18px 60px #000a}
+#atk-kj-dialog::backdrop{background:#000c}
+#atk-kj-dialog h2{font-size:22px;text-align:center;margin:5px 0 12px;line-height:1.22;color:#fff0e8}
+#atk-kj-dialog .atk-kj-progress{text-align:center;font-size:12px;color:#dcb8ac;margin:0 0 9px}
+#atk-kj-dialog p{font-size:13px;line-height:1.45}
+#atk-kj-dialog .atk-kj-lead{text-align:center;color:#f5e4d2;margin:8px 0 13px}
+#atk-kj-dialog .atk-kj-label{display:block;font-size:12px;font-weight:700;margin:12px 0 5px}
+#atk-kj-dialog input:not([type="time"]),#atk-kj-dialog textarea{width:100%;box-sizing:border-box;padding:12px;background:#321c20;border:1px solid #8b5048;border-radius:10px;color:#fff;font:inherit;font-size:14px;min-height:43px}
+#atk-kj-dialog input[type="time"]{box-sizing:border-box;width:100%;min-width:0;color:#fff;background:#321c20;border:1px solid #8b5048;border-radius:9px;padding:10px 7px;font-size:13px;color-scheme:dark}
+#atk-kj-dialog .atk-kj-field-row{display:grid;grid-template-columns:1fr 72px;gap:8px}
+#atk-kj-dialog .atk-kj-results{display:grid;gap:7px;margin:10px 0 13px;max-height:205px;overflow-y:auto}
+#atk-kj-dialog .atk-kj-result{display:block;width:100%;text-align:left;padding:10px 12px;background:#321d21;border:1px solid #86534c;border-radius:10px;color:#f7e9df}
+#atk-kj-dialog .atk-kj-result strong,#atk-kj-dialog .atk-kj-result small{display:block;line-height:1.5}
+#atk-kj-dialog .atk-kj-result small{font-size:11px;color:#d2b9af}
+#atk-kj-dialog .atk-kj-pending{font-size:12px;border:1px solid #714840;background:#2c191c;border-radius:10px;padding:10px;margin:9px 0}
+#atk-kj-dialog .atk-kj-pending strong,#atk-kj-dialog .atk-kj-pending small{display:block}
+#atk-kj-dialog .atk-kj-pending small{color:#d9bfb3;margin-top:4px}
+#atk-kj-dialog .atk-kj-days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+#atk-kj-dialog .atk-kj-day{min-height:54px;background:#301b1d;border:1px solid #88504b;border-radius:10px;text-align:left;padding:10px;color:#f5e4d2}
+#atk-kj-dialog .atk-kj-day[aria-pressed="true"]{background:#782121;border:2px solid #eaa49a;padding:9px}
+#atk-kj-dialog .atk-kj-time-row{padding:10px;margin:8px 0;border:1px solid #75514b;border-radius:10px;background:#2d1b1e}
+#atk-kj-dialog .atk-kj-times{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:7px}
+#atk-kj-dialog .atk-kj-times label{min-width:0;font-size:11px;color:#ecd3c8}
+#atk-kj-dialog .atk-kj-inline-action,#atk-kj-dialog .atk-kj-add{display:block;width:100%;padding:12px;margin:12px 0;border:1px solid #da6760;border-radius:10px;background:linear-gradient(#b91d1b,#820d0d);font:700 14px Arial,sans-serif;color:#fff}
+#atk-kj-dialog .atk-kj-inline-action:disabled{opacity:.55}
+#atk-kj-dialog .atk-kj-summary{border:1px solid #87524d;background:#302023;padding:12px;border-radius:11px}
+#atk-kj-dialog .atk-kj-summary p{margin:6px 0}
+#atk-kj-dialog #atk-kj-status{font-size:12px;color:#ffd2c9;min-height:15px;margin:7px 0}
+#atk-kj-dialog .atk-kj-actions{position:sticky;bottom:-15px;background:#210f13;display:flex;gap:9px;padding:12px 0 0;margin-top:10px}
+#atk-kj-dialog .atk-kj-actions button{flex:1;min-height:46px;min-width:0;border-radius:10px;border:1px solid #e76b64;background:linear-gradient(#bd1e1c,#8f0d0d);color:white;font:700 14px Arial,sans-serif}
+#atk-kj-dialog .atk-kj-actions button:disabled{opacity:.5}
+#atk-kj-dialog .atk-kj-note{font-size:12px;color:#d7b9ae}
+</style>
+
 <div id="auth-profile" hidden>
 <section class="member-hero"><div class="member-avatar-wrap"><div class="member-avatar" id="member-avatar">🎤</div><button type="button" class="member-camera" onclick="document.getElementById('member-avatar-input').click()" aria-label="Upload profile photo">📷</button><input type="file" id="member-avatar-input" accept="image/png,image/jpeg,image/webp" hidden onchange="memberUploadAvatar(this)"></div><div><div class="member-name-line"><div class="member-identity-line"><h2 id="auth-display-name">My Profile</h2><span id="member-verified" hidden class="member-verified-check" aria-label="Verified account" title="Verified account">✓</span></div></div><span id="member-founder" hidden class="founder-badge">★ Founder</span><div id="member-badge-labels" class="profile-badge-labels" aria-label="Member badges"></div><p class="member-muted" id="member-karaoke-interests">Your karaoke stage</p><p id="member-avatar-status" class="member-muted" role="status"></p></div><div class="profile-action-grid"><button type="button" class="profile-action" onclick="memberEdit()"><svg class="profile-ui-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16 4a2 2 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>Edit Profile</button><button type="button" id="management-open" class="profile-action" hidden onclick="managementOpen()"><svg class="profile-ui-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Management</button></div><div style="text-align:center;font-size:11px;color:#bca6a2;margin-top:8px">Build <span data-build-version></span></div></section>
 <button type="button" class="atk-welcome-edit" onclick="atkWelcomeStart(true)">My Karaoke Interests</button>
+<button type="button" class="atk-welcome-edit" id="atk-kj-profile-entry" hidden onclick="atkKjStart(false)">My Hosting Venues</button>
 <dialog id="management-dialog" class="management-dialog" aria-labelledby="management-title"><h2 id="management-title">Management Portal</h2><p>Manage venues, members, reviews, and system settings.</p><div class="management-tools"><button type="button" class="management-entry" onclick="managementVenuesOpen()"><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M6 9a6 6 0 0 0 12 0M12 15v6m-4 0h8"/></svg> Venue Management<small>Venue listings, search and filters</small></button><button type="button" class="management-entry" onclick="managementUsersOpen()"><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 5"/></svg> User Management<small>Registered members, search and filters</small></button><div><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg> Review Management<small>Coming next: review moderation</small></div><button type="button" class="management-entry" onclick="managementHistoryOpen()"><svg class="management-entry-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg> Activity Log<small>Protected record of administrative changes</small></button><button type="button" class="management-entry" onclick="managementBackupOpen()">♻ System Maintenance<small>Backup, restore, and launch preparation</small></button></div><section id="management-history" hidden><h2>Activity History</h2><p>Read-only administrative activity. History is not included in content restores or wipe selections.</p><div class="mv-amenities-grid" id="atk-history-categories" aria-label="Report categories"></div><label class="atk-history-field">Search activity<input id="atk-history-search" type="search" placeholder="Name, action, reason..." oninput="atkHistoryRender()"></label><div class="atk-history-filters"><label>Action<select id="atk-history-action" onchange="atkHistoryRender()"><option value="all">All actions</option></select></label><label>Order<select id="atk-history-sort" onchange="atkHistoryRender()"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label><label>From<input type="date" id="atk-history-from" onchange="atkHistoryRender()"></label><label>To<input type="date" id="atk-history-to" onchange="atkHistoryRender()"></label></div><p id="atk-history-count" aria-live="polite"></p><div id="management-history-list" role="status">Loading history…</div></section><style>#atk-backup-form[hidden],#atk-backup-complete[hidden],#atk-backup-footer[hidden],#atk-lifecycle-panel[hidden],#atk-backup-home[hidden],#atk-backup-panel[hidden]{display:none!important}</style><section id="management-backups" hidden><h2>System Maintenance</h2><p>Protect your data before inviting testers.</p>
 <div class="management-tools atk-backup-home" id="atk-backup-home">
 <button type="button" class="management-entry" onclick="atkWizardStart('backup')">Backup<small>Download content plus member accounts and roles</small></button>
@@ -1075,7 +1122,10 @@ async function atkWelcomeSave(interests){
   if(!authUser||authUser.id!==atkWelcomeDialogOwnerId)return;
   Object.assign(memberProfile,data);
   document.getElementById('member-karaoke-interests').textContent=atkWelcomeSummary(values)||'Your karaoke stage';
+  document.getElementById('atk-kj-profile-entry').hidden=!values.includes('kj');
+  const offerKjSetup=!atkWelcomeManual&&values.includes('kj');
   document.getElementById('atk-welcome-dialog').close();atkWelcomeDialogOwnerId=null;
+  if(offerKjSetup)atkKjStart(true);
  }catch(e){status.textContent='Could not save your choices: '+(e?.message||'Please try again.')}
  finally{atkWelcomeSaving=false;next.disabled=false;skip.disabled=false}
 }
@@ -1098,12 +1148,224 @@ document.addEventListener('DOMContentLoaded',()=>{
  dialog?.addEventListener('cancel',event=>{event.preventDefault();if(atkWelcomeManual&&!atkWelcomeSaving)atkWelcomeSkip()});
 });
 
+
+// KJ hosting suggestions are requests, NOT public schedules or verified KJ assignments.
+const atkKjDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+let atkKjStage='list',atkKjOwner=null,atkKjBusy=false,atkKjDraft=null,atkKjRequests=[],atkKjSearchTimer=null,atkKjSearchSerial=0;
+function atkKjNewDraft(){return {venueId:null,venueName:'',address:'',city:'',state:'IA',postal:'',sessions:[],notes:''}}
+function atkKjAllowed(){return !!(authUser&&memberProfile&&authUser.id===memberProfile.user_id&&Array.isArray(memberProfile.karaoke_interests)&&memberProfile.karaoke_interests.includes('kj'))}
+async function atkKjStart(direct=false){
+ if(!atkKjAllowed())return;
+ const dialog=document.getElementById('atk-kj-dialog');
+ if(dialog.open)return;
+ atkKjOwner=authUser.id;atkKjBusy=false;atkKjDraft=atkKjNewDraft();
+ atkKjStage=direct?'venue':'list';atkKjRequests=[];
+ if(document.getElementById('signin-screen').hidden&&typeof navigate==='function')navigate('signin');
+ atkKjRender();dialog.showModal();
+ if(!direct)await atkKjLoadRequests();
+}
+async function atkKjLoadRequests(){
+ if(!atkKjOwner||authUser?.id!==atkKjOwner)return;
+ try{
+  const {data,error}=await authClient.from('kj_host_submissions')
+   .select('id,venue_name,venue_city,venue_state,status,sessions,created_at')
+   .eq('user_id',atkKjOwner).order('created_at',{ascending:false}).limit(30);
+  if(error)throw error;
+  if(authUser?.id!==atkKjOwner)return;
+  atkKjRequests=Array.isArray(data)?data:[];
+  if(atkKjStage==='list')atkKjRender();
+ }catch(e){atkKjMessage('Unable to load hosting requests: '+(e.message||'Please retry.'))}
+}
+function atkKjClose(){
+ if(atkKjBusy)return;
+ const dlg=document.getElementById('atk-kj-dialog');if(dlg.open)dlg.close();
+ atkKjOwner=null;atkKjDraft=null;clearTimeout(atkKjSearchTimer);++atkKjSearchSerial;
+}
+function atkKjMessage(s){document.getElementById('atk-kj-status').textContent=s}
+function atkKjEl(tag,text,cls){
+ const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;
+}
+function atkKjButton(text,fn,cls='atk-kj-inline-action'){
+ const b=atkKjEl('button',text,cls);b.type='button';b.onclick=fn;return b;
+}
+function atkKjField(parent,label,id,value,onchange,required=false){
+ const lab=atkKjEl('label',label,'atk-kj-label');lab.htmlFor=id;parent.appendChild(lab);
+ const input=document.createElement('input');input.id=id;input.value=value;input.required=required;
+ input.addEventListener('input',()=>onchange(input.value));parent.appendChild(input);return input;
+}
+function atkKjRender(){
+ const body=document.getElementById('atk-kj-body'),title=document.getElementById('atk-kj-title');
+ const next=document.getElementById('atk-kj-next'),progress=document.getElementById('atk-kj-progress');
+ body.replaceChildren();atkKjMessage('');
+ next.hidden=false;next.disabled=atkKjBusy;
+ progress.textContent=({list:'Your hosting requests',venue:'Step 1 of 3',details:'Venue details',schedule:'Step 2 of 3',review:'Step 3 of 3',done:'Request sent'})[atkKjStage]||'';
+ if(atkKjStage==='list'){
+  title.textContent='My Hosting Venues';
+  body.appendChild(atkKjEl('p','Your submitted hosting locations stay pending until reviewed.','atk-kj-lead'));
+  if(!atkKjRequests.length)body.appendChild(atkKjEl('p','No hosting locations submitted yet.','atk-kj-note'));
+  for(const r of atkKjRequests){
+   const line=atkKjEl('div',undefined,'atk-kj-pending');
+   line.appendChild(atkKjEl('strong',r.venue_name));
+   line.appendChild(atkKjEl('small',(r.venue_city||'')+', '+(r.venue_state||'')+' · '+String(r.status||'pending').replace(/^./,s=>s.toUpperCase())));
+   line.appendChild(atkKjEl('small',(Array.isArray(r.sessions)?r.sessions:[]).map(s=>atkKjDays[s.day]+' '+atkKjHumanTime(s.start)+'–'+atkKjHumanTime(s.end)).join(' · ')));
+   body.appendChild(line);
+  }
+  body.appendChild(atkKjButton('＋ Add Hosting Venue',()=>{atkKjDraft=atkKjNewDraft();atkKjStage='venue';atkKjRender()}));
+  next.hidden=true;
+ }else if(atkKjStage==='venue'){
+  title.textContent='Where Do You Host?';
+  body.appendChild(atkKjEl('p','Start typing the venue name. Select it if we already have it, or add a new venue.','atk-kj-lead'));
+  const input=atkKjField(body,'Search venue name','atk-kj-search',atkKjDraft.venueName,val=>{atkKjDraft.venueName=val;atkKjDraft.venueId=null;atkKjSearch(val)},true);
+  input.placeholder='e.g. Main Street Bar';input.autocomplete='off';input.maxLength=150;
+  const results=atkKjEl('div',undefined,'atk-kj-results');results.id='atk-kj-results';results.setAttribute('aria-live','polite');body.appendChild(results);
+  body.appendChild(atkKjButton('＋ Add New Venue',()=>{
+   if(atkKjDraft.venueName.trim().length<3)return atkKjMessage('Enter a venue name of at least 3 characters.');
+   atkKjDraft.venueId=null;atkKjStage='details';atkKjRender();
+  },'atk-kj-add'));
+  body.appendChild(atkKjEl('p','Only existing public listings appear in search. Unlisted or pending venues can be submitted for review.','atk-kj-note'));
+  next.hidden=true;
+  if(input.value.trim().length>=2)atkKjSearch(input.value);
+ }else if(atkKjStage==='details'){
+  title.textContent='Tell Us About the Venue';
+  body.appendChild(atkKjEl('p','We’ll review this venue before adding it to the public listings.','atk-kj-lead'));
+  const f=(label,id,key,value)=>atkKjField(body,label,id,value,val=>{atkKjDraft[key]=val},key==='venueName'||key==='city'||key==='state');
+  f('Venue Name','atk-kj-venue-name','venueName',atkKjDraft.venueName);
+  f('Street Address (recommended)','atk-kj-venue-address','address',atkKjDraft.address);
+  f('City','atk-kj-venue-city','city',atkKjDraft.city);
+  f('State (2 letters)','atk-kj-venue-state','state',atkKjDraft.state);
+  f('ZIP Code (optional)','atk-kj-venue-zip','postal',atkKjDraft.postal);
+  next.textContent='Continue';
+ }else if(atkKjStage==='schedule'){
+  title.textContent='When Do You Host?';
+  body.appendChild(atkKjEl('p',atkKjDraft.venueName+' · '+atkKjDraft.city+', '+atkKjDraft.state,'atk-kj-lead'));
+  body.appendChild(atkKjEl('p','Select every karaoke day, then enter the start and end time for each night. Ending after midnight is okay.','atk-kj-note'));
+  const grid=atkKjEl('div',undefined,'atk-kj-days');
+  for(let day=0;day<7;day++){
+   const selected=atkKjDraft.sessions.some(s=>s.day===day);
+   const tile=atkKjButton((selected?'✓  ':'')+atkKjDays[day],()=>{
+    if(selected)atkKjDraft.sessions=atkKjDraft.sessions.filter(s=>s.day!==day);
+    else atkKjDraft.sessions.push({day,start:'',end:''});
+    atkKjDraft.sessions.sort((a,b)=>a.day-b.day);atkKjRender();
+   },'atk-kj-day');
+   tile.setAttribute('aria-pressed',String(selected));grid.appendChild(tile);
+  }
+  body.appendChild(grid);
+  for(const s of atkKjDraft.sessions){
+   const row=atkKjEl('div',undefined,'atk-kj-time-row');
+   row.appendChild(atkKjEl('strong',atkKjDays[s.day]));
+   const times=atkKjEl('div',undefined,'atk-kj-times');
+   for(const [key,label] of [['start','Starts'],['end','Ends']]){
+    const wrap=atkKjEl('label',label),field=document.createElement('input');field.type='time';field.value=s[key];field.required=true;
+    field.setAttribute('aria-label',atkKjDays[s.day]+' '+label.toLowerCase()+' time');
+    field.addEventListener('change',()=>{s[key]=field.value});
+    wrap.appendChild(field);times.appendChild(wrap);
+   }
+   row.appendChild(times);body.appendChild(row);
+  }
+  body.appendChild(atkKjButton('Change Venue',()=>{atkKjStage='venue';atkKjRender()}));
+  next.textContent='Review Details';
+ }else if(atkKjStage==='review'){
+  title.textContent='Review Your Hosting Nights';
+  const box=atkKjEl('div',undefined,'atk-kj-summary');
+  box.appendChild(atkKjEl('strong',atkKjDraft.venueName));
+  box.appendChild(atkKjEl('p',atkKjDraft.city+', '+atkKjDraft.state+(atkKjDraft.address?' · '+atkKjDraft.address:'')));
+  for(const s of atkKjDraft.sessions)box.appendChild(atkKjEl('p',atkKjDays[s.day]+': '+atkKjHumanTime(s.start)+' – '+atkKjHumanTime(s.end)));
+  body.appendChild(box);
+  body.appendChild(atkKjEl('p','Submitting this request will not publish a new venue or change the live karaoke schedule. An admin must review it first.','atk-kj-note'));
+  body.appendChild(atkKjButton('Edit Days & Times',()=>{atkKjStage='schedule';atkKjRender()}));
+  next.textContent=atkKjBusy?'Submitting…':'Submit for Review';
+ }else if(atkKjStage==='done'){
+  title.textContent='Hosting Request Submitted!';
+  body.appendChild(atkKjEl('p','Your karaoke night details have been saved for review. They will not appear on the public site until approved.','atk-kj-lead'));
+  body.appendChild(atkKjButton('＋ Add Another Venue',()=>{atkKjStage='venue';atkKjDraft=atkKjNewDraft();atkKjRender()}));
+  next.hidden=true;
+ }
+}
+function atkKjHumanTime(value){
+ if(!/^\d{2}:\d{2}$/.test(String(value||'')))return 'Time not set';
+ const [h,m]=value.split(':').map(Number);return (h%12||12)+':'+String(m).padStart(2,'0')+(h<12?' AM':' PM');
+}
+function atkKjSearch(value){
+ clearTimeout(atkKjSearchTimer);
+ const serial=++atkKjSearchSerial,results=document.getElementById('atk-kj-results');
+ if(!results||atkKjStage!=='venue')return;
+ results.replaceChildren();
+ const query=value.trim();
+ if(query.length<2){results.appendChild(atkKjEl('small','Type at least 2 characters to search.'));return}
+ results.appendChild(atkKjEl('small','Searching venues…'));
+ atkKjSearchTimer=setTimeout(async()=>{
+  try{
+   const safe=query.replace(/[%_,\\]/g,'').slice(0,80);
+   const {data,error}=await authClient.from('venues')
+    .select('id,name,city,state,address_line1,postal_code')
+    .eq('published',true).ilike('name','%'+safe+'%').limit(8);
+   if(error)throw error;
+   if(serial!==atkKjSearchSerial||atkKjStage!=='venue'||authUser?.id!==atkKjOwner)return;
+   results.replaceChildren();
+   if(!data?.length){results.appendChild(atkKjEl('small','No matching public venues. You can add it below.'));return}
+   for(const v of data){
+    const button=atkKjButton(v.name,()=>{
+     atkKjDraft.venueId=v.id;atkKjDraft.venueName=v.name;
+     atkKjDraft.city=v.city;atkKjDraft.state=v.state||'IA';
+     atkKjDraft.address=v.address_line1||'';atkKjDraft.postal=v.postal_code||'';
+     atkKjStage='schedule';++atkKjSearchSerial;atkKjRender();
+    },'atk-kj-result');
+    button.replaceChildren(atkKjEl('strong',v.name),atkKjEl('small',[v.address_line1,v.city,v.state].filter(Boolean).join(', ')));
+    results.appendChild(button);
+   }
+  }catch(e){if(serial===atkKjSearchSerial){results.replaceChildren(atkKjEl('small','Search is unavailable. You can submit the venue details below.'))}}
+ },230);
+}
+function atkKjValidDetails(){
+ const d=atkKjDraft;
+ if(d.venueName.trim().length<3||d.venueName.trim().length>150)return 'Enter a venue name (3–150 characters).';
+ if(d.city.trim().length<2||d.city.trim().length>120)return 'Enter the venue city.';
+ if(!/^[A-Za-z]{2}$/.test(d.state.trim()))return 'Use a two-letter state abbreviation.';
+ if(d.address.length>240||d.postal.length>15)return 'Please shorten the address or ZIP code.';
+ return '';
+}
+function atkKjValidSessions(){
+ if(!atkKjDraft.sessions.length)return 'Select at least one karaoke day.';
+ if(atkKjDraft.sessions.some(s=>!Number.isInteger(s.day)||s.day<0||s.day>6||!/^([01]\d|2[0-3]):[0-5]\d$/.test(s.start)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(s.end)))return 'Set a valid start and end time for every selected day.';
+ if(atkKjDraft.sessions.some(s=>s.start===s.end))return 'Start and end times need to be different.';
+ return '';
+}
+async function atkKjNext(){
+ if(atkKjBusy||!atkKjAllowed()||authUser.id!==atkKjOwner)return;
+ if(atkKjStage==='details'){
+  const err=atkKjValidDetails();if(err)return atkKjMessage(err);
+  atkKjDraft.state=atkKjDraft.state.trim().toUpperCase();
+  atkKjStage='schedule';atkKjRender();return;
+ }
+ if(atkKjStage==='schedule'){
+  const err=atkKjValidSessions();if(err)return atkKjMessage(err);
+  atkKjStage='review';atkKjRender();return;
+ }
+ if(atkKjStage!=='review')return;
+ let err=atkKjValidDetails()||atkKjValidSessions();if(err)return atkKjMessage(err);
+ atkKjBusy=true;document.getElementById('atk-kj-next').disabled=true;atkKjMessage('Saving your hosting request…');
+ try{
+  const d=atkKjDraft;
+  const payload={user_id:authUser.id,venue_id:d.venueId||null,venue_name:d.venueName.trim(),
+   venue_address:d.address.trim()||null,venue_city:d.city.trim(),venue_state:d.state.trim().toUpperCase(),
+   venue_postal_code:d.postal.trim()||null,sessions:d.sessions.map(s=>({day:s.day,start:s.start,end:s.end})),notes:d.notes||''};
+  const {data,error}=await authClient.from('kj_host_submissions').insert(payload).select('id,status').single();
+  if(error)throw error;if(!data?.id||data.status!=='pending')throw Error('The submission could not be confirmed.');
+  if(authUser?.id!==atkKjOwner)return;
+  atkKjStage='done';atkKjBusy=false;atkKjRender();
+ }catch(e){atkKjMessage('Could not submit: '+(e.message||'Please try again.'))}
+ finally{atkKjBusy=false;const next=document.getElementById('atk-kj-next');next.disabled=false}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ document.getElementById('atk-kj-dialog')?.addEventListener('cancel',event=>{event.preventDefault();if(!atkKjBusy)atkKjClose()});
+});
+
 const memberFounderId='491e4116-52cc-4b4a-837f-cb5a28e74e53';
 function memberEsc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function memberLoad(){if(!authClient||!authUser)return;const id=authUser.id; if(memberLoadedUser===id)return;memberLoadedUser=id;document.getElementById('member-song-list').textContent='Connecting to your song list…';
 try{let {data:p,error:e}=await authClient.from('member_profiles').select('*').eq('user_id',id).maybeSingle();if(e)throw e;
 if(!p){const name=id===memberFounderId?'Mr Steve':(authUser.user_metadata?.display_name||authUser.user_metadata?.full_name||'Karaoke Member').slice(0,30);const r=await authClient.from('member_profiles').insert({user_id:id,stage_name:name.length>=3?name:'Singer'}).select().single();if(r.error)throw r.error;p=r.data}
-memberProfile=p;memberShowAvatar();document.getElementById('member-avatar-status').textContent='';document.getElementById('auth-display-name').textContent=p.stage_name;document.getElementById('member-karaoke-interests').textContent=atkWelcomeSummary(p.karaoke_interests||[])||'Your karaoke stage';document.getElementById('member-bio').textContent=p.bio||'Tell the karaoke community about yourself!';document.getElementById('member-profile-visibility').value=p.profile_visibility;document.getElementById('member-song-visibility').value=p.song_visibility;const verifiedBadge=document.getElementById('member-verified');verifiedBadge.hidden=true;const verification=await authClient.rpc('is_account_verified');if(!verification.error)verifiedBadge.hidden=verification.data!==true;const founderBadge=document.getElementById('member-founder');founderBadge.hidden=true;const founderCheck=await authClient.rpc('is_platform_founder');if(founderCheck.error)console.warn('Founder badge check unavailable');else founderBadge.hidden=founderCheck.data!==true;const managementButton=document.getElementById('management-open');managementButton.hidden=founderCheck.error||founderCheck.data!==true;
+memberProfile=p;memberShowAvatar();document.getElementById('member-avatar-status').textContent='';document.getElementById('auth-display-name').textContent=p.stage_name;document.getElementById('member-karaoke-interests').textContent=atkWelcomeSummary(p.karaoke_interests||[])||'Your karaoke stage';document.getElementById('atk-kj-profile-entry').hidden=!p.karaoke_interests?.includes('kj');document.getElementById('member-bio').textContent=p.bio||'Tell the karaoke community about yourself!';document.getElementById('member-profile-visibility').value=p.profile_visibility;document.getElementById('member-song-visibility').value=p.song_visibility;const verifiedBadge=document.getElementById('member-verified');verifiedBadge.hidden=true;const verification=await authClient.rpc('is_account_verified');if(!verification.error)verifiedBadge.hidden=verification.data!==true;const founderBadge=document.getElementById('member-founder');founderBadge.hidden=true;const founderCheck=await authClient.rpc('is_platform_founder');if(founderCheck.error)console.warn('Founder badge check unavailable');else founderBadge.hidden=founderCheck.data!==true;const managementButton=document.getElementById('management-open');managementButton.hidden=founderCheck.error||founderCheck.data!==true;
 await memberLoadBadges(id);const r=await authClient.from('karaoke_songs').select('*').eq('user_id',id).order('created_at',{ascending:false});if(r.error)throw r.error;memberSongs=r.data||[];memberRender();atkWelcomeMaybeStart(id,p);
 }catch(e){memberLoadedUser=null;document.getElementById('member-song-list').innerHTML='Could not load songs: '+memberEsc(e.message||'Please try again.')+' <button class="member-button" onclick="memberLoad()">Retry</button>'}}
 
@@ -2344,7 +2606,7 @@ async function managementUsersLoad(){const seq=++managementUserRequest;const sta
 let authClient=null,authUser=null;
 function authStatus(message){document.getElementById('auth-status').textContent=message||''}
 function authMode(mode){['login','register','reset','newpassword'].forEach(x=>document.getElementById('auth-'+x).hidden=x!==mode);document.getElementById('auth-title').textContent=({login:'Welcome Back!',register:'Join the Stage!',reset:'Reset Password',newpassword:'New Password'})[mode];authStatus('')}
-function authRefresh(){const managementButton=document.getElementById('management-open');if(managementButton)managementButton.hidden=true;const managementDialog=document.getElementById('management-dialog');if(managementDialog?.open&&(!authUser||managementDialogOwnerId!==authUser.id)){managementDialog.close();managementDialogOwnerId=null;}const badge=document.getElementById('member-founder');if(badge)badge.hidden=true;const verified=document.getElementById('member-verified');if(verified)verified.hidden=true;memberLoadedUser=null;const welcomeDialog=document.getElementById('atk-welcome-dialog');if(welcomeDialog?.open&&(!authUser||atkWelcomeDialogOwnerId!==authUser.id)){welcomeDialog.close();atkWelcomeDialogOwnerId=null;}const logged=!!authUser;document.getElementById('auth-guest').hidden=logged;document.getElementById('auth-profile').hidden=!logged;const nav=document.querySelector('#unified-nav [data-page="signin"] span');if(nav)nav.textContent=logged?'Profile':'Sign In';if(logged){document.getElementById('auth-title').textContent='My Profile';document.getElementById('auth-display-name').textContent=authUser.user_metadata?.display_name||authUser.user_metadata?.full_name||'Member';document.getElementById('auth-display-email').textContent=authUser.email||'';const atkLoginProviders=[...new Set([...(authUser.identities||[]).map(identity=>identity.provider).filter(Boolean),authUser.app_metadata?.provider].filter(Boolean))];document.getElementById('auth-display-provider').textContent=atkLoginProviders.includes('google')?'Connected via Google':atkLoginProviders.includes('email')?'Account created with email':atkLoginProviders.length?'Connected via '+atkLoginProviders.join(', '):'Sign-in method unavailable';document.getElementById('auth-founder-badge').hidden=authUser.id!=='491e4116-52cc-4b4a-837f-cb5a28e74e53';const membershipEl=document.getElementById('auth-display-membership');membershipEl.textContent='Loading membership…';const membershipUserId=authUser.id;authClient.from('atk_membership_numbers').select('member_number,joined_at').eq('user_id',membershipUserId).maybeSingle().then(({data,error})=>{if(authUser?.id!==membershipUserId)return;membershipEl.textContent=error?'Membership details unavailable':data?'Member #'+String(data.member_number).padStart(6,'0')+' · Member since '+new Date(data.joined_at).toLocaleDateString(undefined,{month:'long',year:'numeric'}):'Membership details unavailable';});document.getElementById('auth-display-name').textContent=authUser.id==='491e4116-52cc-4b4a-837f-cb5a28e74e53'?'Mr Steve':(memberProfile?.stage_name||authUser.user_metadata?.display_name||'Member');memberLoad().catch(e=>{document.getElementById('member-song-list').textContent='Profile error: '+e.message})}}
+function authRefresh(){const managementButton=document.getElementById('management-open');if(managementButton)managementButton.hidden=true;const managementDialog=document.getElementById('management-dialog');if(managementDialog?.open&&(!authUser||managementDialogOwnerId!==authUser.id)){managementDialog.close();managementDialogOwnerId=null;}const badge=document.getElementById('member-founder');if(badge)badge.hidden=true;const verified=document.getElementById('member-verified');if(verified)verified.hidden=true;memberLoadedUser=null;const welcomeDialog=document.getElementById('atk-welcome-dialog');if(welcomeDialog?.open&&(!authUser||atkWelcomeDialogOwnerId!==authUser.id)){welcomeDialog.close();atkWelcomeDialogOwnerId=null;}const kjDialog=document.getElementById('atk-kj-dialog');if(kjDialog?.open&&(!authUser||atkKjOwner!==authUser.id)){kjDialog.close();atkKjOwner=null;}const logged=!!authUser;document.getElementById('auth-guest').hidden=logged;document.getElementById('auth-profile').hidden=!logged;const nav=document.querySelector('#unified-nav [data-page="signin"] span');if(nav)nav.textContent=logged?'Profile':'Sign In';if(logged){document.getElementById('auth-title').textContent='My Profile';document.getElementById('auth-display-name').textContent=authUser.user_metadata?.display_name||authUser.user_metadata?.full_name||'Member';document.getElementById('auth-display-email').textContent=authUser.email||'';const atkLoginProviders=[...new Set([...(authUser.identities||[]).map(identity=>identity.provider).filter(Boolean),authUser.app_metadata?.provider].filter(Boolean))];document.getElementById('auth-display-provider').textContent=atkLoginProviders.includes('google')?'Connected via Google':atkLoginProviders.includes('email')?'Account created with email':atkLoginProviders.length?'Connected via '+atkLoginProviders.join(', '):'Sign-in method unavailable';document.getElementById('auth-founder-badge').hidden=authUser.id!=='491e4116-52cc-4b4a-837f-cb5a28e74e53';const membershipEl=document.getElementById('auth-display-membership');membershipEl.textContent='Loading membership…';const membershipUserId=authUser.id;authClient.from('atk_membership_numbers').select('member_number,joined_at').eq('user_id',membershipUserId).maybeSingle().then(({data,error})=>{if(authUser?.id!==membershipUserId)return;membershipEl.textContent=error?'Membership details unavailable':data?'Member #'+String(data.member_number).padStart(6,'0')+' · Member since '+new Date(data.joined_at).toLocaleDateString(undefined,{month:'long',year:'numeric'}):'Membership details unavailable';});document.getElementById('auth-display-name').textContent=authUser.id==='491e4116-52cc-4b4a-837f-cb5a28e74e53'?'Mr Steve':(memberProfile?.stage_name||authUser.user_metadata?.display_name||'Member');memberLoad().catch(e=>{document.getElementById('member-song-list').textContent='Profile error: '+e.message})}}
 function authError(err){authStatus(err?.message||'Unable to complete the request. Please try again.')}
 async function authGoogle(){if(!authClient)return authStatus('Authentication library could not load. Open this page with an internet connection.');authStatus('Opening Google Sign-In…');const {error}=await authClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0].split('?')[0]}});if(error)authError(error)}
 function validateStageName(raw){const name=raw.trim().replace(/\s+/g,' ');if(name.length<3||name.length>30)return 'Display name must be 3–30 characters.';if(/[<>\u0000-\u001f]/.test(name))return 'Please use a different display name.';if(/\b(admin|super\s*admin|moderator|official\s*support|addicted\s*to\s*karaoke)\b/i.test(name))return 'That name could be mistaken for an official account.';const blocked=['fuck','shit','bitch','cunt','nigger','faggot','retard'];const normalized=name.toLowerCase().replace(/[^a-z]/g,'');if(blocked.some(word=>normalized.includes(word)))return 'Please choose a name without profanity or derogatory language.';return ''}
@@ -2353,4 +2615,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-95.1";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-96";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
