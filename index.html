@@ -594,6 +594,14 @@ padding:13px 3px!important;min-height:66px
 #atk-kj-dialog .atk-kj-actions button{flex:1;min-height:46px;min-width:0;border-radius:10px;border:1px solid #e76b64;background:linear-gradient(#bd1e1c,#8f0d0d);color:white;font:700 14px Arial,sans-serif}
 #atk-kj-dialog .atk-kj-actions button:disabled{opacity:.5}
 #atk-kj-dialog .atk-kj-note{font-size:12px;color:#d7b9ae}
+.atk-address-results{display:grid;gap:4px;max-height:190px;overflow-y:auto;margin:5px 0 8px;padding:6px;border:1px solid #92534b;background:#29171b;border-radius:10px}
+.atk-address-results[hidden]{display:none}
+.atk-address-option{display:block;width:100%;text-align:left;border:1px solid #6d4642;border-radius:8px;background:#392127;color:#fff0e8;padding:8px 10px;font:inherit}
+.atk-address-option:focus,.atk-address-option[aria-selected="true"]{outline:2px solid #f6d6bf;outline-offset:-2px}
+.atk-address-option strong,.atk-address-option small{display:block;overflow-wrap:anywhere}
+.atk-address-option strong{font-size:13px}.atk-address-option small{font-size:11px;color:#dbbfb6;margin-top:2px}
+.atk-address-hint,.atk-address-credit{font-size:11px;color:#e5c8be;padding:5px}
+.atk-address-credit a{color:#f5d5c1}
 </style>
 
 <div id="auth-profile" hidden>
@@ -1193,6 +1201,93 @@ function atkKjField(parent,label,id,value,onchange,required=false){
  const input=document.createElement('input');input.id=id;input.value=value;input.required=required;
  input.addEventListener('input',()=>onchange(input.value));parent.appendChild(input);return input;
 }
+
+/* Reusable, optional address suggestions. Manual address entry always works. */
+const atkAddressStateNames=Object.fromEntries(
+ 'Alabama:AL|Alaska:AK|Arizona:AZ|Arkansas:AR|California:CA|Colorado:CO|Connecticut:CT|Delaware:DE|District of Columbia:DC|Florida:FL|Georgia:GA|Hawaii:HI|Idaho:ID|Illinois:IL|Indiana:IN|Iowa:IA|Kansas:KS|Kentucky:KY|Louisiana:LA|Maine:ME|Maryland:MD|Massachusetts:MA|Michigan:MI|Minnesota:MN|Mississippi:MS|Missouri:MO|Montana:MT|Nebraska:NE|Nevada:NV|New Hampshire:NH|New Jersey:NJ|New Mexico:NM|New York:NY|North Carolina:NC|North Dakota:ND|Ohio:OH|Oklahoma:OK|Oregon:OR|Pennsylvania:PA|Rhode Island:RI|South Carolina:SC|South Dakota:SD|Tennessee:TN|Texas:TX|Utah:UT|Vermont:VT|Virginia:VA|Washington:WA|West Virginia:WV|Wisconsin:WI|Wyoming:WY|Puerto Rico:PR'.split('|').map(s=>s.split(':').map(x=>x.trim()))
+);
+let atkAddressPickerCount=0;
+function atkAddressCandidate(feature,typed){
+ const p=feature&&feature.properties||{};
+ if(p.countrycode&&String(p.countrycode).toUpperCase()!=='US')return null;
+ const street=String(p.street||'').trim();
+ if(!street)return null;
+ const match=String(typed).match(/^\s*(\d+[A-Za-z]?(?:[-/]\d+)?)/);
+ const number=String(p.housenumber||match?.[1]||'').trim();
+ const rawState=String(p.statecode||p.state_code||p.state||'').trim();
+ const state=rawState.length===2?rawState.toUpperCase():atkAddressStateNames[rawState]||rawState.replace(/^US-/,'').toUpperCase().match(/^[A-Z]{2}$/)?.[0]||'';
+ const address=[number,street].filter(Boolean).join(' ');
+ const city=String(p.city||p.town||p.village||p.locality||'').trim();
+ if(!city||!state)return null;
+ return {address,city,state,postal:String(p.postcode||'').trim()};
+}
+function atkAddressAttach(input,onPick){
+ if(!input)return;
+ const list=document.createElement('div'),id='atk-address-list-'+(++atkAddressPickerCount);
+ list.id=id;list.className='atk-address-results';list.hidden=true;
+ list.setAttribute('role','listbox');list.setAttribute('aria-label','Suggested addresses');
+ input.insertAdjacentElement('afterend',list);
+ input.autocomplete='off';input.spellcheck=false;input.setAttribute('aria-autocomplete','list');input.setAttribute('aria-controls',id);
+ let serial=0,timer=null,controller=null,matches=[],active=-1;
+ const hide=()=>{list.hidden=true;list.replaceChildren();input.setAttribute('aria-expanded','false');matches=[];active=-1};
+ const render=(items,message='')=>{
+  list.replaceChildren();matches=items;active=-1;
+  if(message){const hint=document.createElement('small');hint.className='atk-address-hint';hint.textContent=message;list.appendChild(hint)}
+  for(let i=0;i<items.length;i++){
+   const item=items[i],b=document.createElement('button');b.type='button';b.className='atk-address-option';
+   b.setAttribute('role','option');b.setAttribute('aria-selected','false');
+   const street=document.createElement('strong'),where=document.createElement('small');
+   street.textContent=item.address;where.textContent=[item.city,item.state,item.postal].filter(Boolean).join(', ');
+   b.append(street,where);
+   b.addEventListener('click',()=>{input.value=item.address;onPick(item);++serial;clearTimeout(timer);controller?.abort();hide();input.focus()});
+   list.appendChild(b);
+  }
+  if(items.length){
+   const credit=document.createElement('small');credit.className='atk-address-credit';
+   const link=document.createElement('a');link.href='https://www.openstreetmap.org/copyright';link.target='_blank';link.rel='noopener noreferrer';link.textContent='OpenStreetMap contributors';
+   credit.append('Address suggestions: ',link,' · Photon');list.appendChild(credit);
+  }
+  list.hidden=false;input.setAttribute('aria-expanded','true');
+ };
+ input.addEventListener('input',()=>{
+  ++serial;clearTimeout(timer);controller?.abort();hide();
+  const query=input.value.trim();
+  if(query.length<4)return;
+  const current=serial;
+  timer=setTimeout(async()=>{
+   if(!input.isConnected)return;
+   render([],'Looking for addresses…');controller=new AbortController();
+   try{
+    const url='https://photon.komoot.io/api/?q='+encodeURIComponent(query)+'&limit=12&lang=en&countrycode=US';
+    const response=await fetch(url,{signal:controller.signal});
+    if(!response.ok)throw Error('Address lookup unavailable');
+    const data=await response.json();
+    if(current!==serial||!input.isConnected)return;
+    const unique=new Set(),items=[];
+    for(const feature of Array.isArray(data.features)?data.features:[]){
+     const item=atkAddressCandidate(feature,query);if(!item)continue;
+     const k=[item.address,item.city,item.state,item.postal].join('|').toLowerCase();
+     if(!unique.has(k)){unique.add(k);items.push(item)}
+     if(items.length>=5)break;
+    }
+    if(items.length)render(items);else render([],'No matching suggestions. You can enter the address manually.');
+   }catch(err){
+    if(current===serial&&err.name!=='AbortError')render([],'Suggestions are unavailable. Please enter the address manually.');
+   }
+  },650);
+ });
+ input.addEventListener('keydown',e=>{
+  if(list.hidden||!matches.length)return;
+  const buttons=[...list.querySelectorAll('.atk-address-option')];
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+   e.preventDefault();active=(active+(e.key==='ArrowDown'?1:matches.length-1))%matches.length;
+   buttons.forEach((b,i)=>b.setAttribute('aria-selected',String(i===active)));
+   buttons[active]?.scrollIntoView({block:'nearest'});
+  }else if(e.key==='Enter'&&active>=0){e.preventDefault();buttons[active].click()}
+  else if(e.key==='Escape'){e.preventDefault();hide()}
+ });
+ input.addEventListener('blur',()=>setTimeout(()=>{if(!list.contains(document.activeElement))hide()},200));
+}
 function atkKjRender(){
  const body=document.getElementById('atk-kj-body'),title=document.getElementById('atk-kj-title');
  const next=document.getElementById('atk-kj-next'),progress=document.getElementById('atk-kj-progress');
@@ -1230,7 +1325,15 @@ function atkKjRender(){
   body.appendChild(atkKjEl('p','We’ll review this venue before adding it to the public listings.','atk-kj-lead'));
   const f=(label,id,key,value)=>atkKjField(body,label,id,value,val=>{atkKjDraft[key]=val},key==='venueName'||key==='city'||key==='state');
   f('Venue Name','atk-kj-venue-name','venueName',atkKjDraft.venueName);
-  f('Street Address (recommended)','atk-kj-venue-address','address',atkKjDraft.address);
+  const addressInput=f('Street Address (recommended)','atk-kj-venue-address','address',atkKjDraft.address);
+  addressInput.placeholder='Start typing an address…';
+  atkAddressAttach(addressInput,place=>{
+   for(const [key,value] of [['address',place.address],['city',place.city],['state',place.state],['postal',place.postal]]){
+    atkKjDraft[key]=value;
+    const field=document.getElementById({address:'atk-kj-venue-address',city:'atk-kj-venue-city',state:'atk-kj-venue-state',postal:'atk-kj-venue-zip'}[key]);
+    if(field)field.value=value;
+   }
+  });
   f('City','atk-kj-venue-city','city',atkKjDraft.city);
   f('State (2 letters)','atk-kj-venue-state','state',atkKjDraft.state);
   f('ZIP Code (optional)','atk-kj-venue-zip','postal',atkKjDraft.postal);
@@ -2565,7 +2668,12 @@ async function managementVenueDeleteExecute(){if(!managementSelectedVenue||docum
 let managementFieldType='';
 const managementFieldMap={address:[['address_line1','Street address'],['city','City'],['state','State'],['postal_code','ZIP code']],phone:[['phone','Phone']],website:[['website','Website']],genres:[['genres','Genres (comma separated)']]};
 function managementVenueFieldCancel(){document.getElementById("mvd-field-editor").classList.remove("mv-scroll-choices");document.getElementById('mvd-field-editor').hidden=true;document.getElementById('mvd-field-feedback').textContent=''}
-function managementVenueFieldEdit(type){if(!managementSelectedVenue)return;managementFieldType=type;document.getElementById('mvd-field-title').textContent='Edit '+type[0].toUpperCase()+type.slice(1);const area=document.getElementById('mvd-field-fields');area.replaceChildren();if(type==='genres'){const p=document.createElement('p');p.textContent='Select the music genres featured at this venue.';area.appendChild(p);const grid=document.createElement('div');grid.className='mv-amenities-grid mv-genre-grid';const selected=new Set(managementSelectedVenue.genres||[]);for(const genre of ['All Genres','Pop','Rock','Country','R&B','Hip-Hop','Classic Rock','80s & 90s','Indie','Jazz','Blues','Latin']){const label=document.createElement('label');label.className='mv-genre-option';const input=document.createElement('input');input.type='checkbox';input.value=genre;input.checked=selected.has(genre);const icon=document.createElement('span');icon.className='mv-genre-icon';icon.textContent='♫';const name=document.createElement('span');name.textContent=genre;label.append(input,icon,name);grid.appendChild(label)}area.appendChild(grid);const count=document.createElement('p');count.className='mv-amenities-count';const update=()=>{const boxes=[...grid.querySelectorAll('input')],all=boxes.find(x=>x.value==='All Genres'),individual=boxes.filter(x=>x!==all);if(all.checked){individual.forEach(x=>{x.checked=false;x.disabled=true;x.closest('label').classList.add('mv-genre-disabled')});all.disabled=false;all.closest('label').classList.remove('mv-genre-disabled')}else{const any=individual.some(x=>x.checked);all.disabled=false;all.closest('label').classList.remove('mv-genre-disabled');individual.forEach(x=>{x.disabled=false;x.closest('label').classList.remove('mv-genre-disabled')})}count.textContent=boxes.filter(x=>x.checked).length+' of 12 selected'};grid.addEventListener('change',e=>{if(e.target.value==='All Genres'&&e.target.checked){grid.querySelectorAll('input').forEach(x=>{if(x!==e.target)x.checked=false})}update()});update();area.appendChild(count);document.getElementById('mvd-field-editor').classList.add('mv-scroll-choices');document.getElementById('mvd-field-editor').hidden=false;return}for(const [key,title] of managementFieldMap[type]){const label=document.createElement('label'),input=document.createElement('input');label.textContent=title;input.id='mvd-field-'+key;label.htmlFor=input.id;input.maxLength=500;input.value=key==='genres'?(managementSelectedVenue.genres||[]).join(', '):(managementSelectedVenue[key]||'');area.append(label,input)}document.getElementById('mvd-field-editor').hidden=false}
+function managementVenueFieldEdit(type){if(!managementSelectedVenue)return;managementFieldType=type;document.getElementById('mvd-field-title').textContent='Edit '+type[0].toUpperCase()+type.slice(1);const area=document.getElementById('mvd-field-fields');area.replaceChildren();if(type==='genres'){const p=document.createElement('p');p.textContent='Select the music genres featured at this venue.';area.appendChild(p);const grid=document.createElement('div');grid.className='mv-amenities-grid mv-genre-grid';const selected=new Set(managementSelectedVenue.genres||[]);for(const genre of ['All Genres','Pop','Rock','Country','R&B','Hip-Hop','Classic Rock','80s & 90s','Indie','Jazz','Blues','Latin']){const label=document.createElement('label');label.className='mv-genre-option';const input=document.createElement('input');input.type='checkbox';input.value=genre;input.checked=selected.has(genre);const icon=document.createElement('span');icon.className='mv-genre-icon';icon.textContent='♫';const name=document.createElement('span');name.textContent=genre;label.append(input,icon,name);grid.appendChild(label)}area.appendChild(grid);const count=document.createElement('p');count.className='mv-amenities-count';const update=()=>{const boxes=[...grid.querySelectorAll('input')],all=boxes.find(x=>x.value==='All Genres'),individual=boxes.filter(x=>x!==all);if(all.checked){individual.forEach(x=>{x.checked=false;x.disabled=true;x.closest('label').classList.add('mv-genre-disabled')});all.disabled=false;all.closest('label').classList.remove('mv-genre-disabled')}else{const any=individual.some(x=>x.checked);all.disabled=false;all.closest('label').classList.remove('mv-genre-disabled');individual.forEach(x=>{x.disabled=false;x.closest('label').classList.remove('mv-genre-disabled')})}count.textContent=boxes.filter(x=>x.checked).length+' of 12 selected'};grid.addEventListener('change',e=>{if(e.target.value==='All Genres'&&e.target.checked){grid.querySelectorAll('input').forEach(x=>{if(x!==e.target)x.checked=false})}update()});update();area.appendChild(count);document.getElementById('mvd-field-editor').classList.add('mv-scroll-choices');document.getElementById('mvd-field-editor').hidden=false;return}for(const [key,title] of managementFieldMap[type]){const label=document.createElement('label'),input=document.createElement('input');label.textContent=title;input.id='mvd-field-'+key;label.htmlFor=input.id;input.maxLength=500;input.value=key==='genres'?(managementSelectedVenue.genres||[]).join(', '):(managementSelectedVenue[key]||'');area.append(label,input)}
+if(type==='address')atkAddressAttach(document.getElementById('mvd-field-address_line1'),place=>{
+ const ids={address:'mvd-field-address_line1',city:'mvd-field-city',state:'mvd-field-state',postal:'mvd-field-postal_code'};
+ for(const [key,id] of Object.entries(ids)){const field=document.getElementById(id);if(field)field.value=place[key]||''}
+});
+document.getElementById('mvd-field-editor').hidden=false}
 function managementVenueFieldRefresh(){const v=managementSelectedVenue;if(!v)return;document.getElementById('mvd-address').textContent=[v.address_line1,v.city,v.state,v.postal_code].filter(Boolean).join(', ')||'Not provided';document.getElementById('mvd-phone').textContent=v.phone||'Not provided';document.getElementById('mvd-website').textContent=v.website||'Not provided';document.getElementById('mvd-genres').textContent=(v.genres||[]).join(' · ')||'Not provided'}
 async function managementVenueFieldSave(){if(!managementSelectedVenue)return;const payload={},feedback=document.getElementById('mvd-field-feedback'),btn=document.getElementById('mvd-field-save');for(const [key] of managementFieldMap[managementFieldType]){const value=key==='genres'?'':document.getElementById('mvd-field-'+key).value.trim();payload[key]=key==='genres'?[...document.querySelectorAll('#mvd-field-fields .mv-genre-option input:checked')].map(x=>x.value):value}if(payload.website&&!/^https?:\/\//i.test(payload.website))payload.website='https://'+payload.website;if(payload.website){try{const url=new URL(payload.website);if(!['https:','http:'].includes(url.protocol))throw Error()}catch(e){feedback.textContent='Enter a valid website URL.';return}}btn.disabled=true;feedback.textContent='Saving…';try{const access=await authClient.rpc('is_platform_founder');if(access.error||access.data!==true)throw Error('Management permission required.');const {data,error}=await authClient.from('venues').update(payload).eq('id',managementSelectedVenue.id).select('id,'+Object.keys(payload).join(',')).single();if(error)throw error;if(!data)throw Error('Venue was not updated.');Object.assign(managementSelectedVenue,data);if(payload.genres){for(const venue of sampleVenues){if(venue.databaseId===managementSelectedVenue.id){venue.genres=payload.genres;venue.genre=payload.genres[0]||'Other';if(selectedVenue===venue.id)openVenue(venue.id)}}}managementVenueFieldRefresh();managementVenueFieldCancel();document.getElementById('mvd-feedback').textContent='Venue details saved.'}catch(e){feedback.textContent='Could not save: '+(e.message||'Please try again.')}finally{btn.disabled=false}}
 
@@ -2615,4 +2723,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-96";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-97";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
