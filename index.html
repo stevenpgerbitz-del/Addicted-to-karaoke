@@ -539,15 +539,13 @@ padding:13px 3px!important;min-height:66px
 #atk-wizard .atk-restore-choice-heading{font-size:15px;color:#f2dfd3;margin:18px 0 10px;font-weight:700}
 #atk-wizard .atk-restore-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 16px}
 #atk-wizard .atk-restore-choice{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:10px;min-width:0;min-height:140px;padding:14px 12px;text-align:left;border:1px solid #85504d;border-radius:12px;background:#301b1d;color:#f5e4d2;cursor:pointer;box-sizing:border-box}
-#atk-wizard .atk-restore-choice.selected{background:#51252a;border:2px solid #e09c88;padding:13px 11px}
+#atk-wizard .atk-restore-choice.selected{background:#63262b;border:2px solid #f1a49a;padding:13px 11px;box-shadow:inset 0 0 0 1px #b56057}
 #atk-wizard .atk-restore-choice:focus-visible{outline:2px solid #f4b5a8;outline-offset:3px}
 #atk-wizard .atk-restore-choice-icon{display:flex;align-items:center;justify-content:center;width:30px;height:30px;color:#f5d0c4}
 #atk-wizard .atk-restore-choice-icon svg{width:27px;height:27px;display:block}
 #atk-wizard .atk-restore-choice-copy{display:flex;flex-direction:column;gap:6px;min-width:0;padding-right:4px}
 #atk-wizard .atk-restore-choice-copy strong{font-size:14px;line-height:1.25;overflow-wrap:anywhere}
 #atk-wizard .atk-restore-choice-copy small{font-size:11px;line-height:1.35;color:#dfbdb2;overflow-wrap:anywhere}
-#atk-wizard .atk-restore-choice-indicator{position:absolute;top:12px;right:12px;display:flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid #a77e79;border-radius:5px;font-size:16px;font-weight:bold;color:white;background:#251819}
-#atk-wizard .atk-restore-choice.selected .atk-restore-choice-indicator{background:#b32f2b;border-color:#e4a69b}
 @media(max-width:360px){#atk-wizard .atk-restore-choice-grid{gap:7px}#atk-wizard .atk-restore-choice{padding:11px 9px}#atk-wizard .atk-restore-choice.selected{padding:10px 8px}}
 
 </style><div id="atk-lifecycle-panel" hidden><h3>Prepare to Go Live</h3><p><strong>Current phase: Development</strong></p><p>Before launch, we must verify full database, account, role, audit-history and uploaded-file recovery.</p><p>Then we'll test selective system wipe, a separate Founder-only history reset, and Founder account protection.</p><p><strong>Launch is locked until recovery safeguards are verified.</strong> No data will be changed here.</p><div class="management-pages"><button type="button" onclick="managementLifecycleBack()">Cancel</button></div></div><div id="atk-backup-panel" hidden>
@@ -1194,7 +1192,7 @@ function atkWizardRender(){
  document.getElementById('atk-wizard-title').textContent=atkWizardStages[type][page];
  document.getElementById('atk-wizard-bars').innerHTML=Array.from({length:4},(_,i)=>'<i class="'+(i<=page?'active':'')+'"></i>').join('');
  document.getElementById('atk-wizard-previous').hidden=page===0;
- const next=document.getElementById('atk-wizard-next');next.disabled=false;next.textContent=page===3?'Finish':'Next';document.getElementById('atk-wizard-actions').hidden=false;document.getElementById('atk-wizard-bars').hidden=false;
+ const next=document.getElementById('atk-wizard-next');next.disabled=false;next.textContent=page===3?'Finish':'Next';document.getElementById('atk-wizard-previous').textContent='Previous';document.getElementById('atk-wizard-actions').hidden=false;document.getElementById('atk-wizard-bars').hidden=false;
  const message=document.getElementById('atk-wizard-message');message.textContent='';document.getElementById('atk-wizard-next').hidden=false;
  const info=document.createElement('p');body.appendChild(info);
  if(type==='backup'&&atkWizardCompleted){
@@ -1231,14 +1229,22 @@ function atkWizardRender(){
   const typeLabel=data.backup_scope?.type==='venue'?'Venue backup'+(data.backup_scope.venue_name?' — '+data.backup_scope.venue_name:''):data.backup_scope?.type==='all_supported_content'?'All supported content backup':data.recovery_scope==='partial-content-only'?(venueRows.length===1?'Single-venue content snapshot':'Content snapshot ('+venueRows.length+' venues)'):'Backup ('+(data.recovery_scope||'unknown scope')+')';
   info.textContent='Detected: '+typeLabel+'. '+venueRows.length+' venues, '+(counts.reviews||0)+' reviews, '+(counts.review_ratings||0)+' ratings in this file.';
   const missingReviews=(managementBackupDiffCounts.reviews?.missing||0),changedReviews=(managementBackupDiffCounts.reviews?.changed||0),changedRatings=(managementBackupDiffCounts.review_ratings?.changed||0),otherChanges=Object.entries(managementBackupDiffCounts).reduce((total,[table,stat])=>total+(table==='venues'?0:stat.missing+stat.changed),0);
+  if(page===1&&!missing.length){
+   const hasChanges=otherChanges>0||changed.length>0;
+   const backupName=data.backup_scope?.type==='venue'?data.backup_scope.venue_name:(venueRows.length===1?venueRows[0].name:'');
+   info.textContent=hasChanges?'Backup checked — no missing venues.':backupName?backupName+' is already on the website.':'Backup checked — everything is already on the website.';
+   const result=document.createElement('p');
+   result.textContent=hasChanges?'Some existing records differ. This restore cannot overwrite them or restore reviews independently. No changes were made.':'Everything matches. Nothing to restore.';
+   body.appendChild(result);
+   next.hidden=true;document.getElementById('atk-wizard-previous').textContent='Choose Another Backup';
+   return;
+  }
   const note=document.createElement('p');note.textContent=missing.length?'Missing venues available to restore: '+missing.length+'.':'No missing venues. The backup does not need to add any of its venues.';body.appendChild(note);
   const details=document.createElement('p');details.style.fontSize='.88em';
   details.textContent=[changed.length?changed.length+' existing venue(s) have differences (not overwritten).':'',missingReviews?missingReviews+' review(s) missing from the site.':'',changedReviews?changedReviews+' review(s) changed.':'',changedRatings?changedRatings+' rating(s) changed.':''].filter(Boolean).join(' ') || 'No venue or review changes detected.';
   body.appendChild(details);
   if(page===1){
    const selected=new Set(managementRestoreRecordSelection);
-   if(!missing.length){const p=document.createElement('p');p.textContent=otherChanges||changed.length?'No venues can be added. This restore currently cannot import reviews independently or overwrite existing records. No changes will be made.':'Everything in this backup is already present. There is nothing to restore, and no changes will be made.';body.appendChild(p);next.disabled=true;next.textContent='Nothing to Restore'}
-   if(!missing.length)return;
    const heading=document.createElement('h4');heading.className='atk-restore-choice-heading';heading.textContent='Select what to restore';body.appendChild(heading);
    const grid=document.createElement('div');grid.className='atk-restore-choice-grid';body.appendChild(grid);
    const addChoice=(title,subtitle,icon,checked,onToggle)=>{
@@ -1248,8 +1254,7 @@ function atkWizardRender(){
     const name=document.createElement('strong');name.textContent=title;
     const detail=document.createElement('small');detail.textContent=subtitle;
     copy.append(name,detail);
-    const indicator=document.createElement('span');indicator.className='atk-restore-choice-indicator';indicator.setAttribute('aria-hidden','true');indicator.textContent=checked?'✓':'';
-    tile.append(graphic,copy,indicator);tile.onclick=onToggle;grid.appendChild(tile);
+    tile.append(graphic,copy);tile.onclick=onToggle;grid.appendChild(tile);
    };
    const venueIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h16v11H4zM3 9l9-6 9 6M9 20v-7h6v7"/></svg>';
    const reviewIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.2.9-4.5 4.3 1 6.2L12 17.1 6.6 20l1-6.2-4.5-4.3 6.2-.9L12 3z"/></svg>';
@@ -1606,4 +1611,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-87.10";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-87.11";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
