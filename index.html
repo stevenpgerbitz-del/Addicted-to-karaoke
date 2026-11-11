@@ -1072,9 +1072,17 @@ let managementBackupPending=null,managementRestoreSelection=new Set(),management
 const managementRestoreGroups=[['venues','Venues'],['kjs','KJ Profiles'],['venue_schedules','Karaoke Schedules'],['venue_photos','Venue Photo Records'],['reviews','Reviews'],['review_ratings','Review Ratings']];
 function managementRestoreRenderSelection(){
  const host=document.getElementById('management-restore-selection');host.replaceChildren();
+ const selectedVenues=(managementBackupPending?.tables?.venues||[]).filter(v=>managementRestoreRecordSelection.has(String(v.id)));
+ const selectedIds=new Set(selectedVenues.map(v=>v.id));
+ const bundledReviews=(managementBackupPending?.tables?.reviews||[]).filter(r=>selectedIds.has(r.venue_id));
+ const bundledReviewIds=new Set(bundledReviews.map(r=>r.id));
+ const bundledRatings=(managementBackupPending?.tables?.review_ratings||[]).filter(r=>bundledReviewIds.has(r.review_id));
+ const bundledSchedules=(managementBackupPending?.tables?.venue_schedules||[]).filter(r=>selectedIds.has(r.venue_id));
+ const bundledPhotos=(managementBackupPending?.tables?.venue_photos||[]).filter(r=>selectedIds.has(r.venue_id));
  for(const [table,label] of managementRestoreGroups){
   const diff=managementBackupDiffCounts[table],count=diff?(diff.missing+diff.changed+diff.onlyLive):0;
   if(!count)continue;
+  if(table==='reviews'&&count===bundledReviews.length&&selectedVenues.length)continue;
   const tile=document.createElement('button');tile.type='button';tile.className='mv-amenity-option atk-restore-tile'+(managementRestoreOpenTable===table?' selected':'');
   tile.setAttribute('aria-expanded',String(managementRestoreOpenTable===table));
   const heading=document.createElement('strong');heading.textContent=label;
@@ -1104,7 +1112,7 @@ function managementRestoreRenderSelection(){
   host.append(section);
  }
  const count=managementRestoreRecordSelection.size;
- document.getElementById('management-restore-count').textContent=count+' venue'+(count===1?'':'s')+' selected for restore';
+ document.getElementById('management-restore-count').textContent=count+' venue'+(count===1?'':'s')+' selected for restore'+(count?' — includes '+bundledReviews.length+' reviews, '+bundledRatings.length+' ratings, '+bundledSchedules.length+' schedules and '+bundledPhotos.length+' photo records automatically.':'');
  document.getElementById('management-restore-submit').disabled=!count;
 }
 async function managementBackupFounder(){
@@ -1405,4 +1413,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-82";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-83";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
