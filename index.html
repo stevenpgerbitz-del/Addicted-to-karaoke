@@ -1362,6 +1362,20 @@ function atkWizardRender(){
       atkWizardRender();
     });
    }
+   if(managementRestoreInclude.has('member_access')&&managementAccountPreview?.items?.length){
+    const list=document.createElement('div');list.style.cssText='font-size:12px;line-height:1.45;margin:6px 0;padding:8px 10px;background:#281718;border:1px solid #714a46;border-radius:10px';
+    const header=document.createElement('strong');header.textContent='Member roles in this backup';list.append(header);
+    for(const member of managementAccountPreview.items.slice(0,8)){
+     const row=document.createElement('div');row.style.cssText='padding:5px 0;border-top:1px solid #5b3735';
+     const label=String(member.stage_name||member.email||'Member');
+     const role=String(member.backup_role||'member').replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase());
+     const current=String(member.current_role||'member').replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase());
+     row.textContent=label+' — '+role+(member.changed?' (currently '+current+')':' (already correct)');
+     list.append(row);
+    }
+    if(managementAccountPreview.items.length>8){const more=document.createElement('small');more.textContent='And '+(managementAccountPreview.items.length-8)+' more account(s) in this backup.';list.append(more)}
+    body.append(list);
+   }
    if(managementAccountWarning){const warning=document.createElement('small');warning.textContent='Member access recovery unavailable: '+managementAccountWarning;body.append(warning)}
    const reason=document.createElement('textarea');reason.rows=2;reason.className='atk-restore-reason';reason.placeholder='Reason for restore (required)';reason.value=document.getElementById('atk-restore-reason').value;reason.oninput=()=>document.getElementById('atk-restore-reason').value=reason.value;reason.style.cssText='width:100%;box-sizing:border-box;padding:12px;background:#301b1d;color:white;border:1px solid #8c5552;border-radius:9px';body.appendChild(reason);next.textContent='Review Restore';
   }
@@ -1789,4 +1803,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-89.1";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-89.2";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
