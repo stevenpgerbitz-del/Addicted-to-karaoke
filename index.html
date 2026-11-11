@@ -522,8 +522,60 @@ padding:13px 3px!important;min-height:66px
 <div class="management-tools atk-backup-home" id="atk-backup-home">
 <button type="button" class="management-entry" onclick="atkWizardStart('backup')">Backup<small>Download content plus member accounts and roles</small></button>
 <button type="button" class="management-entry" onclick="atkWizardStart('restore')">Restore<small>Choose a saved snapshot and preview its records</small></button>
+<button type="button" class="management-entry" onclick="atkInspectorStart()">Inspect Backup<small>View a downloaded backup's records — read only</small></button>
 <button type="button" class="management-entry" onclick="managementHistoryOpen()">Activity History<small>Founder-only read-only administrative records</small></button>
 <button type="button" class="management-entry" onclick="atkWizardStart('live')">Prepare to Go Live<small>Optional pre-launch cleanup, backup and production activation</small></button></div>
+<div id="atk-inspector" hidden>
+ <h3>Backup Inspector</h3>
+ <p class="atk-inspector-intro">Choose a saved backup to inspect. Nothing is uploaded, restored or changed.</p>
+ <button type="button" class="atk-inspector-file-button" onclick="document.getElementById('atk-inspector-file').click()">
+  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+  <span><strong id="atk-inspector-file-label">Choose Backup File</strong><small>Select an ATK JSON backup on your device</small></span>
+ </button>
+ <input type="file" id="atk-inspector-file" accept=".json,application/json" hidden onchange="atkInspectorLoad(this)">
+ <p id="atk-inspector-status" role="status">No backup file selected.</p>
+ <div id="atk-inspector-summary" hidden>
+  <div class="atk-inspector-file-meta" id="atk-inspector-meta"></div>
+  <h4>What's included</h4>
+  <div id="atk-inspector-tiles" class="mv-amenities-grid" aria-label="Backup categories"></div>
+  <div id="atk-inspector-detail" hidden aria-live="polite">
+   <h4 id="atk-inspector-detail-title"></h4>
+   <div id="atk-inspector-detail-rows"></div>
+  </div>
+  <div id="atk-inspector-checks" role="status"></div>
+  <p class="atk-inspector-disclaimer">This checks file structure and relationships. It cannot prove the file hasn't been altered or that excluded data can be recovered.</p>
+ </div>
+ <div class="management-pages"><button type="button" onclick="atkInspectorCancel()">Cancel</button></div>
+</div>
+<style>
+#atk-inspector[hidden],#atk-inspector-summary[hidden],#atk-inspector-detail[hidden],#atk-inspector-file[hidden]{display:none!important}
+#atk-inspector{max-width:440px;margin:auto;min-width:0}
+#atk-inspector h3{margin:0 0 9px}
+#atk-inspector h4{font-size:14px;margin:14px 0 10px}
+#atk-inspector .atk-inspector-intro,#atk-inspector-status{font-size:13px;line-height:1.45;color:#e0c9c0}
+#atk-inspector .atk-inspector-file-button{display:flex;align-items:center;gap:12px;width:100%;min-height:78px;text-align:left;padding:12px;background:linear-gradient(125deg,#462123,#291719);border:1px solid #ac6660;border-radius:13px;color:#f9ece5}
+#atk-inspector .atk-inspector-file-button>svg{width:28px;height:28px;flex:none}
+#atk-inspector .atk-inspector-file-button span{display:flex;flex-direction:column;gap:5px;min-width:0}
+#atk-inspector .atk-inspector-file-button small{font-size:12px;color:#dfbdb2;font-weight:400;overflow-wrap:anywhere}
+#atk-inspector .atk-inspector-file-meta{border:1px solid #754640;border-radius:11px;background:#271719;padding:12px;display:grid;gap:5px}
+#atk-inspector .atk-inspector-file-meta strong{font-size:13px;overflow-wrap:anywhere}
+#atk-inspector .atk-inspector-file-meta small{font-size:12px;line-height:1.4;color:#d8bdb2}
+#atk-inspector #atk-inspector-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
+#atk-inspector .atk-inspector-tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;min-width:0;min-height:82px;text-align:left;padding:12px;border:1px solid #84504b;border-radius:11px;background:#301b1d;color:#f5e4d2}
+#atk-inspector .atk-inspector-tile strong{font-size:20px;line-height:1}
+#atk-inspector .atk-inspector-tile span{font-size:12px;line-height:1.3;overflow-wrap:anywhere}
+#atk-inspector .atk-inspector-tile.selected{border:2px solid #efaaa0;background:#792225;padding:11px}
+#atk-inspector .atk-inspector-tile:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#atk-inspector #atk-inspector-detail{margin:10px 0;border:1px solid #89544e;background:#271719;padding:12px;border-radius:10px;max-height:35dvh;overflow-y:auto;overflow-wrap:anywhere}
+#atk-inspector #atk-inspector-detail h4{margin:0 0 7px}
+#atk-inspector .atk-inspector-record{padding:8px 0;border-top:1px solid #583633;font-size:12px;line-height:1.45}
+#atk-inspector .atk-inspector-record:first-of-type{border-top:0}
+#atk-inspector #atk-inspector-checks{font-size:12px;line-height:1.45;margin:12px 0}
+#atk-inspector .atk-inspector-check-heading{font-weight:700;margin-bottom:5px}
+#atk-inspector .atk-inspector-check-item{padding:5px 0;overflow-wrap:anywhere}
+#atk-inspector .atk-inspector-disclaimer{font-size:11px;color:#ceb5aa;line-height:1.45}
+#atk-inspector>.management-pages{margin:15px 0 4px}
+</style>
 <div id="atk-wizard" hidden><div class="atk-wizard-bars" id="atk-wizard-bars"></div><h3 id="atk-wizard-title"></h3><p id="atk-wizard-description"></p><div id="atk-wizard-body"></div><p id="atk-wizard-message" role="status"></p><div class="management-pages atk-wizard-buttons" id="atk-wizard-actions"><button type="button" id="atk-wizard-previous" onclick="atkWizardPrevious()">Previous</button><button type="button" id="atk-wizard-next" onclick="atkWizardNext()">Next</button></div></div>
 <style>
 #atk-wizard[hidden],#atk-wizard-actions[hidden],#atk-wizard-bars[hidden],#atk-wizard-previous[hidden],#atk-wizard-next[hidden]{display:none!important}#atk-wizard{max-width:440px;margin:auto}#atk-wizard-body{max-height:48dvh;overflow:auto}#atk-wizard-body select{display:block;width:100%;min-height:44px;margin:10px 0;padding:8px;border-radius:9px;background:#301b1d;color:white;border:1px solid #8c5552}.atk-wizard-bars{display:flex;gap:6px;margin:12px 0 18px}.atk-wizard-bars i{height:6px;flex:1;background:#503032;border-radius:8px}.atk-wizard-bars i.active{background:#e43d3d}.atk-wizard-buttons{display:flex;gap:8px;flex-wrap:wrap}.atk-wizard-buttons button{flex:1;min-height:42px}#atk-wizard-message{font-size:13px;line-height:1.5}
@@ -1233,6 +1285,7 @@ function atkWizardStart(type){
 }
 function atkWizardReset(){
  // Always discard wizard UI when returning to System Maintenance or closing it.
+ atkInspectorReset();
  atkWizardType='';atkWizardPage=0;atkWizardSnapshot=null;atkWizardVenueId='';atkWizardBackupScope='all';atkWizardMemberCount=0;atkWizardCompleted=false;
  managementBackupPending=null;managementAccountPreview=null;managementAccountWarning='';managementRejoinPreview=null;managementRejoinSelectedId='';managementRejoinCompletedMessage='';managementRestoreRecordSelection.clear();managementRestoreInclude.clear();
  document.getElementById('atk-wizard').hidden=true;
@@ -1536,6 +1589,214 @@ function atkHistoryRender(){atkHistoryRenderCategories();const search=document.g
 }
 async function managementHistoryOpen(){try{await managementBackupFounder();managementResetNavigation();document.querySelector('#management-dialog>.management-tools').hidden=true;document.getElementById('management-title').hidden=true;document.querySelector('#management-dialog>p').hidden=true;document.getElementById('management-history').hidden=false;document.getElementById('management-history-list').textContent='Loading history…';const {data,error}=await authClient.rpc('management_read_audit_history',{p_limit:100});if(error)throw Error(error.message);atkHistoryRows=data||[];atkHistoryCategory='all';atkHistoryNames=new Map();const ids=[...new Set(atkHistoryRows.flatMap(x=>[x.actor_id,x.target_id]).filter(Boolean))];if(ids.length){const {data:profiles,error:pe}=await authClient.from('member_profiles').select('user_id,stage_name').in('user_id',ids);if(!pe)(profiles||[]).forEach(p=>{if(p.stage_name)atkHistoryNames.set(p.user_id,p.stage_name)})}const sel=document.getElementById('atk-history-action');sel.replaceChildren(new Option('All actions','all'));for(const action of [...new Set(atkHistoryRows.map(x=>x.action).filter(Boolean))].sort())sel.add(new Option(atkHistoryWords(action),action));atkHistoryRender()}catch(e){document.getElementById('management-history-list').textContent='Unable to load activity: '+e.message}}
 function atkHistoryExport(){if(!atkHistoryFiltered.length){alert('No matching records to export.');return}const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const category=atkHistoryCategories.find(c=>c[0]===atkHistoryCategory)?.[1]||'All Activity';const rows=atkHistoryFiltered.map(x=>'<article><strong>'+escape(atkHistorySentence(x))+'</strong><p>'+escape(x.created_at?new Date(x.created_at).toLocaleString():'Date unavailable')+'</p>'+(x.reason?'<p>Reason: '+escape(x.reason)+'</p>':'')+'</article>').join('');const html='<!doctype html><html><head><title>Activity History Report</title><style>body{font:12pt Arial;color:#222;margin:25mm 18mm}h1{font-size:20pt}article{padding:12px 0;border-bottom:1px solid #bbb;break-inside:avoid}article p{font-size:10pt;margin:6px 0}@page{size:A4;margin:16mm}footer{font-size:9pt;color:#555}</style></head><body><h1>Addicted to Karaoke — Activity History</h1><p>Category: '+escape(category)+' | Records: '+atkHistoryFiltered.length+'</p><p>Generated: '+escape(new Date().toLocaleString())+'</p>'+rows+'<footer>Confidential administrative report</footer></body></html>';const frame=document.createElement('iframe');frame.style.cssText='position:fixed;width:0;height:0;border:0';document.body.append(frame);frame.onload=()=>{try{frame.contentWindow.focus();frame.contentWindow.print()}finally{setTimeout(()=>frame.remove(),60000)}};frame.srcdoc=html}
+
+
+// Backup Inspector: local read-only file analysis. Never calls restore RPCs or writes data.
+const atkInspectorCategories=[
+ ['venues','Venues'],['reviews','Reviews'],['review_ratings','Review Ratings'],
+ ['venue_schedules','Karaoke Schedules'],['venue_photos','Photo Records'],
+ ['kjs','KJ Profiles'],['member_access','Members & Roles']
+];
+let atkInspectorCurrent=null,atkInspectorSelected='';
+function atkInspectorReset(){
+ const pane=document.getElementById('atk-inspector');
+ if(!pane)return;
+ pane.hidden=true;atkInspectorCurrent=null;atkInspectorSelected='';
+ document.getElementById('atk-inspector-file').value='';
+ document.getElementById('atk-inspector-summary').hidden=true;
+ document.getElementById('atk-inspector-detail').hidden=true;
+ document.getElementById('atk-inspector-tiles').replaceChildren();
+ document.getElementById('atk-inspector-detail-rows').replaceChildren();
+ document.getElementById('atk-inspector-checks').replaceChildren();
+ document.getElementById('atk-inspector-status').textContent='No backup file selected.';
+ document.getElementById('atk-inspector-file-label').textContent='Choose Backup File';
+}
+async function atkInspectorStart(){
+ try{
+  await managementBackupFounder();
+  atkWizardReset();
+  document.getElementById('atk-backup-home').hidden=true;
+  document.getElementById('atk-inspector').hidden=false;
+  document.getElementById('atk-backup-footer').hidden=true;
+  const dialog=document.getElementById('management-dialog');if(dialog)dialog.scrollTop=0;
+ }catch(e){managementBackupStatus(e?.message||'Founder permission required.')}
+}
+function atkInspectorCancel(){
+ atkInspectorReset();
+ document.getElementById('atk-backup-home').hidden=false;
+ const dialog=document.getElementById('management-dialog');if(dialog)dialog.scrollTop=0;
+}
+function atkInspectorAnalyze(data){
+ if(!data||typeof data!=='object'||Array.isArray(data))throw Error('This file is not a valid ATK backup.');
+ const rolesOnly=data.format==='addicted-to-karaoke-member-role-backup';
+ const content=data.format==='addicted-to-karaoke-content-backup';
+ if(!rolesOnly&&!content)throw Error('Unsupported backup format. Choose an Addicted to Karaoke JSON backup.');
+ if(data.version!==1)throw Error('Unsupported backup version. This inspector supports version 1.');
+ const issues=[],groups=[],tables={};
+ if(rolesOnly){
+  if(data.tables!==undefined)throw Error('Members & Roles Only backup should not contain site data.');
+ }else{
+  if(!data.tables||typeof data.tables!=='object'||Array.isArray(data.tables))throw Error('Content backup has no table data.');
+  for(const key of managementBackupTables){
+   if(!Array.isArray(data.tables[key]))throw Error('Backup has missing or invalid '+key+' records.');
+   tables[key]=data.tables[key];
+  }
+ }
+ const access=rolesOnly?data.member_access:data.member_access;
+ if(rolesOnly&&!Array.isArray(access))throw Error('Members & Roles backup has no role roster.');
+ if(access!==undefined&&!Array.isArray(access))throw Error('Member role roster is invalid.');
+ if(access!==undefined){
+  if(!Number.isInteger(data.account_count)||data.account_count!==access.length)
+   issues.push('Member count in file does not match saved member records.');
+  const seen=new Set();
+  for(const [index,row] of access.entries()){
+   if(!row||typeof row!=='object'||Array.isArray(row)){issues.push('Invalid member record #'+(index+1)+'.');continue}
+   const id=String(row.user_id||''),role=String(row.role||'');
+   if(!/^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}$/i.test(id))issues.push('Member record #'+(index+1)+' is missing a valid account ID.');
+   if(seen.has(id))issues.push('Duplicate account ID in members: '+id.slice(0,8)+'.');
+   seen.add(id);
+   if(!['member','moderator','admin','super_admin','founder'].includes(role))issues.push('Unrecognized role in member record #'+(index+1)+'.');
+   const fingerprint=String(row.email_fingerprint||'');
+   if(fingerprint&&!/^[\da-f]{64}$/i.test(fingerprint))issues.push('Invalid email fingerprint in member record #'+(index+1)+'.');
+   if(typeof row.verified!=='boolean')issues.push('Invalid verification value in member record #'+(index+1)+'.');
+  }
+ }
+ if(content){
+  const declared=data.table_counts;
+  for(const key of managementBackupTables){
+   const rows=tables[key],ids=new Set();
+   if(declared&&declared[key]!==rows.length)issues.push('Count mismatch for '+key+': file says '+String(declared[key])+', found '+rows.length+'.');
+   for(const [index,row] of rows.entries()){
+    if(!row||typeof row!=='object'||Array.isArray(row)){issues.push('Invalid '+key+' record #'+(index+1)+'.');continue}
+    const identity=key==='review_ratings'?String(row.review_id||'')+'|'+String(row.category||''):String(row.id||'');
+    if(!identity||identity==='|'||identity==='undefined')issues.push('Missing ID in '+key+' record #'+(index+1)+'.');
+    if(ids.has(identity))issues.push('Duplicate record in '+key+': '+identity.slice(0,40)+'.');
+    ids.add(identity);
+   }
+  }
+  const venueIds=new Set(tables.venues.filter(r=>r&&r.id).map(r=>r.id));
+  const reviewIds=new Set(tables.reviews.filter(r=>r&&r.id).map(r=>r.id));
+  const broken={
+   missing_venue_for_review:tables.reviews.filter(r=>r&&r.venue_id&&!venueIds.has(r.venue_id)).length,
+   missing_review_for_rating:tables.review_ratings.filter(r=>r&&r.review_id&&!reviewIds.has(r.review_id)).length,
+   missing_venue_for_photo:tables.venue_photos.filter(r=>r&&r.venue_id&&!venueIds.has(r.venue_id)).length,
+   missing_venue_for_schedule:tables.venue_schedules.filter(r=>r&&r.venue_id&&!venueIds.has(r.venue_id)).length
+  };
+  for(const [key,count] of Object.entries(broken)){
+   if(count)issues.push(count+' '+key.replace(/_/g,' ')+' relationship(s) are missing.');
+   if(data.integrity_check&&data.integrity_check[key]!==count)issues.push('Integrity summary does not match '+key+'.');
+  }
+  if(data.recovery_scope==='content-plus-member-access'&&!Array.isArray(access))issues.push('This full-content snapshot has no member role roster.');
+ }
+ for(const [key,label] of atkInspectorCategories){
+  const rows=key==='member_access'?(access||[]):(tables[key]||[]);
+  if(rows.length)groups.push({key,label,rows});
+ }
+ const scope=rolesOnly?'Members & Roles Only':
+  data.backup_scope?.type==='venue'?'Single Venue':
+  Array.isArray(access)?'Full Backup':'Content Backup';
+ return {rolesOnly,groups,issues,scope,tables,access:access||[],data};
+}
+function atkInspectorRecordLabel(group,row,index){
+ if(!row||typeof row!=='object')return 'Record '+(index+1)+' — invalid entry';
+ const tables=atkInspectorCurrent?.tables||{},venueNames=new Map((tables.venues||[]).filter(v=>v&&v.id).map(v=>[v.id,v.name||'Unnamed venue']));
+ const reviewNames=new Map((tables.reviews||[]).filter(r=>r&&r.id).map(r=>[r.id,venueNames.get(r.venue_id)||'Unknown venue']));
+ const short=(v,max=100)=>String(v??'').slice(0,max);
+ if(group==='venues')return short(row.name||'Unnamed venue')+(row.city?' — '+short(row.city,40):'');
+ if(group==='reviews')return short(venueNames.get(row.venue_id)||'Unknown venue')+' — '+short(row.display_name||'Reviewer')+(row.comment?' · '+short(row.comment,110):'');
+ if(group==='review_ratings')return short(reviewNames.get(row.review_id)||'Unknown review')+' — '+short(String(row.category||'Rating').replace(/_/g,' '))+' · '+(row.score==null?'N/A':row.score+'/5');
+ if(group==='venue_schedules')return short(venueNames.get(row.venue_id)||'Unknown venue')+' — '+short(row.event_name||'Karaoke')+' · Day '+String(row.day_of_week??'?')+(row.start_time?' at '+short(row.start_time,20):'');
+ if(group==='venue_photos')return short(venueNames.get(row.venue_id)||'Unknown venue')+' — '+short(row.caption||row.storage_path||'Photo metadata');
+ if(group==='kjs')return short(row.display_name||'Unnamed KJ');
+ if(group==='member_access'){
+  const number=row.member_number==null?'Unknown number':String(row.member_number).padStart(6,'0');
+  const role=String(row.role||'Unknown role').replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase());
+  return 'Member #'+number+' — '+role+(row.verified?' · Verified':'');
+ }
+ return short(row.id||'Record '+(index+1));
+}
+function atkInspectorChoose(key){
+ if(!atkInspectorCurrent)return;
+ atkInspectorSelected=atkInspectorSelected===key?'':key;
+ document.querySelectorAll('#atk-inspector-tiles .atk-inspector-tile').forEach(tile=>{
+  const selected=tile.dataset.category===atkInspectorSelected;
+  tile.classList.toggle('selected',selected);tile.setAttribute('aria-pressed',String(selected));
+ });
+ const pane=document.getElementById('atk-inspector-detail'),host=document.getElementById('atk-inspector-detail-rows');
+ host.replaceChildren();
+ const group=atkInspectorCurrent.groups.find(g=>g.key===atkInspectorSelected);
+ pane.hidden=!group;
+ if(!group)return;
+ document.getElementById('atk-inspector-detail-title').textContent=group.label+' ('+group.rows.length+')';
+ for(const [index,row] of group.rows.slice(0,100).entries()){
+  const entry=document.createElement('div');entry.className='atk-inspector-record';
+  entry.textContent=atkInspectorRecordLabel(group.key,row,index);
+  host.appendChild(entry);
+ }
+ if(group.rows.length>100){
+  const note=document.createElement('small');note.textContent='Showing the first 100 of '+group.rows.length+' records.';host.appendChild(note);
+ }
+}
+function atkInspectorRender(file,analysis){
+ atkInspectorCurrent=analysis;atkInspectorSelected='';
+ const meta=document.getElementById('atk-inspector-meta');meta.replaceChildren();
+ const heading=document.createElement('strong');heading.textContent=file.name;meta.appendChild(heading);
+ const date=analysis.data.created_at?new Date(analysis.data.created_at):null;
+ const dateText=date&&!Number.isNaN(date.getTime())?date.toLocaleString():'Not recorded';
+ for(const value of [analysis.scope+' · '+dateText,'Build: '+String(analysis.data.build||'Not recorded')]){
+  const small=document.createElement('small');small.textContent=value;meta.appendChild(small);
+ }
+ const tiles=document.getElementById('atk-inspector-tiles');tiles.replaceChildren();
+ for(const group of analysis.groups){
+  const tile=document.createElement('button');tile.type='button';tile.className='atk-inspector-tile';
+  tile.dataset.category=group.key;tile.setAttribute('aria-pressed','false');
+  tile.setAttribute('aria-label',group.rows.length+' '+group.label+'. Tap to inspect records.');
+  const count=document.createElement('strong');count.textContent=String(group.rows.length);
+  const label=document.createElement('span');label.textContent=group.label;
+  tile.append(count,label);tile.onclick=()=>atkInspectorChoose(group.key);tiles.appendChild(tile);
+ }
+ if(!analysis.groups.length){
+  const noRecords=document.createElement('p');noRecords.textContent='No records are included in this file.';tiles.appendChild(noRecords);
+ }
+ const checks=document.getElementById('atk-inspector-checks');checks.replaceChildren();
+ const status=document.createElement('div');status.className='atk-inspector-check-heading';
+ status.textContent=analysis.issues.length?analysis.issues.length+' structure warning(s) found':'✓ File structure checks passed';
+ checks.appendChild(status);
+ for(const issue of analysis.issues.slice(0,30)){
+  const item=document.createElement('div');item.className='atk-inspector-check-item';item.textContent='⚠ '+issue;checks.appendChild(item);
+ }
+ if(analysis.issues.length>30){
+  const more=document.createElement('small');more.textContent='And '+(analysis.issues.length-30)+' more warnings.';checks.appendChild(more);
+ }
+ if(!analysis.rolesOnly){
+  const note=document.createElement('div');note.className='atk-inspector-check-item';
+  note.textContent=analysis.data.tables.venue_photos?.length?'Photo metadata is listed, but actual image files are not included.':'This backup does not contain uploaded image files or login credentials.';
+  checks.appendChild(note);
+ }
+ document.getElementById('atk-inspector-detail').hidden=true;
+ document.getElementById('atk-inspector-summary').hidden=false;
+ document.getElementById('atk-inspector-file-label').textContent='Choose Another Backup';
+ document.getElementById('atk-inspector-status').textContent=analysis.issues.length?'Backup loaded with warnings. Tap a category to inspect its records.':'Backup opened. Tap a category to inspect its records.';
+}
+async function atkInspectorLoad(input){
+ const file=input.files?.[0];if(!file)return;
+ const status=document.getElementById('atk-inspector-status');status.textContent='Checking backup file…';
+ document.getElementById('atk-inspector-summary').hidden=true;
+ atkInspectorCurrent=null;atkInspectorSelected='';
+ try{
+  if(file.size>20*1024*1024)throw Error('File exceeds the 20 MB inspection limit.');
+  if(!/\.json$/i.test(file.name))throw Error('Choose a JSON backup file.');
+  const data=JSON.parse(await file.text());
+  const analysis=atkInspectorAnalyze(data);
+  atkInspectorRender(file,analysis);
+ }catch(e){
+  status.textContent='Cannot inspect this backup: '+(e?.message||'Unreadable file');
+  document.getElementById('atk-inspector-file-label').textContent='Choose Another Backup';
+ }finally{
+  // Selecting the same filename again must still fire change on Android.
+  input.value='';
+ }
+}
 
 function managementBackupStatus(message){document.getElementById('management-backup-status').textContent=message}
 async function managementBackupOpen(){
@@ -1876,4 +2137,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-91";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-92";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
