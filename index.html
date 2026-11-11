@@ -1234,7 +1234,7 @@ function atkWizardRender(){
    const reviews=managementRestoreInclude.has('reviews')?data.tables.reviews.filter(r=>venueIds.has(String(r.venue_id))):[];
    const names=venues.length===1?(venues[0].name||'this venue'):venues.length===2?venues.map(v=>v.name||'Unnamed venue').join(' and '):venues.length+' venues';
    const reviewText=reviews.length?' and '+reviews.length+' '+(reviews.length===1?'review':'reviews'):'';
-   info.textContent='Restore '+names+reviewText+'?';
+   info.textContent='Are you sure you want to restore '+names+reviewText+'?';
    info.className='atk-restore-confirm-question';
    const note=document.createElement('p');note.textContent='Existing records will stay unchanged.';note.className='atk-restore-confirm-note';body.appendChild(note);
    next.textContent='Restore Now';
@@ -1612,4 +1612,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-87.13";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-87.14";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
