@@ -1070,6 +1070,7 @@ async function memberSavePrivacy(){if(!memberProfile||!authUser)return;const cha
 const managementBackupTables=['venues','kjs','venue_schedules','venue_photos','reviews','review_ratings'];
 let managementBackupPending=null,managementRestoreSelection=new Set(),managementBackupDiffCounts={},managementRestoreRecordSelection=new Set(),managementRestoreOpenTable=null,managementRestoreDiffRows={};
 const managementRestoreGroups=[['venues','Venues'],['kjs','KJ Profiles'],['venue_schedules','Karaoke Schedules'],['venue_photos','Venue Photo Records'],['reviews','Reviews'],['review_ratings','Review Ratings']];
+const managementRestoreInclude=new Set();
 function managementRestoreRenderSelection(){
  const host=document.getElementById('management-restore-selection');host.replaceChildren();
  const selectedVenues=(managementBackupPending?.tables?.venues||[]).filter(v=>managementRestoreRecordSelection.has(String(v.id)));
@@ -1082,14 +1083,14 @@ function managementRestoreRenderSelection(){
  for(const [table,label] of managementRestoreGroups){
   const diff=managementBackupDiffCounts[table],count=diff?(diff.missing+diff.changed+diff.onlyLive):0;
   if(!count)continue;
-  if(table==='reviews'&&count===bundledReviews.length&&selectedVenues.length)continue;
-  const tile=document.createElement('button');tile.type='button';tile.className='mv-amenity-option atk-restore-tile'+(managementRestoreOpenTable===table?' selected':'');
+  
+  const tile=document.createElement('button');tile.type='button';tile.className='mv-amenity-option atk-restore-tile'+((table==='venues'?managementRestoreOpenTable===table:managementRestoreInclude.has(table))?' selected':'');
   tile.setAttribute('aria-expanded',String(managementRestoreOpenTable===table));
   const heading=document.createElement('strong');heading.textContent=label;
-  const detail=document.createElement('span');detail.textContent=diff?(count+' '+(count===1?'difference':'differences')):'Not compared';
+  const detail=document.createElement('span');detail.textContent=diff?(count+' '+(count===1?'difference':'differences')+(table!=='venues'?(managementRestoreInclude.has(table)?' — selected':' — not selected') :'')):'Not compared';
   detail.style.cssText='display:block;margin-top:7px;font-size:.85em;font-weight:400;line-height:1.35';
   tile.append(heading,detail);tile.style.cssText+=';display:block;text-align:left;white-space:normal;line-height:1.35';
-  tile.onclick=()=>{managementRestoreOpenTable=managementRestoreOpenTable===table?null:table;managementRestoreRenderSelection()};
+  tile.onclick=()=>{if(table==='venues')managementRestoreOpenTable=managementRestoreOpenTable===table?null:table;else if(managementRestoreInclude.has(table))managementRestoreInclude.delete(table);else managementRestoreInclude.add(table);managementRestoreRenderSelection()};
   host.append(tile);
  }
  if(managementRestoreOpenTable){
@@ -1112,7 +1113,7 @@ function managementRestoreRenderSelection(){
   host.append(section);
  }
  const count=managementRestoreRecordSelection.size;
- document.getElementById('management-restore-count').textContent=count+' venue'+(count===1?'':'s')+' selected for restore'+(count?' — includes '+bundledReviews.length+' reviews, '+bundledRatings.length+' ratings, '+bundledSchedules.length+' schedules and '+bundledPhotos.length+' photo records automatically.':'');
+ document.getElementById('management-restore-count').textContent=count+' venue'+(count===1?'':'s')+' selected; '+(managementRestoreInclude.has('reviews')?bundledReviews.length:0)+' reviews, '+(managementRestoreInclude.has('review_ratings')?bundledRatings.length:0)+' ratings, '+(managementRestoreInclude.has('venue_schedules')?bundledSchedules.length:0)+' schedules and '+(managementRestoreInclude.has('venue_photos')?bundledPhotos.length:0)+' photo records selected.';
  document.getElementById('management-restore-submit').disabled=!count;
 }
 async function managementBackupFounder(){
@@ -1236,7 +1237,7 @@ function managementBackupValidateSnapshot(data){
 async function managementBackupFileSelected(input){
  const file=input.files&&input.files[0];if(!file)return;
  // Keep the selected file and the management dialog intact while the native picker returns.
- managementRestoreSelection.clear();managementBackupPending=null;managementBackupDiffCounts={};
+ managementRestoreSelection.clear();managementRestoreInclude.clear();managementBackupPending=null;managementBackupDiffCounts={};
  document.getElementById('management-backup-preview').hidden=true;
  document.getElementById('atk-restore-empty').hidden=true;
  document.getElementById('atk-backup-footer').hidden=false;
@@ -1293,9 +1294,9 @@ async function managementBackupRestore(){
   const venues=managementBackupPending.tables.venues.filter(v=>managementRestoreRecordSelection.has(String(v.id))&&managementRestoreDiffRows.venues?.some(d=>d.key===String(v.id)&&d.type==='missing'));
   if(!venues.length)throw Error('No missing venues selected.');
   const bundles=venues.map(venue=>{
-   const reviews=managementBackupPending.tables.reviews.filter(r=>r.venue_id===venue.id);
+   const reviews=managementRestoreInclude.has('reviews')?managementBackupPending.tables.reviews.filter(r=>r.venue_id===venue.id):[];
    const ids=new Set(reviews.map(r=>r.id));
-   return {p_venue:venue,p_reviews:reviews,p_ratings:managementBackupPending.tables.review_ratings.filter(r=>ids.has(r.review_id)),p_schedules:managementBackupPending.tables.venue_schedules.filter(r=>r.venue_id===venue.id),p_photos:managementBackupPending.tables.venue_photos.filter(r=>r.venue_id===venue.id)};
+   return {p_venue:venue,p_reviews:reviews,p_ratings:managementRestoreInclude.has('review_ratings')?managementBackupPending.tables.review_ratings.filter(r=>ids.has(r.review_id)):[],p_schedules:managementRestoreInclude.has('venue_schedules')?managementBackupPending.tables.venue_schedules.filter(r=>r.venue_id===venue.id):[],p_photos:managementRestoreInclude.has('venue_photos')?managementBackupPending.tables.venue_photos.filter(r=>r.venue_id===venue.id):[]};
   });
   managementBackupStatus('Validating venue and related records (read-only)…');
   for(const bundle of bundles){const check=await authClient.rpc('atk_restore_venue_bundle',{...bundle,p_dry_run:true});if(check.error)throw Error(check.error.message)}
@@ -1309,7 +1310,7 @@ async function managementBackupRestore(){
    restored++;
   }
   const audit=await authClient.rpc('founder_log_maintenance',{p_action:'content_restore_completed',p_reason:reason,p_details:{venue_ids:venues.map(v=>v.id),venues:restored,...totals}});
-  managementRestoreRecordSelection.clear();
+  managementRestoreRecordSelection.clear();managementRestoreInclude.clear();
   await managementBackupShowDiff(managementBackupPending);
   const remaining=Object.values(managementBackupDiffCounts).reduce((n,d)=>n+d.missing+d.changed+d.onlyLive,0);
   document.getElementById('management-backup-preview').hidden=remaining===0;
@@ -1413,4 +1414,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-83";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-84";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
