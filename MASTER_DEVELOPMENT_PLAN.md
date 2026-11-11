@@ -76,6 +76,16 @@ Existing member permissions as inspected 2026-11-11: Mr Steve = Founder, Steven 
 - Verification: 9 inline JavaScript blocks parse; simulated new-member Google redirect, three-step flow, multi-select, save, skip, existing-member edit cancel, and checks that no privileged role RPC executes all passed. **Android acceptance testing pending.**
 - Scope remains account onboarding only; actual Go Live activation and destructive wipe stay deferred.
 
+## Build 96 — KJ Hosting Setup Wizard (implemented, awaiting Android approval)
+- Members who choose KJ / Host during first-time onboarding automatically see the KJ Hosting Setup Wizard after finishing member signup. Existing members may enable that interest through My Karaoke Interests, then open **Profile → My Hosting Venues**.
+- Step 1 searches *published* venue names in Supabase with live autocomplete and shows name, address/city/state; choosing an existing venue keeps its ID. **Add New Venue** collects name, street address, city, state and optional ZIP when no matching public listing is found.
+- Step 2 uses compact Amenities-style selectable day tiles (Sunday–Saturday) with individually entered **start/end times** for each chosen day, including over-midnight times.
+- Step 3 shows the venue/schedule summary and submits an owner-scoped **pending request**. More than one hosting venue per member is supported; Profile shows the latest submitted requests and their status.
+- New RLS-protected `public.kj_host_submissions` stores proposed venues and schedules. Authenticated KJs can insert only their own requests in pending status and read only their own requests; they cannot alter approved public venues, published schedules, platform roles, certification or ownership. Founder/admin review and conversion into approved venues/KJ schedules is a **separate next milestone**.
+- Tested simulated existing venue autocomplete → Friday 8 PM–1 AM → pending insertion, and unlisted venue → city/state/address → Thursday/Friday independent schedules → pending insertion. Empty/unset session times are blocked. Nine inline JS script blocks parsed successfully.
+- **Important recovery gap:** The current Full Backup/Restore flow does not yet include `kj_host_submissions`. Add this to complete backup/recovery before launch and test with restored pending requests. No actual KJ requests were submitted during development tests.
+- **Android acceptance pending.** No public venues or karaoke schedules changed during implementation.
+
 ## Priority 3 — KJ profiles and hosting schedules
 - KJs can search for a venue, attach their KJ profile, and submit their own karaoke days and start/end times.
 - If venue is missing, KJ may create a basic venue listing, starting in Submitted status for review; listing creator is NOT venue owner.
