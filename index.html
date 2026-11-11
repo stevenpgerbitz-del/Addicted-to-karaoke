@@ -1059,7 +1059,12 @@ function managementRestoreRenderSelection(){
   const selected=managementRestoreSelection.has(table),tile=document.createElement('button');
   tile.type='button';tile.className='mv-amenity-option atk-restore-tile'+(selected?' selected':'');
   tile.setAttribute('aria-pressed',String(selected));
-  const heading=document.createElement('strong');heading.textContent=label+' ('+(managementBackupPending?.tables[table]?.length||0)+')';const detail=document.createElement('small');const diff=managementBackupDiffCounts[table];detail.textContent=diff?(diff.missing||diff.changed||diff.onlyLive?[(diff.missing?diff.missing+' missing':''),(diff.changed?diff.changed+' changed':''),(diff.onlyLive?diff.onlyLive+' live only':'')].filter(Boolean).join(' · '):'No differences'):'Not compared';tile.append(heading,detail);tile.style.display='flex';tile.style.flexDirection='column';tile.style.alignItems='flex-start';tile.style.gap='5px';
+  const diff=managementBackupDiffCounts[table],count=diff?(diff.missing+diff.changed+diff.onlyLive):0;
+  const heading=document.createElement('strong');heading.textContent=label;
+  const detail=document.createElement('span');detail.textContent=diff?(count+' '+(count===1?'difference':'differences')):'Not compared';
+  detail.style.display='block';detail.style.marginTop='7px';detail.style.fontSize='0.85em';detail.style.fontWeight='400';detail.style.lineHeight='1.35';
+  tile.append(heading,detail);tile.style.display='block';tile.style.textAlign='left';tile.style.whiteSpace='normal';tile.style.lineHeight='1.35';
+
   tile.onclick=()=>{if(selected)managementRestoreSelection.delete(table);else managementRestoreSelection.add(table);managementRestoreRenderSelection()};
   host.append(tile);
  }
@@ -1194,7 +1199,7 @@ async function managementBackupFileSelected(input){
   managementBackupPending=data;managementRestoreSelection.clear();managementRestoreRenderSelection();
   managementBackupStatus('Comparing backup against live database (read-only)…');
   await managementBackupShowDiff(data);
-  document.getElementById('management-backup-summary').textContent='Backup: '+new Date(data.created_at).toLocaleString()+' · Partial content backup';
+  document.getElementById('management-backup-summary').textContent='These numbers show differences between the backup file and the current system. A difference may be missing, changed, or present only in the live system. Not all differences can be restored yet.';
   document.getElementById('management-backup-preview').hidden=false;
   document.querySelector('#atk-backup-restore > p').hidden=true;
   document.querySelector('#atk-backup-restore > .management-pages').hidden=true;
@@ -1332,4 +1337,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-60";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-61";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script></body></html>
