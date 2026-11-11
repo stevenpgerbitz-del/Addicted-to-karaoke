@@ -1178,7 +1178,7 @@ function atkWizardRender(){
    select.onchange=()=>{venue.hidden=select.value!=='venue'};
    managementBackupFounder().then(()=>managementBackupRows('venues')).then(rows=>{venue.replaceChildren(...rows.map(r=>{const o=document.createElement('option');o.value=String(r.id);o.textContent=r.name||r.venue_name||String(r.id);return o}));if(atkWizardVenueId)venue.value=atkWizardVenueId}).catch(e=>message.textContent=e.message);
   }else if(page===1){info.textContent='Records scanned: '+Object.entries(atkWizardSnapshot||{}).map(([k,v])=>k+': '+v.length).join(', ')}
-  else {info.textContent='Content backup includes '+Object.entries(atkWizardSnapshot||{}).map(([k,v])=>k+' ('+v.length+')').join(', ');if(page===2){const reason=document.getElementById('atk-backup-reason');body.appendChild(reason);reason.placeholder='Reason for backup (at least 5 characters)'}else next.textContent='Download Backup'}
+  else {info.textContent='Content backup includes '+Object.entries(atkWizardSnapshot||{}).map(([k,v])=>k+' ('+v.length+')').join(', ');if(page===2){const reason=document.createElement('textarea');reason.id='atk-wizard-backup-reason';reason.rows=3;reason.placeholder='Reason for backup (at least 5 characters)';reason.style.cssText='width:100%;box-sizing:border-box;min-height:90px;padding:12px;border-radius:9px;background:#301b1d;color:white;border:1px solid #8c5552';reason.value=document.getElementById('atk-backup-reason').value;reason.oninput=()=>{document.getElementById('atk-backup-reason').value=reason.value};body.appendChild(reason)}else next.textContent='Download Backup'}
   message.textContent='Partial content backup only: accounts, permissions, audit history and uploaded image files are not included.';
  }else if(type==='restore'){
   if(page===0){info.textContent=managementBackupPending?'Backup loaded.':'Choose a backup file to scan.';const btn=document.createElement('button');btn.textContent='Choose Backup File';btn.onclick=()=>document.getElementById('management-backup-file').click();body.appendChild(btn)}
@@ -1190,7 +1190,7 @@ function atkWizardRender(){
   info.textContent=['Review launch readiness.','Verify configuration, security and recovery.','Resolve any remaining launch blockers.','Launch remains unavailable until checks are verified.'][page];if(page===3)next.textContent='Close';
  }
 }
-async function atkWizardNext(){
+async async function atkWizardNext(){
  const message=document.getElementById('atk-wizard-message');
  try{
   await managementBackupFounder();
@@ -1212,7 +1212,7 @@ async function atkWizardNext(){
     atkWizardSnapshot=tables;
    }
    if(atkWizardPage===2&&document.getElementById('atk-backup-reason').value.trim().length<5)throw Error('Enter a reason of at least five characters.');
-   if(atkWizardPage===3){await managementBackupDownload(atkWizardSnapshot);document.getElementById('atk-wizard-message').textContent=document.getElementById('management-backup-status').textContent||'Backup downloaded. Check your downloads.';return}
+   if(atkWizardPage===3){await managementBackupDownload(atkWizardSnapshot);document.getElementById('atk-wizard-message').textContent=document.getElementById('management-backup-status').textContent||'Backup request completed. Check your downloads.';return}
   }
   if(atkWizardType==='restore'){
    if(atkWizardPage===0&&!managementBackupPending)throw Error('Choose and scan a backup first.');
