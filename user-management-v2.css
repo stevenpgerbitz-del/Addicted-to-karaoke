@@ -1,0 +1,682 @@
+/* Build 133 — User Management, matching Venue Management's quiet burgundy and cream.
+   No neon or unrelated design changes. */
+
+#management-dialog[open]:has(> #management-users:not([hidden])),
+#management-dialog[open]:has(> #management-member-details:not([hidden])){
+ width:min(94vw,525px)!important;
+ max-height:min(88dvh,calc(100dvh - 32px))!important;
+ box-sizing:border-box;
+ background:#1b0d0f;
+ border:1px solid #a46c68;
+ border-radius:17px;
+ padding:18px 15px 14px!important;
+ box-shadow:none;
+}
+#management-dialog #management-users,
+#management-dialog #management-member-details{
+ width:100%;
+ min-width:0;
+ min-height:0;
+ margin:0;
+ padding:0 0 8px;
+ box-sizing:border-box;
+ overflow:auto;
+ overscroll-behavior:contain;
+ scrollbar-width:thin;
+ scrollbar-color:#855550 transparent;
+}
+#management-dialog #management-users[hidden],
+#management-dialog #management-member-details[hidden],
+#management-dialog .mg2-users-screen [hidden],
+#management-dialog .mg2-details-screen [hidden]{
+ display:none!important;
+}
+#management-dialog[open]:has(> #management-users:not([hidden]))>.atk-history-footer,
+#management-dialog[open]:has(> #management-member-details:not([hidden]))>.atk-history-footer{
+ flex:0 0 auto;
+ padding-top:10px;
+ margin-top:8px;
+ border-top:1px solid #694347;
+}
+#management-dialog[open]:has(> #management-users:not([hidden]))>.atk-history-footer .management-close,
+#management-dialog[open]:has(> #management-member-details:not([hidden]))>.atk-history-footer .management-close{
+ margin:0!important;
+ width:100%;
+ min-height:48px;
+ border:1px solid #e1685f;
+ border-radius:11px;
+ background:linear-gradient(#bc1c1c,#870c0c);
+ color:#fff5ed;
+ box-shadow:none;
+ font:700 16px Arial,sans-serif;
+}
+#management-dialog .mg2-icon{
+ display:block;
+ flex:none;
+ width:20px;height:20px;
+ vertical-align:middle;
+}
+#management-users .mg2-header{
+ display:flex;
+ align-items:start;
+ gap:10px;
+ margin:0 0 18px;
+}
+#management-users .mg2-header-copy{
+ min-width:0;
+ flex:1;
+}
+#management-users .mg2-header h2,
+#management-member-details .mg2-details-header h2{
+ margin:0;
+ color:#f6e6d5;
+ font:700 25px/1.14 Georgia,serif;
+}
+#management-users .mg2-header p{
+ margin:8px 0 0;
+ color:#cdb2a6;
+ font:400 12px/1.45 Arial,sans-serif;
+}
+#management-users .mg2-search-label{
+ position:relative;
+ display:block;
+ width:100%;
+ min-width:0;
+ margin:0 0 11px;
+ padding:0;
+ font-size:0;
+ line-height:0;
+}
+#management-users .mg2-search-label>.mg2-icon{
+ position:absolute;
+ left:13px;
+ top:50%;
+ transform:translateY(-50%);
+ width:19px;height:19px;
+ color:#e0bdac;
+ pointer-events:none;
+}
+#management-users #mg-search{
+ display:block;
+ box-sizing:border-box;
+ width:100%;
+ max-width:100%;
+ height:48px;
+ min-height:48px;
+ padding:10px 12px 10px 43px;
+ margin:0;
+ border:1px solid #98625b;
+ border-radius:11px;
+ box-shadow:none;
+ background:#2d1b1f;
+ color:#f6e9de;
+ font:400 14px Arial,sans-serif;
+}
+#management-users #mg-search::placeholder{color:#bdaba0;opacity:1}
+#management-users .mg2-toolbar{
+ display:grid;
+ grid-template-columns:90px minmax(0,1fr) minmax(0,1fr);
+ align-items:stretch;
+ gap:8px;
+ margin-bottom:8px;
+ min-width:0;
+ width:100%;
+ box-sizing:border-box;
+}
+#management-users .mg2-filter-button,
+#management-users .mg2-toolbar-label select{
+ height:43px;
+ min-height:43px;
+ box-sizing:border-box;
+ width:100%;
+ border:1px solid #885751;
+ border-radius:10px;
+ background:#322025;
+ color:#f7e7db;
+ box-shadow:none;
+ font:600 12px Arial,sans-serif;
+}
+#management-users .mg2-filter-button{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:5px;
+ padding:8px 5px;
+}
+#management-users .mg2-filter-button>.mg2-icon{width:16px;height:16px}
+#management-users .mg2-filter-button[aria-expanded="true"]{
+ border-color:#c78e7e;background:#3c272a;
+}
+#management-users .mg2-toolbar-label{
+ display:block;
+ min-width:0;
+ margin:0;
+ padding:0;
+ font-size:0;
+ line-height:0;
+}
+#management-users .mg2-toolbar-label select{
+ display:block;
+ padding:8px 5px;
+ font-size:12px;
+ color-scheme:dark;
+}
+#management-users .mg2-more-filters{
+ display:flex;
+ align-items:end;
+ gap:12px;
+ box-sizing:border-box;
+ min-width:0;
+ margin-bottom:13px;
+ padding:10px 12px;
+ border:1px solid #75504a;
+ border-radius:10px;
+ background:#28181b;
+}
+#management-users .mg2-sort-label{
+ flex:1;
+ min-width:0;
+ margin:0;
+ color:#dec4b5;
+ font:700 12px/1.35 Arial,sans-serif;
+}
+#management-users .mg2-sort-label select{
+ display:block;
+ width:100%;
+ box-sizing:border-box;
+ min-height:40px;
+ margin-top:5px;
+ padding:8px 7px;
+ border:1px solid #94605a;
+ border-radius:8px;
+ background:#382227;
+ color:#f6e5da;
+ font:400 13px Arial,sans-serif;
+}
+#management-users .mg2-inline-link{
+ flex:none;
+ min-height:40px;
+ padding:7px 1px;
+ border:0;
+ background:transparent;
+ text-decoration:underline;
+ text-underline-offset:3px;
+ color:#e0b9ac;
+ font:700 12px Arial,sans-serif;
+ box-shadow:none;
+}
+#management-users .mg2-block-heading{
+ display:flex;
+ align-items:baseline;
+ justify-content:space-between;
+ gap:8px;
+ margin:17px 0 10px;
+ padding:0;
+ width:100%;
+}
+#management-users .mg2-block-heading h3{
+ margin:0;
+ font:700 19px/1.2 Georgia,serif;
+ color:#f8e5d6;
+}
+#management-users .mg2-total{
+ color:#c9b1a5;
+ font:400 12px Arial,sans-serif;
+ text-align:right;
+}
+#management-users .mg2-attention{
+ display:block;
+ margin:14px 0 0;
+}
+#management-users .mg2-approval-action{
+ display:flex;
+ gap:10px;
+ align-items:center;
+ width:100%;
+ min-height:69px;
+ margin:0;
+ padding:11px;
+ background:#2c1a1d;
+ color:#f7e9dc;
+ border:1px solid #79504b;
+ border-radius:11px;
+ box-shadow:none;
+ text-align:left;
+}
+#management-users .mg2-approval-action:focus-visible,
+#management-users .mg2-member-card:focus-visible,
+#management-users .mg2-browse:focus-visible{
+ outline:2px solid #f5e6d5;
+ outline-offset:2px;
+}
+#management-users .mg2-approval-icon{
+ display:grid;
+ place-items:center;
+ width:36px;height:36px;
+ flex:none;
+ background:#402629;
+ border-radius:9px;
+ color:#eac5b5;
+}
+#management-users .mg2-approval-icon .mg2-icon{width:23px;height:23px}
+#management-users .mg2-approval-copy{min-width:0;flex:1}
+#management-users .mg2-approval-copy strong{
+ display:block;
+ font:700 13px/1.3 Arial,sans-serif;
+}
+#management-users .mg2-approval-copy small{
+ display:block;
+ margin-top:4px;
+ color:#cbb3a9;
+ font:400 11px/1.45 Arial,sans-serif;
+}
+#management-users .mg2-approval-action>.mg2-icon{
+ width:16px;height:16px;color:#ccb2a8;
+}
+#management-users .mg2-directory{
+ width:100%;
+ min-width:0;
+ box-sizing:border-box;
+ border-top:1px solid #72484b;
+ margin-top:18px;
+ padding:1px 0 0;
+}
+#management-users .mg2-directory-hint{
+ margin:0 0 10px;
+ color:#cdb3a8;
+ font:400 12px/1.45 Arial,sans-serif;
+}
+#management-users .mg2-recent-list,
+#management-users .mg2-results{
+ display:grid;
+ gap:8px;
+ width:100%;
+ min-width:0;
+}
+#management-users .mg2-member-card{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ text-align:left;
+ width:100%;
+ box-sizing:border-box;
+ min-width:0;
+ min-height:72px;
+ padding:9px 10px;
+ border:1px solid #875550;
+ border-radius:11px;
+ background:#301d20;
+ color:#f8e9dc;
+ box-shadow:none;
+}
+#management-users .mg2-member-card:hover{
+ border-color:#b68176;
+ background:#382326;
+}
+#management-users .mg2-avatar,
+#management-member-details .mg2-avatar{
+ display:grid;
+ place-items:center;
+ flex:none;
+ overflow:hidden;
+ width:48px;height:48px;
+ border:1px solid #95655a;
+ border-radius:50%;
+ background:#593336;
+ color:#f4e2d5;
+ font:700 23px/1 Georgia,serif;
+}
+#management-users .mg2-avatar img,
+#management-member-details .mg2-avatar img{
+ display:block;
+ width:100%;height:100%;
+ object-fit:cover;
+}
+#management-users .mg2-member-info{
+ display:block;flex:1;min-width:0;
+}
+#management-users .mg2-member-info strong{
+ display:block;
+ margin:0;
+ color:#f7e8da;
+ font:700 14px/1.3 Arial,sans-serif;
+ overflow-wrap:anywhere;
+}
+#management-users .mg2-member-info small{
+ display:block;
+ margin:4px 0 0;
+ color:#c8afa4;
+ font:400 11px/1.35 Arial,sans-serif;
+ overflow-wrap:anywhere;
+}
+#management-users .mg2-badges,
+#management-member-details .mg2-badges{
+ display:flex;
+ align-items:center;
+ justify-content:flex-end;
+ flex-wrap:wrap;
+ gap:4px;
+ max-width:120px;
+ min-width:0;
+}
+#management-users .mg2-badge,
+#management-member-details .mg2-badge{
+ display:inline-block;
+ width:auto;
+ padding:4px 7px;
+ border-radius:99px;
+ border:1px solid #a57166;
+ color:#f2ddcf;
+ background:#40272a;
+ font:600 10px/1.2 Arial,sans-serif;
+ white-space:nowrap;
+}
+#management-users .mg2-badge-founder,
+#management-member-details .mg2-badge-founder{
+ border-color:#ba9660;
+ color:#f6dfb5;
+ background:#4a3024;
+}
+#management-users .mg2-badge-verified,
+#management-member-details .mg2-badge-verified{
+ border-color:#a4746a;
+ background:#3e282c;
+ color:#f7e1d1;
+}
+#management-users .mg2-member-card>.mg2-icon{
+ width:16px;height:16px;
+ color:#ddc4b6;
+}
+#management-users .mg2-browse{
+ display:flex;
+ align-items:center;
+ width:100%;
+ min-height:46px;
+ gap:9px;
+ margin:11px 0 0;
+ padding:10px 13px;
+ border:1px solid #a36d64;
+ border-radius:10px;
+ background:#3d2428;
+ color:#f2dccc;
+ box-shadow:none;
+ text-align:left;
+ font:700 13px Arial,sans-serif;
+}
+#management-users .mg2-browse>.mg2-icon:last-child{
+ margin-left:auto;
+}
+#management-users .mg2-status{
+ margin:10px 0;
+ font-size:12px;
+ color:#d7bcb0;
+}
+#management-users .mg2-pages{
+ width:100%;
+ box-sizing:border-box;
+ margin:13px 0 0!important;
+}
+#management-users .mg2-pages button{
+ min-height:41px;
+ border-radius:9px;
+ background:#41272a;
+ border:1px solid #905a52;
+ color:#f5e4d6;
+}
+#management-users .mg2-empty{
+ margin:0;
+ padding:13px;
+ border:1px solid #754e4b;
+ border-radius:9px;
+ background:#2c1b1d;
+ color:#d9c1b5;
+ font-size:12px;
+ line-height:1.45;
+}
+
+/* Member Details — one compact summary and grouped sections, never huge edit cards. */
+#management-member-details .mg2-details-header{margin:0 0 16px}
+#management-member-details .mg2-legacy-card{
+ display:none!important;
+}
+#management-member-details .mg2-member-hero{
+ display:flex;
+ align-items:center;
+ gap:14px;
+ padding:14px 12px;
+ border:1px solid #97635c;
+ border-radius:12px;
+ background:#301d20;
+ color:#f9e6d6;
+}
+#management-member-details .mg2-avatar-large{
+ width:72px;height:72px;
+ font-size:34px;
+ border-color:#bb796a;
+}
+#management-member-details .mg2-hero-info{
+ flex:1;
+ min-width:0;
+}
+#management-member-details .mg2-hero-info h3{
+ font:700 20px/1.2 Georgia,serif;
+ overflow-wrap:anywhere;
+ margin:0 0 5px;
+ color:#f6e6d5;
+}
+#management-member-details .mg2-hero-info p{
+ font:400 12px/1.4 Arial,sans-serif;
+ margin:0 0 8px;
+ color:#cfb7ab;
+}
+#management-member-details .mg2-hero-info .mg2-badges{
+ justify-content:flex-start;
+ max-width:none;
+}
+#management-member-details .mg2-section{
+ margin:12px 0 0;
+ padding:13px;
+ border:1px solid #875651;
+ border-radius:12px;
+ background:#2e1b1e;
+}
+#management-member-details .mg2-section-top{
+ display:flex;
+ gap:10px;
+ align-items:center;
+ justify-content:space-between;
+ margin-bottom:9px;
+}
+#management-member-details .mg2-section-title{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ min-width:0;
+}
+#management-member-details .mg2-section-title h3{
+ margin:0;
+ font:700 18px/1.2 Georgia,serif;
+ color:#f5e3d5;
+}
+#management-member-details .mg2-section-title>.mg2-icon{
+ width:22px;height:22px;
+ color:#dfc0ab;
+}
+#management-member-details .mg2-edit-button{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:5px;
+ padding:7px 10px;
+ min-height:34px;
+ border:1px solid #ae756e;
+ border-radius:99px;
+ background:#40282c;
+ color:#f2dccd;
+ font:700 12px Arial,sans-serif;
+ box-shadow:none;
+}
+#management-member-details .mg2-edit-button>.mg2-icon{
+ width:14px;height:14px;
+}
+#management-member-details .mg2-permissions-values{
+ display:grid;
+ margin:0;
+ padding:0;
+ gap:8px;
+}
+#management-member-details .mg2-permissions-row{
+ display:grid;
+ grid-template-columns:minmax(105px,45%) minmax(0,1fr);
+ gap:10px;
+ padding:0;
+}
+#management-member-details .mg2-permissions-row dt,
+#management-member-details .mg2-permissions-row dd{
+ margin:0;
+ font:400 12px/1.4 Arial,sans-serif;
+ overflow-wrap:anywhere;
+}
+#management-member-details .mg2-permissions-row dt{color:#c9ada2}
+#management-member-details .mg2-permissions-row dd{color:#f7e8db}
+#management-member-details .mg2-role-chooser{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:8px;
+ margin-top:13px;
+}
+#management-member-details .mg2-chooser-action{
+ min-height:42px;
+ padding:8px;
+ border-radius:9px;
+ border:1px solid #a36c65;
+ color:#f4dfd2;
+ background:#44292d;
+ font:700 12px/1.2 Arial,sans-serif;
+}
+#management-member-details .mg2-disclosure{
+ margin-top:11px;
+ border:1px solid #875651;
+ border-radius:11px;
+ background:#301c1f;
+ overflow:hidden;
+}
+#management-member-details .mg2-disclosure-button{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ width:100%;
+ min-height:54px;
+ padding:12px 13px;
+ text-align:left;
+ border:0;
+ border-radius:0;
+ background:transparent;
+ color:#f4e3d4;
+ box-shadow:none;
+}
+#management-member-details .mg2-disclosure-label{
+ display:flex;
+ gap:9px;
+ align-items:center;
+ min-width:0;
+}
+#management-member-details .mg2-disclosure-label strong{
+ font:700 17px/1.25 Georgia,serif;
+}
+#management-member-details .mg2-disclosure-label>.mg2-icon{
+ width:21px;height:21px;
+ color:#e0bfaa;
+}
+#management-member-details .mg2-chevron{
+ transition:transform .16s ease;
+}
+#management-member-details .mg2-disclosure-button[aria-expanded="true"]>.mg2-chevron{
+ transform:rotate(90deg);
+}
+#management-member-details .mg2-disclosure-content{
+ padding:2px 13px 13px;
+ color:#f1dbcf;
+ font:400 12px/1.5 Arial,sans-serif;
+}
+#management-member-details .mg2-disclosure-content p{
+ margin:7px 0 0;
+ white-space:pre-wrap;
+}
+#management-member-details .mg2-subheading{
+ font-weight:700;
+ color:#ecd4c6;
+}
+#management-member-details .mg2-muted{color:#c9ada4}
+#management-member-details .mg2-venue-association{
+ display:grid;
+ gap:2px;
+ padding:7px 0;
+ border-top:1px solid #6a4343;
+}
+#management-member-details .mg2-venue-association small{color:#c7aea4}
+#management-member-details .mg2-history-record{
+ border-top:1px solid #6a4343;
+ padding:10px 0;
+}
+#management-member-details .mg2-history-record strong,
+#management-member-details .mg2-history-record small{
+ display:block;
+ line-height:1.4;
+}
+#management-member-details .mg2-history-record small{color:#c7ada3;margin-top:3px}
+#management-member-details #mg-detail-note{
+ color:#d4bdb1;
+ margin:12px 0;
+ font-size:12px;
+}
+
+/* Existing secure role, verification, confirm and save-result modals. */
+#management-dialog .mg-member-editor-card,
+#management-dialog .mg-role-confirm-card{
+ background:#241417;
+ border:1px solid #a87168;
+ color:#f4e2d4;
+ box-shadow:none;
+}
+#management-dialog #management-member-details .mg-confirm-actions button{
+ min-height:45px;
+ padding:10px 13px;
+ border:1px solid #df685f!important;
+ border-radius:10px;
+ background:linear-gradient(#bd1d1d,#880f0f)!important;
+ color:#fff3e9!important;
+ box-shadow:none!important;
+ font:700 13px Arial,sans-serif;
+}
+#management-dialog #management-member-details .mg-confirm-actions button:focus-visible,
+#management-dialog #management-member-details .mg2-edit-button:focus-visible,
+#management-dialog #management-member-details .mg2-disclosure-button:focus-visible{
+ outline:2px solid #f4dfcd;
+ outline-offset:2px;
+}
+@media(max-width:390px){
+ #management-users .mg2-header h2,
+ #management-member-details .mg2-details-header h2{font-size:23px}
+ #management-users .mg2-toolbar{
+  grid-template-columns:80px minmax(0,1fr) minmax(0,1fr);
+  gap:6px;
+ }
+ #management-users .mg2-member-card{
+  gap:7px;
+  padding:8px;
+ }
+ #management-users .mg2-avatar{
+  width:42px;height:42px;
+ }
+ #management-users .mg2-member-info strong{font-size:13px}
+ #management-users .mg2-member-info small{font-size:10px}
+ #management-users .mg2-badges{max-width:92px}
+ #management-users .mg2-badge{font-size:9px;padding:3px 5px}
+ #management-member-details .mg2-member-hero{gap:9px;padding:12px 10px}
+ #management-member-details .mg2-avatar-large{width:59px;height:59px}
+ #management-member-details .mg2-hero-info h3{font-size:18px}
+ #management-member-details .mg2-section-title h3{font-size:16px}
+ #management-member-details .mg2-role-chooser{grid-template-columns:1fr}
+}
