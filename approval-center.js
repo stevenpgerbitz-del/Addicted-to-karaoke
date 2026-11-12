@@ -433,12 +433,12 @@ approvalCenterRender=function(){
   heading.append(sectionTitle);
   const hint=heading.nextElementSibling;
   if(hint?.classList.contains('atk-approval-muted')&&links.length){
-   hint.textContent='Tap a member for details. Dismiss only hides the notice for you — it never deletes the member.';
+   hint.textContent='Tap a member for details. Hide removes only your notice — it never deletes the member.';
   }
   if(links.length>1){
-   const clear=approvalCenterButton('Dismiss all',()=>atkApprovalDismissMembers(members));
+   const clear=approvalCenterButton('Hide all',()=>atkApprovalDismissMembers(members));
    clear.className='atk-approval-dismiss-all';
-   clear.setAttribute('aria-label','Dismiss all new-member updates for your account');
+   clear.setAttribute('aria-label','Hide all new-member updates for your account, without deleting members');
    heading.append(clear);
   }
  }
@@ -447,10 +447,28 @@ approvalCenterRender=function(){
   const row=approvalCenterEl('div',undefined,'atk-approval-member-row');
   link.parentNode.insertBefore(row,link);
   row.append(link);
-  const dismiss=approvalCenterButton('Dismiss',()=>atkApprovalDismissMembers([member]));
+  const dismiss=approvalCenterButton('',()=>atkApprovalDismissMembers([member]));
   dismiss.className='atk-approval-member-dismiss';
   dismiss.title='Hide this notification for your account (does not delete the member)';
-  dismiss.setAttribute('aria-label','Dismiss new-member update for '+(member.stage_name||'Karaoke member'));
+  dismiss.setAttribute('aria-label','Hide new-member update for '+(member.stage_name||'Karaoke member')+'; does not delete the member');
+  const eye=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  eye.setAttribute('viewBox','0 0 24 24');
+  eye.setAttribute('aria-hidden','true');
+  eye.setAttribute('fill','none');
+  eye.setAttribute('stroke','currentColor');
+  eye.setAttribute('stroke-width','1.9');
+  eye.setAttribute('stroke-linecap','round');
+  eye.setAttribute('stroke-linejoin','round');
+  for(const shape of [
+   'M10.58 10.587a2 2 0 0 0 2.84 2.84',
+   'M16.681 16.673A8.7 8.7 0 0 1 12 18c-4.5 0-8.27-3.11-9.5-6a9.8 9.8 0 0 1 2.653-3.639',
+   'M9.88 5.09A8.7 8.7 0 0 1 12 5c4.5 0 8.27 3.11 9.5 7a9.78 9.78 0 0 1-1.346 2.375',
+   'M2 2l20 20'
+  ]){
+   const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+   path.setAttribute('d',shape);eye.append(path);
+  }
+  dismiss.append(eye,approvalCenterEl('span','Hide'));
   row.append(dismiss);
  });
 };
@@ -460,7 +478,7 @@ async function atkApprovalDismissMembers(members){
  const items=members.filter(m=>m?.id&&!atkDismissedMemberIds.has(m.id));
  if(!items.length)return;
  atkApprovalSaving=true;
- approvalCenterMessage('Saving your dismissed member notices…');
+ approvalCenterMessage('Hiding member updates for your account…');
  try{
   const {error}=await authClient.from('admin_member_dismissals').insert(
    items.map(m=>({admin_user_id:uid,member_user_id:m.id}))
@@ -470,9 +488,9 @@ async function atkApprovalDismissMembers(members){
   for(const m of items)atkDismissedMemberIds.add(m.id);
   approvalCenterRender();
   approvalCenterSetBadge(atkApprovalData);
-  approvalCenterMessage(items.length===1?'Update dismissed for your account.':'Updates dismissed for your account.');
+  approvalCenterMessage(items.length===1?'Update hidden for your account.':'Updates hidden for your account.');
  }catch(error){
-  approvalCenterMessage('Could not dismiss member notice: '+(error.message||'Please try again.'));
+  approvalCenterMessage('Could not hide member update: '+(error.message||'Please try again.'));
  }finally{atkApprovalSaving=false}
 }
 
