@@ -124,9 +124,16 @@
     get('atk-review-feedback').textContent='Your review privileges are suspended until '+until+'. The review was not submitted.';
     return;
    }
-   if(data?.status!=='pending')throw Error('Unexpected review response.');
+   if(data?.status!=='pending'&&data?.status!=='approved')throw Error('Unexpected review response.');
    reviewDialog.close();
-   message('Review submitted! It is awaiting approval.');
+   const published=data.status==='approved';
+   message(published?'Your review is published!':'Review submitted! It is awaiting approval.');
+   if(published){
+    if(typeof liveReviewCache!=='undefined')liveReviewCache.delete(activeVenue);
+    if(document.querySelector('[data-tab="reviews"]')?.getAttribute('aria-selected')==='true')
+     showLiveVenueReviews();
+    if(typeof loadLiveVenues==='function')loadLiveVenues();
+   }
   }catch(error){
    const detail=String(error?.message||'Please try again.');
    get('atk-review-feedback').textContent=detail;
