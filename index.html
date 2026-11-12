@@ -746,6 +746,9 @@ padding:13px 3px!important;min-height:66px
 #atk-kj-dialog .atk-kj-pending{font-size:12px;border:1px solid #714840;background:#2c191c;border-radius:10px;padding:10px;margin:9px 0}
 #atk-kj-dialog .atk-kj-pending strong,#atk-kj-dialog .atk-kj-pending small{display:block}
 #atk-kj-dialog .atk-kj-pending small{color:#d9bfb3;margin-top:4px}
+#atk-kj-dialog .atk-kj-row-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+#atk-kj-dialog .atk-kj-row-actions .atk-kj-row-button{min-width:0;min-height:41px;padding:9px 5px;border-radius:9px;border:1px solid #d86d63;background:linear-gradient(#bc1d1c,#870d0d);color:#fff5e9;font:700 13px Arial,sans-serif}
+#atk-kj-dialog .atk-kj-row-actions .atk-kj-row-button:focus-visible{outline:2px solid #fff1dc;outline-offset:2px}
 #atk-kj-dialog .atk-kj-days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
 #atk-kj-dialog .atk-kj-day{min-height:54px;background:#301b1d;border:1px solid #88504b;border-radius:10px;text-align:left;padding:10px;color:#f5e4d2}
 #atk-kj-dialog .atk-kj-day[aria-pressed="true"]{background:#782121;border:2px solid #eaa49a;padding:9px}
@@ -1455,7 +1458,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 // KJ hosting suggestions are requests, NOT public schedules or verified KJ assignments.
 const atkKjDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 let atkKjStage='list',atkKjOwner=null,atkKjBusy=false,atkKjDraft=null,atkKjRequests=[],atkKjSearchTimer=null,atkKjSearchSerial=0;
-function atkKjNewDraft(){return {venueId:null,venueName:'',address:'',city:'',state:'IA',postal:'',sessions:[],notes:''}}
+function atkKjNewDraft(){return {venueId:null,venueName:'',address:'',city:'',state:'IA',postal:'',sessions:[],notes:'',editId:null,lastStatus:null,lastAction:null}}
 function atkKjAllowed(){return !!(authUser&&memberProfile&&authUser.id===memberProfile.user_id&&Array.isArray(memberProfile.karaoke_interests)&&memberProfile.karaoke_interests.includes('kj'))}
 async function atkKjStart(direct=false){
  if(!atkKjAllowed())return;
@@ -1471,8 +1474,8 @@ async function atkKjLoadRequests(){
  if(!atkKjOwner||authUser?.id!==atkKjOwner)return;
  try{
   const {data,error}=await authClient.from('kj_host_submissions')
-   .select('id,venue_name,venue_city,venue_state,status,sessions,created_at')
-   .eq('user_id',atkKjOwner).order('created_at',{ascending:false}).limit(30);
+   .select('id,user_id,venue_id,venue_name,venue_address,venue_city,venue_state,venue_postal_code,status,sessions,notes,request_kind,source_submission_id,created_at')
+   .eq('user_id',atkKjOwner).order('created_at',{ascending:false}).limit(80);
   if(error)throw error;
   if(authUser?.id!==atkKjOwner)return;
   atkKjRequests=Array.isArray(data)?data:[];
@@ -1583,26 +1586,64 @@ function atkAddressAttach(input,onPick){
  });
  input.addEventListener('blur',()=>setTimeout(()=>{if(!list.contains(document.activeElement))hide()},200));
 }
+function atkKjEdit(r){
+ if(atkKjBusy||!atkKjAllowed()||!r||r.user_id!==authUser?.id||!['approved','pending'].includes(r.status))return;
+ atkKjDraft={venueId:r.venue_id||null,venueName:r.venue_name||'',address:r.venue_address||'',
+ city:r.venue_city||'',state:r.venue_state||'IA',postal:r.venue_postal_code||'',
+ sessions:(Array.isArray(r.sessions)?r.sessions:[]).map(x=>({day:x.day,start:x.start,end:x.end})),
+ notes:r.notes||'',editId:r.id,lastStatus:null,lastAction:null};
+ atkKjStage='schedule';atkKjRender();
+}
+function atkKjRemoveStart(r){
+ if(atkKjBusy||!atkKjAllowed()||!r||r.user_id!==authUser?.id||!['approved','pending'].includes(r.status))return;
+ atkKjDraft={...atkKjNewDraft(),editId:r.id,venueName:r.venue_name,venueId:r.venue_id,
+  sessions:(Array.isArray(r.sessions)?r.sessions:[]).map(x=>({...x}))};
+ atkKjStage='confirm_remove';atkKjRender();
+}
+async function atkKjRemoveConfirmed(){
+ if(atkKjBusy||atkKjStage!=='confirm_remove'||!atkKjDraft?.editId||!atkKjAllowed()||atkKjOwner!==authUser?.id)return;
+ atkKjBusy=true;const next=document.getElementById('atk-kj-next');next.disabled=true;
+ atkKjMessage('Removing your hosting location…');
+ try{
+  const {data,error}=await authClient.from('kj_host_submissions').update({status:'withdrawn'})
+    .eq('id',atkKjDraft.editId).eq('user_id',atkKjOwner).in('status',['approved','pending']).select('id,status').single();
+  if(error)throw error;
+  if(data?.status!=='withdrawn')throw Error('The location was not removed.');
+  if(authUser?.id!==atkKjOwner)return;
+  atkKjDraft=atkKjNewDraft();atkKjStage='list';
+  await atkKjLoadRequests();atkKjRender();atkKjMessage('Your hosting location was removed. The venue listing was not deleted.');
+ }catch(error){atkKjMessage('Could not remove hosting: '+(error.message||'Please try again.'))}
+ finally{atkKjBusy=false;next.disabled=false}
+}
 function atkKjRender(){
  const body=document.getElementById('atk-kj-body'),title=document.getElementById('atk-kj-title');
  const next=document.getElementById('atk-kj-next'),progress=document.getElementById('atk-kj-progress');
  body.replaceChildren();atkKjMessage('');
  next.hidden=false;next.disabled=atkKjBusy;
- progress.textContent=({list:'Your hosting requests',venue:'Step 1 of 3',details:'Venue details',schedule:'Step 2 of 3',review:'Step 3 of 3',done:'Request sent'})[atkKjStage]||'';
+ progress.textContent=({list:'Your hosting locations',venue:'Step 1 of 3',details:'Venue details',schedule:'Step 2 of 3',review:'Step 3 of 3',confirm_remove:'Remove location',done:'Hosting saved'})[atkKjStage]||'';
  if(atkKjStage==='list'){
   title.textContent='My Hosting Venues';
-  body.appendChild(atkKjEl('p','Your submitted hosting locations stay pending until reviewed.','atk-kj-lead'));
-  if(!atkKjRequests.length)body.appendChild(atkKjEl('p','No hosting locations submitted yet.','atk-kj-note'));
-  for(const r of atkKjRequests){
+  body.appendChild(atkKjEl('p','Manage your hosting nights. Unclaimed venues go live immediately; verified venue owners approve changes on claimed venues.','atk-kj-lead'));
+  const hosts=atkKjRequests.filter(r=>(r.request_kind||'add')==='add'&&r.status!=='withdrawn');
+  if(!hosts.length)body.appendChild(atkKjEl('p','No hosting locations yet. Add your first one below.','atk-kj-note'));
+  for(const r of hosts){
    const line=atkKjEl('div',undefined,'atk-kj-pending');
    line.appendChild(atkKjEl('strong',r.venue_name));
-   line.appendChild(atkKjEl('small',(r.venue_city||'')+', '+(r.venue_state||'')+' · '+String(r.status||'pending').replace(/^./,s=>s.toUpperCase())));
+   const status=r.status==='approved'?'Live':r.status==='pending'?'Awaiting Venue Owner':r.status==='rejected'?'Not Approved':'Removed';
+   line.appendChild(atkKjEl('small',[r.venue_city,r.venue_state].filter(Boolean).join(', ')+' · '+status));
    line.appendChild(atkKjEl('small',(Array.isArray(r.sessions)?r.sessions:[]).map(s=>atkKjDays[s.day]+' '+atkKjHumanTime(s.start)+'–'+atkKjHumanTime(s.end)).join(' · ')));
+   const proposed=atkKjRequests.find(q=>q.request_kind==='edit'&&q.source_submission_id===r.id&&q.status==='pending');
+   if(proposed)line.appendChild(atkKjEl('small','Schedule update awaiting venue owner approval'));
+   if(r.status==='approved'||r.status==='pending'){
+    const actions=atkKjEl('div',undefined,'atk-kj-row-actions');
+    actions.append(atkKjButton('Edit',()=>atkKjEdit(r),'atk-kj-row-button'),
+     atkKjButton('Remove',()=>atkKjRemoveStart(r),'atk-kj-row-button'));
+    line.append(actions);
+   }
    body.appendChild(line);
   }
   body.appendChild(atkKjButton('＋ Add Hosting Venue',()=>{atkKjDraft=atkKjNewDraft();atkKjStage='venue';atkKjRender()}));
-  next.hidden=true;
- }else if(atkKjStage==='venue'){
+  next.hidden=true; }else if(atkKjStage==='venue'){
   title.textContent='Where Do You Host?';
   body.appendChild(atkKjEl('p','Start typing the venue name. Select it if we already have it, or add a new venue.','atk-kj-lead'));
   const input=atkKjField(body,'Search venue name','atk-kj-search',atkKjDraft.venueName,val=>{atkKjDraft.venueName=val;atkKjDraft.venueId=null;atkKjSearch(val)},true);
@@ -1634,7 +1675,7 @@ function atkKjRender(){
   f('ZIP Code (optional)','atk-kj-venue-zip','postal',atkKjDraft.postal);
   next.textContent='Continue';
  }else if(atkKjStage==='schedule'){
-  title.textContent='When Do You Host?';
+  title.textContent=atkKjDraft.editId?'Edit Your Hosting Nights':'When Do You Host?';
   body.appendChild(atkKjEl('p',atkKjDraft.venueName+' · '+atkKjDraft.city+', '+atkKjDraft.state,'atk-kj-lead'));
   body.appendChild(atkKjEl('p','Select every karaoke day, then enter the start and end time for each night. Ending after midnight is okay.','atk-kj-note'));
   const grid=atkKjEl('div',undefined,'atk-kj-days');
@@ -1660,7 +1701,8 @@ function atkKjRender(){
    }
    row.appendChild(times);body.appendChild(row);
   }
-  body.appendChild(atkKjButton('Change Venue',()=>{atkKjStage='venue';atkKjRender()}));
+  if(atkKjDraft.editId)body.appendChild(atkKjButton('Cancel Editing',()=>{atkKjStage='list';atkKjRender()}));
+  else body.appendChild(atkKjButton('Change Venue',()=>{atkKjStage='venue';atkKjRender()}));
   next.textContent='Review Details';
  }else if(atkKjStage==='review'){
   title.textContent='Review Your Hosting Nights';
@@ -1669,15 +1711,22 @@ function atkKjRender(){
   box.appendChild(atkKjEl('p',atkKjDraft.city+', '+atkKjDraft.state+(atkKjDraft.address?' · '+atkKjDraft.address:'')));
   for(const s of atkKjDraft.sessions)box.appendChild(atkKjEl('p',atkKjDays[s.day]+': '+atkKjHumanTime(s.start)+' – '+atkKjHumanTime(s.end)));
   body.appendChild(box);
-  body.appendChild(atkKjEl('p','Submitting this request will not publish a new venue or change the live karaoke schedule. An admin must review it first.','atk-kj-note'));
+  body.appendChild(atkKjEl('p','At unclaimed venues, your hosting schedule goes live as soon as you save. If the venue has a verified owner, schedule changes need that owner’s approval.','atk-kj-note'));
   body.appendChild(atkKjButton('Edit Days & Times',()=>{atkKjStage='schedule';atkKjRender()}));
-  next.textContent=atkKjBusy?'Submitting…':'Submit for Review';
+  next.textContent=atkKjBusy?'Saving…':(atkKjDraft.editId?'Save Changes':'Save Hosting Schedule');
+ }else if(atkKjStage==='confirm_remove'){
+  title.textContent='Remove Your Hosting Location?';
+  body.appendChild(atkKjEl('p','Remove your hosting schedule for '+atkKjDraft.venueName+'? The venue listing, its reviews, and other KJs’ schedules will remain.','atk-kj-lead'));
+  body.appendChild(atkKjButton('Cancel',()=>{atkKjDraft=atkKjNewDraft();atkKjStage='list';atkKjRender()}));
+  next.textContent=atkKjBusy?'Removing…':'Remove My Hosting';
  }else if(atkKjStage==='done'){
-  title.textContent='Hosting Request Submitted!';
-  body.appendChild(atkKjEl('p',atkKjDraft.venueId
-   ? 'Your hosting nights are pending approval. The existing venue listing has not been changed.'
-   : 'Your venue was sent to Management → Venues as Submitted. Your hosting nights are also pending approval. Nothing has been published.','atk-kj-lead'));
-  body.appendChild(atkKjButton('＋ Add Another Venue',()=>{atkKjStage='venue';atkKjDraft=atkKjNewDraft();atkKjRender()}));
+  title.textContent=atkKjDraft.lastStatus==='approved'?'Hosting Schedule Saved!':'Sent to Venue Owner';
+  body.appendChild(atkKjEl('p',
+   atkKjDraft.lastStatus==='approved'
+     ?'Your karaoke hosting nights are live. You can edit or remove them from My Hosting Venues.'
+     :'This venue is claimed. Your proposed hosting schedule is awaiting approval from its verified owner.',
+   'atk-kj-lead'));
+  body.appendChild(atkKjButton('View My Hosting Venues',async()=>{atkKjDraft=atkKjNewDraft();atkKjStage='list';atkKjRender();await atkKjLoadRequests()}));
   next.hidden=true;
  }
 }
@@ -1741,6 +1790,7 @@ async function atkKjNext(){
   const err=atkKjValidSessions();if(err)return atkKjMessage(err);
   atkKjStage='review';atkKjRender();return;
  }
+ if(atkKjStage==='confirm_remove'){await atkKjRemoveConfirmed();return}
  if(atkKjStage!=='review')return;
  let err=atkKjValidDetails()||atkKjValidSessions();if(err)return atkKjMessage(err);
  atkKjBusy=true;document.getElementById('atk-kj-next').disabled=true;atkKjMessage('Saving your hosting request…');
@@ -1749,9 +1799,29 @@ async function atkKjNext(){
   const payload={user_id:authUser.id,venue_id:d.venueId||null,venue_name:d.venueName.trim(),
    venue_address:d.address.trim()||null,venue_city:d.city.trim(),venue_state:d.state.trim().toUpperCase(),
    venue_postal_code:d.postal.trim()||null,sessions:d.sessions.map(s=>({day:s.day,start:s.start,end:s.end})),notes:d.notes||''};
-  const {data,error}=await authClient.from('kj_host_submissions').insert(payload).select('id,status').single();
-  if(error)throw error;if(!data?.id||data.status!=='pending')throw Error('The submission could not be confirmed.');
+  let result;
+  if(d.editId){
+   const update=await authClient.from('kj_host_submissions').update({sessions:payload.sessions})
+      .eq('id',d.editId).eq('user_id',atkKjOwner).in('status',['approved','pending'])
+      .select('id,status').single();
+   if(update.error && /claimed|owner approval/i.test(update.error.message||'')){
+    const proposal={...payload,request_kind:'edit',source_submission_id:d.editId};
+    const change=await authClient.from('kj_host_submissions').insert(proposal).select('id,status').single();
+    if(change.error)throw change.error;
+    result=change.data;
+   }else{
+    if(update.error)throw update.error;
+    result=update.data;
+   }
+  }else{
+   const created=await authClient.from('kj_host_submissions').insert(payload).select('id,status').single();
+   if(created.error)throw created.error;
+   result=created.data;
+  }
+  if(!result?.id||!['approved','pending'].includes(result.status))throw Error('The schedule could not be confirmed.');
   if(authUser?.id!==atkKjOwner)return;
+  d.lastStatus=result.status;
+  d.lastAction=d.editId?'edited':'added';
   atkKjStage='done';atkKjBusy=false;atkKjRender();
  }catch(e){atkKjMessage('Could not submit: '+(e.message||'Please try again.'))}
  finally{atkKjBusy=false;const next=document.getElementById('atk-kj-next');next.disabled=false}
@@ -3240,4 +3310,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-112";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-113";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
