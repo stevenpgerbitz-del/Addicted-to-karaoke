@@ -82,11 +82,12 @@
    const {data,error}=await authClient.rpc('get_my_review_privileges');
    if(error)throw error;
    if(authUser?.id!==userId)return;
-   if(!data?.verified){message('Only Verified members can write reviews. Request verification for your account first.');return}
-   if(data.mode==='suspended'){
-    const until=data.suspended_until?new Date(data.suspended_until).toLocaleString():'a later date';
-    message('Review privileges suspended until '+until+'.');return;
+   if(data?.mode==='suspended'){
+    if(typeof window.atkShowReviewSuspension==='function')await window.atkShowReviewSuspension(data);
+    else message('Your review privileges are temporarily suspended.');
+    return;
    }
+   if(!data?.verified){message('Only Verified members can write reviews. Request verification for your account first.');return}
   }catch(error){
    message('Unable to check review permissions right now. Please try again.');return;
   }
