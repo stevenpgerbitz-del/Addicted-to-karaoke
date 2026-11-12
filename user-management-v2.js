@@ -159,6 +159,7 @@
   const hint=make('p','mg2-directory-hint','Recently registered members. Search or browse to find anyone.');
   const recent=make('div','mg2-recent-list');recent.id='mg2-recent-list';
   const browseButton=button('Browse all members',browse,'mg2-browse');
+  browseButton.id='mg2-browse';
   browseButton.prepend(icon('people'));browseButton.append(icon('chevron'));
   const originalStatus=get('mg-status'),originalResults=get('mg-results');
   originalStatus.classList.add('mg2-status');
