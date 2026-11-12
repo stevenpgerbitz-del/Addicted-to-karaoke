@@ -198,7 +198,10 @@
    const badges=element('div','atk-review-author-badges');
    if(data.verified)badges.append(element('span','','✓ Verified'));
    if(data.founder)badges.append(element('span','atk-review-founder','★ Founder'));
-   if(badges.childElementCount)content.append(badges);
+   const publishedReviews=Math.max(0,Math.floor(Number(data.published_review_count)||0));
+   badges.append(element('span','atk-review-posted',
+    publishedReviews.toLocaleString()+' '+(publishedReviews===1?'Review':'Reviews')+' Posted'));
+   content.append(badges);
    const interests=Array.isArray(data.interests)?data.interests.map(k=>labels[k]).filter(Boolean):[];
    if(interests.length){
     content.append(element('h3','','Karaoke Interests'),element('p','',interests.join(' · ')));
