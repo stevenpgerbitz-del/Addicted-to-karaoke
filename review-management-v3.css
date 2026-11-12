@@ -214,3 +214,25 @@
  #management-reviews .mg3-ratings{grid-template-columns:1fr}
  #management-reviews .mg3-rating:nth-last-child(2){border-bottom:1px solid #503737}
 }
+
+/* Staff-only companion dialog. Uses the same Review Management content; no duplicate UI. */
+#mg3-staff-review-entry[hidden]{display:none!important}
+#mg3-staff-dialog[open]{
+ box-sizing:border-box;display:flex;flex-direction:column;gap:0;
+ width:min(96vw,565px);max-width:565px;height:auto;
+ max-height:min(90dvh,calc(100dvh - 20px));
+ padding:17px 15px 13px;background:#1b0d0f;
+ border:1px solid #a56860;border-radius:17px;
+ color:#f7e5d8;overflow:hidden
+}
+#mg3-staff-dialog>#management-reviews:not([hidden]){
+ flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+ padding:0 3px 12px 0;box-sizing:border-box
+}
+#mg3-staff-dialog>.mg3-staff-close{
+ flex:none;display:block;width:100%;min-height:47px;position:static;
+ padding:10px;margin:8px 0 0;border:1px solid #e36b60;border-radius:12px;
+ background:linear-gradient(#b51d1b,#780c0b);color:#fff2e7;
+ box-shadow:none;font:700 14px Arial,sans-serif
+}
+#mg3-staff-dialog::backdrop{background:#000c}
