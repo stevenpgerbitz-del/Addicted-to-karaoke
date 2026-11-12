@@ -256,7 +256,7 @@
    const intro=panel.querySelector('.heading + .muted');
    if(intro){
     const sampleCount=rows.filter(r=>!r.reviewer_id).length;
-    intro.textContent=rows.length+' approved review'+(rows.length===1?'':'s')+(sampleCount?' · '+sampleCount+' demo sample'+(sampleCount===1?'':'s'):'')+' · Tap a review to see all seven ratings';
+    intro.textContent=rows.length+' approved review'+(rows.length===1?'':'s')+(sampleCount?' · '+sampleCount+' demo sample'+(sampleCount===1?'':'s'):'');
    }
    const cards=panel.querySelectorAll('.review-card');
    cards.forEach((card,index)=>{if(rows[index])attachProfileAction(card,rows[index])});
