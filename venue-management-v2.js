@@ -83,7 +83,7 @@
   overlaySave=btn('Save Changes',async ()=>{
    if(overlayBusy||!overlaySaveHandler)return;
    overlayBusy=true;overlaySave.disabled=true;overlayFeedback.textContent='Saving changes…';
-   try{await overlaySaveHandler();closeOverlay();}
+   try{await overlaySaveHandler();overlayBusy=false;closeOverlay();}
    catch(error){overlayFeedback.textContent=error.message||'Unable to save changes.'}
    finally{overlayBusy=false;overlaySave.disabled=false}
   },'mv2-button-red');
@@ -323,7 +323,6 @@
    const {data,error}=await authClient.from('venues').insert(payload).select('id').single();
    if(error)throw error;
    if(!data?.id)throw Error('Could not confirm the new venue.');
-   closeOverlay();
    browseAll=true;
    await original.detailOpen(data.id);
    if(managementSelectedVenue?.id===data.id){refreshDetail();loadContacts(data.id);loadPublicLink(data.id)}
@@ -523,7 +522,7 @@
   install();
   await original.detailOpen(id);
   if(managementSelectedVenue?.id!==id||get('management-venue-details').hidden)return;
-  refreshDetail();loadContacts(id);loadPublicLink(id);
+  refreshDetail();get('mv2-public-link').hidden=true;loadContacts(id);loadPublicLink(id);
  };
  managementVenueDetailBack=function(){
   ++contactSerial;if(overlay&&!overlay.hidden&&!overlayBusy)closeOverlay();
