@@ -37,3 +37,130 @@
 .atk-approval-member-link:hover{background:#392126}
 .atk-approval-member-link:focus-visible{outline:2px solid #f3d0bb;outline-offset:-3px}
 .atk-approval-member-link .atk-approval-chevron{font-size:26px}
+
+
+/* Build 105: one scroll surface per dialog. Protect the bottom Close action. */
+#management-dialog[open]{
+ overflow:hidden!important; /* earlier global overflow-y:auto was causing nested scrolling */
+}
+#management-dialog[open]:has(> #management-approvals:not([hidden])){
+ width:min(94vw,500px);
+ max-height:min(84dvh,calc(100dvh - 44px))!important;
+ height:auto;
+ padding:17px 15px 14px!important;
+ box-sizing:border-box;
+ gap:0!important;
+}
+#management-dialog[open] > #management-approvals:not([hidden]){
+ flex:1 1 auto;
+ min-height:0;
+ min-width:0;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+ padding:0 5px 8px 0;
+ scrollbar-width:thin;
+ scrollbar-color:#82524e transparent;
+}
+#management-dialog:has(> #management-approvals:not([hidden])) > .atk-history-footer{
+ flex:none;
+ margin-top:8px;
+ padding-top:8px;
+ border-top:1px solid #553638;
+}
+#management-dialog:has(> #management-approvals:not([hidden])) > .atk-history-footer > .management-close{
+ margin:0!important;
+ min-height:48px;
+ box-shadow:none;
+}
+#management-approvals .management-user-head{
+ position:sticky;
+ top:0;
+ z-index:2;
+ background:#1b0d0f;
+ padding:3px 0 8px;
+ margin:0 0 7px;
+}
+#management-approvals .management-user-head h2{
+ font-size:23px;
+ line-height:1.2;
+ margin:0;
+}
+#management-approvals .atk-approval-intro{
+ margin:0 0 12px;
+ font-size:12px;
+ line-height:1.4;
+}
+#management-approvals .atk-approval-summary{
+ border:0;
+ border-bottom:1px solid #664244;
+ background:none;
+ border-radius:0;
+ padding:0 0 12px;
+ margin:0 0 14px;
+ font-size:13px;
+ line-height:1.35;
+}
+#management-approvals .atk-approval-filter-label{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ font-size:13px;
+ margin:0 0 15px;
+}
+#management-approvals #atk-approval-filter{
+ flex:1 1 auto;
+ width:100%;
+ max-width:310px;
+ min-width:0;
+ min-height:42px;
+ margin:0;
+ padding:9px 10px;
+}
+#management-approvals .atk-approval-group-label{
+ font-size:18px;
+ margin:18px 0 12px;
+ line-height:1.2;
+}
+#management-approvals .atk-approval-muted{
+ line-height:1.45;
+ margin:0 0 12px;
+}
+#management-approvals .atk-approval-member-link{
+ min-height:64px;
+ padding:11px 12px;
+ margin:9px 0;
+ border-radius:11px;
+}
+#management-approvals .atk-approval-member-link strong{font-size:14px}
+#management-approvals .atk-approval-member-link small{line-height:1.35}
+#management-approvals #atk-approval-feedback{
+ margin-top:12px;
+}
+#management-approvals #atk-approval-feedback:empty{display:none}
+
+/* Account/Profile dialogs: no content or button should escape the mobile viewport. */
+@media(max-width:799px){
+ #profile-section-dialog[open]{
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  width:min(calc(100vw - 28px),530px);
+  max-height:min(88dvh,calc(100dvh - 36px));
+  overflow:hidden;
+ }
+ #profile-section-dialog[open] #profile-section-content{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+ }
+ #profile-section-dialog[open] > .profile-popup-close{
+  flex:none;
+  position:static;
+  margin-top:12px;
+ }
+}
