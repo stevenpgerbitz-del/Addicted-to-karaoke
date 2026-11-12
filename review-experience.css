@@ -69,3 +69,5 @@
  .atk-review-rate svg{width:12px;height:16px}
  .atk-review-rate[data-score="na"]{min-width:34px}
 }
+
+.atk-review-demo-badge{align-self:flex-start;border:1px solid #835c56;border-radius:9px;padding:2px 7px;color:#d7bab0;font:700 10px Arial,sans-serif}
