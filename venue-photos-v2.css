@@ -1,0 +1,309 @@
+/* Build 131 — Venue Photos & Gallery, matching the approved burgundy/cream UI. */
+
+/* Compact preview in Venue Details, just before Advanced Actions. */
+#management-venue-details .mv3-photo-summary{
+ margin:0;
+ padding:13px;
+ border:1px solid #87534f;
+ border-radius:12px;
+ background:#2c191c;
+}
+#management-venue-details .mv3-photo-summary .mv2-section-heading{margin-bottom:11px}
+#management-venue-details .mv3-count{
+ border:1px solid #a36a63;border-radius:99px;
+ padding:6px 10px;color:#f3dfd1;font:600 11px Arial,sans-serif;
+ white-space:nowrap;
+}
+#management-venue-details .mv3-summary-body{
+ display:grid;grid-template-columns:minmax(100px,38%) minmax(0,1fr);
+ gap:12px;align-items:center;min-width:0;
+}
+#management-venue-details .mv3-summary-thumbnail{
+ aspect-ratio:4 / 3;
+ display:grid;place-items:center;
+ overflow:hidden;position:relative;
+ border-radius:10px;border:1px solid #83534f;background:#382328;
+ color:#d8b4a2;
+}
+#management-venue-details .mv3-summary-thumbnail>.mv3-icon{
+ width:31px;height:31px;
+}
+#management-venue-details .mv3-summary-thumbnail>img:not([hidden]){
+ position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+}
+#management-venue-details .mv3-summary-info{
+ min-width:0;display:grid;gap:7px;
+}
+#management-venue-details .mv3-summary-info p{
+ font:400 12px/1.35 Arial,sans-serif;margin:0;overflow-wrap:anywhere;
+ color:#f0ddd0;
+}
+#management-venue-details .mv3-summary-info .mv3-cover-hint{
+ color:#c6aca1;font-size:11px;
+}
+#management-venue-details .mv3-open-button{
+ display:flex;justify-content:center;align-items:center;gap:9px;
+ width:100%;min-height:42px;
+ margin-top:12px;padding:10px 14px;
+ border:1px solid #db655b;border-radius:11px;
+ color:#fff4e9;background:linear-gradient(#b91c1c,#870d0d);
+ font:700 13px Arial,sans-serif;box-shadow:none;
+}
+#management-venue-details .mv3-open-button>.mv3-icon{
+ width:15px;height:15px;
+}
+
+/* Independent photo editor layer inside the existing management dialog. */
+#management-dialog .mv3-gallery-overlay{
+ position:fixed;inset:0;z-index:260;
+ display:flex;align-items:center;justify-content:center;
+ padding:12px;box-sizing:border-box;
+ background:rgba(0,0,0,.78);
+}
+#management-dialog .mv3-gallery-overlay[hidden]{display:none!important}
+#management-dialog .mv3-gallery-shell{
+ box-sizing:border-box;
+ width:min(100%,505px);
+ max-height:min(90dvh,calc(100dvh - 24px));
+ min-height:0;
+ display:flex;flex-direction:column;overflow:hidden;
+ padding:17px 15px 13px;
+ border:1px solid #aa6c67;border-radius:17px;
+ background:#1b0d0f;color:#f5e5d7;
+ box-shadow:0 18px 44px rgba(0,0,0,.32);
+}
+#management-dialog .mv3-gallery-header{
+ flex:none;min-width:0;
+ padding:1px 0 11px;
+ border-bottom:1px solid #633d40;
+}
+#management-dialog .mv3-gallery-header h2{
+ font:700 23px/1.15 Georgia,serif;
+ color:#f8e8d8;margin:0;
+}
+#management-dialog .mv3-gallery-header p{
+ font:400 12px/1.4 Arial,sans-serif;
+ color:#ceb6aa;margin:7px 0 0;
+}
+#management-dialog .mv3-gallery-scroll{
+ min-height:0;flex:1;
+ overflow-y:auto;overflow-x:hidden;
+ overscroll-behavior:contain;
+ padding:11px 2px 12px 0;
+ scrollbar-width:thin;
+ scrollbar-color:#82534b transparent;
+}
+#management-dialog .mv3-gallery-hint{
+ margin:0 0 11px;padding:10px 11px;
+ border:1px solid #674344;border-radius:9px;background:#2b191b;
+ color:#d9c1b6;font:400 12px/1.45 Arial,sans-serif;
+}
+#management-dialog .mv3-upload-zone{
+ display:grid;justify-items:center;gap:7px;
+ background:#2a191b;
+ border:1px dashed #ab7269;
+ border-radius:12px;
+ padding:17px 10px;
+ margin:0 0 16px;
+}
+#management-dialog .mv3-upload-button{
+ display:flex;align-items:center;justify-content:center;gap:8px;
+ min-height:42px;width:min(100%,230px);
+ border:1px solid #bc7970;border-radius:10px;
+ background:#49282a;color:#fff1e4;
+ font:700 14px Arial,sans-serif;padding:9px 13px;
+}
+#management-dialog .mv3-upload-button>.mv3-icon{
+ width:21px;height:21px;
+}
+#management-dialog .mv3-upload-zone>span{
+ font:400 11px/1.3 Arial,sans-serif;color:#c3a9a0;text-align:center;
+}
+#management-dialog .mv3-file-input[hidden]{display:none!important}
+#management-dialog .mv3-gallery-toolbar{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:8px;align-items:center;margin:0 0 11px;
+}
+#management-dialog .mv3-gallery-toolbar>h3{
+ grid-column:1 / -1;
+ font:700 19px/1.2 Georgia,serif;
+ margin:0;color:#f8e5d5;
+}
+#management-dialog .mv3-gallery-toolbar select{
+ display:block;box-sizing:border-box;
+ min-height:40px;width:100%;min-width:0;
+ padding:7px 8px;margin:0;
+ border:1px solid #8f5b57;border-radius:9px;
+ background:#352124;color:#f6e9dc;font:400 12px Arial,sans-serif;
+}
+#management-dialog .mv3-gallery-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+}
+#management-dialog .mv3-photo-tile{
+ display:block;min-width:0;width:100%;padding:5px;
+ background:#311d20;border:1px solid #905b55;
+ border-radius:11px;color:#f6e8dd;
+ text-align:left;box-shadow:none;
+}
+#management-dialog .mv3-photo-tile:hover,
+#management-dialog .mv3-photo-tile:focus-visible{
+ border-color:#e4b0a0;
+ outline:none;
+}
+#management-dialog .mv3-photo-tile.mv3-cover-tile{border-color:#e2bc8e}
+#management-dialog .mv3-tile-image{
+ display:grid;place-items:center;position:relative;overflow:hidden;
+ aspect-ratio:1 / 1;
+ border-radius:8px;background:#3a2629;color:#bca095;
+}
+#management-dialog .mv3-tile-image>.mv3-icon{width:30px;height:30px}
+#management-dialog .mv3-tile-image img:not([hidden]){
+ position:absolute;inset:0;object-fit:cover;width:100%;height:100%;
+}
+#management-dialog .mv3-photo-badge{
+ position:absolute;top:7px;left:7px;z-index:2;
+ border:1px solid #b78a80;border-radius:99px;
+ padding:5px 7px;background:rgba(42,23,26,.95);
+ color:#f5e7dd;font:700 10px/1 Arial,sans-serif;
+}
+#management-dialog .mv3-photo-badge[data-state="cover"]{
+ border-color:#e5bc81;color:#ffebc9;background:#603b2b;
+}
+#management-dialog .mv3-photo-badge[data-state="pending"]{
+ border-color:#c89b74;color:#ffe4c4;
+}
+#management-dialog .mv3-photo-badge[data-state="removed"],
+#management-dialog .mv3-photo-badge[data-state="rejected"]{
+ color:#d7c6bf;border-color:#8a7670;
+}
+#management-dialog .mv3-tile-caption{
+ display:block;overflow:hidden;
+ text-overflow:ellipsis;white-space:nowrap;
+ padding:8px 5px 5px;
+ font:600 12px/1.2 Arial,sans-serif;color:#f4e6d9;
+}
+#management-dialog .mv3-empty-photos{
+ grid-column:1 / -1;
+ border:1px solid #72514a;border-radius:11px;
+ padding:15px;margin:0;background:#301d1f;
+ font-size:12px;line-height:1.4;color:#d7bcb0;text-align:center;
+}
+
+/* Tap a tile to reveal a large, fully visible photo underneath the grid. */
+#management-dialog .mv3-photo-viewer{
+ margin-top:13px;padding:11px;
+ border:1px solid #a46d65;border-radius:12px;background:#311e20;
+}
+#management-dialog .mv3-photo-viewer[hidden]{display:none!important}
+#management-dialog .mv3-viewer-heading{
+ display:flex;align-items:center;justify-content:space-between;gap:7px;
+ margin-bottom:9px;
+}
+#management-dialog .mv3-viewer-heading h3{
+ font:700 16px/1.3 Georgia,serif;
+ color:#f5e7db;margin:0;overflow-wrap:anywhere;
+}
+#management-dialog .mv3-viewer-dismiss{
+ width:32px;height:32px;flex:none;padding:2px;
+ border:1px solid #9e645d;border-radius:50%;
+ background:#44282b;color:#f4dfd2;
+ font:400 23px/1 Arial,sans-serif;
+}
+#management-dialog .mv3-large-image{
+ display:grid;place-items:center;position:relative;overflow:hidden;
+ min-height:150px;max-height:320px;
+ border-radius:9px;background:#180e10;
+ color:#d3b09e;
+}
+#management-dialog .mv3-large-image>.mv3-icon{width:34px;height:34px}
+#management-dialog .mv3-large-image img:not([hidden]){
+ position:relative;
+ width:100%;height:auto;max-height:320px;object-fit:contain;
+}
+#management-dialog .mv3-viewer-detail{
+ display:flex;align-items:center;justify-content:space-between;
+ flex-wrap:wrap;gap:7px;margin:10px 0;
+ font:400 11px/1.35 Arial,sans-serif;color:#cdb3a7;
+}
+#management-dialog .mv3-photo-state{
+ display:inline-block;padding:5px 7px;border-radius:99px;
+ border:1px solid #9c7166;color:#f7dfd3;
+}
+#management-dialog .mv3-photo-actions,
+#management-dialog .mv3-inline-actions{
+ display:flex;flex-wrap:wrap;gap:7px;
+}
+#management-dialog .mv3-photo-actions button,
+#management-dialog .mv3-inline-actions button{
+ flex:1 1 94px;min-height:39px;box-sizing:border-box;
+ padding:8px 7px;border-radius:9px;
+ font:700 11px/1.2 Arial,sans-serif;
+ box-shadow:none;
+}
+#management-dialog .mv3-action-primary{
+ border:1px solid #e0685d;
+ color:#fff4e9;background:linear-gradient(#bc1c1c,#880e0e);
+}
+#management-dialog .mv3-action-secondary{
+ border:1px solid #a16d64;
+ color:#f6e6d9;background:#43292c;
+}
+#management-dialog .mv3-photo-actions button:disabled{
+ opacity:.58;cursor:default;
+}
+#management-dialog .mv3-viewer-inline{
+ margin:11px 0 0;padding:10px;
+ border-radius:9px;border:1px solid #ab736a;
+ background:#3b2528;
+}
+#management-dialog .mv3-viewer-inline[hidden]{display:none!important}
+#management-dialog .mv3-viewer-inline h4{
+ font:700 15px Georgia,serif;margin:0 0 6px;
+}
+#management-dialog .mv3-viewer-inline p{
+ font:400 12px/1.45 Arial,sans-serif;
+ color:#e0c6b9;margin:0 0 10px;
+}
+#management-dialog .mv3-viewer-inline textarea{
+ box-sizing:border-box;display:block;width:100%;
+ min-height:75px;border-radius:9px;
+ border:1px solid #b28176;background:#2b181a;
+ color:#f7e9dc;padding:9px;
+ font:400 13px Arial,sans-serif;resize:vertical;margin-bottom:10px;
+}
+#management-dialog .mv3-gallery-notice{
+ margin:13px 0 0;
+ border:1px solid #a2756b;border-radius:9px;
+ background:#342123;color:#f4dfd3;
+ padding:10px 11px;
+ font:400 12px/1.45 Arial,sans-serif;
+}
+#management-dialog .mv3-gallery-notice[hidden]{display:none!important}
+#management-dialog .mv3-gallery-notice[data-error="true"]{
+ border-color:#d78c83;color:#ffded4;
+}
+#management-dialog .mv3-gallery-footer{
+ flex:none;margin-top:9px;padding-top:11px;
+ border-top:1px solid #704748;
+}
+#management-dialog .mv3-red-button{
+ display:block;width:100%;min-height:48px;
+ color:#fff4e8;background:linear-gradient(#be1d1d,#840d0d);
+ border:1px solid #e16c62;border-radius:11px;
+ padding:10px;font:700 16px Arial,sans-serif;
+ box-shadow:none;
+}
+#management-dialog .mv3-red-button:disabled{opacity:.5}
+#management-dialog .mv3-photo-tile:focus-visible,
+#management-dialog .mv3-gallery-overlay button:focus-visible,
+#management-dialog .mv3-gallery-overlay select:focus-visible{
+ outline:2px solid #f3decc;outline-offset:2px;
+}
+@media(max-width:385px){
+ #management-dialog .mv3-gallery-shell{padding:13px 10px 11px}
+ #management-dialog .mv3-gallery-header h2{font-size:21px}
+ #management-dialog .mv3-gallery-grid{gap:8px}
+ #management-dialog .mv3-photo-tile{padding:4px}
+ #management-dialog .mv3-photo-badge{padding:4px 6px;font-size:9px}
+ #management-venue-details .mv3-summary-body{grid-template-columns:minmax(92px,39%) minmax(0,1fr);gap:9px}
+}
