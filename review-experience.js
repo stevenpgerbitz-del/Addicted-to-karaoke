@@ -70,13 +70,27 @@
   const avg=values.length?(values.reduce((sum,n)=>sum+n,0)/values.length).toFixed(1)+' / 5':'— / 5';
   get('atk-review-average').textContent=avg;
  }
- function openReviewForm(){
+ async function openReviewForm(){
   if(typeof authUser==='undefined'||!authUser||!authClient){
-   message('Sign in or create a free account to write a review.');
+   message('Sign in to write a review. Only Verified members can submit reviews.');
    navigate('signin');return;
   }
   const venue=currentVenue();
   if(!venue||!venue.databaseId){message('This venue is not available for reviews.');return}
+  const userId=authUser.id;
+  try{
+   const {data,error}=await authClient.rpc('get_my_review_privileges');
+   if(error)throw error;
+   if(authUser?.id!==userId)return;
+   if(!data?.verified){message('Only Verified members can write reviews. Request verification for your account first.');return}
+   if(data.mode==='suspended'){
+    const until=data.suspended_until?new Date(data.suspended_until).toLocaleString():'a later date';
+    message('Review privileges suspended until '+until+'.');return;
+   }
+  }catch(error){
+   message('Unable to check review permissions right now. Please try again.');return;
+  }
+  if(authUser?.id!==userId||selectedVenue!==venue.id)return;
   makeReviewDialog();
   activeVenue=venue.databaseId;sending=false;
   ratings=new Map(categories.map(([key])=>[key,null]));
@@ -105,6 +119,11 @@
     p_venue_id:activeVenue,p_comment:comment,p_ratings:values
    });
    if(error)throw error;
+   if(data?.status==='suspended'){
+    const until=data.until?new Date(data.until).toLocaleString():'a later date';
+    get('atk-review-feedback').textContent='Your review privileges are suspended until '+until+'. The review was not submitted.';
+    return;
+   }
    if(data?.status!=='pending')throw Error('Unexpected review response.');
    reviewDialog.close();
    message('Review submitted! It is awaiting approval.');
