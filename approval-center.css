@@ -280,3 +280,21 @@
   font-size:11px;
  }
 }
+
+/* Build 126: make the action explicit without returning to bulky side buttons. */
+#management-approvals .atk-approval-member-row .atk-approval-member-dismiss{
+ flex:0 0 74px;width:74px;
+ padding:0 5px;
+ color:#f2c7b9;
+ font:600 12px/1.25 Arial,sans-serif;
+ letter-spacing:0;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-dismiss:hover{
+ background:#4d282b;color:#fff4eb;
+}
+@media(max-width:390px){
+ #management-approvals .atk-approval-member-row .atk-approval-member-dismiss{
+  flex:0 0 67px;width:67px;
+  font-size:11px;
+ }
+}
