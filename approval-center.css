@@ -298,3 +298,28 @@
   font-size:11px;
  }
 }
+
+
+/* Build 127: clear non-destructive Hide control with eye-off icon. */
+#management-approvals .atk-approval-member-row .atk-approval-member-dismiss{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+ flex:0 0 62px;width:62px;min-height:70px;
+ padding:7px 3px;border-left:1px solid #624342;
+ background:transparent;color:#e5c3b6;
+ font:600 11px/1.15 Arial,sans-serif;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-dismiss svg{
+ display:block;width:22px;height:22px;flex:none;
+ stroke:currentColor;fill:none;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-dismiss span{
+ display:block;font-size:11px;line-height:1.2;white-space:nowrap;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-dismiss:hover{
+ background:#4d282b;color:#fff4eb;
+}
+@media(max-width:390px){
+ #management-approvals .atk-approval-member-row .atk-approval-member-dismiss{
+  flex-basis:58px;width:58px;
+ }
+}
