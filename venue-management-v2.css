@@ -392,3 +392,164 @@
  #management-venue-details .mv2-hero-right{gap:5px}
  #management-venue-details .mv2-venue-name{font-size:18px}
 }
+
+
+/* Build 129 — consistency polish for the approved mobile venue screens.
+   Keep the red/cream theme, avoid neon or changing the existing layout concept. */
+
+/* A single content rail: scrolling sections, dividers, search, cards and footer
+   share the same inner left/right edges instead of drifting by a few pixels. */
+#management-dialog[open]:has(> #management-venues:not([hidden])),
+#management-dialog[open]:has(> #management-venue-details:not([hidden])){
+ --mv2-panel-edge:#86514e;
+ --mv2-panel-fill:#2d1a1e;
+ --mv2-corner:12px;
+ gap:0;
+}
+#management-dialog #management-venues,
+#management-dialog #management-venue-details{
+ width:100%;
+ min-width:0;
+ margin:0;
+ padding:0 0 8px!important;
+ box-sizing:border-box;
+}
+#management-venues .mv2-header,
+#management-venues .mv2-search-wrap,
+#management-venues .mv2-toolbar,
+#management-venues .mv2-filters-panel,
+#management-venues .mv2-attention,
+#management-venues .mv2-directory,
+#management-venues .mv2-recent,
+#management-venues .mv2-attention-list,
+#management-venues .mv2-directory-prompt,
+#management-venues .mv2-recent-list,
+#management-venues .mv2-directory-results,
+#management-venues .mv2-results-status,
+#management-venues .mv2-pagination{
+ display:revert-layer;
+ width:100%;
+ max-width:100%;
+ min-width:0;
+ margin-left:0;
+ margin-right:0;
+ padding-left:0;
+ padding-right:0;
+ box-sizing:border-box;
+}
+/* Preserve components' natural layout; only reset their box metrics above.
+   For cards, restore their deliberate internal padding. */
+#management-venues .mv2-filters-panel{padding:12px}
+#management-venues .mv2-directory-prompt{padding:12px}
+#management-venues .mv2-search-wrap{margin-bottom:12px}
+#management-venues .mv2-header{margin-bottom:18px}
+#management-venues .mv2-attention{margin:0}
+#management-venues .mv2-block-heading,
+#management-venues .mv2-recent-heading{
+ width:100%;
+ max-width:100%;
+ padding:0;
+ margin-left:0;
+ margin-right:0;
+ box-sizing:border-box;
+}
+#management-venues .mv2-directory{
+ margin-top:18px;
+ padding-top:16px;
+ border-top:1px solid #6e4546;
+}
+#management-venues .mv2-directory .mv2-block-heading{
+ margin-top:0;
+}
+#management-venues .mv2-recent{
+ margin-top:12px;
+}
+#management-venues .mv2-recent .mv2-recent-heading{
+ margin-top:0;
+}
+#management-venues .mv2-search-label,
+#management-venues #mv-search,
+#management-venues .mv2-attention-row,
+#management-venues .mv2-recent-row,
+#management-venues .mv2-directory-results .mv-list-venue-button{
+ box-sizing:border-box;
+ width:100%;
+ max-width:100%;
+}
+#management-venues .mv2-attention-row,
+#management-venues .mv2-recent-row,
+#management-venues .mv2-directory-results .mv-list-venue-button,
+#management-venues .mv2-directory-prompt{
+ border-radius:var(--mv2-corner);
+}
+#management-venues .mv2-search-wrap,
+#management-venues .mv2-toolbar,
+#management-venues .mv2-attention,
+#management-venues .mv2-directory,
+#management-venues .mv2-recent{overflow:visible}
+#management-venues .mv2-toolbar{
+ display:grid;
+ grid-template-columns:90px minmax(0,1fr) minmax(0,1fr);
+ gap:8px;
+}
+
+/* Every bottom Cancel / Close / Save button inside the venue editor family
+   gets exactly the same red treatment — no more odd brown secondary button. */
+#management-dialog .mv2-overlay-actions button,
+#management-dialog .mv2-overlay-actions .mv2-button-secondary,
+#management-dialog .mv2-overlay-actions .mv2-button-red,
+#management-dialog .mv-amenities-overlay .management-pages button,
+#management-dialog .mv2-advanced-actions .management-pages button{
+ min-height:48px;
+ padding:10px 12px;
+ border:1px solid #e36b60!important;
+ border-radius:11px;
+ color:#fff7ee!important;
+ background:linear-gradient(180deg,#be1c1c 0%,#870d0d 100%)!important;
+ box-shadow:none!important;
+ font-weight:700;
+ text-align:center;
+}
+#management-dialog .mv2-overlay-actions .mv2-button-secondary{
+ background:linear-gradient(180deg,#b51d1b 0%,#790b0b 100%)!important;
+}
+#management-dialog .mv2-overlay-actions button:disabled,
+#management-dialog .mv-amenities-overlay .management-pages button:disabled{
+ opacity:.5;
+}
+#management-dialog .mv2-overlay-actions button:focus-visible,
+#management-dialog .mv-amenities-overlay .management-pages button:focus-visible{
+ outline:2px solid #f8e7d7;
+ outline-offset:2px;
+}
+
+/* Prevent the scrolling profile editor from starting halfway down its content
+   and keep all labels/genre tiles below the heading. */
+#management-dialog .mv2-overlay-body{
+ padding:10px 3px 14px 0;
+ display:grid;
+ align-content:start;
+ grid-auto-rows:max-content;
+ scroll-padding-top:10px;
+ min-height:0;
+}
+#management-dialog .mv2-tile-section{
+ min-width:0;
+ overflow:visible;
+}
+#management-dialog .mv2-tile-section h3{
+ margin:0 0 9px;
+ padding-top:3px;
+ line-height:1.3;
+}
+#management-dialog .mv2-overlay-panel > h2{
+ margin:0 0 12px;
+ flex:none;
+ line-height:1.2;
+}
+@media(max-width:390px){
+ #management-venues .mv2-toolbar{
+  grid-template-columns:82px minmax(0,1fr) minmax(0,1fr);
+  gap:6px;
+ }
+}
