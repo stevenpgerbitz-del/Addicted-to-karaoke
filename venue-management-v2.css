@@ -1,0 +1,394 @@
+
+/* Addicted to Karaoke — Venue Management v2 (Build 128).
+   Match the approved dark burgundy, cream type and restrained red controls. */
+#management-dialog[open]:has(> #management-venues:not([hidden])),
+#management-dialog[open]:has(> #management-venue-details:not([hidden])){
+ width:min(94vw,525px);max-height:min(88dvh,calc(100dvh - 32px))!important;
+ box-sizing:border-box;padding:18px 15px 14px!important;
+ background:#1b0d0f;border-color:#a46c68;box-shadow:none;
+}
+#management-dialog > .mv2-overlay[hidden],
+#management-venues [hidden],
+#management-venue-details [hidden]{display:none!important}
+#management-dialog #management-venues,
+#management-dialog #management-venue-details{
+ padding:0 3px 8px 0;
+ overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+ min-height:0;scrollbar-width:thin;scrollbar-color:#684544 transparent;
+}
+#management-dialog[open]:has(> #management-venues:not([hidden]))>.atk-history-footer,
+#management-dialog[open]:has(> #management-venue-details:not([hidden]))>.atk-history-footer{
+ margin-top:8px;padding-top:9px;border-top:1px solid #593638;flex:none;
+}
+#management-dialog[open]:has(> #management-venues:not([hidden]))>.atk-history-footer .management-close,
+#management-dialog[open]:has(> #management-venue-details:not([hidden]))>.atk-history-footer .management-close{
+ min-height:48px;margin:0!important;box-shadow:none;
+}
+.mv2-icon{width:20px;height:20px;flex:none;vertical-align:middle;display:block}
+#management-venues .mv2-header{
+ display:flex;align-items:start;justify-content:space-between;gap:10px;margin:0 0 18px;
+}
+#management-venues .mv2-header-titles{min-width:0;flex:1}
+#management-venues .mv2-header h2{
+ font:700 24px/1.16 Georgia,serif;margin:0;color:#f8e7d7;
+}
+#management-venues .mv2-header p{font-size:12px;line-height:1.35;margin:7px 0 0;color:#d1b6a9}
+#management-venues .mv2-add-button{
+ display:flex;align-items:center;justify-content:center;gap:4px;flex:none;
+ min-height:39px;padding:8px 10px;border-radius:9px;
+ font:700 12px Arial,sans-serif;white-space:nowrap;
+ background:linear-gradient(#be2020,#8d1111);color:#fff5ed;border:1px solid #db625e;
+ box-shadow:none;
+}
+#management-venues .mv2-add-button .mv2-icon{width:15px;height:15px}
+#management-venues .mv2-search-wrap{margin:0 0 12px}
+#management-venues .mv2-search-label{
+ position:relative;display:block;margin:0;min-width:0;
+ color:#d6bfb2;font:700 0 Arial,sans-serif;
+}
+#management-venues .mv2-search-label .mv2-icon{
+ position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#e4c1b2;
+ width:19px;height:19px;pointer-events:none;
+}
+#management-venues #mv-search{
+ display:block;margin:0;width:100%;box-sizing:border-box;min-height:48px;
+ padding:10px 13px 10px 42px;border-radius:11px;
+ border:1px solid #9b605b;background:#2c191c;color:#fff1e8;
+ font:400 14px Arial,sans-serif;box-shadow:none;
+}
+#management-venues #mv-search::placeholder{color:#b69c94;opacity:1}
+#management-venues .mv2-toolbar{
+ display:grid;grid-template-columns:90px minmax(0,1fr) minmax(0,1fr);
+ gap:7px;margin-bottom:9px;min-width:0;
+}
+#management-venues .mv2-filter-toggle,
+#management-venues .mv2-toolbar-select select{
+ display:flex;align-items:center;min-width:0;width:100%;height:43px;
+ border:1px solid #8a5450;background:#301d20;color:#f5e7dc;
+ border-radius:10px;box-sizing:border-box;box-shadow:none;
+ font:600 12px Arial,sans-serif;
+}
+#management-venues .mv2-filter-toggle{justify-content:center;gap:5px;padding:8px}
+#management-venues .mv2-filter-toggle .mv2-icon{width:16px;height:16px}
+#management-venues .mv2-filter-toggle[aria-expanded="true"]{border-color:#c78c7c;background:#3b2327}
+#management-venues .mv2-toolbar-select{font-size:0;min-width:0;display:block;margin:0}
+#management-venues .mv2-toolbar-select select{
+ font-size:12px;font-weight:500;padding:8px 5px 8px 9px;
+ color-scheme:dark;appearance:auto;
+}
+#management-venues .mv2-filters-panel{
+ border:1px solid #75504a;background:#28181a;padding:12px;border-radius:10px;
+ margin:0 0 13px;
+}
+#management-venues .mv2-filters-panel label{display:block;font-size:12px;color:#ddc0b4}
+#management-venues .mv2-filters-panel select{
+ width:100%;min-height:42px;display:block;margin-top:5px;box-sizing:border-box;
+ background:#352125;border:1px solid #97605b;border-radius:8px;color:#f6e6d8;padding:8px;
+ font-size:14px;
+}
+#management-venues .mv2-clear-filters,#management-venues .mv2-browse-button,
+#management-venues .mv2-text-action{
+ border:0;background:transparent;color:#e6bab0;
+ font:700 12px Arial,sans-serif;padding:8px 3px;text-decoration:underline;
+ text-underline-offset:4px;box-shadow:none;cursor:pointer;
+}
+#management-venues .mv2-clear-filters{margin-top:5px}
+#management-venues .mv2-block-heading{
+ display:flex;align-items:baseline;justify-content:space-between;gap:9px;
+ margin:17px 0 10px;
+}
+#management-venues .mv2-block-heading h3{
+ font:700 18px/1.2 Georgia,serif;color:#f5e5d8;margin:0;
+}
+#management-venues .mv2-section-count{
+ color:#cfb4a8;font:400 12px Arial,sans-serif;text-align:right;
+}
+#management-venues .mv2-attention-list{display:grid;gap:8px}
+#management-venues .mv2-attention-row{
+ display:flex;align-items:center;gap:10px;text-align:left;
+ min-height:63px;width:100%;padding:10px 11px;box-sizing:border-box;
+ background:#2c191c;border:1px solid #79504b;border-radius:11px;color:#f3e4d8;
+ box-shadow:none;
+}
+#management-venues .mv2-attention-row:hover{border-color:#b57a70;background:#362023}
+#management-venues .mv2-attention-icon{
+ display:grid;place-items:center;width:34px;height:36px;flex:none;
+ background:#3b2325;border-radius:8px;color:#eab9a9;
+}
+#management-venues .mv2-attention-icon .mv2-icon{width:22px;height:22px}
+#management-venues .mv2-attention-text{min-width:0;flex:1;display:block}
+#management-venues .mv2-attention-text strong{
+ display:block;font-size:14px;line-height:1.25;color:#f8e9db;
+}
+#management-venues .mv2-attention-text small{
+ display:block;font-size:11px;line-height:1.45;color:#cdb3aa;margin-top:4px;
+}
+#management-venues .mv2-attention-count{
+ min-width:25px;height:24px;box-sizing:border-box;
+ display:grid;place-items:center;padding:2px 6px;
+ border:1px solid #d77a70;border-radius:16px;color:#ffe9dd;background:#60282a;
+ font:700 12px Arial,sans-serif;flex:none;
+}
+#management-venues .mv2-attention-row>.mv2-icon{width:17px;height:17px;color:#cbb5aa}
+#management-venues .mv2-empty-attention{
+ margin:0;padding:13px;background:#2d1c1e;border:1px solid #70504a;border-radius:10px;
+ font-size:13px;line-height:1.5;color:#ddc6b9;
+}
+#management-venues .mv2-directory{border-top:1px solid #6e4546;margin-top:17px}
+#management-venues .mv2-directory-prompt{
+ border:1px solid #79504b;background:#29191c;border-radius:10px;
+ display:grid;grid-template-columns:20px minmax(0,1fr);gap:8px;
+ padding:12px;margin:0 0 14px;color:#dac2b6;font:400 12px/1.5 Arial,sans-serif;
+}
+#management-venues .mv2-directory-prompt>.mv2-icon{color:#dfb6a6;width:18px;height:18px}
+#management-venues .mv2-directory-prompt .mv2-browse-button{
+ grid-column:2;justify-self:start;margin:0;padding:0;
+}
+#management-venues .mv2-recent-heading{
+ display:flex;align-items:baseline;justify-content:space-between;
+ margin:10px 0 8px;gap:8px;
+}
+#management-venues .mv2-recent-heading h3{
+ font:700 15px Georgia,serif;margin:0;color:#f1e0d4;
+}
+#management-venues .mv2-recent-list{display:grid;gap:8px}
+#management-venues .mv2-recent-row{
+ width:100%;display:flex;align-items:center;text-align:left;gap:8px;
+ min-height:64px;padding:12px 10px;border:1px solid #79504b;background:#2d1c1e;
+ color:#f8e7dc;border-radius:11px;
+}
+#management-venues .mv2-recent-row:hover{background:#382225;border-color:#b57a70}
+#management-venues .mv2-recent-text{min-width:0;flex:1}
+#management-venues .mv2-recent-text strong{display:block;font-size:14px;line-height:1.3}
+#management-venues .mv2-recent-text small{
+ display:block;font-size:12px;color:#cab2a6;line-height:1.3;margin-top:3px;
+}
+#management-venues .mv2-recent-row>.mv2-icon{width:17px;height:17px}
+.mv2-status{
+ display:inline-flex;align-items:center;justify-content:center;min-height:27px;
+ padding:4px 9px;box-sizing:border-box;border:1px solid #a37169;border-radius:99px;
+ color:#f0dfd4;background:#3c2528;font:500 11px Arial,sans-serif;white-space:nowrap;
+}
+.mv2-status[data-status="submitted"]{border-color:#b98a61;background:#3c2b25;color:#f4dbbe}
+.mv2-status[data-status="under_review"]{border-color:#ac8b72;background:#382b29;color:#f3dbc8}
+.mv2-status[data-status="archived"]{border-color:#777;background:#282123;color:#d1c5c1}
+#management-venues .mv2-results-status{margin:12px 0;font-size:13px;color:#d8c1b6}
+#management-venues .mv2-directory-results{display:grid;gap:8px}
+#management-venues .mv2-directory-results .mv-list-venue-button{
+ min-height:66px;margin:0;padding:10px 11px;border-radius:11px;
+ border:1px solid #82524d;background:#2e1b1e;box-shadow:none;
+}
+#management-venues .mv2-directory-results .mv-list-venue-button:hover{background:#3a2226}
+#management-venues .mv2-directory-results strong{font-size:14px}
+#management-venues .mv2-directory-results small{font-size:12px;line-height:1.3;color:#c8ada4}
+#management-venues .mv2-pagination{margin:12px 0 5px!important}
+#management-venues .mv2-pagination button{min-height:42px}
+#management-venues .mv2-directory-empty{
+ color:#cbb2a8;font-size:13px;line-height:1.4;padding:8px 0;margin:0;
+}
+/* The original per-field buttons remain in DOM for legacy flows, but are replaced
+   visually by grouped editing sections. Existing editor overlays are retained. */
+#management-venue-details>.management-member.mv-edit-card{display:none!important}
+#management-venue-details .mv2-detail-frame{display:grid;gap:13px;padding:3px 0 12px}
+#management-venue-details .mv2-venue-hero{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ border:1px solid #9b5e59;border-radius:12px;padding:14px;background:#301c20;
+}
+#management-venue-details .mv2-hero-info{display:grid;gap:5px;min-width:0}
+#management-venue-details .mv2-venue-name{
+ color:#f8e8da;font:700 20px/1.15 Georgia,serif;overflow-wrap:anywhere;
+}
+#management-venue-details .mv2-venue-location{color:#cab2a7;font-size:12px}
+#management-venue-details .mv2-hero-right{
+ display:grid;justify-items:end;gap:7px;flex:none;
+}
+#management-venue-details .mv2-public-link{
+ display:flex;align-items:center;gap:3px;padding:2px 0;background:transparent;border:0;
+ color:#edc4b6;text-decoration:underline;text-underline-offset:3px;
+ font:600 11px Arial,sans-serif;box-shadow:none;
+}
+#management-venue-details .mv2-public-link .mv2-icon{width:15px;height:15px}
+#management-venue-details .mv2-detail-groups{display:grid;gap:12px}
+#management-venue-details .mv2-detail-section{
+ padding:13px;border:1px solid #87534f;border-radius:12px;
+ background:#2c191c;min-width:0;
+}
+#management-venue-details .mv2-section-heading{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;
+}
+#management-venue-details .mv2-heading-name{
+ display:flex;align-items:center;gap:9px;min-width:0;
+}
+#management-venue-details .mv2-heading-name>.mv2-icon{color:#dfbeaa;width:21px;height:21px}
+#management-venue-details .mv2-heading-name h3{
+ color:#f7e6d8;font:700 18px/1.2 Georgia,serif;margin:0;
+}
+#management-venue-details .mv2-section-edit{
+ display:flex;align-items:center;justify-content:center;gap:5px;
+ background:#382225;color:#f1d5c4;border:1px solid #a46962;
+ padding:5px 10px;min-width:65px;min-height:33px;border-radius:99px;
+ font:700 12px Arial,sans-serif;box-shadow:none;
+}
+#management-venue-details .mv2-section-edit .mv2-icon{width:14px;height:14px}
+#management-venue-details .mv2-detail-values{display:grid;gap:8px;margin:0}
+#management-venue-details .mv2-detail-row{
+ display:grid;grid-template-columns:minmax(94px,38%) minmax(0,1fr);
+ gap:10px;align-items:start;
+}
+#management-venue-details .mv2-detail-row dt,
+#management-venue-details .mv2-detail-row dd{
+ font:400 12px/1.45 Arial,sans-serif;min-width:0;margin:0;
+ overflow-wrap:anywhere;white-space:pre-wrap;
+}
+#management-venue-details .mv2-detail-row dt{color:#cdb3a7}
+#management-venue-details .mv2-detail-row dd{color:#f4e4d7}
+#management-venue-details .mv2-contact-note{
+ font-size:12px;line-height:1.45;margin:0 0 11px;color:#c6a99d;
+}
+#management-venue-details .mv2-contacts-list{display:grid;gap:8px}
+#management-venue-details .mv2-empty-contact{
+ font-size:12px;line-height:1.45;color:#d0b6ac;padding:7px 0;margin:0;
+}
+#management-venue-details .mv2-contact-card{
+ display:flex;align-items:center;text-align:left;gap:10px;
+ width:100%;min-height:64px;padding:9px;border:1px solid #75504a;border-radius:10px;
+ background:#392226;color:#f6e7db;box-shadow:none;
+}
+#management-venue-details .mv2-contact-card:hover{border-color:#b67c71}
+#management-venue-details .mv2-contact-avatar,
+.mv2-contact-popup-head .mv2-contact-avatar{
+ display:grid;place-items:center;overflow:hidden;flex:none;width:44px;height:44px;
+ border:1px solid #8f6559;border-radius:50%;background:#4a2c2f;
+ color:#f4d7c7;font:700 20px Georgia,serif;
+}
+.mv2-contact-avatar img{width:100%;height:100%;object-fit:cover}
+#management-venue-details .mv2-contact-info{display:grid;gap:4px;flex:1;min-width:0}
+#management-venue-details .mv2-contact-info strong{font-size:13px;overflow-wrap:anywhere}
+#management-venue-details .mv2-contact-info small{font-size:11px;color:#d4b7ac}
+#management-venue-details .mv2-contact-card .mv2-icon{width:17px;height:17px}
+#management-venue-details .mv2-advanced-actions{
+ border-top:1px solid #694747;padding-top:10px;
+ color:#cdb6ab;font-size:12px;
+}
+#management-venue-details .mv2-advanced-actions summary{
+ cursor:pointer;padding:8px 4px;font-size:12px;
+}
+#management-venue-details .mv2-advanced-actions #mvd-delete-entry{
+ width:100%;margin:6px 0 0;border-color:#91524e;
+}
+#management-venue-details #mvd-feedback:empty{display:none}
+#management-venue-details #mvd-feedback{
+ font-size:12px;margin:2px 0;color:#e7cabb;
+}
+/* Focused grouped editor and private contact dialog. */
+#management-dialog .mv2-overlay{
+ position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+ padding:16px;box-sizing:border-box;background:rgba(0,0,0,.72);
+}
+#management-dialog .mv2-overlay-panel{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ width:min(100%,485px);max-height:min(88dvh,calc(100dvh - 24px));
+ background:#1e1012;border:1px solid #ac706a;border-radius:16px;
+ padding:17px;overflow:hidden;color:#f7e7db;
+}
+#management-dialog .mv2-overlay-panel>h2{
+ font:700 23px Georgia,serif;margin:0 0 13px;color:#f8e7d8;flex:none;
+}
+#management-dialog .mv2-overlay-body{
+ overflow:auto;overscroll-behavior:contain;min-height:0;flex:1;
+ padding:2px 3px 10px 0;display:grid;gap:11px;
+}
+#management-dialog .mv2-field{
+ display:grid;gap:5px;font-size:12px;font-weight:700;color:#e7cfc1;min-width:0;
+}
+#management-dialog .mv2-field input,
+#management-dialog .mv2-field textarea{
+ box-sizing:border-box;width:100%;min-height:42px;
+ background:#342024;border:1px solid #94615a;border-radius:9px;
+ padding:10px;color:#fff0e3;font:400 14px Arial,sans-serif;
+}
+#management-dialog .mv2-field textarea{resize:vertical;min-height:96px}
+#management-dialog .mv2-tile-section{min-width:0}
+#management-dialog .mv2-tile-section h3{
+ font:700 15px Georgia,serif;margin:4px 0 9px;color:#f4dfd1;
+}
+#management-dialog .mv2-choice-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+}
+#management-dialog .mv2-choice{
+ min-height:42px;text-align:center;border:1px solid #8e5c56;border-radius:9px;
+ background:#372226;color:#f4e4d7;font:600 12px/1.25 Arial,sans-serif;
+ padding:8px 5px;
+}
+#management-dialog .mv2-choice[aria-pressed="true"]{
+ border-color:#e4b09d;background:#763434;color:#fff2e7;
+}
+#management-dialog .mv2-status-change{
+ border-top:1px solid #694646;display:flex;gap:8px;
+ justify-content:space-between;align-items:center;
+ padding:12px 0 0;color:#e0c8bb;font-size:12px;
+}
+#management-dialog .mv2-text-action{
+ border:0;padding:7px 0;background:none;color:#f4c7b3;
+ text-decoration:underline;text-underline-offset:3px;font:700 12px Arial,sans-serif;
+}
+#management-dialog .mv2-overlay-feedback{
+ flex:none;margin:4px 0;color:#f1c7b9;font-size:12px;line-height:1.4;
+}
+#management-dialog .mv2-overlay-feedback:empty{display:none}
+#management-dialog .mv2-overlay-actions{
+ display:grid;grid-template-columns:1fr 1fr;gap:9px;flex:none;
+ border-top:1px solid #55383b;padding-top:12px;
+}
+#management-dialog .mv2-overlay-actions:has(.mv2-button-red[hidden]){
+ grid-template-columns:1fr;
+}
+#management-dialog .mv2-overlay-actions button{
+ min-height:46px;box-sizing:border-box;border-radius:10px;
+ padding:9px 12px;color:#fff4e8;font:700 14px Arial,sans-serif;
+}
+#management-dialog .mv2-button-secondary{
+ background:#3a2427;border:1px solid #a16d65;
+}
+#management-dialog .mv2-button-red{
+ background:linear-gradient(#bd1b1b,#880e0e);border:1px solid #e1605e;
+}
+#management-dialog .mv2-button-red:disabled{opacity:.5}
+#management-dialog .mv2-contact-popup-head{
+ display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid #6b4544;
+}
+#management-dialog .mv2-contact-popup-head .mv2-contact-avatar{
+ width:59px;height:59px;font-size:25px;
+}
+#management-dialog .mv2-contact-popup-head h3{margin:0;font:700 20px Georgia,serif}
+#management-dialog .mv2-contact-popup-head p{margin:5px 0 0;font-size:12px}
+#management-dialog .mv2-contact-metadata{display:grid;gap:10px;margin:0}
+#management-dialog .mv2-contact-metadata .mv2-detail-row{
+ display:grid;grid-template-columns:100px minmax(0,1fr);gap:9px;
+}
+#management-dialog .mv2-contact-metadata dt,
+#management-dialog .mv2-contact-metadata dd{
+ margin:0;font-size:13px;line-height:1.4;overflow-wrap:anywhere;
+}
+#management-dialog .mv2-contact-metadata dt{color:#c8aea4}
+#management-dialog .mv2-contact-actions{display:flex;gap:9px;flex-wrap:wrap}
+#management-dialog .mv2-link-button{
+ flex:1;min-width:85px;min-height:40px;display:flex;align-items:center;
+ justify-content:center;gap:8px;padding:8px;
+ border:1px solid #a26c64;border-radius:9px;color:#f6e0d2;
+ background:#392226;text-decoration:none;font-size:13px;font-weight:700;
+}
+#management-dialog .mv2-link-button .mv2-icon{width:17px;height:17px}
+#management-dialog .mv2-private-note{
+ color:#bda29b;font-size:12px;line-height:1.45;margin:0;
+}
+@media(max-width:390px){
+ #management-venues .mv2-toolbar{grid-template-columns:82px minmax(0,1fr) minmax(0,1fr);gap:5px}
+ #management-venues .mv2-header h2{font-size:22px}
+ #management-venues .mv2-add-button{padding:8px;font-size:11px}
+ #management-venues .mv2-attention-text strong{font-size:13px}
+ #management-venue-details .mv2-detail-section{padding:11px}
+ #management-venue-details .mv2-detail-row{grid-template-columns:minmax(87px,39%) minmax(0,1fr);gap:8px}
+ #management-venue-details .mv2-hero-right{gap:5px}
+ #management-venue-details .mv2-venue-name{font-size:18px}
+}
