@@ -433,7 +433,7 @@ approvalCenterRender=function(){
   heading.append(sectionTitle);
   const hint=heading.nextElementSibling;
   if(hint?.classList.contains('atk-approval-muted')&&links.length){
-   hint.textContent='Tap a member to view their profile.';
+   hint.textContent='Tap a member for details. Dismiss only hides the notice for you — it never deletes the member.';
   }
   if(links.length>1){
    const clear=approvalCenterButton('Dismiss all',()=>atkApprovalDismissMembers(members));
@@ -447,9 +447,9 @@ approvalCenterRender=function(){
   const row=approvalCenterEl('div',undefined,'atk-approval-member-row');
   link.parentNode.insertBefore(row,link);
   row.append(link);
-  const dismiss=approvalCenterButton('×',()=>atkApprovalDismissMembers([member]));
+  const dismiss=approvalCenterButton('Dismiss',()=>atkApprovalDismissMembers([member]));
   dismiss.className='atk-approval-member-dismiss';
-  dismiss.title='Dismiss this update';
+  dismiss.title='Hide this notification for your account (does not delete the member)';
   dismiss.setAttribute('aria-label','Dismiss new-member update for '+(member.stage_name||'Karaoke member'));
   row.append(dismiss);
  });
