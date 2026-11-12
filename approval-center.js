@@ -220,7 +220,7 @@ function approvalCenterRender(){
  const members=Array.isArray(data.recent_members)?data.recent_members:[];
  const summary=document.getElementById('atk-approval-summary');
  summary.textContent=total
-  ? total+' item'+(total===1?'':'s')+' awaiting your review · '+Number(data.venue_count||0)+' venue · '+Number(data.hosting_count||0)+' KJ'
+  ? total+' item'+(total===1?'':'s')+' awaiting review · '+Number(data.venue_count||0)+' venue'+(Number(data.venue_count||0)===1?'':'s')+' · '+Number(data.hosting_count||0)+' KJ request'+(Number(data.hosting_count||0)===1?'':'s')
   : 'All caught up — no approvals waiting.';
  const filter=document.getElementById('atk-approval-filter').value;
  const showVenues=filter==='all'||filter==='venues';
@@ -236,7 +236,7 @@ function approvalCenterRender(){
   if(!hosting.length)root.append(approvalCenterEl('p','No pending KJ hosting nights.','atk-approval-muted'));
   for(const request of hosting)root.append(approvalCenterHostingCard(request));
  }
- if(showMembers){
+ if(showMembers&&(members.length||filter==='members')){
   approvalCenterGroup(root,'New members · '+members.length);
   root.append(approvalCenterEl('p','Accounts are active when registered. Tap a member to see their management profile.','atk-approval-muted'));
   if(!members.length)root.append(approvalCenterEl('p','No new members in the last seven days.','atk-approval-muted'));
