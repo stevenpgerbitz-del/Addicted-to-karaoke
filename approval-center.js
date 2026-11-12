@@ -194,6 +194,19 @@ async function approvalCenterHostingAction(r,action,sessions,reason,card){
   await approvalCenterRefresh(action==='approved'?'KJ hosting nights approved and published. Decision recorded in Activity History.':'KJ request rejected. No nights published. Decision recorded in Activity History.');
  }catch(e){atkApprovalSaving=false;buttons.forEach(b=>b.disabled=false);approvalCenterMessage('Unable to review hosting request: '+(e.message||'Please retry.'));}
 }
+function approvalCenterMemberOpen(member){
+ if(!member?.id||!authClient||!authUser)return;
+ const profile={
+  id:member.id,
+  stage_name:member.stage_name||'Karaoke member',
+  role:member.role||'member',
+  verified:member.verified===true,
+  joined_at:member.created_at
+ };
+ document.getElementById('management-approvals').hidden=true;
+ managementMemberOpen(profile,'approvals');
+ document.getElementById('management-dialog').scrollTop=0;
+}
 function approvalCenterRender(){
  const data=atkApprovalData,root=document.getElementById('atk-approval-results');root.replaceChildren();
  if(!data)return;
@@ -212,15 +225,17 @@ function approvalCenterRender(){
  }
  if(filter==='all'||filter==='members'){
   approvalCenterGroup(root,'New members · last 7 days');
-  root.append(approvalCenterEl('p','Informational only: signup is automatic, not approval-gated. Use User Management for member roles and verification.','atk-approval-muted'));
+  root.append(approvalCenterEl('p','New accounts are active automatically. Tap a member to view their management profile, role and verification status.','atk-approval-muted'));
   if(!data.recent_members.length)root.append(approvalCenterEl('p','No recent signups.','atk-approval-muted'));
   for(const member of data.recent_members){
-   const c=approvalCenterEl('div',undefined,'atk-approval-member');
-   c.append(approvalCenterEl('strong',member.stage_name||'Karaoke member'),
-    approvalCenterEl('small','Joined '+approvalCenterDate(member.created_at)+' · Account active'));
+   const c=approvalCenterButton('',()=>approvalCenterMemberOpen(member));
+   c.className='atk-approval-member atk-approval-member-link';
+   c.setAttribute('aria-label','View member profile: '+(member.stage_name||'Karaoke member'));
+   const info=approvalCenterEl('span',undefined,'atk-approval-member-info');
+   info.append(approvalCenterEl('strong',member.stage_name||'Karaoke member'),
+    approvalCenterEl('small','Joined '+approvalCenterDate(member.created_at)+' · '+(member.verified?'Verified member':'Account active')));
+   c.append(info,approvalCenterEl('span','›','atk-approval-chevron'));
    root.append(c);
   }
-  const b=approvalCenterButton('Open User Management',()=>{approvalCenterBack();managementUsersOpen();});
-  b.className='atk-approval-member-jump';root.append(b);
  }
 }
