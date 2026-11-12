@@ -724,7 +724,7 @@ padding:13px 3px!important;min-height:66px
  <div id="atk-kj-body"></div>
  <p id="atk-kj-status" role="status"></p>
  <div class="atk-kj-actions">
-  <button type="button" onclick="atkKjClose()">Close</button>
+  <button type="button" id="atk-kj-dismiss" onclick="atkKjDismiss()">Close</button>
   <button type="button" id="atk-kj-next" onclick="atkKjNext()" hidden>Continue</button>
  </div>
 </dialog>
@@ -1529,6 +1529,11 @@ async function atkKjLoadRequests(){
   if(atkKjStage==='list')atkKjRender();
  }catch(e){atkKjMessage('Unable to load hosting requests: '+(e.message||'Please retry.'))}
 }
+function atkKjDismiss(){
+ if(atkKjBusy)return;
+ if(atkKjStage==='confirm_remove'){atkKjDraft=atkKjNewDraft();atkKjStage='list';atkKjRender();return}
+ atkKjClose();
+}
 function atkKjClose(){
  if(atkKjBusy)return;
  const dlg=document.getElementById('atk-kj-dialog');if(dlg.open)dlg.close();
@@ -1667,6 +1672,8 @@ function atkKjRender(){
  const next=document.getElementById('atk-kj-next'),progress=document.getElementById('atk-kj-progress');
  body.replaceChildren();atkKjMessage('');
  next.hidden=false;next.disabled=atkKjBusy;
+ const dismiss=document.getElementById('atk-kj-dismiss');
+ if(dismiss)dismiss.textContent=atkKjStage==='confirm_remove'?'Cancel':'Close';
  progress.textContent=({list:'Your hosting locations',venue:'Step 1 of 3',details:'Venue details',schedule:'Step 2 of 3',review:'Step 3 of 3',confirm_remove:'Remove location',done:'Hosting saved'})[atkKjStage]||'';
  if(atkKjStage==='list'){
   title.textContent='My Hosting Venues';
@@ -1764,7 +1771,6 @@ function atkKjRender(){
  }else if(atkKjStage==='confirm_remove'){
   title.textContent='Remove Your Hosting Location?';
   body.appendChild(atkKjEl('p','Remove your hosting schedule for '+atkKjDraft.venueName+'? The venue listing, its reviews, and other KJs’ schedules will remain.','atk-kj-lead'));
-  body.appendChild(atkKjButton('Cancel',()=>{atkKjDraft=atkKjNewDraft();atkKjStage='list';atkKjRender()}));
   next.textContent=atkKjBusy?'Removing…':'Remove My Hosting';
  }else if(atkKjStage==='done'){
   title.textContent=atkKjDraft.lastStatus==='approved'?'Hosting Schedule Saved!':'Sent to Venue Owner';
@@ -3357,4 +3363,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-115";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-116";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
