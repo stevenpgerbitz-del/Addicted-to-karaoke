@@ -362,7 +362,7 @@
    if(error)throw error;
    if(!data?.id)throw Error('Could not confirm the new venue.');
    browseAll=true;
-   await original.detailOpen(data.id);
+   await managementVenueDetailOpen(data.id);
    if(managementSelectedVenue?.id===data.id){refreshDetail();loadContacts(data.id);loadPublicLink(data.id)}
    refreshDashboard();
   });
