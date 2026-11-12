@@ -418,8 +418,27 @@
     v.hasPhoto=!!cover||v.hasPhoto;
     const teaser=[...document.querySelectorAll('.venue-teaser[data-venue]')]
      .find(card=>card.dataset.venue===v.id);
-    const image=teaser?.querySelector('.teaser-img img');
-    if(image){image.src=v.image;image.alt=cover?'Cover photo for '+v.name:'Venue illustration for '+v.name}
+    const media=teaser?.querySelector('.teaser-img');
+    const image=media?.querySelector('img:not(.mv3-cover-blur)');
+    if(image){
+     image.src=v.image;
+     image.alt=cover?'Cover photo for '+v.name:'Venue illustration for '+v.name;
+     image.classList.toggle('mv3-cover-image',!!cover);
+     // A portrait cover should not stretch the venue card or be zoomed/cropped.
+     // Its softened backdrop fills only the existing image panel.
+     let backdrop=media.querySelector('.mv3-cover-blur');
+     if(cover){
+      if(!backdrop){
+       backdrop=document.createElement('img');
+       backdrop.className='mv3-cover-blur';
+       backdrop.alt='';
+       backdrop.setAttribute('aria-hidden','true');
+       backdrop.decoding='async';
+       media.prepend(backdrop);
+      }
+      backdrop.src=cover;
+     }else if(backdrop){backdrop.remove()}
+    }
     if(typeof selectedVenue!=='undefined'&&selectedVenue===v.id){
      const hero=get('venue-screen')?.querySelector('.identity img');
      if(hero)hero.src=v.image;
