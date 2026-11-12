@@ -66,6 +66,32 @@
   const inside=make('div','atk-approval-details');outer.append(heading,inside);
   return {outer,inside};
  }
+ function hideNoticeButton(kind,row){
+  const name=row.stage_name||'member';
+  const b=button('',()=>act(kind,row.id,'dismiss'),'atk-review-notification-hide');
+  b.title='Hide this notification for your account only';
+  b.setAttribute('aria-label','Hide '+(kind==='suspension'?'suspension':'suspension message')+' for '+name+' from my notifications only');
+  const eye=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  eye.setAttribute('viewBox','0 0 24 24');
+  eye.setAttribute('aria-hidden','true');
+  eye.setAttribute('fill','none');
+  eye.setAttribute('stroke','currentColor');
+  eye.setAttribute('stroke-width','1.9');
+  eye.setAttribute('stroke-linecap','round');
+  eye.setAttribute('stroke-linejoin','round');
+  for(const shape of [
+   'M10.58 10.587a2 2 0 0 0 2.84 2.84',
+   'M16.681 16.673A8.7 8.7 0 0 1 12 18c-4.5 0-8.27-3.11-9.5-6a9.8 9.8 0 0 1 2.653-3.639',
+   'M9.88 5.09A8.7 8.7 0 0 1 12 5c4.5 0 8.27 3.11 9.5 7a9.78 9.78 0 0 1-1.346 2.375',
+   'M2 2l20 20'
+  ]){
+   const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+   path.setAttribute('d',shape);
+   eye.append(path);
+  }
+  b.append(eye,make('span','','Hide'));
+  return b;
+ }
  function cardForSuspension(row){
   const {outer,inside}=detailCard(row.stage_name||'Member',
     (row.active?'Review privileges suspended':'Suspension expired')+' · '+formatDate(row.created_at));
@@ -74,7 +100,7 @@
   inside.append(make('p','','Until: '+formatDate(row.suspended_until)));
   inside.append(make('p','','Reason: '+(row.reason||'No reason recorded.')));
   const actions=make('div','atk-approval-actions');
-  actions.append(button('Hide for Me',()=>act('suspension',row.id,'dismiss')));
+  actions.append(hideNoticeButton('suspension',row));
   if(typeof approvalCenterMemberOpen==='function'&&staffDialog?.open!==true){
    actions.append(button('Member Details',()=>approvalCenterMemberOpen({id:row.user_id,stage_name:row.stage_name})));
   }
@@ -88,7 +114,7 @@
   const content=make('p','atk-review-notification-message',row.message||'');
   inside.append(content);
   const actions=make('div','atk-approval-actions');
-  actions.append(button('Hide for Me',()=>act('message',row.id,'dismiss')));
+  actions.append(hideNoticeButton('message',row));
   const done=button('Mark Handled',()=>{
    if(done.dataset.confirm!=='yes'){
     done.dataset.confirm='yes';done.textContent='Confirm Handled';return;
