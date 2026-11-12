@@ -103,6 +103,9 @@
   if(state.mode==='suspended'&&state.reason){
    container.append(el('p','mg2-muted','Reason: '+state.reason));
   }
+  if(state.mode==='suspended'){
+   container.append(el('p','mg2-muted','Suspended by: '+(state.issued_by||'Site Moderator')));
+  }
   if(state.mode==='suspended')container.append(el('p','mg2-muted','The member will see a suspension notice at sign-in.'));
   $('mg2-review-edit').hidden=!state.can_manage;
  }
