@@ -809,152 +809,27 @@
  #management-users .mg2-member-card .mg2-badges{max-width:29%}
 }
 
-
-/* Build 135 — User Management mobile containment and filter alignment.
-   The legacy nested dialog scrollbar was overlapping the last column and
-   creating the illusion of cards going off-screen. Keep scrolling functional
-   while retaining a single consistent left/right content rail. */
-#management-dialog[open]:has(> #management-users:not([hidden])),
-#management-dialog[open]:has(> #management-member-details:not([hidden])){
- overflow-x:hidden!important;
- max-width:calc(100vw - 16px)!important;
-}
+/* Build 136 — final scroll rail polish for the user management popup. */
 #management-dialog #management-users,
 #management-dialog #management-member-details{
- width:100%!important;
- max-width:100%!important;
- min-width:0!important;
- box-sizing:border-box!important;
- overflow-x:hidden!important;
- overflow-y:auto!important;
- scrollbar-width:none;
- -ms-overflow-style:none;
- padding:0 0 20px!important;
+ padding-right:0!important;
+ padding-bottom:18px!important;
  scroll-padding-bottom:18px;
 }
-#management-dialog #management-users::-webkit-scrollbar,
-#management-dialog #management-member-details::-webkit-scrollbar{
- display:none;
- width:0;
- height:0;
-}
-#management-dialog #management-users > *,
-#management-dialog #management-member-details > *{
- box-sizing:border-box;
- max-width:100%;
- min-width:0;
-}
-#management-users .mg2-toolbar{
- display:grid;
- width:100%;
- min-width:0;
- max-width:100%;
- grid-template-columns:repeat(3,minmax(0,1fr));
- align-items:stretch;
- gap:8px;
- margin:0 0 10px;
- padding:0;
- box-sizing:border-box;
-}
 #management-users .mg2-toolbar > *{
- width:100%;
- min-width:0;
- min-height:44px;
- margin:0!important;
- align-self:stretch;
  box-sizing:border-box;
-}
-#management-users .mg2-toolbar > .mg2-toolbar-label{
- display:flex;
- align-items:stretch;
  min-width:0;
+ align-self:stretch;
 }
 #management-users .mg2-toolbar .mg2-filter-button,
-#management-users .mg2-toolbar .mg2-toolbar-label select{
- box-sizing:border-box!important;
- display:flex;
- width:100%!important;
- min-width:0!important;
- max-width:100%!important;
- height:44px!important;
- min-height:44px!important;
- margin:0!important;
- border-radius:10px;
- font-size:12px;
- line-height:1.2;
+#management-users .mg2-toolbar .mg2-toolbar-label>select{
  vertical-align:middle;
-}
-#management-users .mg2-toolbar .mg2-filter-button{
- align-items:center;
- justify-content:center;
- gap:5px;
- padding:9px 5px;
-}
-#management-users .mg2-toolbar .mg2-toolbar-label select{
- display:block;
- padding:8px 5px 8px 8px;
- text-overflow:ellipsis;
- white-space:nowrap;
- overflow:hidden;
-}
-#management-users .mg2-block-heading,
-#management-users .mg2-directory,
-#management-users .mg2-attention,
-#management-users .mg2-recent-list,
-#management-users .mg2-results,
-#management-users .mg2-member-card,
-#management-users .mg2-approval-action,
-#management-users .mg2-browse,
-#management-users .mg2-search-label,
-#management-users #mg-search{
- box-sizing:border-box;
- width:100%;
- min-width:0;
- max-width:100%;
 }
 #management-users .mg2-block-heading{
  flex-wrap:wrap;
- align-items:baseline;
- gap:4px 8px;
-}
-#management-users .mg2-block-heading h3{
- min-width:0;
- flex:1 1 auto;
+ gap:6px 8px;
 }
 #management-users .mg2-block-heading .mg2-total{
- flex:0 0 auto;
  max-width:100%;
  margin-left:auto;
- white-space:nowrap;
-}
-#management-users .mg2-member-info{
- flex:1 1 0;
- min-width:0;
- overflow-wrap:anywhere;
-}
-#management-users .mg2-member-card > .mg2-icon{
- flex:none;
-}
-#management-users .mg2-member-card .mg2-badges{
- flex:0 1 auto;
- min-width:0;
- max-width:105px;
-}
-#management-users .mg2-directory-hint,
-#management-users .mg2-approval-copy small{
- overflow-wrap:anywhere;
-}
-@media(max-width:390px){
- #management-users .mg2-toolbar{
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:6px;
- }
- #management-users .mg2-toolbar .mg2-filter-button,
- #management-users .mg2-toolbar .mg2-toolbar-label select{
-  font-size:11px;
- }
- #management-users .mg2-toolbar .mg2-toolbar-label select{
-  padding-left:6px;
-  padding-right:2px;
- }
 }
