@@ -192,7 +192,6 @@
     const {data:founder,error:fe}=await authClient.rpc('is_platform_founder');
     if(serial!==staffAccessSerial||authUser?.id!==id)return;
     staffButton.hidden=!fe&&founder===true;
-    staffButton.hidden=(!fe&&founder===true)||false;
    }
   }catch(e){if(staffButton)staffButton.hidden=true}
  }
