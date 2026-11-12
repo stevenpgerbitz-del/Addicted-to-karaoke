@@ -1,0 +1,48 @@
+/* Build 148 — compact public venue review filters. Consistent red/black styling. */
+#content .atk-public-review-filterbar{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px;
+ row-gap:10px;align-items:end;min-width:0;margin:13px 0 16px;
+ padding:12px;border:1px solid #86514c;border-radius:12px;
+ background:linear-gradient(145deg,#2b1d1e,#211718);
+}
+#content .atk-public-review-select-label{
+ display:block;min-width:0;max-width:100%;
+ color:#e4cabe;font:700 12px/1.35 Arial,sans-serif
+}
+#content .atk-public-review-select-label span{display:block;margin:0 0 6px}
+#content .atk-public-review-select-label select{
+ display:block;box-sizing:border-box;appearance:auto;
+ width:100%;max-width:100%;min-width:0;min-height:44px;
+ padding:9px 7px;margin:0;
+ border:1px solid #9a635c;border-radius:9px;
+ background:#382528;color:#f7e7de;
+ font:400 13px/1.3 Arial,sans-serif
+}
+#content .atk-public-review-select-label select:focus-visible{
+ outline:2px solid #e8b6a4;outline-offset:2px
+}
+#content .atk-public-review-pages{
+ display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+ align-items:center;gap:9px;margin:16px 0 8px
+}
+#content .atk-public-review-pages .atk-public-review-page{
+ display:block;width:100%;min-width:0;min-height:42px;
+ padding:9px 6px;border:1px solid #a46c64;border-radius:10px;
+ background:#382428;color:#f7e8dc;
+ font:700 13px Arial,sans-serif
+}
+#content .atk-public-review-pages .atk-public-review-page:disabled{opacity:.45;cursor:default}
+#content .atk-public-review-pages span{
+ color:#ddc7b8;font:600 12px Arial,sans-serif;white-space:nowrap
+}
+@media(max-width:360px){
+ #content .atk-public-review-filterbar{gap:7px;padding:9px}
+ #content .atk-public-review-select-label select{font-size:12px;padding:8px 4px}
+ #content .atk-public-review-pages{gap:6px}
+ #content .atk-public-review-pages span{font-size:11px}
+}
+/* Long comments stay easy to scan; expanding the review reveals the entire text. */
+#content .review-card:not([open]) .review-comment{
+ display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;
+ overflow:hidden;overflow-wrap:anywhere
+}
