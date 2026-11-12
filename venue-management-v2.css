@@ -552,3 +552,111 @@
   gap:6px;
  }
 }
+
+
+/* Build 130 — compact, readable venue editors. Earlier generic management-form
+   margins were still creating large gaps between every field. Scope these fixes
+   to the new grouped venue dialogs only. */
+#management-dialog .mv2-overlay-panel{
+ padding:15px;
+}
+#management-dialog .mv2-overlay-panel > h2{
+ margin:0 0 11px;
+ line-height:1.2;
+}
+#management-dialog .mv2-overlay-body{
+ display:flex;
+ flex-direction:column;
+ align-items:stretch;
+ gap:11px;
+ padding:2px 3px 9px 0;
+ overflow-y:auto;
+ overflow-x:hidden;
+ scroll-padding-top:6px;
+ min-height:0;
+}
+#management-dialog .mv2-overlay-body > *{
+ flex:0 0 auto;
+ min-width:0;
+}
+#management-dialog .mv2-overlay-body label.mv2-field{
+ margin:0!important;
+ padding:0;
+ display:grid;
+ gap:5px;
+ min-width:0;
+ width:100%;
+ font-size:12px;
+ line-height:1.3;
+ color:#f1d8c9;
+}
+#management-dialog .mv2-overlay-body .mv2-field > span:first-child{
+ display:block;
+ margin:0;
+ padding:0;
+ font-weight:700;
+ line-height:1.35;
+}
+#management-dialog .mv2-overlay-body .mv2-field > input,
+#management-dialog .mv2-overlay-body .mv2-field > textarea{
+ display:block;
+ min-width:0;
+ width:100%;
+ margin:0!important;
+ padding:9px 11px;
+ box-sizing:border-box;
+ min-height:44px;
+ border-radius:9px;
+ color:#fff0e5;
+ background:#352125;
+ border:1px solid #95615b;
+ font:400 15px/1.35 Arial,sans-serif;
+}
+#management-dialog .mv2-overlay-body .mv2-field > input:focus-visible,
+#management-dialog .mv2-overlay-body .mv2-field > textarea:focus-visible{
+ outline:2px solid #ddb2a4;
+ outline-offset:1px;
+}
+#management-dialog .mv2-address-pair{
+ display:grid;
+ grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+ gap:9px;
+ align-items:start;
+}
+#management-dialog .mv2-address-pair > .mv2-field{
+ min-width:0;
+}
+#management-dialog .mv2-address-pair input{
+ min-width:0;
+}
+#management-dialog .mv2-status-change{
+ margin-top:2px;
+ padding:10px 0;
+}
+#management-dialog .mv2-overlay-actions{
+ margin-top:6px;
+ padding-top:11px;
+}
+#management-dialog .mv2-overlay-body .mv2-phone-help{
+ display:block;
+ margin:2px 0 0;
+ font:400 11px/1.4 Arial,sans-serif;
+ color:#d7bcae;
+}
+#management-dialog .mv2-overlay-body .mv2-phone-help.mv2-phone-error{
+ color:#ffb5a9;
+ font-weight:600;
+}
+#management-dialog .mv2-overlay-body .mv2-field > input[aria-invalid="true"]{
+ border-color:#f1a095;
+ outline-color:#f1a095;
+}
+/* Keep genre / amenity tiles comfortable and vertically scrollable. */
+#management-dialog .mv2-overlay-body .mv2-tile-section h3{
+ margin:0 0 8px;
+ padding:2px 0 0;
+}
+@media(max-width:360px){
+ #management-dialog .mv2-overlay-panel{padding:13px}
+ #management-dialog .mv2-address-pair{gap:7px}
+}
