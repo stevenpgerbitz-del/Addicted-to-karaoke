@@ -13,14 +13,22 @@ function approvalCenterDate(t){
  const d=new Date(t);return Number.isNaN(d.valueOf())?'Unknown date':d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
 }
 function approvalCenterSetBadge(data){
- const count=Number(data.total_pending||0);
+ const count=Number(data.total_pending||0)+Number(data.report_count||0)+Number(data.photo_count||0);
  document.getElementById('management-approval-count').textContent=count+' pending decision'+(count===1?'':'s')+' · New member updates';
 }
-function approvalCenterBadge(){
+async function approvalCenterBadge(){
  const owner=authUser?.id;if(!owner||!authClient)return;
- authClient.rpc('founder_approval_center').then(({data,error})=>{
-  if(!error&&data&&authUser?.id===owner){atkApprovalData=data;approvalCenterSetBadge(data);}
- }).catch(()=>{});
+ try{
+  const [base,reports,photos]=await Promise.all([
+   authClient.rpc('founder_approval_center'),
+   authClient.from('venue_reports').select('id',{count:'exact',head:true}).eq('status','pending'),
+   authClient.from('venue_photos').select('id',{count:'exact',head:true}).eq('moderation_status','pending').eq('published',false)
+  ]);
+  if(base.error)throw base.error;
+  if(authUser?.id!==owner)return;
+  atkApprovalData={...base.data,report_count:reports.error?0:reports.count||0,photo_count:photos.error?0:photos.count||0};
+  approvalCenterSetBadge(atkApprovalData);
+ }catch(error){console.warn('Approval count unavailable',error)}
 }
 function approvalCenterOpen(){
  if(!authClient||!authUser)return;
@@ -48,11 +56,24 @@ async function approvalCenterRefresh(success=''){
  const request=++atkApprovalSerial,owner=authUser?.id;
  document.getElementById('atk-approval-summary').textContent='Checking pending approvals…';
  try{
-  const {data,error}=await authClient.rpc('founder_approval_center');
-  if(error)throw error;
+  const [base,reports,photos]=await Promise.all([
+   authClient.rpc('founder_approval_center'),
+   authClient.from('venue_reports')
+    .select('id,venue_id,reporter_id,reason,note,status,created_at,venues(name,city,state)')
+    .eq('status','pending').order('created_at',{ascending:true}).limit(150),
+   authClient.from('venue_photos')
+    .select('id,venue_id,storage_path,caption,created_at,uploader_user_id,venues(name,city,state)')
+    .eq('moderation_status','pending').eq('published',false).order('created_at',{ascending:true}).limit(150)
+  ]);
+  if(base.error)throw base.error;
+  if(reports.error)throw reports.error;
+  if(photos.error)throw photos.error;
+  const data=base.data;
   if(!data||!Array.isArray(data.venues)||!Array.isArray(data.hosting)||!Array.isArray(data.recent_members))throw Error('Unexpected approval results');
   if(request!==atkApprovalSerial||authUser?.id!==owner||document.getElementById('management-approvals').hidden)return;
-  atkApprovalData=data;approvalCenterSetBadge(data);approvalCenterRender();
+  atkApprovalData={...data,reports:reports.data||[],photos:photos.data||[],
+   report_count:reports.data?.length||0,photo_count:photos.data?.length||0};
+  approvalCenterSetBadge(atkApprovalData);approvalCenterRender();
   approvalCenterMessage(success);
  }catch(e){
   if(request!==atkApprovalSerial)return;
@@ -208,24 +229,107 @@ function approvalCenterMemberOpen(member){
  managementMemberOpen(profile,'approvals');
  document.getElementById('management-dialog').scrollTop=0;
 }
+
+const atkVenueReportLabels={
+ incorrect_details:'Incorrect venue information',no_karaoke:'No karaoke here',closed:'Venue closed',
+ duplicate:'Duplicate listing',inappropriate:'Inappropriate content',other:'Other issue'
+};
+function approvalCenterReportCard(report){
+ const venue=report.venues||{};
+ const {card,inside}=approvalCenterDetails(venue.name||'Reported Venue',
+  (atkVenueReportLabels[report.reason]||'Reported venue')+' · '+approvalCenterDate(report.created_at));
+ inside.append(approvalCenterEl('p','Location: '+[venue.city,venue.state].filter(Boolean).join(', ')));
+ const note=approvalCenterEl('p','Member report: '+report.note);note.style.whiteSpace='pre-wrap';inside.append(note);
+ const actions=approvalCenterEl('div',undefined,'atk-approval-actions');
+ const dismissed=approvalCenterButton('Dismiss Report',()=>approvalCenterReportAction(report,'dismissed',card));
+ const resolved=approvalCenterButton('Mark Resolved',()=>approvalCenterReportAction(report,'resolved',card));
+ actions.append(dismissed,resolved);inside.append(actions);
+ return card;
+}
+async function approvalCenterReportAction(report,status,card){
+ if(atkApprovalSaving)return;
+ atkApprovalSaving=true;
+ const buttons=[...card.querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);
+ approvalCenterMessage('Updating venue report…');
+ try{
+  const {data,error}=await authClient.from('venue_reports')
+   .update({status,reviewed_at:new Date().toISOString(),reviewed_by:authUser.id})
+   .eq('id',report.id).eq('status','pending').select('id,status').single();
+  if(error)throw error;
+  if(data?.status!==status)throw Error('Report update could not be confirmed.');
+  atkApprovalSaving=false;
+  await approvalCenterRefresh(status==='resolved'?'Venue report marked resolved.':'Venue report dismissed.');
+ }catch(error){atkApprovalSaving=false;buttons.forEach(b=>b.disabled=false);
+  approvalCenterMessage('Unable to update venue report: '+(error.message||'Please try again.'))}
+}
+function approvalCenterPhotoCard(photo){
+ const venue=photo.venues||{};
+ const {card,inside}=approvalCenterDetails(venue.name||'Venue Photo',
+  'Photo submitted · '+approvalCenterDate(photo.created_at));
+ const preview=document.createElement('img');preview.alt=photo.caption||'Submitted venue photo';
+ preview.className='atk-approval-photo-preview';
+ inside.append(preview);
+ authClient.storage.from('venue-community-photos').createSignedUrl(photo.storage_path,600).then(({data,error})=>{
+  if(!error&&data?.signedUrl&&card.isConnected)preview.src=data.signedUrl;
+  else preview.alt='Photo preview unavailable';
+ }).catch(()=>{preview.alt='Photo preview unavailable'});
+ if(photo.caption)inside.append(approvalCenterEl('p','Caption: '+photo.caption));
+ inside.append(approvalCenterEl('p','Approve to show the photo publicly. Reject to keep it hidden.','atk-approval-note'));
+ const reason=approvalCenterEl('textarea',undefined,'atk-approval-reason');
+ reason.hidden=true;reason.maxLength=500;reason.placeholder='Reason for rejecting this photo (required)';
+ reason.setAttribute('aria-label','Reason for rejecting venue photo');inside.append(reason);
+ const actions=approvalCenterEl('div',undefined,'atk-approval-actions');
+ const reject=approvalCenterButton('Reject',()=>{
+  if(reason.hidden){reason.hidden=false;reject.textContent='Confirm Reject';reason.focus();return}
+  if(reason.value.trim().length<5){approvalCenterMessage('Please explain why this photo is being rejected (at least five characters).');reason.focus();return}
+  approvalCenterPhotoAction(photo,'rejected',reason.value.trim(),card);
+ });
+ const approve=approvalCenterButton('Approve Photo',()=>approvalCenterPhotoAction(photo,'approved','',card));
+ actions.append(reject,approve);inside.append(actions);
+ return card;
+}
+async function approvalCenterPhotoAction(photo,status,reason,card){
+ if(atkApprovalSaving)return;
+ atkApprovalSaving=true;
+ const buttons=[...card.querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);
+ approvalCenterMessage('Reviewing submitted venue photo…');
+ try{
+  const {data,error}=await authClient.from('venue_photos')
+   .update({moderation_status:status,published:status==='approved',
+    moderation_note:reason||null,reviewed_at:new Date().toISOString(),reviewed_by:authUser.id})
+   .eq('id',photo.id).eq('moderation_status','pending')
+   .select('id,moderation_status,published').single();
+  if(error)throw error;
+  if(data?.moderation_status!==status||data.published!==(status==='approved'))
+   throw Error('Photo decision could not be confirmed.');
+  atkApprovalSaving=false;
+  await approvalCenterRefresh(status==='approved'?'Photo approved and available in the venue gallery.':'Photo rejected and kept private.');
+ }catch(error){atkApprovalSaving=false;buttons.forEach(b=>b.disabled=false);
+  approvalCenterMessage('Unable to review photo: '+(error.message||'Please try again.'))}
+}
+
 function approvalCenterRender(){
  const data=atkApprovalData,root=document.getElementById('atk-approval-results');
  root.replaceChildren();
  if(!data)return;
  const section=document.getElementById('management-approvals');
  if(section)section.scrollTop=0;
- const total=Number(data.total_pending||0);
  const venues=Array.isArray(data.venues)?data.venues:[];
  const hosting=Array.isArray(data.hosting)?data.hosting:[];
+ const reports=Array.isArray(data.reports)?data.reports:[];
+ const photos=Array.isArray(data.photos)?data.photos:[];
  const members=Array.isArray(data.recent_members)?data.recent_members:[];
+ const total=Number(data.total_pending||0)+reports.length+photos.length;
  const summary=document.getElementById('atk-approval-summary');
  summary.textContent=total
-  ? total+' item'+(total===1?'':'s')+' awaiting review · '+Number(data.venue_count||0)+' venue'+(Number(data.venue_count||0)===1?'':'s')+' · '+Number(data.hosting_count||0)+' KJ request'+(Number(data.hosting_count||0)===1?'':'s')
+  ? total+' item'+(total===1?'':'s')+' awaiting review · '+Number(data.venue_count||0)+' venue'+(Number(data.venue_count||0)===1?'':'s')+' · '+Number(data.hosting_count||0)+' KJ request'+(Number(data.hosting_count||0)===1?'s':'s')+' · '+reports.length+' report'+(reports.length===1?'':'s')+' · '+photos.length+' photo'+(photos.length===1?'':'s')
   : 'All caught up — no approvals waiting.';
  const filter=document.getElementById('atk-approval-filter').value;
  const showVenues=filter==='all'||filter==='venues';
  const showHosting=filter==='all'||filter==='hosting';
  const showMembers=filter==='all'||filter==='members';
+ const showReports=filter==='all'||filter==='reports';
+ const showPhotos=filter==='all'||filter==='photos';
  if(showVenues&&(venues.length||filter==='venues')){
   approvalCenterGroup(root,'Venue submissions'+(venues.length?' · '+venues.length:''));
   if(!venues.length)root.append(approvalCenterEl('p','No venue submissions waiting for review.','atk-approval-muted'));
@@ -235,6 +339,16 @@ function approvalCenterRender(){
   approvalCenterGroup(root,'KJ hosting requests'+(hosting.length?' · '+hosting.length:''));
   if(!hosting.length)root.append(approvalCenterEl('p','No pending KJ hosting nights.','atk-approval-muted'));
   for(const request of hosting)root.append(approvalCenterHostingCard(request));
+ }
+ if(showReports&&(reports.length||filter==='reports')){
+  approvalCenterGroup(root,'Venue Reports · '+reports.length);
+  if(!reports.length)root.append(approvalCenterEl('p','No pending venue reports.','atk-approval-muted'));
+  for(const report of reports)root.append(approvalCenterReportCard(report));
+ }
+ if(showPhotos&&(photos.length||filter==='photos')){
+  approvalCenterGroup(root,'Venue Photos · '+photos.length);
+  if(!photos.length)root.append(approvalCenterEl('p','No photos waiting for review.','atk-approval-muted'));
+  for(const photo of photos)root.append(approvalCenterPhotoCard(photo));
  }
  if(showMembers&&(members.length||filter==='members')){
   approvalCenterGroup(root,'New members · '+members.length);
