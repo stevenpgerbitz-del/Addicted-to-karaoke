@@ -26,3 +26,10 @@
 #atk-suspension-contact-status{font-size:12px;color:#f7d6c5;line-height:1.4;margin:0}
 .atk-suspension-contact button[hidden]{display:none!important}
 @media(max-width:380px){.atk-review-notification-card .atk-approval-actions{grid-template-columns:1fr}.atk-review-notification-card .atk-approval-actions button:only-child{grid-column:auto}}
+
+/* Build 142 — clear moderation actions: two buttons, then one full-width destructive option. */
+.atk-review-report-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.atk-review-report-actions button{width:100%;min-width:0;box-sizing:border-box;font-size:12px}
+.atk-review-report-actions button:last-child{grid-column:1/-1;background:linear-gradient(#a41f1d,#72100f);border-color:#c96b61}
+.atk-review-report-actions button:first-child{background:#402628;border-color:#98615b}
+@media(max-width:380px){.atk-review-report-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}.atk-review-report-actions button:last-child{grid-column:1/-1}}
