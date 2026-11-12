@@ -164,3 +164,26 @@
   margin-top:12px;
  }
 }
+
+
+/* Build 124: compact, per-admin dismissal controls */
+#management-approvals .atk-approval-member-row{display:grid;grid-template-columns:minmax(0,1fr) 80px;gap:7px;align-items:center;margin:8px 0}
+#management-approvals .atk-approval-member-row .atk-approval-member-link{margin:0;min-width:0;width:100%;min-height:66px}
+#management-approvals .atk-approval-member-dismiss{min-height:46px;border:1px solid #a46a62;border-radius:10px;background:#392226;color:#f4e5d7;font:700 12px Arial,sans-serif;padding:8px 4px}
+#management-approvals .atk-approval-member-dismiss:focus-visible,
+#management-approvals .atk-approval-member-toolbar button:focus-visible{outline:2px solid #f5e4d2;outline-offset:2px}
+#management-approvals .atk-approval-member-toolbar{display:flex;justify-content:flex-end;margin:0 0 4px}
+#management-approvals .atk-approval-member-toolbar button{border:1px solid #a46a62;border-radius:9px;background:#392226;color:#f4e5d7;padding:8px 12px;font:700 12px Arial,sans-serif}
+#management-approvals .atk-approval-member-row .atk-approval-member-link .atk-approval-chevron{font-size:21px}
+@media(max-width:390px){#management-approvals .atk-approval-member-row{grid-template-columns:minmax(0,1fr) 74px;gap:5px}
+ #management-approvals .atk-approval-member-row .atk-approval-member-link{padding:10px 7px}}
+/* Verified venue owner's photo-review dialog uses the existing approval-card design. */
+#atk-owner-photo-dialog[open]{box-sizing:border-box;width:min(94vw,500px);max-height:min(86dvh,calc(100dvh - 42px));
+ overflow:hidden;display:flex;flex-direction:column;gap:0;padding:18px 15px 14px}
+#atk-owner-photo-dialog .atk-owner-photo-results{overflow-y:auto;overflow-x:hidden;min-height:0;flex:1 1 auto;overscroll-behavior:contain}
+#atk-owner-photo-dialog .atk-owner-photo-close{flex:none;width:100%;min-height:48px;position:static;margin:12px 0 0}
+#atk-owner-photo-dialog .atk-owner-photo-feedback{font-size:13px;line-height:1.4;margin:8px 0;color:#f7dfd1}
+#atk-owner-photo-dialog .atk-owner-photo-feedback:empty{display:none}
+#atk-owner-photo-dialog .atk-approval-card{margin:9px 0}
+#atk-owner-photo-action-wrap .member-button{width:100%;min-height:46px}
+#atk-owner-photo-action-wrap .member-muted{font-size:12px;margin:8px 0}
