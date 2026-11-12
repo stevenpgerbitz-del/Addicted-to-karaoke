@@ -10,7 +10,7 @@ let built=false;
 function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=String(txt);return n}
 function button(label,click,cls){const n=el('button',cls,label);n.type='button';if(click)n.addEventListener('click',click);return n}
 function date(t){const d=new Date(t);return Number.isNaN(d.valueOf())?'Unknown date':d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}
-function score(x){const n=Number(x);return Number.isFinite(n)?n.toFixed(1)+' / 5':'N/A'}
+function score(x){if(x===null||x===undefined||x==='')return 'N/A';const n=Number(x);return Number.isFinite(n)?n.toFixed(1)+' / 5':'N/A'}
 function allowed(r){const possible={pending:['approve','reject','archive','spam'],approved:['hide','archive','spam'],hidden:['archive','spam','restore'],rejected:['archive','restore'],archived:['restore']}[r.status]||[];return possible.filter(x=>x!=='restore'||S.result?.can_restore)}
 function status(t){return names[t]||'Unknown'}
 function feedback(t=''){if($('mg3-feedback'))$('mg3-feedback').textContent=t}
