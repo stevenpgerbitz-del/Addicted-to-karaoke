@@ -147,8 +147,8 @@
   const action=button('',()=>{if(typeof approvalCenterOpen==='function')approvalCenterOpen()},'mg2-approval-action');
   const actionIcon=make('span','mg2-approval-icon');actionIcon.append(icon('clipboard'));
   const actionCopy=make('span','mg2-approval-copy');
-  actionCopy.append(make('strong','','Member Requests & Approvals'),
-   make('small','','Open the Approval Center to review pending requests and updates.'));
+  actionCopy.append(make('strong','','Notification Center'),
+   make('small','','See approval requests, member updates, and review suspension messages.'));
   action.append(actionIcon,actionCopy,icon('chevron'));
   attention.append(attentionTitle,action);
   const directory=make('section','mg2-directory');
