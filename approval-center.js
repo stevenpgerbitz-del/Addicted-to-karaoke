@@ -425,20 +425,34 @@ approvalCenterRender=function(){
  const root=document.getElementById('atk-approval-results');
  const links=[...root.querySelectorAll('.atk-approval-member-link')];
  const members=data.recent_members||[];
+ const sectionTitle=[...root.querySelectorAll('.atk-approval-group-label')]
+  .find(h=>h.textContent.trim().startsWith('New members'));
+ if(sectionTitle){
+  const heading=approvalCenterEl('div',undefined,'atk-approval-member-heading');
+  sectionTitle.parentNode.insertBefore(heading,sectionTitle);
+  heading.append(sectionTitle);
+  const hint=heading.nextElementSibling;
+  if(hint?.classList.contains('atk-approval-muted')&&links.length){
+   hint.textContent='Tap a member to view their profile.';
+  }
+  if(links.length>1){
+   const clear=approvalCenterButton('Dismiss all',()=>atkApprovalDismissMembers(members));
+   clear.className='atk-approval-dismiss-all';
+   clear.setAttribute('aria-label','Dismiss all new-member updates for your account');
+   heading.append(clear);
+  }
+ }
  links.forEach((link,i)=>{
   const member=members[i];if(!member)return;
   const row=approvalCenterEl('div',undefined,'atk-approval-member-row');
-  link.parentNode.insertBefore(row,link);row.append(link);
-  const dismiss=approvalCenterButton('Dismiss',()=>atkApprovalDismissMembers([member]));
+  link.parentNode.insertBefore(row,link);
+  row.append(link);
+  const dismiss=approvalCenterButton('×',()=>atkApprovalDismissMembers([member]));
   dismiss.className='atk-approval-member-dismiss';
+  dismiss.title='Dismiss this update';
   dismiss.setAttribute('aria-label','Dismiss new-member update for '+(member.stage_name||'Karaoke member'));
   row.append(dismiss);
  });
- if(links.length>1){
-  const toolbar=approvalCenterEl('div',undefined,'atk-approval-member-toolbar');
-  toolbar.append(approvalCenterButton('Dismiss all',()=>atkApprovalDismissMembers(members)));
-  root.insertBefore(toolbar,links[0].parentElement);
- }
 };
 async function atkApprovalDismissMembers(members){
  if(!authUser||!authClient||atkApprovalSaving)return;
