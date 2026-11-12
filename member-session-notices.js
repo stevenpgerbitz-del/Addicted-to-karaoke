@@ -41,6 +41,8 @@
   const reasonHead=document.createElement('strong');
   reasonHead.textContent='Reason';
   const reason=document.createElement('p');reason.id='atk-review-suspension-reason';
+  const issuerHead=document.createElement('strong');issuerHead.textContent='Suspended by';
+  const issuer=document.createElement('p');issuer.id='atk-review-suspension-issuer';
   const timeHead=document.createElement('strong');
   timeHead.textContent='Reviewing returns';
   const time=document.createElement('p');time.id='atk-review-suspension-until';
@@ -50,7 +52,7 @@
   const close=document.createElement('button');close.type='button';close.className='member-button';close.textContent='Close';
   close.addEventListener('click',()=>dialog.close());
   footer.append(close);
-  dialog.append(title,intro,reasonHead,reason,timeHead,time,note,footer);
+  dialog.append(title,intro,reasonHead,reason,issuerHead,issuer,timeHead,time,note,footer);
   document.body.append(dialog);
   return dialog;
  }
@@ -80,6 +82,7 @@
    const d=makeDialog();
    const reason=String(data.reason||'Your review activity was restricted by the moderation team.').trim();
    $('atk-review-suspension-reason').textContent=reason;
+   $('atk-review-suspension-issuer').textContent=String(data.issued_by||'Site Moderator');
    const date=until?new Date(until):null;
    $('atk-review-suspension-until').textContent=date&&!Number.isNaN(date.getTime())
     ?date.toLocaleString(undefined,{weekday:'short',year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})
