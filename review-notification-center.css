@@ -1,0 +1,28 @@
+/* Build 141 — Notification Center additions, matches existing red/black management */
+.atk-review-notification-section .atk-review-notification-card p{overflow-wrap:anywhere;white-space:pre-wrap}
+.atk-review-notification-message{padding:10px 12px;border-radius:10px;border:1px solid #75504a;background:#3b2729;color:#fff0e5}
+.atk-review-notification-card .atk-approval-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.atk-review-notification-card .atk-approval-actions button:only-child{grid-column:1/-1}
+.atk-review-notification-card .atk-approval-actions button{min-height:43px;box-sizing:border-box}
+.atk-review-notification-card .atk-approval-actions button:first-child:not(:only-child){background:#402628;border-color:#98615b}
+#atk-staff-notification-entry[hidden]{display:none!important}
+#atk-staff-notification-entry{font:700 13px Arial,sans-serif}
+#atk-staff-notifications-dialog[open]{box-sizing:border-box;width:min(94vw,500px);height:auto;max-height:84dvh;overflow:hidden;display:flex;flex-direction:column;padding:18px 16px;gap:8px}
+#atk-staff-notifications-dialog .atk-staff-notification-results{flex:1 1 auto;overflow-y:auto;min-height:0;overscroll-behavior:contain}
+#atk-staff-notifications-dialog .atk-staff-notifications-close{flex:none;margin-top:8px;width:100%;min-height:46px}
+#atk-staff-notifications-dialog h2{font:700 24px Georgia,serif;margin:0}
+#atk-staff-notifications-feedback{font:400 12px/1.5 Arial,sans-serif;color:#f3d6c5;margin:4px 0}
+#atk-staff-notifications-feedback:empty{display:none}
+.atk-suspension-contact{border:1px solid #855550;border-radius:10px;background:#332124;padding:0 11px;margin:14px 0}
+.atk-suspension-contact>summary{font:700 14px/1.4 Arial,sans-serif;list-style:none;cursor:pointer;color:#f8e9dd;padding:12px 1px}
+.atk-suspension-contact>summary::after{content:'+';float:right;font-size:20px;line-height:14px}
+.atk-suspension-contact[open]>summary::after{content:'−'}
+.atk-suspension-contact summary::-webkit-details-marker{display:none}
+.atk-suspension-contact form{display:grid;gap:8px;padding:0 0 12px}
+.atk-suspension-contact label{color:#dac1b6;font:400 12px/1.4 Arial,sans-serif}
+.atk-suspension-contact textarea{box-sizing:border-box;width:100%;resize:vertical;min-height:74px;padding:10px;border:1px solid #956560;border-radius:8px;background:#28191b;color:#f8eae1;font:14px/1.4 Arial,sans-serif}
+.atk-suspension-contact button{min-height:42px;border:1px solid #df6e65;border-radius:10px;background:linear-gradient(#b51d1b,#780c0b);color:#fff2e6;font:700 13px Arial,sans-serif}
+.atk-suspension-contact button:disabled{opacity:.5}
+#atk-suspension-contact-status{font-size:12px;color:#f7d6c5;line-height:1.4;margin:0}
+.atk-suspension-contact button[hidden]{display:none!important}
+@media(max-width:380px){.atk-review-notification-card .atk-approval-actions{grid-template-columns:1fr}.atk-review-notification-card .atk-approval-actions button:only-child{grid-column:auto}}
