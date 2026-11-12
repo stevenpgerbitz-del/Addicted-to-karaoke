@@ -366,3 +366,243 @@ function approvalCenterRender(){
   }
  }
 }
+
+/* ATK Build 124: personal approval-center updates and owner-first photo routing.
+   Database RLS and owner_review_venue_photo enforce account/venue permissions. */
+let atkDismissedMemberIds=new Set(),atkClaimedPhotoVenueIds=new Set();
+let atkUnclaimedPhotoCount=null,atkOwnerVenueIds=[],atkOwnerPhotoBusy=false,atkOwnerPhotoSerial=0;
+
+async function atkApprovalLoadPersonalContext(){
+ if(!authClient||!authUser)return;
+ const uid=authUser.id;
+ const [dismissed,claims,pending]=await Promise.all([
+  authClient.from('admin_member_dismissals').select('member_user_id').eq('admin_user_id',uid),
+  authClient.from('verified_venue_claims').select('venue_id').is('revoked_at',null),
+  authClient.from('venue_photos').select('id,venue_id').eq('moderation_status','pending').eq('published',false).limit(1000)
+ ]);
+ if(authUser?.id!==uid)return;
+ if(dismissed.error||claims.error||pending.error)
+  throw dismissed.error||claims.error||pending.error;
+ atkDismissedMemberIds=new Set((dismissed.data||[]).map(row=>row.member_user_id));
+ atkClaimedPhotoVenueIds=new Set((claims.data||[]).map(row=>row.venue_id));
+ atkUnclaimedPhotoCount=(pending.data||[]).filter(p=>!atkClaimedPhotoVenueIds.has(p.venue_id)).length;
+}
+const atkOriginalApprovalSetBadge=approvalCenterSetBadge;
+approvalCenterSetBadge=function(data){
+ if(!data)return;
+ if(atkUnclaimedPhotoCount!==null)data.photo_count=atkUnclaimedPhotoCount;
+ const count=Number(data.total_pending||0)+Number(data.report_count||0)+Number(data.photo_count||0);
+ const members=(data.recent_members||[]).filter(m=>!atkDismissedMemberIds.has(m.id)).length;
+ document.getElementById('management-approval-count').textContent=
+  count+' pending decision'+(count===1?'':'s')+(members?' · '+members+' new member'+(members===1?'':'s'):'');
+};
+const atkOriginalApprovalBadge=approvalCenterBadge;
+approvalCenterBadge=async function(){
+ try{await atkApprovalLoadPersonalContext()}catch(error){console.warn('Personal approval updates unavailable',error)}
+ await atkOriginalApprovalBadge();
+};
+const atkOriginalApprovalRefresh=approvalCenterRefresh;
+approvalCenterRefresh=async function(message=''){
+ try{await atkApprovalLoadPersonalContext()}catch(error){
+  approvalCenterMessage('Unable to load personalized approval updates: '+(error.message||'Please try again.'));
+  return;
+ }
+ await atkOriginalApprovalRefresh(message);
+};
+const atkOriginalApprovalRender=approvalCenterRender;
+approvalCenterRender=function(){
+ const data=atkApprovalData;
+ if(data){
+  if(Array.isArray(data.photos)){
+   data.photos=data.photos.filter(p=>!atkClaimedPhotoVenueIds.has(p.venue_id));
+   data.photo_count=data.photos.length;
+  }
+  if(Array.isArray(data.recent_members))
+   data.recent_members=data.recent_members.filter(m=>!atkDismissedMemberIds.has(m.id));
+ }
+ atkOriginalApprovalRender();
+ if(!data)return;
+ const root=document.getElementById('atk-approval-results');
+ const links=[...root.querySelectorAll('.atk-approval-member-link')];
+ const members=data.recent_members||[];
+ links.forEach((link,i)=>{
+  const member=members[i];if(!member)return;
+  const row=approvalCenterEl('div',undefined,'atk-approval-member-row');
+  link.parentNode.insertBefore(row,link);row.append(link);
+  const dismiss=approvalCenterButton('Dismiss',()=>atkApprovalDismissMembers([member]));
+  dismiss.className='atk-approval-member-dismiss';
+  dismiss.setAttribute('aria-label','Dismiss new-member update for '+(member.stage_name||'Karaoke member'));
+  row.append(dismiss);
+ });
+ if(links.length>1){
+  const toolbar=approvalCenterEl('div',undefined,'atk-approval-member-toolbar');
+  toolbar.append(approvalCenterButton('Dismiss all',()=>atkApprovalDismissMembers(members)));
+  root.insertBefore(toolbar,links[0].parentElement);
+ }
+};
+async function atkApprovalDismissMembers(members){
+ if(!authUser||!authClient||atkApprovalSaving)return;
+ const uid=authUser.id;
+ const items=members.filter(m=>m?.id&&!atkDismissedMemberIds.has(m.id));
+ if(!items.length)return;
+ atkApprovalSaving=true;
+ approvalCenterMessage('Saving your dismissed member notices…');
+ try{
+  const {error}=await authClient.from('admin_member_dismissals').insert(
+   items.map(m=>({admin_user_id:uid,member_user_id:m.id}))
+  );
+  if(error)throw error;
+  if(authUser?.id!==uid)return;
+  for(const m of items)atkDismissedMemberIds.add(m.id);
+  approvalCenterRender();
+  approvalCenterSetBadge(atkApprovalData);
+  approvalCenterMessage(items.length===1?'Update dismissed for your account.':'Updates dismissed for your account.');
+ }catch(error){
+  approvalCenterMessage('Could not dismiss member notice: '+(error.message||'Please try again.'));
+ }finally{atkApprovalSaving=false}
+}
+
+/* A verified claim makes a venue owner eligible for its pending-photo queue.
+   Claimed venue photos disappear from founder's normal queue; unclaimed stay there. */
+function atkOwnerPhotoMakeUI(){
+ const panel=document.querySelector('.profile-owner-panel');
+ if(panel&&!document.getElementById('atk-owner-photo-action-wrap')){
+  const wrap=approvalCenterEl('div',undefined,'atk-owner-photo-action-wrap');
+  wrap.id='atk-owner-photo-action-wrap';wrap.hidden=true;
+  const action=approvalCenterButton('Review Venue Photos',atkOwnerPhotoOpen);
+  action.id='atk-owner-photo-action';action.className='member-button';
+  const hint=approvalCenterEl('p','', 'member-muted');hint.id='atk-owner-photo-count';
+  wrap.append(action,hint);panel.prepend(wrap);
+ }
+ if(document.getElementById('atk-owner-photo-dialog'))return;
+ const dlg=document.createElement('dialog');dlg.id='atk-owner-photo-dialog';
+ dlg.className='management-dialog atk-owner-photo-dialog';
+ const heading=approvalCenterEl('h2','Venue Photo Approvals');
+ heading.id='atk-owner-photo-heading';dlg.setAttribute('aria-labelledby',heading.id);
+ const intro=approvalCenterEl('p','Review photos submitted to your verified venues. Other venues are not shown.','atk-approval-muted');
+ const results=approvalCenterEl('div',undefined,'atk-owner-photo-results');results.id='atk-owner-photo-results';
+ const feedback=approvalCenterEl('p','','atk-owner-photo-feedback');feedback.id='atk-owner-photo-feedback';
+ feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+ const close=approvalCenterButton('Close',()=>dlg.close());
+ close.className='management-close atk-owner-photo-close';
+ dlg.append(heading,intro,results,feedback,close);
+ dlg.addEventListener('cancel',e=>{e.preventDefault();if(!atkOwnerPhotoBusy)dlg.close()});
+ document.body.append(dlg);
+}
+async function atkOwnerPhotoSync(){
+ if(!authClient||!authUser)return;
+ const uid=authUser.id;
+ atkOwnerPhotoMakeUI();
+ const {data,error}=await authClient.from('verified_venue_claims')
+  .select('venue_id').eq('owner_user_id',uid).is('revoked_at',null);
+ if(uid!==authUser?.id)return;
+ if(error){console.warn('Venue owner photo permissions unavailable',error);return}
+ atkOwnerVenueIds=(data||[]).map(c=>c.venue_id);
+ const ownerCard=document.getElementById('atk-owner-profile-entry');
+ const interests=Array.isArray(memberProfile?.karaoke_interests)?memberProfile.karaoke_interests:[];
+ if(ownerCard)ownerCard.hidden=!atkOwnerVenueIds.length&&!interests.includes('venue_owner');
+ const wrap=document.getElementById('atk-owner-photo-action-wrap');
+ if(wrap)wrap.hidden=!atkOwnerVenueIds.length;
+ const description=document.querySelector('.profile-owner-panel>p.member-muted');
+ if(description)description.textContent=atkOwnerVenueIds.length
+  ?'You can review new photos submitted for the venues whose ownership is verified.'
+  :'Venue ownership must be verified and approved before a member can manage a listing. The owner claim and management tools are not available yet.';
+ if(!atkOwnerVenueIds.length)return;
+ const result=await authClient.from('venue_photos').select('id',{count:'exact',head:true})
+  .in('venue_id',atkOwnerVenueIds).eq('moderation_status','pending').eq('published',false);
+ if(uid!==authUser?.id)return;
+ const hint=document.getElementById('atk-owner-photo-count');
+ if(hint)hint.textContent=result.error?'Photo count unavailable':
+  (result.count||0)+' photo'+(result.count===1?'':'s')+' awaiting approval.';
+}
+async function atkOwnerPhotoOpen(){
+ if(!authUser||!authClient)return;
+ await atkOwnerPhotoSync();
+ if(!atkOwnerVenueIds.length)return;
+ atkOwnerPhotoMakeUI();
+ const dlg=document.getElementById('atk-owner-photo-dialog');dlg.showModal();
+ await atkOwnerPhotoRefresh();
+}
+function atkOwnerPhotoCard(photo){
+ const venue=photo.venues||{};
+ const {card,inside}=approvalCenterDetails(venue.name||'Venue Photo',
+  'Photo submitted · '+approvalCenterDate(photo.created_at));
+ const preview=document.createElement('img');preview.className='atk-approval-photo-preview';
+ preview.alt=photo.caption||'Submitted venue photo';inside.append(preview);
+ authClient.storage.from('venue-community-photos').createSignedUrl(photo.storage_path,600).then(({data,error})=>{
+  if(!error&&data?.signedUrl&&card.isConnected)preview.src=data.signedUrl;
+  else preview.alt='Photo preview unavailable';
+ }).catch(()=>{preview.alt='Photo preview unavailable'});
+ if(photo.caption)inside.append(approvalCenterEl('p','Caption: '+photo.caption));
+ inside.append(approvalCenterEl('p','Approve to publish, or reject to keep this photo hidden.','atk-approval-note'));
+ const reason=approvalCenterEl('textarea',undefined,'atk-approval-reason');reason.hidden=true;
+ reason.maxLength=500;reason.placeholder='Reason for rejecting (required)';
+ reason.setAttribute('aria-label','Reason for rejecting venue photo');inside.append(reason);
+ const actions=approvalCenterEl('div',undefined,'atk-approval-actions');
+ const reject=approvalCenterButton('Reject',()=>{
+  if(reason.hidden){reason.hidden=false;reject.textContent='Confirm Reject';reason.focus();return}
+  if(reason.value.trim().length<5){
+   document.getElementById('atk-owner-photo-feedback').textContent='Enter at least five characters explaining why the photo is rejected.';
+   reason.focus();return;
+  }
+  atkOwnerPhotoDecide(photo,'rejected',reason.value.trim(),card);
+ });
+ const approve=approvalCenterButton('Approve Photo',()=>atkOwnerPhotoDecide(photo,'approved',null,card));
+ actions.append(reject,approve);inside.append(actions);
+ return card;
+}
+async function atkOwnerPhotoRefresh(message=''){
+ const uid=authUser?.id,serial=++atkOwnerPhotoSerial,dlg=document.getElementById('atk-owner-photo-dialog');
+ if(!uid||!dlg?.open||!atkOwnerVenueIds.length)return;
+ const root=document.getElementById('atk-owner-photo-results');
+ const feedback=document.getElementById('atk-owner-photo-feedback');
+ root.textContent='Checking submitted photos…';
+ try{
+  const {data,error}=await authClient.from('venue_photos')
+   .select('id,venue_id,storage_path,caption,created_at,uploader_user_id,venues(name,city,state)')
+   .in('venue_id',atkOwnerVenueIds).eq('moderation_status','pending').eq('published',false)
+   .order('created_at',{ascending:true}).limit(150);
+  if(error)throw error;
+  if(serial!==atkOwnerPhotoSerial||authUser?.id!==uid||!dlg.open)return;
+  root.replaceChildren();
+  if(!data?.length)root.append(approvalCenterEl('p','All caught up — no photos waiting.','atk-approval-muted'));
+  else for(const photo of data)root.append(atkOwnerPhotoCard(photo));
+  feedback.textContent=message;
+  atkOwnerPhotoSync();
+ }catch(error){
+  if(serial!==atkOwnerPhotoSerial)return;
+  root.textContent='Could not load photos: '+(error.message||'Please try again.');
+ }
+}
+async function atkOwnerPhotoDecide(photo,status,reason,card){
+ if(atkOwnerPhotoBusy||!authClient||!authUser)return;
+ atkOwnerPhotoBusy=true;
+ const buttons=[...card.querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);
+ const feedback=document.getElementById('atk-owner-photo-feedback');feedback.textContent='Saving photo decision…';
+ try{
+  const {data,error}=await authClient.rpc('owner_review_venue_photo',{
+   p_photo_id:photo.id,p_action:status,p_reason:reason
+  });
+  if(error)throw error;
+  if(data?.id!==photo.id||data.moderation_status!==status)throw Error('Photo decision not confirmed.');
+  atkOwnerPhotoBusy=false;
+  await atkOwnerPhotoRefresh(status==='approved'?'Photo approved and available in the venue gallery.':'Photo rejected and kept private.');
+ }catch(error){
+  buttons.forEach(b=>b.disabled=false);
+  feedback.textContent='Unable to review photo: '+(error.message||'Please try again.');
+ }finally{atkOwnerPhotoBusy=false}
+}
+if(typeof profileInterestNavSync==='function'){
+ const previousProfileSync=profileInterestNavSync;
+ profileInterestNavSync=function(){previousProfileSync();atkOwnerPhotoSync()};
+}
+if(authClient?.auth){
+ authClient.auth.onAuthStateChange((_event,session)=>{
+  if(session?.user)atkOwnerPhotoSync();
+  else{
+   atkOwnerVenueIds=[];atkDismissedMemberIds=new Set();atkClaimedPhotoVenueIds=new Set();atkUnclaimedPhotoCount=null;
+   const dlg=document.getElementById('atk-owner-photo-dialog');if(dlg?.open)dlg.close();
+  }
+ });
+ if(authUser)atkOwnerPhotoSync();
+}
