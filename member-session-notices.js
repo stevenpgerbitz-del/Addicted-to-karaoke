@@ -34,7 +34,7 @@
   dialog.id='atk-review-suspension-notice';
   dialog.className='atk-review-suspension-dialog';
   dialog.setAttribute('aria-labelledby','atk-review-suspension-heading');
-  const title=document.createElement('h2');title.id='atk-review-suspension-heading';
+  const title=document.createElement('h2');title.id='atk-review-suspension-heading';title.tabIndex=-1;
   title.textContent='Review Privileges Suspended';
   const intro=document.createElement('p');intro.id='atk-review-suspension-intro';
   intro.textContent='Your account is temporarily unable to submit venue reviews.';
@@ -47,7 +47,7 @@
   const note=document.createElement('p');note.className='atk-review-suspension-note';
   note.textContent='You can still use the rest of Addicted to Karaoke while review privileges are suspended. They return automatically when the suspension ends.';
   const footer=document.createElement('footer');
-  const close=document.createElement('button');close.type='button';close.textContent='Close';
+  const close=document.createElement('button');close.type='button';close.className='member-button';close.textContent='Close';
   close.addEventListener('click',()=>dialog.close());
   footer.append(close);
   dialog.append(title,intro,reasonHead,reason,timeHead,time,note,footer);
@@ -87,6 +87,7 @@
    if(!d.open){
     markShown(key);
     d.showModal();
+    $('atk-review-suspension-heading')?.focus({preventScroll:true});
    }
   }catch(err){console.warn('Review suspension sign-in notice unavailable',err)}
   finally{noticeInFlight=false}
