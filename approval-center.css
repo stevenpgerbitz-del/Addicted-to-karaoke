@@ -187,3 +187,96 @@
 #atk-owner-photo-dialog .atk-approval-card{margin:9px 0}
 #atk-owner-photo-action-wrap .member-button{width:100%;min-height:46px}
 #atk-owner-photo-action-wrap .member-muted{font-size:12px;margin:8px 0}
+
+
+/* Build 125: streamlined member notifications, one full-width surface per member.
+   A member card opens the profile; the small × affects only that admin's notice. */
+#management-approvals .atk-approval-member-heading{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ margin:18px 0 5px;min-width:0;
+}
+#management-approvals .atk-approval-member-heading .atk-approval-group-label{
+ margin:0;flex:1;min-width:0;font-size:19px;line-height:1.2;
+}
+#management-approvals .atk-approval-dismiss-all{
+ border:none;background:none;box-shadow:none;flex:none;
+ padding:9px 2px 9px 10px;min-height:40px;
+ color:#e7baae;text-decoration:underline;text-underline-offset:4px;
+ font:600 12px Arial,sans-serif;cursor:pointer;
+}
+#management-approvals .atk-approval-dismiss-all:hover{
+ color:#fff0e3;text-decoration-color:#f2a99c;
+}
+#management-approvals .atk-approval-dismiss-all:focus-visible{
+ outline:2px solid #f6d8c6;outline-offset:2px;border-radius:5px;
+}
+#management-approvals .atk-approval-member-heading + .atk-approval-muted{
+ margin:0 0 13px;color:#bda49e;font-size:12px;
+}
+#management-approvals .atk-approval-member-row{
+ display:flex;align-items:stretch;gap:0;min-height:70px;
+ width:100%;margin:9px 0;box-sizing:border-box;
+ border:1px solid #85504c;border-radius:13px;
+ background:linear-gradient(135deg,#342124,#26191b);
+ overflow:hidden;
+ transition:border-color .14s ease,background .14s ease;
+}
+#management-approvals .atk-approval-member-row:hover,
+#management-approvals .atk-approval-member-row:focus-within{
+ border-color:#c17a6c;background:linear-gradient(135deg,#3c2429,#2b1b1d);
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-link{
+ display:flex;align-items:center;justify-content:space-between;
+ flex:1 1 auto;min-width:0;width:auto;min-height:70px;
+ box-sizing:border-box;
+ margin:0;padding:12px 11px 12px 14px;
+ border:0;border-radius:0;box-shadow:none;background:transparent;
+ color:#f7e8dd;text-align:left;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-link:hover{
+ background:transparent;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-link:focus-visible{
+ outline:2px solid #f8d9c7;outline-offset:-4px;border-radius:10px;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-info{
+ min-width:0;flex:1;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-link strong{
+ font-size:15px;font-weight:700;line-height:1.35;overflow-wrap:anywhere;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-link small{
+ color:#d2bcb2;font-size:12px;line-height:1.4;margin-top:5px;
+ overflow-wrap:anywhere;
+}
+#management-approvals .atk-approval-member-row .atk-approval-chevron{
+ margin-left:8px;font-size:23px;opacity:.8;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-dismiss{
+ display:grid;place-items:center;align-self:stretch;flex:0 0 44px;
+ width:44px;min-height:70px;padding:0;margin:0;
+ border:0;border-left:1px solid #624342;border-radius:0;
+ background:transparent;color:#d5b0a6;
+ font:400 25px/1 Arial,sans-serif;cursor:pointer;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-dismiss:hover{
+ color:#fff6ee;background:#572a2a;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-dismiss:focus-visible{
+ outline:2px solid #f8d9c7;outline-offset:-4px;
+}
+#management-approvals .atk-approval-member-row .atk-approval-member-dismiss:disabled{
+ opacity:.4;
+}
+@media(max-width:390px){
+ #management-approvals .atk-approval-member-row{gap:0}
+ #management-approvals .atk-approval-member-row .atk-approval-member-link{
+  padding:11px 8px 11px 11px;
+ }
+ #management-approvals .atk-approval-member-row .atk-approval-member-dismiss{
+  flex-basis:42px;width:42px;
+ }
+ #management-approvals .atk-approval-member-row .atk-approval-member-link small{
+  font-size:11px;
+ }
+}
