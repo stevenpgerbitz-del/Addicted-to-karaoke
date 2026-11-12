@@ -3533,4 +3533,106 @@ async function atkVenueReportSubmit(event){
  finally{atkVenueReportBusy=false;submit.disabled=false}
 }
 
-const SITE_BUILD_VERSION="2026.11.12-120";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
+
+let atkVenuePhotoBusy=false,atkVenuePhotoRequest=0;
+function atkVenuePhotoOpen(){
+ if(!atkVenueRequireAccount('add venue photos'))return;
+ if(!atkVenueCurrent()?.databaseId)return alert('This sample venue cannot receive photos.');
+ document.getElementById('atk-venue-photo-file').value='';
+ document.getElementById('atk-venue-photo-caption').value='';
+ document.getElementById('atk-venue-photo-status').textContent='';
+ document.getElementById('atk-venue-photo-dialog').showModal();
+}
+function atkVenuePhotoClose(){if(!atkVenuePhotoBusy)document.getElementById('atk-venue-photo-dialog').close()}
+function atkVenuePhotoProcess(file){
+ return new Promise((resolve,reject)=>{
+  const url=URL.createObjectURL(file),img=new Image();
+  img.onload=()=>{
+   URL.revokeObjectURL(url);
+   const scale=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
+   const canvas=document.createElement('canvas');
+   canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+   canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+   const context=canvas.getContext('2d');if(!context){reject(Error('Image processing unavailable.'));return}
+   context.drawImage(img,0,0,canvas.width,canvas.height);
+   canvas.toBlob(blob=>blob?resolve(blob):reject(Error('Photo processing failed.')),'image/jpeg',0.84);
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);reject(Error('Unable to open this photo. Use JPEG, PNG, or WebP.'))};
+  img.src=url;
+ });
+}
+async function atkVenuePhotoSubmit(event){
+ event.preventDefault();
+ if(atkVenuePhotoBusy||!authClient||!authUser)return;
+ const v=atkVenueCurrent(),file=document.getElementById('atk-venue-photo-file').files?.[0],
+  caption=document.getElementById('atk-venue-photo-caption').value.trim(),
+  feedback=document.getElementById('atk-venue-photo-status'),button=document.getElementById('atk-venue-photo-submit');
+ if(!v?.databaseId||!file||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5242880){
+  feedback.textContent='Choose a JPEG, PNG, or WebP photo smaller than 5 MB.';return;
+ }
+ const user=authUser.id,venueId=v.databaseId,path=user+'/'+venueId+'/'+crypto.randomUUID()+'.jpg';
+ atkVenuePhotoBusy=true;button.disabled=true;feedback.textContent='Preparing photo…';
+ try{
+  const blob=await atkVenuePhotoProcess(file);
+  if(blob.size>5242880)throw Error('The processed photo is too large.');
+  if(authUser?.id!==user)throw Error('Your sign-in changed. Please try again.');
+  feedback.textContent='Uploading photo…';
+  const upload=await authClient.storage.from('venue-community-photos').upload(path,blob,{contentType:'image/jpeg',upsert:false});
+  if(upload.error)throw upload.error;
+  const {error}=await authClient.from('venue_photos').insert({
+   venue_id:venueId,storage_path:path,caption,uploader_user_id:user,published:false,moderation_status:'pending'
+  });
+  if(error)throw error;
+  document.getElementById('atk-venue-photo-dialog').close();
+  if(selectedVenue===v.id&&document.querySelector('[data-tab="photos"]')?.getAttribute('aria-selected')==='true')
+   await atkVenuePhotosRender();
+  message('Photo submitted for approval. It will appear publicly once approved.');
+  if(typeof approvalCenterBadge==='function')approvalCenterBadge();
+ }catch(error){feedback.textContent='Could not submit photo: '+(error.message||'Please try again.')}
+ finally{atkVenuePhotoBusy=false;button.disabled=false}
+}
+async function atkVenuePhotosRender(){
+ const request=++atkVenuePhotoRequest,venue=atkVenueCurrent(),id=venue?.databaseId,venueKey=selectedVenue;
+ const content=document.getElementById('content');if(!content)return;
+ content.replaceChildren();
+ const root=document.createElement('div');root.id='atk-venue-photos';content.append(root);
+ const title=document.createElement('h2');title.textContent='Venue Photos';root.append(title);
+ const add=document.createElement('button');add.type='button';add.className='atk-photos-add';
+ add.textContent='＋ Add Photo';add.addEventListener('click',atkVenuePhotoOpen);root.append(add);
+ const gallery=document.createElement('div');gallery.className='atk-photos-grid';root.append(gallery);
+ const status=document.createElement('p');status.className='atk-photo-empty';status.textContent='Loading venue photos…';root.append(status);
+ if(!id||!authClient){status.textContent='No community photos available yet.';return}
+ try{
+  const {data,error}=await authClient.from('venue_photos')
+   .select('id,storage_path,caption,published,moderation_status,uploader_user_id')
+   .eq('venue_id',id).order('created_at',{ascending:false}).limit(40);
+  if(error)throw error;
+  if(request!==atkVenuePhotoRequest||venueKey!==selectedVenue||!root.isConnected)return;
+  const visible=(data||[]).filter(p=>p.published||p.uploader_user_id===authUser?.id);
+  status.textContent=visible.length?'':'No community photos yet. Be the first to add one!';
+  let shown=0;
+  for(const item of visible){
+   const {data:signed,error:signError}=await authClient.storage.from('venue-community-photos')
+    .createSignedUrl(item.storage_path,3600);
+   if(request!==atkVenuePhotoRequest||venueKey!==selectedVenue||!root.isConnected)return;
+   if(signError||!signed?.signedUrl)continue;
+   const figure=document.createElement('figure'),button=document.createElement('button');button.type='button';
+   const img=document.createElement('img');img.src=signed.signedUrl;img.loading='lazy';
+   img.alt=item.caption||'Photo of '+venue.name;button.append(img);
+   button.addEventListener('click',()=>{
+    const viewer=document.getElementById('atk-venue-photo-viewer');
+    const expanded=document.getElementById('atk-venue-photo-expanded');
+    expanded.src=signed.signedUrl;expanded.alt=img.alt;viewer.showModal();
+   });
+   const text=document.createElement('figcaption');text.textContent=item.caption||'Venue photo';
+   if(!item.published){
+    const label=document.createElement('span');label.className='atk-photo-pending';
+    label.textContent=item.moderation_status==='rejected'?'Not approved':'Awaiting approval';text.append(label);
+   }
+   figure.append(button,text);gallery.append(figure);shown++;
+  }
+  if(!shown)status.textContent='No community photos available yet.';
+ }catch(error){status.textContent='Could not load venue photos: '+(error.message||'Please try again.')}
+}
+
+const SITE_BUILD_VERSION="2026.11.12-121";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
