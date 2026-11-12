@@ -97,7 +97,10 @@
  function openOverlay(title,onSave){
   overlayHeading.textContent=title;overlayBody.replaceChildren();overlayFeedback.textContent='';
   overlaySaveHandler=onSave||null;overlaySave.hidden=!onSave;overlayCancel.textContent=onSave?'Cancel':'Close';
-  overlay.hidden=false;overlay.scrollTop=0;
+  overlay.hidden=false;overlay.scrollTop=0;overlayBody.scrollTop=0;
+  // Editors reuse this scroll container; ensure a previously scrolled tile list
+  // never reopens with its first fields or heading clipped off-screen.
+  requestAnimationFrame(()=>{if(!overlay.hidden)overlayBody.scrollTop=0});
  }
  function closeOverlay(){if(overlayBusy)return;overlay.hidden=true;overlayBody.replaceChildren();overlaySaveHandler=null}
  function inputField(label,value,max=300,type='text'){
