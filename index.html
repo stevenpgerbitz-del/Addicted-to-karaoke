@@ -813,6 +813,8 @@ padding:13px 3px!important;min-height:66px
 <option value="all">All items</option>
 <option value="venues">Venue submissions</option>
 <option value="hosting">KJ hosting requests</option>
+<option value="reports">Venue reports</option>
+<option value="photos">Venue photos</option>
 <option value="members">New members (informational)</option>
 </select></label>
 <div id="atk-approval-results"></div>
@@ -3434,7 +3436,8 @@ async function authLogout(){if(!authClient)return;const {error}=await authClient
 #atk-profile-favorites .atk-favorite-profile-entry strong,#atk-profile-favorites .atk-favorite-profile-entry small{display:block}
 #atk-profile-favorites .atk-favorite-profile-entry small{margin-top:4px;font-size:12px;color:#d9bcb0}
 #atk-profile-favorites .atk-favorite-profile-entry i{font-style:normal;font-size:24px}
-#atk-profile-favorites .atk-favorites-empty{color:#d9bcb0;font-size:14px}</style><script>
+#atk-profile-favorites .atk-favorites-empty{color:#d9bcb0;font-size:14px}</style><style>.atk-approval-photo-preview{display:block;width:100%;max-height:250px;object-fit:contain;background:#160c0e;border:1px solid #804845;border-radius:11px;margin:10px 0}
+.atk-approval-details .atk-approval-note{font-size:13px;line-height:1.5}</style><script>
 let atkVenueFavoriteBusy=false,atkVenueReportBusy=false;
 function atkVenueCurrent(){return sampleVenues.find(v=>v.id===selectedVenue)||null}
 function atkVenueRequireAccount(action){
@@ -3635,4 +3638,4 @@ async function atkVenuePhotosRender(){
  }catch(error){status.textContent='Could not load venue photos: '+(error.message||'Please try again.')}
 }
 
-const SITE_BUILD_VERSION="2026.11.12-121";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
+const SITE_BUILD_VERSION="2026.11.12-122";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=122"></script></body></html>
