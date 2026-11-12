@@ -71,3 +71,6 @@
 }
 
 .atk-review-demo-badge{align-self:flex-start;border:1px solid #835c56;border-radius:9px;padding:2px 7px;color:#d7bab0;font:700 10px Arial,sans-serif}
+
+.atk-review-author-avatar-button .review-avatar{overflow:hidden}
+.atk-review-author-avatar-button .review-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
