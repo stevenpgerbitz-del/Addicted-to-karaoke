@@ -427,7 +427,6 @@
 #management-venues .mv2-directory-results,
 #management-venues .mv2-results-status,
 #management-venues .mv2-pagination{
- display:revert-layer;
  width:100%;
  max-width:100%;
  min-width:0;
