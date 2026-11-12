@@ -199,6 +199,25 @@
   const action=event=>{event.preventDefault();event.stopPropagation();showAuthor(review)};
   avatarButton.addEventListener('click',action);nameButton.addEventListener('click',action);
  }
+ function populateMemberAvatars(rows,cards){
+  if(!authClient)return;
+  const ids=[...new Set(rows.map(r=>r.reviewer_id).filter(Boolean))];
+  if(!ids.length)return;
+  authClient.from('member_profiles').select('user_id,avatar_path').in('user_id',ids)
+   .then(({data,error})=>{
+    if(error||!Array.isArray(data))return;
+    const paths=new Map(data.filter(m=>m.avatar_path).map(m=>[m.user_id,m.avatar_path]));
+    cards.forEach((card,index)=>{
+     const path=paths.get(rows[index]?.reviewer_id),avatar=card.querySelector('.review-avatar');
+     if(!path||!avatar||!card.isConnected)return;
+     const url=authClient.storage.from('member-avatars').getPublicUrl(path).data?.publicUrl;
+     if(!url)return;
+     const image=new Image();image.alt='';image.loading='lazy';
+     image.onload=()=>{if(avatar.isConnected)avatar.replaceChildren(image)};
+     image.src=url;
+    });
+   }).catch(error=>console.warn('Review avatar lookup unavailable',error));
+ }
  const previousRender=window.renderLiveReviews;
  if(typeof previousRender==='function'){
   window.renderLiveReviews=function(rows){
@@ -211,6 +230,7 @@
    }
    const cards=panel.querySelectorAll('.review-card');
    cards.forEach((card,index)=>{if(rows[index])attachProfileAction(card,rows[index])});
+   populateMemberAvatars(rows,Array.from(cards));
    const action=panel.querySelector('button.direction');
    if(action){action.removeAttribute('onclick');action.onclick=openReviewForm;action.type='button'}
   };
