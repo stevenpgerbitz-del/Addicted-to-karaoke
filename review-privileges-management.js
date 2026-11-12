@@ -103,7 +103,7 @@
   if(state.mode==='suspended'&&state.reason){
    container.append(el('p','mg2-muted','Reason: '+state.reason));
   }
-  if(state.mode==='suspended')container.append(el('p','mg2-muted','Email delivery pending setup. Suspension notice has been recorded.'));
+  if(state.mode==='suspended')container.append(el('p','mg2-muted','The member will see a suspension notice at sign-in.'));
   $('mg2-review-edit').hidden=!state.can_manage;
  }
  async function load(member){
@@ -149,7 +149,7 @@
    if(currentUser!==uid)return;
    if(!refreshed)throw Error('Saved, but unable to refresh review privileges. Reopen this member to verify.');
    $('mg2-review-summary').append(el('p','mg2-review-success',
-    savedMode==='suspended'?'Suspension saved. A notification record is ready for email setup.':'Review privileges updated.'));
+    savedMode==='suspended'?'Suspension saved. The member will see a notice at sign-in.':'Review privileges updated.'));
   }catch(error){
    if(currentUser===uid)$('mg2-review-feedback').textContent=error.message||'Could not update review privileges.';
   }finally{
