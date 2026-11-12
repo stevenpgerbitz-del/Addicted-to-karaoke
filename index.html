@@ -516,6 +516,10 @@ padding:13px 3px!important;min-height:66px
 #profile-section-dialog .member-about:has(#member-privacy-editor:not([hidden])) #member-privacy-editor,
 #profile-section-dialog .member-about:has(#member-interests-editor:not([hidden])) #member-interests-editor{margin-top:0}
 #auth-profile .profile-owner-panel .member-button{margin-top:12px;background:linear-gradient(#b91d1b,#840d0d);color:#fff3e9;border:1px solid #bf625b}
+#profile-section-dialog .member-about .profile-privacy-help,
+#profile-section-dialog .member-about .profile-interests-note{font-size:12px;line-height:1.4;margin:0 0 10px;white-space:normal}
+#profile-section-dialog .member-about #member-privacy-feedback,
+#profile-section-dialog .member-about #member-interests-feedback{font-size:12px;line-height:1.4;margin:6px 0 0;white-space:normal}
 .member-bio-dialog-actions button{flex:1;min-width:0;background:linear-gradient(#b91d1b,#840d0d)!important;border:1px solid #b76a63!important;color:#fff7ed!important;font-weight:700}
 #member-interests-editor[hidden]{display:none!important}
 #member-interests-editor{margin-top:13px}
@@ -3236,4 +3240,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-111";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-112";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
