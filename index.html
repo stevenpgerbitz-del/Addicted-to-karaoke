@@ -3434,4 +3434,103 @@ async function authLogout(){if(!authClient)return;const {error}=await authClient
 #atk-profile-favorites .atk-favorite-profile-entry strong,#atk-profile-favorites .atk-favorite-profile-entry small{display:block}
 #atk-profile-favorites .atk-favorite-profile-entry small{margin-top:4px;font-size:12px;color:#d9bcb0}
 #atk-profile-favorites .atk-favorite-profile-entry i{font-style:normal;font-size:24px}
-#atk-profile-favorites .atk-favorites-empty{color:#d9bcb0;font-size:14px}</style><script>const SITE_BUILD_VERSION="2026.11.12-119";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
+#atk-profile-favorites .atk-favorites-empty{color:#d9bcb0;font-size:14px}</style><script>
+let atkVenueFavoriteBusy=false,atkVenueReportBusy=false;
+function atkVenueCurrent(){return sampleVenues.find(v=>v.id===selectedVenue)||null}
+function atkVenueRequireAccount(action){
+ if(authClient&&authUser)return true;
+ alert('Please sign in to '+action+'.');navigate('signin');return false;
+}
+function atkVenueFavoriteUI(isFavorite){
+ const button=document.getElementById('atk-venue-favorite');if(!button)return;
+ button.setAttribute('aria-pressed',String(!!isFavorite));
+ button.innerHTML=isFavorite?'<span aria-hidden="true">★</span> Favorited':'<span aria-hidden="true">☆</span> Favorite';
+}
+async function atkVenueFavoriteRefresh(){
+ const venue=atkVenueCurrent(),id=venue?.databaseId,selected=selectedVenue;
+ atkVenueFavoriteUI(false);const button=document.getElementById('atk-venue-favorite');
+ if(button)button.disabled=!id;
+ if(!id||!authClient||!authUser)return;
+ try{
+  const {data,error}=await authClient.from('venue_favorites')
+   .select('venue_id').eq('venue_id',id).eq('user_id',authUser.id).maybeSingle();
+  if(error)throw error;
+  if(selectedVenue===selected)atkVenueFavoriteUI(!!data);
+ }catch(error){console.warn('Unable to load favorite state',error)}
+}
+async function atkVenueFavoriteToggle(){
+ if(atkVenueFavoriteBusy)return;
+ if(!atkVenueRequireAccount('save favorite venues'))return;
+ const v=atkVenueCurrent(),id=v?.databaseId;if(!id)return alert('This venue is not in the live directory yet.');
+ const button=document.getElementById('atk-venue-favorite'),saved=button.getAttribute('aria-pressed')==='true';
+ const user=authUser.id;atkVenueFavoriteBusy=true;button.disabled=true;
+ try{
+  const {error}=saved?
+   await authClient.from('venue_favorites').delete().eq('venue_id',id).eq('user_id',user):
+   await authClient.from('venue_favorites').insert({venue_id:id,user_id:user});
+  if(error)throw error;
+  if(authUser?.id===user){atkVenueFavoriteUI(!saved);atkFavoriteListRender();}
+ }catch(error){alert('Unable to update your favorites: '+(error.message||'Please try again.'))}
+ finally{atkVenueFavoriteBusy=false;button.disabled=false}
+}
+async function atkFavoriteListRender(){
+ const root=document.getElementById('atk-profile-favorites');if(!root)return;
+ root.textContent='Loading favorites…';
+ if(!authClient||!authUser){root.textContent='Sign in to view your favorites.';return}
+ const id=authUser.id;
+ try{
+  const {data,error}=await authClient.from('venue_favorites')
+   .select('venue_id,venues(id,name,city,state,published)')
+   .eq('user_id',id).order('created_at',{ascending:false}).limit(75);
+  if(error)throw error;if(authUser?.id!==id)return;
+  root.replaceChildren();
+  const list=(data||[]).filter(x=>x.venues?.published);
+  if(!list.length){const p=document.createElement('p');p.className='atk-favorites-empty';
+   p.textContent='No favorites yet. Tap ☆ Favorite on a venue to add it here.';root.append(p);return}
+  for(const item of list){
+   const v=item.venues,btn=document.createElement('button');btn.type='button';btn.className='atk-favorite-profile-entry';
+   const wrap=document.createElement('span'),title=document.createElement('strong'),where=document.createElement('small');
+   title.textContent=v.name;where.textContent=[v.city,v.state].filter(Boolean).join(', ');
+   wrap.append(title,where);const chevron=document.createElement('i');chevron.textContent='›';chevron.setAttribute('aria-hidden','true');
+   btn.append(wrap,chevron);
+   btn.addEventListener('click',()=>atkFavoriteOpenVenue(v.id,v.name));root.append(btn);
+  }
+ }catch(error){root.textContent='Could not load favorite venues: '+(error.message||'Please try again.')}
+}
+async function atkFavoriteOpenVenue(id,name){
+ if(document.getElementById('profile-section-dialog')?.open)profileCloseSection();
+ if(window.liveVenueLoadPromise)try{await window.liveVenueLoadPromise}catch(error){}
+ const v=sampleVenues.find(x=>x.databaseId===id);
+ if(v){openVenue(v.id);return}
+ navigate('find');
+ const search=document.getElementById('venue-search');if(search){search.value=name;filterVenues()}
+}
+function atkVenueReportOpen(){
+ if(!atkVenueRequireAccount('report a venue'))return;
+ const v=atkVenueCurrent();if(!v?.databaseId)return alert('This sample venue cannot be reported.');
+ document.getElementById('atk-venue-report-name').textContent=v.name;
+ document.getElementById('atk-venue-report-reason').value='';
+ document.getElementById('atk-venue-report-note').value='';
+ document.getElementById('atk-venue-report-status').textContent='';
+ document.getElementById('atk-venue-report-dialog').showModal();
+}
+function atkVenueReportClose(){if(!atkVenueReportBusy)document.getElementById('atk-venue-report-dialog').close()}
+async function atkVenueReportSubmit(event){
+ event.preventDefault();if(atkVenueReportBusy||!authClient||!authUser)return;
+ const v=atkVenueCurrent(),reason=document.getElementById('atk-venue-report-reason').value,
+  note=document.getElementById('atk-venue-report-note').value.trim(),
+  feedback=document.getElementById('atk-venue-report-status'),submit=document.getElementById('atk-venue-report-submit');
+ if(!v?.databaseId||!reason||note.length<10){feedback.textContent='Choose a reason and explain the issue (at least 10 characters).';return}
+ const member=authUser.id;atkVenueReportBusy=true;submit.disabled=true;feedback.textContent='Sending report…';
+ try{
+  const {error}=await authClient.from('venue_reports').insert({venue_id:v.databaseId,reporter_id:member,reason,note});
+  if(error)throw error;
+  document.getElementById('atk-venue-report-dialog').close();
+  message('Venue report submitted to the Approval Center. Thank you!');
+  if(typeof approvalCenterBadge==='function')approvalCenterBadge();
+ }catch(error){feedback.textContent=error.code==='23505'?'You already have a pending report for this venue.':
+  'Could not send report: '+(error.message||'Please try again.')}
+ finally{atkVenueReportBusy=false;submit.disabled=false}
+}
+
+const SITE_BUILD_VERSION="2026.11.12-120";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
