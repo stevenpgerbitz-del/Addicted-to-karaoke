@@ -1,0 +1,32 @@
+/* Build 142 — Review reporting consistent with Addicted to Karaoke's muted red/black theme */
+.atk-review-report-link{
+ display:block;margin:15px 0 0 auto;padding:8px 9px;
+ border:1px solid #865a54;border-radius:9px;background:#382426;
+ color:#f2d7cb;font:700 12px Arial,sans-serif;cursor:pointer;
+}
+.atk-review-report-dialog{box-sizing:border-box;width:min(490px,calc(100vw - 24px));max-height:87dvh;
+ overflow:hidden;padding:0;background:#211517;border:1px solid #9e6159;border-radius:18px;
+ color:#f7e7dc;box-shadow:0 20px 65px #000b;font:14px Arial,sans-serif}
+.atk-review-report-dialog::backdrop{background:#000c}
+.atk-review-report-dialog[open]{display:flex}
+.atk-review-report-dialog form{display:flex;flex-direction:column;min-height:0;width:100%}
+.atk-review-report-heading{flex:none;padding:18px 17px 13px;border-bottom:1px solid #633f3d}
+.atk-review-report-heading h2{font:700 24px Georgia,serif;margin:0 0 5px;color:#f5e5d9}
+.atk-review-report-heading p{margin:0;color:#ceb6ac;font:13px/1.4 Arial,sans-serif}
+.atk-review-report-body{overflow-y:auto;flex:1;min-height:0;padding:14px 16px 10px}
+.atk-review-report-caption{margin:0 0 10px;font:700 14px Arial,sans-serif}
+.atk-review-report-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 13px}
+.atk-review-report-option{min-height:53px;box-sizing:border-box;padding:9px;border:1px solid #87534f;
+ border-radius:10px;background:#382427;color:#f5e5dc;text-align:left;font:700 12px/1.35 Arial,sans-serif}
+.atk-review-report-option[aria-pressed="true"]{background:#62292c;border:2px solid #dcaea1;padding:8px}
+.atk-review-report-label{display:block;font:700 13px Arial,sans-serif;margin:7px 0}
+#atk-review-report-detail{box-sizing:border-box;width:100%;min-height:73px;resize:vertical;
+ border:1px solid #955e57;border-radius:10px;background:#301d21;color:#f8e8de;
+ padding:10px;font:14px/1.4 Arial,sans-serif}
+.atk-review-report-feedback{color:#f8d6c6;font:12px/1.4 Arial,sans-serif;margin:0;padding:0 15px}
+.atk-review-report-footer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
+ padding:12px 16px 15px;border-top:1px solid #674242;flex:none}
+.atk-review-report-footer button{min-height:44px;border:1px solid #d26c61;border-radius:10px;
+ color:#fff1e7;background:linear-gradient(#b51d1b,#800c0b);font:700 13px Arial,sans-serif}
+.atk-review-report-footer .atk-review-report-cancel{background:#39262a;border-color:#9c6860}
+.atk-review-report-footer button:disabled{opacity:.55}
