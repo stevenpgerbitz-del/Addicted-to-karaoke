@@ -8,7 +8,7 @@
  ];
  const labels={singer:'Singer',kj:'KJ / Host',venue_owner:'Venue Owner'};
  const mic='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M6 10a6 6 0 0 0 12 0M12 16v6m-4 0h8"/></svg>';
- let reviewDialog=null, authorDialog=null, ratings=new Map(), sending=false, activeVenue=null;
+ let reviewDialog=null, authorDialog=null, ratings=new Map(), sending=false, activeVenue=null, authorLoadSerial=0;
  function element(tag,cls,value){
   const x=document.createElement(tag);if(cls)x.className=cls;
   if(value!==undefined)x.textContent=String(value);return x;
@@ -128,8 +128,10 @@
   ].join('');
   document.body.append(authorDialog);
   get('atk-review-author-close').addEventListener('click',()=>authorDialog.close());
+  authorDialog.addEventListener('close',()=>{++authorLoadSerial});
  }
  async function showAuthor(review){
+  const serial=++authorLoadSerial;
   makeAuthorDialog();
   const content=get('atk-review-author-content');content.replaceChildren(element('p','atk-review-muted','Loading profile…'));
   authorDialog.showModal();
@@ -143,7 +145,7 @@
    if(!authClient)throw Error('Member profiles are temporarily unavailable.');
    const {data,error}=await authClient.rpc('review_author_card',{p_user_id:reviewerId});
    if(error)throw error;
-   if(!authorDialog.open)return;
+   if(!authorDialog.open||serial!==authorLoadSerial)return;
    content.replaceChildren();
    if(!data?.visible){
     content.append(element('strong','atk-review-demo-name',review.display_name||'Member'),
@@ -179,7 +181,7 @@
    }
    if(!interests.length&&!String(data.bio||'').trim())content.append(element('p','atk-review-muted','This member has not added a public story yet.'));
   }catch(error){
-   if(authorDialog.open)content.replaceChildren(element('p','atk-review-muted','This member profile is unavailable right now.'));
+   if(authorDialog.open&&serial===authorLoadSerial)content.replaceChildren(element('p','atk-review-muted','This member profile is unavailable right now.'));
    console.warn('Member review profile could not load',error);
   }
  }
@@ -193,6 +195,7 @@
   const nameButton=element('button','atk-review-author-name-button',review.display_name||'Guest');
   nameButton.type='button';nameButton.setAttribute('aria-label','View profile for '+(review.display_name||'reviewer'));
   name.replaceWith(nameButton);
+  if(!review.reviewer_id)nameButton.after(element('span','atk-review-demo-badge','Demo'));
   const action=event=>{event.preventDefault();event.stopPropagation();showAuthor(review)};
   avatarButton.addEventListener('click',action);nameButton.addEventListener('click',action);
  }
@@ -202,7 +205,10 @@
    previousRender(rows);
    const panel=document.getElementById('content');
    const intro=panel.querySelector('.heading + .muted');
-   if(intro)intro.textContent=rows.length+' approved review'+(rows.length===1?'':'s')+' · Tap a review to see all seven ratings';
+   if(intro){
+    const sampleCount=rows.filter(r=>!r.reviewer_id).length;
+    intro.textContent=rows.length+' approved review'+(rows.length===1?'':'s')+(sampleCount?' · '+sampleCount+' demo sample'+(sampleCount===1?'':'s'):'')+' · Tap a review to see all seven ratings';
+   }
    const cards=panel.querySelectorAll('.review-card');
    cards.forEach((card,index)=>{if(rows[index])attachProfileAction(card,rows[index])});
    const action=panel.querySelector('button.direction');
