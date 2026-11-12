@@ -680,3 +680,131 @@
  #management-member-details .mg2-section-title h3{font-size:16px}
  #management-member-details .mg2-role-chooser{grid-template-columns:1fr}
 }
+
+
+/* Build 135 — mobile alignment and horizontal-containment correction.
+   The legacy management input rule adds a 6px top margin to selects, while the
+   Filters button has none. Reset it only for this user-management toolbar.
+   Remove the intrusive scrollbar overlay but preserve touch scrolling. */
+#management-dialog[open]:has(> #management-users:not([hidden])),
+#management-dialog[open]:has(> #management-member-details:not([hidden])){
+ max-width:calc(100vw - 20px)!important;
+ overflow:hidden!important;
+}
+#management-dialog #management-users,
+#management-dialog #management-member-details{
+ box-sizing:border-box!important;
+ max-width:100%!important;
+ min-width:0!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ scrollbar-width:none;
+ -ms-overflow-style:none;
+ overscroll-behavior-x:none;
+}
+#management-dialog #management-users::-webkit-scrollbar,
+#management-dialog #management-member-details::-webkit-scrollbar{
+ display:none;
+ width:0;
+}
+#management-users .mg2-toolbar{
+ width:100%;
+ max-width:100%;
+ min-width:0;
+ align-items:stretch;
+ grid-template-columns:90px minmax(0,1fr) minmax(0,1fr);
+ gap:8px;
+ box-sizing:border-box;
+}
+#management-users .mg2-toolbar-label{
+ display:block;
+ box-sizing:border-box;
+ min-width:0;
+ width:100%;
+ height:43px;
+ margin:0!important;
+ padding:0!important;
+ line-height:normal;
+}
+#management-dialog #management-users .mg2-toolbar-label>select{
+ appearance:auto;
+ -webkit-appearance:auto;
+ display:block;
+ box-sizing:border-box!important;
+ width:100%!important;
+ max-width:100%!important;
+ height:43px!important;
+ min-height:43px!important;
+ margin:0!important;
+ padding:7px 5px 7px 9px!important;
+ border-radius:10px;
+ font:600 12px/1.25 Arial,sans-serif!important;
+ vertical-align:middle;
+}
+#management-dialog #management-users .mg2-filter-button{
+ width:100%;
+ max-width:100%;
+ box-sizing:border-box;
+ height:43px!important;
+ min-height:43px!important;
+ margin:0!important;
+ padding:7px!important;
+ line-height:1.25;
+ align-self:stretch;
+}
+#management-users .mg2-header,
+#management-users .mg2-search-label,
+#management-users .mg2-toolbar,
+#management-users .mg2-more-filters,
+#management-users .mg2-attention,
+#management-users .mg2-directory,
+#management-users .mg2-block-heading,
+#management-users .mg2-recent-list,
+#management-users .mg2-results,
+#management-users .mg2-browse,
+#management-users .mg2-pages,
+#management-member-details .mg2-member-hero,
+#management-member-details .mg2-section,
+#management-member-details .mg2-disclosure{
+ width:100%;
+ max-width:100%;
+ min-width:0;
+ margin-left:0;
+ margin-right:0;
+ box-sizing:border-box;
+}
+#management-users .mg2-member-card,
+#management-users .mg2-approval-action{
+ box-sizing:border-box;
+ max-width:100%;
+ min-width:0;
+ overflow:hidden;
+}
+#management-users .mg2-block-heading h3{
+ min-width:0;
+ flex:1 1 auto;
+}
+#management-users .mg2-total{
+ flex:0 0 auto;
+ white-space:nowrap;
+}
+#management-users .mg2-member-card .mg2-badges{
+ flex:0 1 auto;
+ max-width:30%;
+}
+#management-users .mg2-directory,
+#management-users .mg2-attention,
+#management-users .mg2-recent-list{
+ overflow-x:clip;
+}
+@media(max-width:390px){
+ #management-users .mg2-toolbar{
+  grid-template-columns:80px minmax(0,1fr) minmax(0,1fr);
+  gap:6px;
+ }
+ #management-dialog #management-users .mg2-toolbar-label>select{
+  padding:7px 3px 7px 6px!important;
+  font-size:11px!important;
+ }
+ #management-users .mg2-member-card .mg2-badges{max-width:29%}
+}
