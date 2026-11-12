@@ -215,4 +215,74 @@ function managementReviewsBack(){
 }
 window.managementReviewsOpen=managementReviewsOpen;
 window.managementReviewsBack=managementReviewsBack;
+
+/* Admins and moderators use the same Review Management surface without gaining
+   Founder-only Management Portal entries or permissions. */
+let staffDialog=null,staffEntry=null,staffMarker=null,staffUser=null,staffCheck=0;
+function makeStaffEntry(){
+ if(staffEntry||!$('management-open'))return;
+ staffEntry=button('Review Management',openStaffPanel,'profile-action mg3-staff-entry');
+ staffEntry.id='mg3-staff-review-entry';staffEntry.hidden=true;
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('class','profile-ui-icon');
+ svg.setAttribute('viewBox','0 0 24 24');
+ svg.setAttribute('aria-hidden','true');
+ svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
+ svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');
+ svg.setAttribute('stroke-linejoin','round');
+ const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+ path.setAttribute('d','M5 3h14v18H5zM9 8h6M9 12h6M9 16h4');
+ svg.append(path);staffEntry.prepend(svg);
+ $('management-open').after(staffEntry);
+ staffDialog=document.createElement('dialog');
+ staffDialog.id='mg3-staff-dialog';staffDialog.className='management-dialog mg3-staff-dialog';
+ staffDialog.setAttribute('aria-label','Review Management');
+ const close=button('Close',()=>staffDialog.close(),'member-button mg3-staff-close');
+ staffDialog.append(close);document.body.append(staffDialog);
+ staffDialog.addEventListener('close',()=>{
+  ++S.serial;S.selected.clear();S.result=null;S.bulk=false;
+  if(S.dialog?.open)S.dialog.close();
+  const section=$('management-reviews');section.hidden=true;
+  if(staffMarker?.parentNode)staffMarker.replaceWith(section);
+  staffMarker=null;
+ });
+}
+async function checkStaffAccess(id){
+ makeStaffEntry();const serial=++staffCheck;
+ if(staffEntry)staffEntry.hidden=true;
+ if(!id||!authClient)return;
+ try{
+  const {data,error}=await authClient.rpc('management_review_directory',{
+   p_search:'',p_status:'all',p_sort:'newest',p_page:1
+  });
+  if(serial!==staffCheck||authUser?.id!==id)return;
+  if(error)throw error;
+  // Founder already has this page inside Management Portal.
+  staffEntry.hidden=data?.role==='founder'||!['admin','super_admin','moderator'].includes(data?.role);
+ }catch(error){if(serial===staffCheck&&staffEntry)staffEntry.hidden=true}
+}
+function openStaffPanel(){
+ if(!authClient||!authUser||!staffDialog||!staffEntry||staffEntry.hidden)return;
+ build();const root=$('management-reviews');
+ if(!root||staffDialog.open)return;
+ staffMarker=document.createComment('Return Review Management to Management Portal');
+ root.before(staffMarker);
+ staffDialog.insertBefore(root,staffDialog.firstChild);
+ root.hidden=false;root.scrollTop=0;
+ S.page=1;S.filter='all';S.sort='newest';S.search='';S.selected.clear();S.bulk=false;
+ $('mg3-bulk').hidden=true;$('mg3-multiple').textContent='Manage Multiple';$('mg3-multiple').setAttribute('aria-pressed','false');
+ $('mg3-search').value='';$('mg3-status').value='all';$('mg3-sort').value='newest';
+ staffDialog.showModal();load();
+}
+makeStaffEntry();
+if(authClient?.auth){
+ authClient.auth.onAuthStateChange((_event,session)=>{
+  setTimeout(()=>{
+   const id=session?.user?.id;
+   if(!id){++staffCheck;staffUser=null;if(staffEntry)staffEntry.hidden=true;if(staffDialog?.open)staffDialog.close();return}
+   if(staffUser!==id){staffUser=id;void checkStaffAccess(id)}
+  },0);
+ });
+ if(authUser){staffUser=authUser.id;void checkStaffAccess(authUser.id)}
+}
 })();
