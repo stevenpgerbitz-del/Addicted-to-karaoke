@@ -394,6 +394,9 @@
  managementMemberBack=function(){
   ++profileSerial;detailMemberId=null;
   originalMemberBack.apply(this,arguments);
+  // Changes may have been made while the directory was hidden.
+  // Reload member badges and counts when returning to the directory.
+  if(!users().hidden)managementUsersLoad();
  };
  managementMemberSaveRole=async function(){
   const result=await originalSaveRole.apply(this,arguments);
