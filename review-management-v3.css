@@ -211,6 +211,8 @@
  #management-reviews .mg3-card summary{grid-template-columns:34px minmax(0,1fr) minmax(68px,auto);gap:7px;padding:11px 8px}
  #management-reviews .mg3-avatar{width:34px;height:34px;font-size:15px}
  #management-reviews .mg3-card-main strong{font-size:13px}
+}
+@media(max-width:365px){
  #management-reviews .mg3-ratings{grid-template-columns:1fr}
  #management-reviews .mg3-rating:nth-last-child(2){border-bottom:1px solid #503737}
 }
