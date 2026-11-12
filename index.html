@@ -476,11 +476,75 @@ padding:13px 3px!important;min-height:66px
 #profile-section-dialog .profile-about-interests>#member-about-interests{margin:8px 0!important;font-size:14px;line-height:1.5}
 #member-interests-editor[hidden]{display:none!important}
 #member-interests-editor{margin-top:13px}
-#member-interests-options{display:grid;gap:8px}
-#member-interests-options label{display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid #80504c;border-radius:10px;background:#2b1a1e}
-#member-interests-options input{accent-color:#bc3028;width:18px;height:18px;flex:none;margin-top:3px}
-#member-interests-options strong,#member-interests-options small{display:block}
-#member-interests-options small{font-size:11px;line-height:1.4;color:#d5bcb4;margin-top:3px}
+/* Same two-column, tap-to-select design as Venue Amenities. */
+#member-interests-options{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:9px;
+}
+#member-interests-options .profile-interest-tile{
+ appearance:none;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:7px;
+ position:relative;
+ box-sizing:border-box;
+ width:100%;
+ min-width:0;
+ min-height:118px;
+ padding:13px 9px;
+ border:1px solid #82514d;
+ border-radius:11px;
+ background:#302022;
+ color:#f5e4d2;
+ cursor:pointer;
+ text-align:center;
+ font:inherit;
+}
+#member-interests-options .profile-interest-tile:last-child{
+ grid-column:1/-1;
+ min-height:90px;
+ flex-direction:row;
+ text-align:left;
+ padding:14px 17px;
+}
+#member-interests-options .profile-interest-tile[aria-pressed="true"]{
+ background:#65201f;
+ border:2px solid #e06c60;
+ padding:12px 8px;
+}
+#member-interests-options .profile-interest-tile:last-child[aria-pressed="true"]{
+ padding:13px 16px;
+}
+#member-interests-options .profile-interest-tile svg{
+ flex:none;
+ width:25px;
+ height:25px;
+ stroke:#f5e4d2;
+ fill:none;
+ stroke-width:1.8;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+}
+#member-interests-options .profile-interest-tile span{display:block;min-width:0}
+#member-interests-options .profile-interest-tile strong,
+#member-interests-options .profile-interest-tile small{display:block}
+#member-interests-options .profile-interest-tile strong{
+ font-size:14px;
+ line-height:1.25;
+}
+#member-interests-options .profile-interest-tile small{
+ font-size:11px;
+ line-height:1.35;
+ color:#d5bcb4;
+ margin-top:4px;
+}
+#member-interests-options .profile-interest-tile:focus-visible{
+ outline:2px solid #f5e4d2;
+ outline-offset:2px;
+}
 .profile-interests-note{font-size:12px;line-height:1.4;color:#dac0b8}
 .profile-interests-buttons{display:flex;gap:8px}
 .profile-interests-buttons button{flex:1;min-width:0;min-height:43px;border:1px solid #b76a63;border-radius:9px;color:#fff7ed;background:#3b2529;font-weight:700;padding:8px 5px}
@@ -1646,24 +1710,38 @@ function memberInterestsEdit(){
  form.replaceChildren();
  const chosen=Array.isArray(memberProfile.karaoke_interests)?memberProfile.karaoke_interests:[];
  for(const option of atkWelcomeOptions){
-  const label=document.createElement('label');
-  const input=document.createElement('input');
-  input.type='checkbox';input.value=option.id;input.checked=chosen.includes(option.id);
+  const tile=document.createElement('button');
+  tile.type='button';
+  tile.className='profile-interest-tile';
+  tile.dataset.interest=option.id;
+  tile.setAttribute('aria-pressed',String(chosen.includes(option.id)));
+  tile.setAttribute('aria-label',option.title+' — '+option.detail);
+  const icon=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  icon.setAttribute('viewBox','0 0 24 24');
+  icon.setAttribute('aria-hidden','true');
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d',option.path);
+  icon.append(path);
   const words=document.createElement('span');
   const title=document.createElement('strong');title.textContent=option.title;
   const detail=document.createElement('small');detail.textContent=option.detail;
-  words.append(title,detail);label.append(input,words);form.append(label);
+  words.append(title,detail);
+  tile.append(icon,words);
+  tile.addEventListener('click',()=>{
+   tile.setAttribute('aria-pressed',String(tile.getAttribute('aria-pressed')!=='true'));
+  });
+  form.append(tile);
  }
  document.getElementById('member-interests-feedback').textContent='';
  editor.hidden=false;
- form.querySelector('input')?.focus();
+ form.querySelector('button')?.focus();
 }
 async function memberInterestsSave(){
  if(memberInterestsSaving||!authClient||!authUser||!memberProfile||memberProfile.user_id!==authUser.id)return;
  const userId=authUser.id;
  const editor=document.getElementById('member-interests-editor'),btn=document.getElementById('member-interests-save');
  const feedback=document.getElementById('member-interests-feedback');
- const values=[...document.querySelectorAll('#member-interests-options input[type="checkbox"]:checked')].map(el=>el.value)
+ const values=[...document.querySelectorAll('#member-interests-options .profile-interest-tile[aria-pressed="true"]')].map(el=>el.dataset.interest)
   .filter(id=>atkWelcomeOptions.some(o=>o.id===id));
  memberInterestsSaving=true;btn.disabled=true;
  feedback.textContent='Saving your interests…';
@@ -2960,4 +3038,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-106";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-107";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
