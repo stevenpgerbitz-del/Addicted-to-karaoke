@@ -176,6 +176,9 @@
     state:inputField('State',v.state,40),
     zip:inputField('ZIP / postal code',v.postal_code,20)
    };
+   const pair=mk('div','mv2-address-pair');
+   pair.append(fields.state.closest('label'),fields.zip.closest('label'));
+   overlayBody.append(pair);
    const group=mk('div','mv2-status-change');
    group.append(mk('span','','Publication Status: '+statusLabel(v.publication_status)));
    group.append(btn('Change status',()=>{
@@ -192,7 +195,14 @@
    }
   }else if(group==='contact'){
    openOverlay('Edit Venue Contact',async ()=>{
-    const website=fields.website.value.trim(),phone=fields.phone.value.trim();
+    const checked=window.atkVenuePhone?.validate(fields.phone.value);
+    if(!checked)throw Error('Phone validation is unavailable. Reload and try again.');
+    if(!checked.valid){
+     showPhoneFeedback(checked);fields.phone.focus();
+     throw Error(checked.message);
+    }
+    fields.phone.value=checked.formatted;
+    const website=fields.website.value.trim(),phone=checked.formatted;
     let url=website;
     if(url&&!/^https?:\/\//i.test(url))url='https://'+url;
     if(url){try{const parsed=new URL(url);if(!['http:','https:'].includes(parsed.protocol))throw Error('bad protocol')}
@@ -203,6 +213,31 @@
     phone:inputField('Venue phone number',v.phone,40,'tel'),
     website:inputField('Venue website',v.website,400,'url')
    };
+   fields.phone.placeholder='(515) 555-0123';
+   fields.phone.setAttribute('inputmode','tel');
+   fields.phone.setAttribute('autocomplete','tel-national');
+   const phoneHint=mk('span','mv2-phone-help',
+    'U.S./Canada: (515) 555-0123. International: +country code and number.');
+   phoneHint.id='mv2-phone-help';
+   fields.phone.closest('label').append(phoneHint);
+   fields.phone.setAttribute('aria-describedby',phoneHint.id);
+   function showPhoneFeedback(result){
+    const error=Boolean(result&&!result.valid);
+    phoneHint.textContent=error?result.message:
+     'U.S./Canada: (515) 555-0123. International: +country code and number.';
+    phoneHint.classList.toggle('mv2-phone-error',error);
+    fields.phone.setAttribute('aria-invalid',String(error));
+   }
+   const stored=window.atkVenuePhone?.validate(v.phone);
+   if(stored?.valid&&v.phone)fields.phone.value=stored.formatted;
+   else if(v.phone)showPhoneFeedback(stored||{valid:false,
+    message:'This saved number is not valid. Please correct it before saving.'});
+   fields.phone.addEventListener('input',()=>showPhoneFeedback(null));
+   fields.phone.addEventListener('blur',()=>{
+    const checked=window.atkVenuePhone?.validate(fields.phone.value);
+    if(checked?.valid)fields.phone.value=checked.formatted;
+    showPhoneFeedback(checked);
+   });
   }else if(group==='profile'){
    openOverlay('Edit Venue Profile',async ()=>{
     const genres=getGenres(),amenities=getAmenities();
@@ -338,6 +373,9 @@
    state:inputField('State','IA',40),
    zip:inputField('ZIP / postal code',null,20)
   };
+  const pair=mk('div','mv2-address-pair');
+  pair.append(fields.state.closest('label'),fields.zip.closest('label'));
+  overlayBody.append(pair);
   const p=mk('p','mv2-private-note','New venues are saved as Submitted and remain hidden until approved.');
   overlayBody.append(p);
   if(typeof atkAddressAttach==='function'){
@@ -542,6 +580,24 @@
     if(method==='statusSave')loadPublicLink(managementSelectedVenue.id);
    }
    return result;
+  };
+ }
+ // The legacy single-field editor still exists, so protect its phone saves too.
+ const oldFieldSave=window.managementVenueFieldSave;
+ if(typeof oldFieldSave==='function'){
+  window.managementVenueFieldSave=async function(){
+   if(typeof managementFieldType!=='undefined'&&managementFieldType==='phone'){
+    const phone=get('mvd-field-phone');
+    if(phone){
+     const result=window.atkVenuePhone?.validate(phone.value);
+     if(!result||!result.valid){
+      setText('mvd-field-feedback',result?.message||'Phone validation is unavailable. Reload and try again.');
+      phone.setAttribute('aria-invalid','true');phone.focus();return;
+     }
+     phone.value=result.formatted;phone.setAttribute('aria-invalid','false');
+    }
+   }
+   return oldFieldSave.apply(this,arguments);
   };
  }
  // Existing templates are loaded before this script. Initialize without replacing stored venue data.
