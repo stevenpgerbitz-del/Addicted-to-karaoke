@@ -120,10 +120,11 @@
    const {data,error}=await authClient.rpc('management_get_review_privileges',{p_user_id:currentUser});
    if(error)throw error;
    if(serial!==lookupSerial)return;
-   state=data;fillSummary();
+   state=data;fillSummary();return true;
   }catch(error){
-   if(serial!==lookupSerial)return;
+   if(serial!==lookupSerial)return false;
    $('mg2-review-summary').replaceChildren(el('p','mg2-muted','Unable to load review privileges: '+(error.message||'Please try again.')));
+   return false;
   }
  }
  async function savePrivileges(){
@@ -143,10 +144,12 @@
    if(error)throw error;
    if(data?.success!==true)throw Error('Update could not be verified.');
    if(currentUser!==uid)return;
-   await load({id:uid});
+   const savedMode=mode;
+   const refreshed=await load({id:uid});
    if(currentUser!==uid)return;
+   if(!refreshed)throw Error('Saved, but unable to refresh review privileges. Reopen this member to verify.');
    $('mg2-review-summary').append(el('p','mg2-review-success',
-    mode==='suspended'?'Suspension saved. A notification record is ready for email setup.':'Review privileges updated.'));
+    savedMode==='suspended'?'Suspension saved. A notification record is ready for email setup.':'Review privileges updated.'));
   }catch(error){
    if(currentUser===uid)$('mg2-review-feedback').textContent=error.message||'Could not update review privileges.';
   }finally{
