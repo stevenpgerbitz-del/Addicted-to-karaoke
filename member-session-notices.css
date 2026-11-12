@@ -20,8 +20,10 @@
 .atk-review-suspension-dialog footer{margin-top:17px}
 .atk-review-suspension-dialog footer button{
  display:block;box-sizing:border-box;width:100%;min-height:46px;padding:10px;
- border:1px solid #d77366;border-radius:10px;
- background:linear-gradient(#b92321,#870e0e);color:#fff0e7;
- font:700 14px Arial,sans-serif;cursor:pointer;
+ border:1px solid #e36b60;border-radius:12px;
+ background:linear-gradient(#b51d1b,#780c0b);color:#fff3e9;
+ font:700 14px Arial,sans-serif;cursor:pointer;box-shadow:none;
 }
-.atk-review-suspension-dialog footer button:focus-visible{outline:3px solid #f6ddae;outline-offset:2px}
+.atk-review-suspension-dialog h2:focus{outline:none}
+.atk-review-suspension-dialog footer button:focus:not(:focus-visible){outline:none}
+.atk-review-suspension-dialog footer button:focus-visible{outline:2px solid #f5e4d2;outline-offset:2px}
