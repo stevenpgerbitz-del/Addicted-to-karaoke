@@ -22,18 +22,23 @@
  async function loadFeed(){
   if(!authClient||!authUser)return null;
   const owner=authUser.id,serial=++fetchSerial;
-  const {data,error}=await authClient.rpc('management_review_notification_feed');
-  if(error)throw error;
+  const [notices,reports]=await Promise.all([
+   authClient.rpc('management_review_notification_feed'),
+   authClient.rpc('management_pending_review_reports')
+  ]);
+  if(notices.error)throw notices.error;
+  if(reports.error)throw reports.error;
   if(owner!==authUser?.id||serial!==fetchSerial)return null;
+  const data={...notices.data,review_reports:reports.data?.reports||[]};
   lastFeed=data;return data;
  }
  function feedCounts(data){
-  return Number(data?.suspensions?.length||0)+Number(data?.messages?.length||0);
+  return Number(data?.suspensions?.length||0)+Number(data?.messages?.length||0)+Number(data?.review_reports?.length||0);
  }
  function options(){
   const filter=$('atk-approval-filter');
   if(!filter||filter.querySelector('option[value="suspensions"]'))return;
-  for(const [value,text] of [['suspensions','Review suspensions'],['messages','Suspension messages']]){
+  for(const [value,text] of [['suspensions','Review suspensions'],['messages','Suspension messages'],['review_reports','Reported reviews']]){
    const o=document.createElement('option');o.value=value;o.textContent=text;filter.append(o);
   }
  }
@@ -92,11 +97,56 @@
   });
   actions.append(done);inside.append(actions);return outer;
  }
+ const reportNames={spam:'Spam / advertising',scam:'Scam / phishing',abusive:'Abusive language',unrelated:'Off-topic review',fake:'Fake / misleading',other:'Other issue'};
+ async function actReport(reportId,action){
+  notify('Updating reported review…');
+  try{
+   const {data,error}=await authClient.rpc('management_review_report_action',{
+    p_report_id:reportId,p_action:action
+   });
+   if(error)throw error;
+   if(data?.success!==true)throw Error('Report update could not be confirmed.');
+   const fresh=await loadFeed();
+   if(!fresh)throw Error('Saved, but unable to reload reports.');
+   if(staffDialog?.open)renderStaff(fresh);
+   if(!$('management-approvals')?.hidden)renderFounder(fresh);
+   notify(action==='dismiss'?'Report dismissed. The review remains published.':
+    action==='spam'?'Review marked as spam and archived. It no longer counts toward ratings.':
+    'Review hidden. It no longer counts toward ratings.');
+  }catch(error){notify('Unable to moderate review: '+(error.message||'Please try again.'))}
+ }
+ function cardForReport(report){
+  const {outer,inside}=detailCard(report.venue_name||'Reported Review',
+   (reportNames[report.reason]||'Reported content')+' · '+formatDate(report.created_at));
+  inside.append(make('p','','Review by: '+(report.author_name||'Member')));
+  inside.append(make('p','','Reported by: '+(report.reporter_name||'Member')));
+  if(report.review_excerpt)inside.append(make('p','atk-review-notification-message','Review: '+report.review_excerpt));
+  if(report.details)inside.append(make('p','','Details: '+report.details));
+  const actions=make('div','atk-approval-actions atk-review-report-actions');
+  const dismiss=button('Dismiss Report',()=>actReport(report.id,'dismiss'));
+  const hide=button('Hide Review',()=>confirmDecision(hide,'hide','Confirm Hide',report.id));
+  const spam=button('Spam & Archive',()=>confirmDecision(spam,'spam','Confirm Archive',report.id));
+  function confirmDecision(control,action,label,id){
+   if(control.dataset.confirm!==action){
+    control.dataset.confirm=action;control.textContent=label;return;
+   }
+   actReport(id,action);
+  }
+  actions.append(dismiss,hide,spam);inside.append(actions);
+  return outer;
+ }
  function fillFeed(root,feed,filter){
   const suspensions=Array.isArray(feed?.suspensions)?feed.suspensions:[];
   const messages=Array.isArray(feed?.messages)?feed.messages:[];
+  const reports=Array.isArray(feed?.review_reports)?feed.review_reports:[];
   const showS=filter==='all'||filter==='suspensions';
   const showM=filter==='all'||filter==='messages';
+  const showR=filter==='all'||filter==='review_reports';
+  if(showR&&(reports.length||filter==='review_reports')){
+   root.append(make('h3','atk-approval-group-label','Reported reviews · '+reports.length));
+   if(!reports.length)root.append(make('p','atk-approval-muted','No reported reviews waiting for moderation.'));
+   reports.forEach(x=>root.append(cardForReport(x)));
+  }
   if(showM&&(messages.length||filter==='messages')){
    root.append(make('h3','atk-approval-group-label','Suspension messages · '+messages.length));
    if(!messages.length)root.append(make('p','atk-approval-muted','No suspension messages to handle.'));
