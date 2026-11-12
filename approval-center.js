@@ -322,7 +322,7 @@ function approvalCenterRender(){
  const total=Number(data.total_pending||0)+reports.length+photos.length;
  const summary=document.getElementById('atk-approval-summary');
  summary.textContent=total
-  ? total+' item'+(total===1?'':'s')+' awaiting review · '+Number(data.venue_count||0)+' venue'+(Number(data.venue_count||0)===1?'':'s')+' · '+Number(data.hosting_count||0)+' KJ request'+(Number(data.hosting_count||0)===1?'s':'s')+' · '+reports.length+' report'+(reports.length===1?'':'s')+' · '+photos.length+' photo'+(photos.length===1?'':'s')
+  ? total+' item'+(total===1?'':'s')+' awaiting review · '+Number(data.venue_count||0)+' venue'+(Number(data.venue_count||0)===1?'':'s')+' · '+Number(data.hosting_count||0)+' KJ request'+(Number(data.hosting_count||0)===1?'':'s')+' · '+reports.length+' report'+(reports.length===1?'':'s')+' · '+photos.length+' photo'+(photos.length===1?'':'s')
   : 'All caught up — no approvals waiting.';
  const filter=document.getElementById('atk-approval-filter').value;
  const showVenues=filter==='all'||filter==='venues';
