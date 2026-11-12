@@ -33,3 +33,14 @@
 .atk-review-report-actions button:last-child{grid-column:1/-1;background:linear-gradient(#a41f1d,#72100f);border-color:#c96b61}
 .atk-review-report-actions button:first-child{background:#402628;border-color:#98615b}
 @media(max-width:380px){.atk-review-report-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}.atk-review-report-actions button:last-child{grid-column:1/-1}}
+
+/* Build 143 — reuse the same crossed-out eye used on new-member notices. */
+#management-approvals .atk-review-notification-hide,
+#atk-staff-notifications-dialog .atk-review-notification-hide{
+ display:inline-flex;align-items:center;justify-content:center;gap:8px;
+ min-height:44px;min-width:0;padding:9px 12px;
+ background:#392226;color:#f4e5d7;border:1px solid #a46a62;
+ border-radius:10px;box-shadow:none;font:700 12px Arial,sans-serif;
+}
+.atk-review-notification-hide svg{display:block;flex:none;width:19px;height:19px}
+.atk-review-notification-hide:focus-visible{outline:2px solid #f5e4d2;outline-offset:2px}
