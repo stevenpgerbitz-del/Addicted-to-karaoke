@@ -29,6 +29,7 @@ function approvalCenterOpen(){
  document.getElementById('management-title').hidden=true;
  document.querySelector('#management-dialog>p').hidden=true;
  document.getElementById('management-approvals').hidden=false;
+ document.getElementById('management-approvals').scrollTop=0;
  document.getElementById('management-dialog').scrollTop=0;
  document.getElementById('atk-approval-filter').value='all';
  approvalCenterMessage('');
@@ -208,26 +209,38 @@ function approvalCenterMemberOpen(member){
  document.getElementById('management-dialog').scrollTop=0;
 }
 function approvalCenterRender(){
- const data=atkApprovalData,root=document.getElementById('atk-approval-results');root.replaceChildren();
+ const data=atkApprovalData,root=document.getElementById('atk-approval-results');
+ root.replaceChildren();
  if(!data)return;
- document.getElementById('atk-approval-summary').textContent=
-  data.total_pending+' waiting · '+data.venue_count+' venue listing(s) · '+data.hosting_count+' KJ request(s)';
+ const section=document.getElementById('management-approvals');
+ if(section)section.scrollTop=0;
+ const total=Number(data.total_pending||0);
+ const venues=Array.isArray(data.venues)?data.venues:[];
+ const hosting=Array.isArray(data.hosting)?data.hosting:[];
+ const members=Array.isArray(data.recent_members)?data.recent_members:[];
+ const summary=document.getElementById('atk-approval-summary');
+ summary.textContent=total
+  ? total+' item'+(total===1?'':'s')+' awaiting your review · '+Number(data.venue_count||0)+' venue · '+Number(data.hosting_count||0)+' KJ'
+  : 'All caught up — no approvals waiting.';
  const filter=document.getElementById('atk-approval-filter').value;
- if(filter==='all'||filter==='venues'){
-  approvalCenterGroup(root,'Venue submissions');
-  if(!data.venues.length)root.append(approvalCenterEl('p','No venue listings waiting.','atk-approval-muted'));
-  for(const venue of data.venues)root.append(approvalCenterVenueCard(venue));
+ const showVenues=filter==='all'||filter==='venues';
+ const showHosting=filter==='all'||filter==='hosting';
+ const showMembers=filter==='all'||filter==='members';
+ if(showVenues&&(venues.length||filter==='venues')){
+  approvalCenterGroup(root,'Venue submissions'+(venues.length?' · '+venues.length:''));
+  if(!venues.length)root.append(approvalCenterEl('p','No venue submissions waiting for review.','atk-approval-muted'));
+  for(const venue of venues)root.append(approvalCenterVenueCard(venue));
  }
- if(filter==='all'||filter==='hosting'){
-  approvalCenterGroup(root,'KJ hosting requests');
-  if(!data.hosting.length)root.append(approvalCenterEl('p','No pending hosting nights.','atk-approval-muted'));
-  for(const request of data.hosting)root.append(approvalCenterHostingCard(request));
+ if(showHosting&&(hosting.length||filter==='hosting')){
+  approvalCenterGroup(root,'KJ hosting requests'+(hosting.length?' · '+hosting.length:''));
+  if(!hosting.length)root.append(approvalCenterEl('p','No pending KJ hosting nights.','atk-approval-muted'));
+  for(const request of hosting)root.append(approvalCenterHostingCard(request));
  }
- if(filter==='all'||filter==='members'){
-  approvalCenterGroup(root,'New members · last 7 days');
-  root.append(approvalCenterEl('p','New accounts are active automatically. Tap a member to view their management profile, role and verification status.','atk-approval-muted'));
-  if(!data.recent_members.length)root.append(approvalCenterEl('p','No recent signups.','atk-approval-muted'));
-  for(const member of data.recent_members){
+ if(showMembers){
+  approvalCenterGroup(root,'New members · '+members.length);
+  root.append(approvalCenterEl('p','Accounts are active when registered. Tap a member to see their management profile.','atk-approval-muted'));
+  if(!members.length)root.append(approvalCenterEl('p','No new members in the last seven days.','atk-approval-muted'));
+  for(const member of members){
    const c=approvalCenterButton('',()=>approvalCenterMemberOpen(member));
    c.className='atk-approval-member atk-approval-member-link';
    c.setAttribute('aria-label','View member profile: '+(member.stage_name||'Karaoke member'));
