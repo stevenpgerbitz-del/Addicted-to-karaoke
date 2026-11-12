@@ -552,8 +552,7 @@ padding:13px 3px!important;min-height:66px
 }
 .profile-interests-note{font-size:12px;line-height:1.4;color:#dac0b8}
 .profile-interests-buttons{display:flex;gap:8px}
-.profile-interests-buttons button{flex:1;min-width:0;min-height:43px;border:1px solid #b76a63;border-radius:9px;color:#fff7ed;background:#3b2529;font-weight:700;padding:8px 5px}
-.profile-interests-buttons button:last-child{background:linear-gradient(#b91d1b,#840d0d)}
+.profile-interests-buttons button{flex:1;min-width:0;min-height:43px;border:1px solid #b76a63;border-radius:9px;color:#fff7ed;background:linear-gradient(#b91d1b,#840d0d);font-weight:700;padding:8px 5px}
 .profile-interests-buttons button:disabled{opacity:.55}
 #member-interests-feedback:empty{display:none!important}
 #member-interests-feedback{font-size:12px;line-height:1.4;color:#f0d0bd;padding:7px 0 0}
@@ -3052,4 +3051,4 @@ async function authReset(event){event.preventDefault();if(!authClient)return aut
 async function authNewPassword(event){event.preventDefault();if(!authClient)return authStatus('Authentication library unavailable.');const {error}=await authClient.auth.updateUser({password:document.getElementById('auth-new-password').value});if(error)authError(error);else{authMode('login');authStatus('Password updated.')}}
 async function authLogout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error)authError(error);else{authUser=null;authMode('login');authRefresh();authStatus('Signed out.')}}
 (async function initAuth(){try{if(!window.supabase?.createClient)throw Error('Authentication library did not load.');authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,autoRefreshToken:true,persistSession:true}});authClient.auth.onAuthStateChange((event,session)=>{authUser=session?.user||null;authRefresh();if(event==='PASSWORD_RECOVERY'){navigate('signin');authMode('newpassword')}});const {data,error}=await authClient.auth.getSession();if(error)throw error;authUser=data.session?.user||null;authRefresh()}catch(e){authStatus('Sign-in requires internet access and Supabase authentication configuration.')}})();
-</script><script>const SITE_BUILD_VERSION="2026.11.11-108";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
+</script><script>const SITE_BUILD_VERSION="2026.11.11-109";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=105"></script></body></html>
