@@ -370,7 +370,7 @@ function approvalCenterRender(){
 /* ATK Build 124: personal approval-center updates and owner-first photo routing.
    Database RLS and owner_review_venue_photo enforce account/venue permissions. */
 let atkDismissedMemberIds=new Set(),atkClaimedPhotoVenueIds=new Set();
-let atkUnclaimedPhotoCount=null,atkOwnerVenueIds=[],atkOwnerPhotoBusy=false,atkOwnerPhotoSerial=0;
+let atkUnclaimedPhotoCount=null,atkOwnerVenueIds=[],atkOwnerPhotoBusy=false,atkOwnerPhotoSerial=0,atkOwnerPhotoVenueId=null;
 
 async function atkApprovalLoadPersonalContext(){
  if(!authClient||!authUser)return;
@@ -497,21 +497,15 @@ async function atkApprovalDismissMembers(members){
 /* A verified claim makes a venue owner eligible for its pending-photo queue.
    Claimed venue photos disappear from founder's normal queue; unclaimed stay there. */
 function atkOwnerPhotoMakeUI(){
- const panel=document.querySelector('.profile-owner-panel');
- if(panel&&!document.getElementById('atk-owner-photo-action-wrap')){
-  const wrap=approvalCenterEl('div',undefined,'atk-owner-photo-action-wrap');
-  wrap.id='atk-owner-photo-action-wrap';wrap.hidden=true;
-  const action=approvalCenterButton('Review Venue Photos',atkOwnerPhotoOpen);
-  action.id='atk-owner-photo-action';action.className='member-button';
-  const hint=approvalCenterEl('p','', 'member-muted');hint.id='atk-owner-photo-count';
-  wrap.append(action,hint);panel.prepend(wrap);
- }
+ // Photo approvals now live inside the correct venue card in My Venues.
+ // Avoid re-injecting the old dashboard-wide action.
+ document.getElementById('atk-owner-photo-action-wrap')?.remove();
  if(document.getElementById('atk-owner-photo-dialog'))return;
  const dlg=document.createElement('dialog');dlg.id='atk-owner-photo-dialog';
  dlg.className='management-dialog atk-owner-photo-dialog';
  const heading=approvalCenterEl('h2','Venue Photo Approvals');
  heading.id='atk-owner-photo-heading';dlg.setAttribute('aria-labelledby',heading.id);
- const intro=approvalCenterEl('p','Review photos submitted to your verified venues. Other venues are not shown.','atk-approval-muted');
+ const intro=approvalCenterEl('p','Review photos submitted to this verified venue.','atk-approval-muted');
  const results=approvalCenterEl('div',undefined,'atk-owner-photo-results');results.id='atk-owner-photo-results';
  const feedback=approvalCenterEl('p','','atk-owner-photo-feedback');feedback.id='atk-owner-photo-feedback';
  feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
@@ -530,29 +524,20 @@ async function atkOwnerPhotoSync(){
  if(uid!==authUser?.id)return;
  if(error){console.warn('Venue owner photo permissions unavailable',error);return}
  atkOwnerVenueIds=(data||[]).map(c=>c.venue_id);
- const ownerCard=document.getElementById('atk-owner-profile-entry');
- const interests=Array.isArray(memberProfile?.karaoke_interests)?memberProfile.karaoke_interests:[];
- if(ownerCard)ownerCard.hidden=!atkOwnerVenueIds.length&&!interests.includes('venue_owner');
- const wrap=document.getElementById('atk-owner-photo-action-wrap');
- if(wrap)wrap.hidden=!atkOwnerVenueIds.length;
- const description=document.querySelector('.profile-owner-panel>p.member-muted');
- if(description)description.textContent=atkOwnerVenueIds.length
-  ?'You can review new photos submitted for the venues whose ownership is verified.'
-  :'Venue ownership must be verified and approved before a member can manage a listing. The owner claim and management tools are not available yet.';
- if(!atkOwnerVenueIds.length)return;
- const result=await authClient.from('venue_photos').select('id',{count:'exact',head:true})
-  .in('venue_id',atkOwnerVenueIds).eq('moderation_status','pending').eq('published',false);
- if(uid!==authUser?.id)return;
- const hint=document.getElementById('atk-owner-photo-count');
- if(hint)hint.textContent=result.error?'Photo count unavailable':
-  (result.count||0)+' photo'+(result.count===1?'':'s')+' awaiting approval.';
+ // The owner dashboard manages its own visibility and its own photo counts;
+ // this helper only refreshes the verified venue IDs for review permissions.
 }
-async function atkOwnerPhotoOpen(){
- if(!authUser||!authClient)return;
+async function atkOwnerPhotoOpen(venueId,venueName){
+ if(!authUser||!authClient||typeof venueId!=='string')return;
  await atkOwnerPhotoSync();
- if(!atkOwnerVenueIds.length)return;
+ // Even though the RPC also checks ownership, don't open an unrelated queue.
+ if(!atkOwnerVenueIds.includes(venueId))return;
+ atkOwnerPhotoVenueId=venueId;
  atkOwnerPhotoMakeUI();
- const dlg=document.getElementById('atk-owner-photo-dialog');dlg.showModal();
+ const dlg=document.getElementById('atk-owner-photo-dialog');
+ const heading=document.getElementById('atk-owner-photo-heading');
+ if(heading)heading.textContent=(venueName||'Venue')+' · Photo Approvals';
+ if(!dlg.open)dlg.showModal();
  await atkOwnerPhotoRefresh();
 }
 function atkOwnerPhotoCard(photo){
@@ -585,14 +570,14 @@ function atkOwnerPhotoCard(photo){
 }
 async function atkOwnerPhotoRefresh(message=''){
  const uid=authUser?.id,serial=++atkOwnerPhotoSerial,dlg=document.getElementById('atk-owner-photo-dialog');
- if(!uid||!dlg?.open||!atkOwnerVenueIds.length)return;
+ if(!uid||!dlg?.open||!atkOwnerPhotoVenueId||!atkOwnerVenueIds.includes(atkOwnerPhotoVenueId))return;
  const root=document.getElementById('atk-owner-photo-results');
  const feedback=document.getElementById('atk-owner-photo-feedback');
  root.textContent='Checking submitted photos…';
  try{
   const {data,error}=await authClient.from('venue_photos')
    .select('id,venue_id,storage_path,caption,created_at,uploader_user_id,venues(name,city,state)')
-   .in('venue_id',atkOwnerVenueIds).eq('moderation_status','pending').eq('published',false)
+   .eq('venue_id',atkOwnerPhotoVenueId).eq('moderation_status','pending').eq('published',false)
    .order('created_at',{ascending:true}).limit(150);
   if(error)throw error;
   if(serial!==atkOwnerPhotoSerial||authUser?.id!==uid||!dlg.open)return;
@@ -601,6 +586,7 @@ async function atkOwnerPhotoRefresh(message=''){
   else for(const photo of data)root.append(atkOwnerPhotoCard(photo));
   feedback.textContent=message;
   atkOwnerPhotoSync();
+  if(typeof window.atkOwnerDashboardRefresh==='function')void window.atkOwnerDashboardRefresh();
  }catch(error){
   if(serial!==atkOwnerPhotoSerial)return;
   root.textContent='Could not load photos: '+(error.message||'Please try again.');
@@ -633,6 +619,7 @@ if(authClient?.auth){
   if(session?.user)atkOwnerPhotoSync();
   else{
    atkOwnerVenueIds=[];atkDismissedMemberIds=new Set();atkClaimedPhotoVenueIds=new Set();atkUnclaimedPhotoCount=null;
+   atkOwnerPhotoVenueId=null;
    const dlg=document.getElementById('atk-owner-photo-dialog');if(dlg?.open)dlg.close();
   }
  });
