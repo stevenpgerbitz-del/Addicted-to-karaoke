@@ -22,14 +22,14 @@
  };
  const fallback='assets/atk-default-venue.webp';
  let loadedUser=null,sequence=0,scheduled=false,activeTab='venues',searchText='';
- let owned=[],requests=[],photos=[],reviews=[],photoAvailable=false,reviewAvailable=false;
+ let owned=[],managed=[],invitations=[],requests=[],photos=[],reviews=[],photoAvailable=false,reviewAvailable=false;
  let coverURLs=new Map(),editor=null,editingRow=null,editorBusy=false,feedbackText='';
  const shell=node('div','atk-od-workspace');
  shell.id='atk-owner-dashboard';
- const intro=node('p','atk-od-intro','Your venues, ownership requests, and listing tools.');
+ const intro=node('p','atk-od-intro','Your venues, team access, and listing tools.');
  const summary=node('div','atk-od-stats');
  const stats={};
- for(const [key,label] of [['verified','Verified'],['pending','Pending'],['declined','Declined']]){
+ for(const [key,label] of [['verified','Venues'],['pending','Pending'],['declined','Declined']]){
   const card=node('div','atk-od-stat');
   const val=node('strong','atk-od-stat-value','0');
   card.append(val,node('small','',label));summary.append(card);stats[key]=val;
@@ -43,11 +43,13 @@
  const tabs=node('div','atk-od-tabs');tabs.setAttribute('role','tablist');
  const venueTab=button('My Venues',()=>setTab('venues'),'atk-od-tab');
  const requestTab=button('Claim Requests',()=>setTab('requests'),'atk-od-tab');
+ const invitesTab=button('Invitations',()=>setTab('invites'),'atk-od-tab');
  const venueTabCount=node('small','', '0');
  const requestTabCount=node('small','', '0');
- venueTab.append(venueTabCount);requestTab.append(requestTabCount);
- venueTab.setAttribute('role','tab');requestTab.setAttribute('role','tab');
- tabs.append(venueTab,requestTab);
+ const invitesTabCount=node('small','', '0');
+ venueTab.append(venueTabCount);requestTab.append(requestTabCount);invitesTab.append(invitesTabCount);
+ venueTab.setAttribute('role','tab');requestTab.setAttribute('role','tab');invitesTab.setAttribute('role','tab');
+ tabs.append(venueTab,requestTab,invitesTab);
  const searchBox=node('label','atk-od-search-label');
  searchBox.append(node('span','','Search your venues'));
  const search=node('input','atk-od-search');
@@ -65,7 +67,7 @@
   activeTab=which;paintCards();
  }
  function resetForAccount(uid){
-  loadedUser=uid;owned=[];requests=[];photos=[];reviews=[];coverURLs=new Map();
+  loadedUser=uid;owned=[];managed=[];invitations=[];requests=[];photos=[];reviews=[];coverURLs=new Map();
   photoAvailable=false;reviewAvailable=false;activeTab='venues';searchText='';search.value='';feedbackText='';
  }
  function queueRefresh(){
@@ -84,22 +86,27 @@
   }
   status.textContent='Loading your venues…';
   try{
-   const [ownedResult,requestResult]=await Promise.all([
+   const [ownedResult,requestResult,teamResult]=await Promise.all([
     authClient.from('verified_venue_claims')
      .select('venue_id,approved_at,venues(id,name,slug,city,state,address_line1,postal_code,phone,website,tagline,description,publication_status,published,updated_at,karaoke_schedule)')
      .eq('owner_user_id',uid).is('revoked_at',null),
     authClient.from('venue_claim_requests')
      .select('id,venue_id,status,created_at,reviewed_at,decision_note,venues(name,city,state,slug,publication_status)')
-     .eq('claimant_user_id',uid).order('created_at',{ascending:false}).limit(150)
+     .eq('claimant_user_id',uid).order('created_at',{ascending:false}).limit(150),
+    authClient.rpc('venue_team_my')
    ]);
    if(ownedResult.error)throw ownedResult.error;
    if(requestResult.error)throw requestResult.error;
+   if(teamResult.error)throw teamResult.error;
    if(token!==sequence||authUser?.id!==uid)return;
    owned=(ownedResult.data||[]).sort((a,b)=>(a.venues?.name||'').localeCompare(b.venues?.name||''));
    requests=requestResult.data||[];
+   const teamRows=Array.isArray(teamResult.data)?teamResult.data:[];
+   managed=teamRows.filter(x=>x.status==='active'&&!owned.some(o=>o.venue_id===x.venue_id));
+   invitations=teamRows.filter(x=>x.status==='pending');
    const interests=Array.isArray(memberProfile?.karaoke_interests)?memberProfile.karaoke_interests:[];
-   entry.hidden=!(owned.length||requests.length||interests.includes('venue_owner'));
-   const ids=owned.map(x=>x.venue_id);
+   entry.hidden=!(owned.length||managed.length||invitations.length||requests.length||interests.includes('venue_owner'));
+   const ids=[...owned.map(x=>x.venue_id),...managed.filter(x=>(x.permissions||[]).includes('manage_photos')).map(x=>x.venue_id)];
    photos=[];reviews=[];coverURLs=new Map();photoAvailable=false;reviewAvailable=false;
    if(ids.length){
     const [p,r]=await Promise.all([
@@ -146,19 +153,21 @@
  function paintCards(){
   const pending=requests.filter(x=>x.status==='pending').length;
   const declined=requests.filter(x=>x.status==='declined').length;
-  stats.verified.textContent=String(owned.length);
+  stats.verified.textContent=String(owned.length+managed.length);
   stats.pending.textContent=String(pending);
   stats.declined.textContent=String(declined);
-  venueTabCount.textContent=String(owned.length);
+  venueTabCount.textContent=String(owned.length+managed.length);
+  invitesTabCount.textContent=String(invitations.length);
   requestTabCount.textContent=String(requests.length);
-  for(const [tab,which] of [[venueTab,'venues'],[requestTab,'requests']]){
+  for(const [tab,which] of [[venueTab,'venues'],[requestTab,'requests'],[invitesTab,'invites']]){
    const active=activeTab===which;
    tab.setAttribute('aria-selected',String(active));
    tab.tabIndex=active?0:-1;
   }
-  searchBox.hidden=activeTab!=='venues'||owned.length<3;
+  searchBox.hidden=activeTab!=='venues'||owned.length+managed.length<3;
   cards.replaceChildren();
   if(activeTab==='venues')paintOwned();
+  else if(activeTab==='invites')paintInvitations();
   else paintRequests();
  }
  function venuePhotoSection(row){
@@ -215,7 +224,7 @@
    if(relevant.length>30)gallery.append(node('p','atk-od-muted','Showing the first 30 photos.'));
    if(countPending){
     const review=button('Review Pending Photos ('+countPending+')',()=>{
-     if(typeof atkOwnerPhotoOpen==='function')void atkOwnerPhotoOpen(row.venue_id,row.venues?.name);
+     if(window.atkVenueTeam)void window.atkVenueTeam.openPhotos(row.venue_id,row.venues?.name);
     },'atk-od-action atk-od-action-primary atk-od-photo-review');
     gallery.append(review);
    }
