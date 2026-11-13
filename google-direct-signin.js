@@ -170,6 +170,16 @@
    return value;
   };
  }
+ // The app defaults to Home. Google cannot measure a sign-in form while
+ // its page is hidden, so render the button after navigating to Sign In.
+ const previousNavigate=window.navigate;
+ if(typeof previousNavigate==='function'){
+  window.navigate=function(){
+   const result=previousNavigate.apply(this,arguments);
+   if(arguments[0]==='signin')requestAnimationFrame(renderVisible);
+   return result;
+  };
+ }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup,{once:true});
  else void setup();
 })();
