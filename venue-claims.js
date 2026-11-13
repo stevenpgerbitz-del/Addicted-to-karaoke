@@ -138,16 +138,23 @@
   }
   const uid=authUser.id;wrap.textContent='Checking your venue claims…';
   const {data,error}=await authClient.from('venue_claim_requests')
-   .select('id,venue_id,status,created_at,venues(name,city,state)')
+   .select('id,venue_id,status,created_at,reviewed_at,decision_note,venues(name,city,state)')
    .eq('claimant_user_id',uid).order('created_at',{ascending:false}).limit(30);
   if(!wrap.isConnected||authUser?.id!==uid)return;
   if(error){wrap.textContent='Unable to check claim requests.';return}
+  // Claimants can find their messages even if they did not choose Venue Owner during setup.
+  if(data?.length)entry.hidden=false;
   wrap.replaceChildren();
   if(!data?.length){wrap.append(make('p','atk-community-context','No ownership requests yet. Find a venue to submit one.'));return}
   for(const row of data){
    const label=row.status==='approved'?'Verified':row.status==='declined'?'Declined':'Pending review';
    const card=make('div','atk-claim-status-row');
    card.append(make('strong','',row.venues?.name||'Venue'),make('small','',label));
+   if(row.status==='declined'){
+    card.append(make('p','atk-claim-decision-copy','Message from the team: '+(row.decision_note||'Your claim was not approved. Contact the team if you need more information.')));
+   }else if(row.status==='approved'){
+    card.append(make('p','atk-claim-decision-copy','Your ownership claim was approved. Your verified venue permissions are now active.'));
+   }
    wrap.append(card);
   }
  }
@@ -159,6 +166,16 @@
  const ownerEntry=$('atk-owner-profile-entry');
  if(ownerEntry){
   ownerEntry.addEventListener('toggle',()=>{if(ownerEntry.open)refreshMyVenues()});
+ }
+ // Profile loading may reset interest-based section visibility; restore My Venues
+ // for members with a real claim after their profile finishes loading.
+ if(typeof memberLoad==='function'){
+  const oldMemberLoad=window.memberLoad;
+  window.memberLoad=async function(){
+   const result=await oldMemberLoad.apply(this,arguments);
+   if(authUser)await refreshMyVenues();
+   return result;
+  };
  }
  if(typeof authRefresh==='function'){
   // Keep status synchronized after sign-in, sign-out and profile refresh.
