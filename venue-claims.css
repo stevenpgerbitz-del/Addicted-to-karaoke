@@ -1,0 +1,73 @@
+/* Venue ownership claims — compact burgundy / cream, consistent with venue dialogs. */
+#atk-venue-claim-entry{
+ grid-column:1 / -1;
+ width:100%;
+ border-color:#b96a60;
+ background:linear-gradient(#76231f,#4b1719);
+}
+#atk-venue-claim-entry[hidden]{display:none!important}
+#atk-venue-claim-entry:disabled{
+ opacity:.7;
+ background:#413638;
+ border-color:#766360;
+ cursor:default;
+}
+.atk-claim-dialog{padding:17px!important}
+.atk-claim-dialog form{gap:8px}
+.atk-claim-dialog .atk-claim-venue-name{
+ margin:0 0 5px;color:#f4d5c4;
+ font:700 15px/1.4 Georgia,serif;
+}
+.atk-claim-dialog .atk-claim-label{
+ color:#f3dfd2;
+ font:700 13px/1.45 Arial,sans-serif;
+ margin:8px 0 0;
+}
+.atk-claim-dialog .atk-claim-roles{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:8px;
+}
+.atk-claim-dialog .atk-claim-role{
+ display:flex;justify-content:center;align-items:center;
+ border:1px solid #925b54;border-radius:11px;
+ min-height:63px;padding:10px 6px;
+ color:#f6e7db;background:#311d20;
+ font:700 12px/1.25 Arial,sans-serif;text-align:center;
+}
+.atk-claim-dialog .atk-claim-role:last-child{
+ grid-column:1 / -1;
+ min-height:49px;
+}
+.atk-claim-dialog .atk-claim-role[aria-pressed="true"]{
+ background:#6a211f;border:2px solid #de7468;padding:9px 5px;
+}
+.atk-claim-dialog .atk-claim-field{
+ display:grid;gap:6px;font:700 13px Arial,sans-serif;
+ margin-top:5px;
+}
+.atk-claim-dialog .atk-claim-field input,
+.atk-claim-dialog .atk-claim-field textarea{
+ margin:0;min-height:42px;
+}
+.atk-claim-dialog .atk-community-dialog-actions button{
+ min-width:0;min-height:46px;
+}
+.atk-claim-dialog .atk-community-dialog-actions button:disabled{opacity:.55}
+.atk-claim-dialog .atk-claim-status{
+ color:#f4d0c1;
+ font:400 12px/1.45 Arial,sans-serif;
+ min-height:0;margin:2px 0 0;
+}
+.atk-claim-dialog .atk-claim-status:empty{display:none}
+.atk-claim-my-requests{display:grid;gap:8px;margin:12px 0}
+.atk-claim-status-row{
+ display:flex;align-items:center;justify-content:space-between;gap:9px;
+ padding:10px 12px;border:1px solid #8d5c56;
+ border-radius:10px;background:#302022;color:#f3e4d7;
+}
+.atk-claim-status-row strong{font:700 13px Arial,sans-serif}
+.atk-claim-status-row small{font:600 11px Arial,sans-serif;color:#e0c0b4;text-align:right}
+@media(max-width:380px){
+ .atk-claim-dialog{padding:13px!important}
+ .atk-claim-dialog h2{font-size:21px}
+}
