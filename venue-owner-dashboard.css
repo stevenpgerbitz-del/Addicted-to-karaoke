@@ -35,7 +35,7 @@
 }
 .atk-od-action:hover,.atk-od-action:focus-visible{border-color:#f0a69a}
 .atk-od-action:disabled{opacity:.55;cursor:wait}
-.atk-od-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.atk-od-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .atk-od-tab{
  display:flex;align-items:center;justify-content:center;gap:7px;
  min-width:0;min-height:43px;border-radius:10px;
