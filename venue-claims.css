@@ -61,7 +61,7 @@
 .atk-claim-dialog .atk-claim-status:empty{display:none}
 .atk-claim-my-requests{display:grid;gap:8px;margin:12px 0}
 .atk-claim-status-row{
- display:flex;align-items:center;justify-content:space-between;gap:9px;
+ display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:6px 9px;
  padding:10px 12px;border:1px solid #8d5c56;
  border-radius:10px;background:#302022;color:#f3e4d7;
 }
@@ -71,3 +71,48 @@
  .atk-claim-dialog{padding:13px!important}
  .atk-claim-dialog h2{font-size:21px}
 }
+
+/* Messages sent to claimants after approval/decline, in the site theme. */
+.atk-claim-status-row .atk-claim-decision-copy{
+ grid-column:1 / -1;
+ font:400 12px/1.5 Arial,sans-serif;
+ color:#ecd0c1;margin:3px 0 1px;
+ overflow-wrap:anywhere;white-space:pre-wrap;
+}
+.atk-claim-decision-dialog{
+ max-height:min(85dvh,calc(100dvh - 32px));
+ overflow-y:auto;
+}
+.atk-claim-decision-dialog .atk-claim-decision-venue{
+ margin:8px 0 10px;
+ font:700 17px/1.35 Georgia,serif;
+ color:#f1d7c7;overflow-wrap:anywhere;
+}
+.atk-claim-decision-dialog .atk-claim-decision-body{
+ font:400 14px/1.5 Arial,sans-serif;
+ margin:0 0 14px;color:#f4e5d8;
+}
+.atk-claim-decision-dialog .atk-claim-decision-reason{
+ padding:13px;
+ background:#301c20;border:1px solid #9a625a;
+ border-radius:11px;margin:0 0 13px;
+}
+.atk-claim-decision-dialog .atk-claim-decision-reason strong{
+ display:block;color:#f3dccd;
+ font:700 13px/1.4 Arial,sans-serif;
+}
+.atk-claim-decision-dialog .atk-claim-decision-reason p{
+ font:400 13px/1.55 Arial,sans-serif;
+ margin:7px 0 0;color:#f6e5da;
+ overflow-wrap:anywhere;white-space:pre-wrap;
+}
+.atk-claim-decision-dialog .atk-claim-notice-feedback{
+ font:400 12px/1.4 Arial,sans-serif;
+ color:#efd2c2;margin:6px 0;
+}
+.atk-claim-decision-dialog .atk-claim-notice-feedback:empty{display:none}
+.atk-claim-decision-dialog .atk-claim-notice-footer{
+ grid-template-columns:1fr;
+ margin-top:14px;
+}
+.atk-claim-decision-dialog .atk-claim-notice-footer button:disabled{opacity:.6}
