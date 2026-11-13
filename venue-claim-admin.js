@@ -127,7 +127,11 @@
    bucket.append(header);
    if(!claims.length)bucket.append(approvalCenterEl('p','No venue ownership requests waiting for review.','atk-approval-muted'));
    for(const c of claims)bucket.append(makeClaimCard(c));
-   if(firstMember)root.insertBefore(bucket,firstMember);else root.append(bucket);
+   // Member headings are wrapped by approval-center.js for the Hide all action.
+   // Insert beside the wrapper (a direct child of root), not inside it.
+   const memberSection=firstMember?.closest('.atk-approval-member-heading')||firstMember;
+   if(memberSection?.parentElement===root)root.insertBefore(bucket,memberSection);
+   else root.append(bucket);
   }
   const summary=document.getElementById('atk-approval-summary');
   if(summary&&atkApprovalData){
