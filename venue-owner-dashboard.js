@@ -232,13 +232,17 @@
   return section;
  }
  function paintOwned(){
-  if(!owned.length){
+  const allRows=[
+   ...owned.map(x=>({...x,teamRole:'owner',teamPermissions:['edit_details','manage_photos','manage_schedule','manage_amenities']})),
+   ...managed.map(x=>({...x,teamRole:x.role,teamPermissions:x.permissions||[]}))
+  ];
+  if(!allRows.length){
    const empty=node('div','atk-od-empty');
    empty.append(node('strong','','No verified venues yet'),
     node('p','','After a claim is approved, you can manage the listing here. Check Claim Requests for updates.'));
    cards.append(empty);return;
   }
-  const filtered=owned.filter(row=>{
+  const filtered=allRows.filter(row=>{
    const v=row.venues;
    return !searchText||[v?.name,v?.city,v?.state].filter(Boolean).join(' ').toLocaleLowerCase().includes(searchText);
   });
@@ -256,7 +260,9 @@
    const info=node('div','atk-od-venue-info');
    const name=node('strong','atk-od-venue-name',v?.name||'Venue listing unavailable');
    const location=node('p','atk-od-location',[v?.city,v?.state].filter(Boolean).join(', ')||'Location unavailable');
-   const badge=node('span','atk-od-owner-label',available?'Verified Owner':'Listing unavailable');
+   const teamName=row.teamRole==='owner'?'Verified Owner':
+    row.teamRole==='venue_manager'?'Venue Manager':'Venue Moderator';
+   const badge=node('span','atk-od-owner-label',available?teamName:teamName+' · Unpublished');
    const description=node('p','atk-od-tagline',v?.tagline||'Approved '+formatDate(row.approved_at));
    info.append(name,location,badge,description);
    top.append(image,info);card.append(top);
@@ -274,8 +280,13 @@
    if(venuePhotos)card.append(venuePhotos);
    if(available){
     const actions=node('div','atk-od-card-actions');
-    actions.append(button('View Listing',()=>void viewListing(row),'atk-od-action'),
-     button('Edit Details',()=>openEditor(row),'atk-od-action atk-od-action-primary'));
+    actions.append(button('View Listing',()=>void viewListing(row),'atk-od-action'));
+    if(row.teamPermissions.includes('edit_details'))
+     actions.append(button('Edit Details',()=>openEditor(row),'atk-od-action atk-od-action-primary'));
+    if(row.teamPermissions.includes('manage_photos'))
+     actions.append(button('Manage Photos',()=>void window.atkVenueTeam?.openPhotos(row.venue_id,v?.name),'atk-od-action'));
+    if(row.teamRole==='owner')
+     actions.append(button('Manage Team',()=>void window.atkVenueTeam?.openTeam(row.venue_id,v?.name),'atk-od-action atk-od-action-primary'));
     card.append(actions);
    }else{
     card.append(node('p','atk-od-muted','This listing is not public. Only site management can change publication status.'));
