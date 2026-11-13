@@ -228,6 +228,7 @@ function photoBusySet(value){
  photoDialog.querySelectorAll('button').forEach(b=>b.disabled=value);
 }
 function photoGrid(){
+ photoFooter.replaceChildren(btn('Close',()=>{if(!photoBusy)photoDialog.close()},'vt-btn vt-primary'));
  photoBody.replaceChildren();
  if(!photoItems.length){photoBody.append(make('p','vt-muted','No venue photos yet. Registered members can submit photos from the venue listing.'));return;}
  const grid=make('div','vt-photo-grid');
