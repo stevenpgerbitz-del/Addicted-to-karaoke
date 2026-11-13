@@ -170,3 +170,63 @@
  .atk-od-tools{grid-template-columns:1fr}
  .atk-od-tools .atk-od-action{grid-column:1/-1}
 }
+
+/* Build 157 — photos stay attached to the verified venue they belong to. */
+.atk-od-photo-section{
+ min-width:0;padding:0;
+ border:1px solid #734a47;
+ border-radius:10px;
+ background:#2f1d20;
+ overflow:hidden
+}
+.atk-od-photo-toggle{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ width:100%;min-width:0;min-height:43px;
+ border:0;padding:10px 12px;
+ background:transparent;color:#f0d6c8;
+ font:700 12px/1.3 Arial,sans-serif;
+ text-align:left
+}
+.atk-od-photo-toggle:after{
+ content:'⌄';font:700 19px/1 Arial,sans-serif;
+ color:#e3b6a8;flex:none;
+ transition:transform .15s ease
+}
+.atk-od-photo-toggle[aria-expanded="true"]:after{transform:rotate(180deg)}
+.atk-od-photo-toggle:hover{background:#3d2528}
+.atk-od-photo-toggle:focus-visible{outline:2px solid #f4beaa;outline-offset:-3px}
+.atk-od-photo-panel{
+ display:grid;gap:11px;padding:10px 11px 12px;
+ border-top:1px solid #624240
+}
+.atk-od-photo-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:9px;min-width:0
+}
+.atk-od-photo-tile{
+ display:grid;align-content:start;gap:5px;
+ min-width:0;margin:0;padding:6px;
+ border:1px solid #73514d;border-radius:9px;
+ background:#27191b;
+ overflow:hidden
+}
+.atk-od-photo-thumb{
+ display:block;width:100%;
+ aspect-ratio:4/3;object-fit:cover;
+ border-radius:6px;background:#1c1315;
+ color:#dec4b7
+}
+.atk-od-photo-tile figcaption{
+ font:700 11px/1.35 Arial,sans-serif;color:#f4dacb
+}
+.atk-od-photo-caption{
+ display:block;color:#c9aba0;
+ font:400 11px/1.35 Arial,sans-serif;
+ overflow-wrap:anywhere
+}
+.atk-od-photo-review{width:100%;min-height:42px}
+.atk-od-photo-pending-count{color:#f4c9b5}
+@media(max-width:390px){
+ .atk-od-photo-panel{padding:9px}
+ .atk-od-photo-grid{gap:7px}
+}
