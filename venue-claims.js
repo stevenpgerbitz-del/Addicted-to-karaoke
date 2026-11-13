@@ -128,6 +128,10 @@
   }finally{busy=false;submit.disabled=false;cancel.disabled=false}
  }
  async function refreshMyVenues(){
+  // The modern dashboard owns this section. Keep the claim module's saved
+  // refresh hooks so sign-in, new claims, and mobile profile still update it.
+  if(typeof window.atkOwnerDashboardRefresh==='function')
+   return window.atkOwnerDashboardRefresh();
   const entry=$('atk-owner-profile-entry');
   if(!entry||!authUser||!authClient)return;
   let wrap=$('atk-claim-my-requests');
