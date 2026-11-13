@@ -192,6 +192,7 @@
     const item=node('figure','atk-od-photo-tile');
     const image=node('img','atk-od-photo-thumb');
     image.alt=photo.caption||'Venue photo';
+    image.src=fallback; // Show our consistent branded image while the signed URL loads.
     image.loading='lazy';
     const label=node('figcaption','',photo.moderation_status==='pending'?'Awaiting approval':'Approved photo');
     item.append(image,label);
