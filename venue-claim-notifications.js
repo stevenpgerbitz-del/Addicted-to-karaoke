@@ -93,8 +93,8 @@
     .insert({claim_id:id,claimant_user_id:uid});
    if(error&&error.code!=='23505')throw error;
    dialog.close();activeClaim=null;activeUser=null;
-   // Surface another outstanding decision, if there is one, after this one closes.
-   void check();
+   // The next check starts only after saving is reset in finally.
+   setTimeout(scheduleCheck,0);
   }catch(error){
    noticeFeedback.textContent='Could not mark the message read. Please try Close again.';
   }finally{
