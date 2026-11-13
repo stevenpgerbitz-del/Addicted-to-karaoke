@@ -1,0 +1,69 @@
+/* A2K build 160 — keep personal and management actions visually separate. */
+#auth-profile .member-hero .profile-action-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:stretch;
+  gap:8px 10px;
+  width:100%;
+  min-width:0;
+}
+#auth-profile .member-hero .profile-action-grid>.profile-action:first-child{
+  grid-column:1 / -1!important;
+}
+#auth-profile .member-hero .profile-action-grid>.profile-management-label{
+  display:none;
+  grid-column:1 / -1;
+  margin:6px 0 0;
+  padding-top:9px;
+  border-top:1px solid #78504b;
+  color:#dcc3b5;
+  font:700 12px/1.4 Arial,sans-serif;
+  letter-spacing:.025em;
+}
+#auth-profile .member-hero .profile-action-grid:has(>.profile-action:not(:first-child):not([hidden]))>.profile-management-label{
+  display:block;
+}
+#auth-profile .member-hero .profile-action-grid>#management-open:not([hidden]){
+  grid-column:1 / -1;
+}
+#auth-profile .member-hero .profile-action-grid>.profile-action{
+  min-width:0;
+  white-space:normal!important;
+  overflow-wrap:break-word;
+  line-height:1.22!important;
+}
+#auth-profile .member-hero .profile-action-grid>.profile-action[hidden]{
+  display:none!important;
+}
+/* Sitewide <header> styles must never control the review popup heading. */
+#management-reviews .mg3-heading{
+  display:block!important;
+  position:relative!important;
+  top:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  width:100%!important;
+  grid-template-columns:none!important;
+  align-items:initial!important;
+  border:0!important;
+  border-bottom:1px solid #7a4743!important;
+  padding:4px 0 12px!important;
+  margin:0 0 10px!important;
+  background:#1b0d0f!important;
+  box-shadow:none!important;
+}
+#management-reviews .mg3-heading h2{
+  display:block;
+  width:auto;
+  margin:0 0 6px!important;
+  font:700 clamp(22px,5.5vw,25px)/1.2 Georgia,serif!important;
+  color:#f9e9d9;
+}
+#management-reviews .mg3-heading p{
+  display:block;
+  width:auto;
+  max-width:100%;
+  margin:0!important;
+  font:400 12px/1.45 Arial,sans-serif!important;
+  color:#cfb7ab;
+}
