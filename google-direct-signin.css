@@ -1,0 +1,22 @@
+/* A2K Build 154: official Google Identity Services button + unobtrusive fallback. */
+#auth-guest .atk-google-direct{
+ display:flex;align-items:center;justify-content:center;
+ width:100%;min-width:0;min-height:44px;
+ margin:0 0 5px;
+ overflow:hidden;
+}
+#auth-guest .atk-google-direct>div{max-width:100%}
+#auth-guest .auth-mode .auth-google.atk-google-legacy{
+ display:block;width:100%;min-height:34px;
+ padding:7px 8px;margin:0 0 8px;
+ background:transparent;border:0;border-radius:8px;
+ box-shadow:none;color:#e3c6b7;
+ font:600 12px/1.3 Arial,sans-serif;
+ text-align:center;text-decoration:underline;
+ text-underline-offset:3px;
+}
+#auth-guest .auth-mode .auth-google.atk-google-legacy:focus-visible{
+ outline:2px solid #f5d6bd;outline-offset:2px
+}
+#auth-guest .auth-mode .auth-google.atk-google-legacy:hover{color:#fff0e1}
+#auth-guest .atk-google-direct:empty{display:none}
