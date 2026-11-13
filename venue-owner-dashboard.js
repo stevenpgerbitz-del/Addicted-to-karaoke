@@ -294,6 +294,39 @@
    cards.append(card);
   }
  }
+ function paintInvitations(){
+  if(!invitations.length){
+   cards.append(node('p','atk-od-empty','No team invitations waiting for your response.'));return;
+  }
+  for(const invitation of invitations){
+   const v=invitation.venues||{};
+   const card=node('article','atk-od-request-card');
+   card.append(node('strong','',v.name||'Venue'),node('p','atk-od-muted',
+    (invitation.role==='venue_manager'?'Venue Manager':'Venue Moderator')+' invitation'));
+   const roles=(invitation.permissions||[]).filter(x=>['edit_details','manage_photos'].includes(x))
+    .map(x=>x==='edit_details'?'Edit details':'Manage photos');
+   if(roles.length)card.append(node('p','atk-od-muted',roles.join(' · ')));
+   const actions=node('div','atk-od-card-actions');
+   const reply=async accept=>{
+    actions.querySelectorAll('button').forEach(b=>b.disabled=true);
+    status.textContent='Updating your invitation…';
+    try{
+     const {data,error}=await authClient.rpc('venue_team_reply',{
+      p_venue_id:invitation.venue_id,p_accept:accept
+     });
+     if(error)throw error;if(data?.ok!==true)throw Error('Response not confirmed.');
+     feedbackText=accept?'Invitation accepted. This venue is now in My Venues.':'Invitation declined.';
+     if(accept)activeTab='venues';await refresh();
+    }catch(error){
+     status.textContent='Could not respond: '+(error.message||'Please try again.');
+     actions.querySelectorAll('button').forEach(b=>b.disabled=false);
+    }
+   };
+   actions.append(button('Decline',()=>void reply(false),'atk-od-action'),
+    button('Accept Invitation',()=>void reply(true),'atk-od-action atk-od-action-primary'));
+   card.append(actions);cards.append(card);
+  }
+ }
  function paintRequests(){
   if(!requests.length){
    const empty=node('div','atk-od-empty');
