@@ -1,4 +1,4 @@
-/* Build 131 — Venue Photos & Gallery.
+/* Build 149 — Venue Photos, Gallery & Reusable Default Image.
    Extends the approved venue cards; all photo moderation is enforced by Supabase. */
 (function(){
  'use strict';
@@ -33,7 +33,7 @@
  };
  const safeStatus={pending:'Pending',approved:'Approved',rejected:'Rejected',removed:'Removed'};
  let photos=[], currentVenueId=null, selectedPhoto=null, busy=false, requestSerial=0, galleryOpen=false;
- let overlay, overlayScroll, grid, preview, notice, footerClose, uploadButton, fileInput, filter, sortBy, sectionImg;
+ let overlay, overlayScroll, grid, preview, notice, footerClose, uploadButton, fileInput, filter, sortBy, sectionImg, restoreButton, restorePanel;
  let previousFocus=null, dialogCancelListenerInstalled=false;
  const imageFallback=new Map();
  function isFounderView(id){
@@ -94,7 +94,7 @@
   const text=el('div','mv3-summary-info');
   const galleryTotal=el('p','','0 approved photos');galleryTotal.id='mv3-approved-count';
   const pendingTotal=el('p','','No photos pending approval');pendingTotal.id='mv3-pending-count';
-  const coverMessage=el('p','mv3-cover-hint','No default photo selected');coverMessage.id='mv3-cover-hint';
+  const coverMessage=el('p','mv3-cover-hint','Standard venue image in use');coverMessage.id='mv3-cover-hint';
   text.append(galleryTotal,pendingTotal,coverMessage);
   summary.append(thumb,text);
   const manage=button('Manage Photos',openGallery,'mv3-open-button');
@@ -109,15 +109,23 @@
   get('mv3-photo-count').textContent=photoCount('Photo',approved.length);
   get('mv3-approved-count').textContent=photoCount('approved photo',approved.length);
   get('mv3-pending-count').textContent=pending.length?photoCount('pending review',pending.length):'No photos pending approval';
-  get('mv3-cover-hint').textContent=cover?'Default photo selected':'No default photo selected';
+  get('mv3-cover-hint').textContent=cover?'Custom cover photo selected':'Standard venue image in use';
+  if(restoreButton)restoreButton.hidden=!cover;
+  if(!cover&&restorePanel)restorePanel.hidden=true;
   sectionImg.hidden=true;
   const thumb=get('mv3-summary-thumbnail');thumb.classList.remove('mv3-has-cover');
-  if(!cover)return;
-  signedUrlForPhoto(cover).then(url=>{
-   if(!url||managementSelectedVenue?.id!==currentVenueId||!cover.is_cover)return;
-   sectionImg.src=url;sectionImg.alt='Default photo for '+managementSelectedVenue.name;
+  if(!cover){
+   sectionImg.src=atkNoPhotoIllustration;
+   sectionImg.alt='Standard Addicted to Karaoke venue image';
    sectionImg.hidden=false;thumb.classList.add('mv3-has-cover');
-  }).catch(()=>{get('mv3-cover-hint').textContent='Default image unavailable'});
+   return;
+  }
+  const venueId=currentVenueId;
+  signedUrlForPhoto(cover).then(url=>{
+   if(!url||currentVenueId!==venueId||managementSelectedVenue?.id!==venueId||meta().cover?.id!==cover.id)return;
+   sectionImg.src=url;sectionImg.alt='Cover photo for '+managementSelectedVenue.name;
+   sectionImg.hidden=false;thumb.classList.add('mv3-has-cover');
+  }).catch(()=>{if(currentVenueId===venueId)get('mv3-cover-hint').textContent='Cover photo unavailable'});
  }
  async function refreshSummary(id){
   const serial=++requestSerial;currentVenueId=id;photos=[];
@@ -156,6 +164,18 @@
   fileInput.setAttribute('aria-label','Choose photos to upload');
   fileInput.addEventListener('change',uploadFiles);
   upload.append(uploadButton,label,fileInput);
+  const restoreBox=el('div','mv3-restore-control');
+  restoreButton=button('Restore Default Image',askRestoreDefault,'mv3-restore-button');
+  restoreButton.hidden=true;
+  restorePanel=el('div','mv3-restore-confirm');restorePanel.hidden=true;
+  restorePanel.append(el('p','','Use the standard Addicted to Karaoke image on this venue. All uploaded photos will stay in the gallery.'));
+  const restoreActions=el('div','mv3-restore-actions');
+  restoreActions.append(
+   button('Cancel',()=>{restorePanel.hidden=true},'mv3-action-secondary'),
+   button('Restore Default Image',restoreDefaultImage,'mv3-action-primary')
+  );
+  restorePanel.append(restoreActions);
+  restoreBox.append(restoreButton,restorePanel);
   const row=el('div','mv3-gallery-toolbar');
   const photoCountLabel=el('h3','','Venue Photos');photoCountLabel.id='mv3-grid-heading';
   filter=el('select','mv3-gallery-filter');
@@ -175,7 +195,7 @@
   preview=el('section','mv3-photo-viewer');preview.id='mv3-photo-viewer';preview.hidden=true;
   notice=el('p','mv3-gallery-notice');notice.id='mv3-gallery-notice';notice.setAttribute('role','status');
   notice.setAttribute('aria-live','polite');notice.hidden=true;
-  overlayScroll.append(hint,upload,row,grid,preview,notice);
+  overlayScroll.append(hint,upload,restoreBox,row,grid,preview,notice);
   const footer=el('div','mv3-gallery-footer');
   footerClose=button('Close',closeGallery,'mv3-red-button');footer.append(footerClose);
   shell.append(header,overlayScroll,footer);overlay.append(shell);dialog.append(overlay);
@@ -199,6 +219,7 @@
   get('mv3-gallery-subtitle').textContent=
    managementSelectedVenue.name+' · '+[managementSelectedVenue.city,managementSelectedVenue.state].filter(Boolean).join(', ');
   clearViewer();updateNotice('');
+  restorePanel.hidden=true;restoreButton.hidden=true;
   filter.value='all';sortBy.value='newest';
   grid.textContent='Loading photos…';uploadButton.focus();
   await refreshGallery(id);
@@ -318,11 +339,34 @@
    'The image will disappear from the public gallery. Its record is retained so it can be restored later.',
    false,'Remove Photo',()=>takeAction(photo,'remove','Removed by venue management'));
  }
+ function askRestoreDefault(){
+  if(busy||!isFounderView(currentVenueId)||!meta().cover)return;
+  clearViewer();
+  restorePanel.hidden=false;
+  restorePanel.scrollIntoView({block:'nearest',behavior:'smooth'});
+ }
+ async function restoreDefaultImage(){
+  const id=currentVenueId;
+  if(busy||!isFounderView(id)||!meta().cover)return;
+  setBusy(true);updateNotice('Restoring standard venue image…');
+  try{
+   const {data,error}=await authClient.rpc('restore_default_venue_photo',{p_venue_id:id});
+   if(error)throw error;
+   if(data?.ok!==true||data.venue_id!==id)throw Error('The venue image change was not confirmed.');
+   restorePanel.hidden=true;
+   await refreshGallery(id);
+   await applyPublicCovers();
+   updateNotice('Standard image restored. Uploaded photos are still saved.');
+  }catch(error){
+   updateNotice('Could not restore standard image: '+(error.message||'Please try again.'),true);
+  }finally{setBusy(false)}
+ }
  function setBusy(on){
   busy=on;
   if(uploadButton)uploadButton.disabled=on;
+  if(restoreButton)restoreButton.disabled=on;
   if(footerClose)footerClose.disabled=on;
-  if(overlay)for(const b of overlay.querySelectorAll('.mv3-photo-actions button,.mv3-inline-actions button,.mv3-photo-tile'))b.disabled=on;
+  if(overlay)for(const b of overlay.querySelectorAll('.mv3-photo-actions button,.mv3-inline-actions button,.mv3-restore-actions button,.mv3-photo-tile'))b.disabled=on;
  }
  async function takeAction(photo,action,reason=null){
   if(busy||!authClient||!authUser)return;
@@ -392,6 +436,7 @@
   if(busy)return;
   if(!overlay||overlay.hidden)return;
   ++requestSerial;galleryOpen=false;overlay.hidden=true;clearViewer();updateNotice('');
+  if(restorePanel)restorePanel.hidden=true;
   if(previousFocus?.isConnected)previousFocus.focus();
  }
  async function applyPublicCovers(){
@@ -415,7 +460,7 @@
    for(const v of current){
     const cover=byVenue.get(v.databaseId);
     v.image=cover||imageFallback.get(v.databaseId)||v.image;
-    v.hasPhoto=!!cover||v.hasPhoto;
+    v.hasPhoto=!!cover;
     const teaser=[...document.querySelectorAll('.venue-teaser[data-venue]')]
      .find(card=>card.dataset.venue===v.id);
     const media=teaser?.querySelector('.teaser-img');
