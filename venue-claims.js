@@ -12,12 +12,10 @@
  function button(label,handler,cls){
   const b=make('button',cls,label);b.type='button';b.addEventListener('click',handler);return b;
  }
- const actions=document.querySelector('#venue-screen .atk-venue-community-actions');
- if(!actions)return;
- const claim=button('Claim Venue',openClaim,'atk-claim-entry');
- claim.id='atk-venue-claim-entry';
- claim.hidden=true;
- actions.append(claim);
+ // The action is part of the venue page itself, not dynamically inserted after load.
+ const claim=$('atk-venue-claim-entry');
+ if(!claim)return;
+ claim.addEventListener('click',openClaim);
  const dlg=make('dialog','atk-venue-community-dialog atk-claim-dialog');
  dlg.id='atk-venue-claim-dialog';
  dlg.setAttribute('aria-labelledby','atk-claim-title');
@@ -163,9 +161,15 @@
   ownerEntry.addEventListener('toggle',()=>{if(ownerEntry.open)refreshMyVenues()});
  }
  if(typeof authRefresh==='function'){
-  // The existing auth refresh updates account identity. Refresh claim state after any completed auth change.
+  // Keep status synchronized after sign-in, sign-out and profile refresh.
   const previousAuthRefresh=window.authRefresh;
-  window.authRefresh=async function(){const result=await previousAuthRefresh.apply(this,arguments);refreshEntry();if(ownerEntry?.open)refreshMyVenues();return result};
+  window.authRefresh=function(){const result=previousAuthRefresh.apply(this,arguments);refreshEntry();if(ownerEntry?.open)refreshMyVenues();return result};
  }
+ // Critical: published venues are loaded asynchronously. A page opened before
+ // the database returns must still reveal Claim Venue once its real record loads.
+ if(window.liveVenueLoadPromise?.then){
+  window.liveVenueLoadPromise.then(refreshEntry).catch(()=>refreshEntry());
+ }
+ window.atkClaimRefreshEntry=refreshEntry;
  refreshEntry();
 })();
