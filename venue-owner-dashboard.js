@@ -39,11 +39,7 @@
   if(typeof profileOwnerFindVenues==='function')profileOwnerFindVenues();
   else if(typeof navigate==='function')navigate('find');
  },'atk-od-action atk-od-action-primary');
- const photoQueue=button('Review Photos',()=>{
-  if(typeof atkOwnerPhotoOpen==='function')void atkOwnerPhotoOpen();
- },'atk-od-action');
- photoQueue.hidden=true;
- toolsRow.append(find,photoQueue);
+ toolsRow.append(find);
  const tabs=node('div','atk-od-tabs');tabs.setAttribute('role','tablist');
  const venueTab=button('My Venues',()=>setTab('venues'),'atk-od-tab');
  const requestTab=button('Claim Requests',()=>setTab('requests'),'atk-od-tab');
@@ -107,7 +103,7 @@
    photos=[];reviews=[];coverURLs=new Map();photoAvailable=false;reviewAvailable=false;
    if(ids.length){
     const [p,r]=await Promise.all([
-     authClient.from('venue_photos').select('id,venue_id,moderation_status,published,is_cover,storage_path').in('venue_id',ids).limit(1000),
+     authClient.from('venue_photos').select('id,venue_id,caption,moderation_status,published,is_cover,storage_path,created_at').in('venue_id',ids).limit(1000),
      authClient.from('reviews').select('id,venue_id').eq('status','approved').in('venue_id',ids).limit(1000)
     ]);
     if(token!==sequence||authUser?.id!==uid)return;
@@ -161,12 +157,69 @@
    tab.tabIndex=active?0:-1;
   }
   searchBox.hidden=activeTab!=='venues'||owned.length<3;
-  const totalPending=photoAvailable?photos.filter(p=>p.moderation_status==='pending').length:0;
-  photoQueue.hidden=!(owned.length&&totalPending>0&&typeof atkOwnerPhotoOpen==='function');
-  photoQueue.textContent='Review Photos ('+totalPending+')';
   cards.replaceChildren();
   if(activeTab==='venues')paintOwned();
   else paintRequests();
+ }
+ function venuePhotoSection(row){
+  const relevant=photos.filter(photo=>photo.venue_id===row.venue_id
+   &&(photo.moderation_status==='pending'
+    ||(photo.moderation_status==='approved'&&photo.published===true)));
+  if(!photoAvailable||!relevant.length)return null;
+  const section=node('section','atk-od-photo-section');
+  section.setAttribute('aria-label','Photos for '+(row.venues?.name||'this venue'));
+  const countPending=relevant.filter(p=>p.moderation_status==='pending').length;
+  const trigger=button(
+   'Venue Photos ('+relevant.length+')'+(countPending?' · '+countPending+' awaiting approval':''),
+   ()=>void togglePhotos(),'atk-od-photo-toggle'
+  );
+  trigger.setAttribute('aria-expanded','false');
+  const gallery=node('div','atk-od-photo-panel');
+  gallery.hidden=true;
+  section.append(trigger,gallery);
+  let loaded=false;
+  async function togglePhotos(){
+   const open=trigger.getAttribute('aria-expanded')==='true';
+   trigger.setAttribute('aria-expanded',String(!open));
+   gallery.hidden=open;
+   if(open||loaded)return;
+   loaded=true;
+   gallery.append(node('p','atk-od-muted','Loading venue photos…'));
+   const grid=node('div','atk-od-photo-grid');
+   const pending=relevant.filter(p=>p.moderation_status==='pending');
+   const sorted=[...pending,...relevant.filter(p=>p.moderation_status!=='pending')];
+   for(const photo of sorted.slice(0,30)){
+    const item=node('figure','atk-od-photo-tile');
+    const image=node('img','atk-od-photo-thumb');
+    image.alt=photo.caption||'Venue photo';
+    image.loading='lazy';
+    const label=node('figcaption','',photo.moderation_status==='pending'?'Awaiting approval':'Approved photo');
+    item.append(image,label);
+    if(photo.caption)item.append(node('small','atk-od-photo-caption',photo.caption));
+    grid.append(item);
+    if(photo.storage_path){
+     // Only approved venue owners can read these records. Generate short-lived
+     // image URLs when this specific venue's photo list is opened.
+     authClient.storage.from('venue-community-photos').createSignedUrl(photo.storage_path,600)
+      .then(({data,error})=>{
+       if(error||!data?.signedUrl)throw error||Error('No preview URL');
+       if(item.isConnected&&row.venue_id&&authUser?.id===loadedUser)image.src=data.signedUrl;
+      })
+      .catch(()=>{if(item.isConnected)item.replaceChildren(node('p','atk-od-muted','Photo preview unavailable'),label)});
+    }else{
+     item.replaceChildren(node('p','atk-od-muted','Photo preview unavailable'),label);
+    }
+   }
+   gallery.replaceChildren(grid);
+   if(relevant.length>30)gallery.append(node('p','atk-od-muted','Showing the first 30 photos.'));
+   if(countPending){
+    const review=button('Review Pending Photos ('+countPending+')',()=>{
+     if(typeof atkOwnerPhotoOpen==='function')void atkOwnerPhotoOpen(row.venue_id,row.venues?.name);
+    },'atk-od-action atk-od-action-primary atk-od-photo-review');
+    gallery.append(review);
+   }
+  }
+  return section;
  }
  function paintOwned(){
   if(!owned.length){
@@ -199,11 +252,16 @@
    top.append(image,info);card.append(top);
    const metrics=node('div','atk-od-mini-metrics');
    const ps=photoStats(row.venue_id);
+   const reviewCount=reviews.filter(r=>r.venue_id===row.venue_id).length;
    metrics.append(
-    node('span','',reviewAvailable?reviews.filter(r=>r.venue_id===row.venue_id).length+' reviews':'Reviews unavailable'),
-    node('span','',photoAvailable?ps.approved+' photos':'Photos unavailable')
+    node('span','',reviewAvailable?reviewCount+' '+(reviewCount===1?'review':'reviews'):'Reviews unavailable'),
+    node('span','',photoAvailable?ps.approved+' '+(ps.approved===1?'photo':'photos'):'Photos unavailable')
    );
+   if(photoAvailable&&ps.pending)metrics.append(node('span','atk-od-photo-pending-count',
+    ps.pending+' awaiting photo approval'));
    card.append(metrics);
+   const venuePhotos=venuePhotoSection(row);
+   if(venuePhotos)card.append(venuePhotos);
    if(available){
     const actions=node('div','atk-od-card-actions');
     actions.append(button('View Listing',()=>void viewListing(row),'atk-od-action'),
