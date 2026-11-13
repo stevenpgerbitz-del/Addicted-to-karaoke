@@ -86,7 +86,9 @@
 
  async function onGoogleCredential(response){
   if(busy||used||!freshNonce||!response?.credential)return;
-  if(!window.authClient?.auth?.signInWithIdToken){
+  // authClient is a top-level lexical variable declared in index.html.
+  // Top-level 'let' bindings are not properties of window.
+  if(typeof authClient==='undefined'||!authClient?.auth?.signInWithIdToken){
    status('Sign-in service is not ready. Use the previous Google sign-in link.');
    return;
   }
