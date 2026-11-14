@@ -1,0 +1,22 @@
+{
+  "name": "Addicted to Karaoke",
+  "short_name": "Addicted to Karaoke",
+  "description": "Built for singers, powered by KJs, and bringing the karaoke community together.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#12090b",
+  "theme_color": "#511514",
+  "icons": [
+    {
+      "src": "/favicon-64.png?v=1",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.svg?v=1",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
