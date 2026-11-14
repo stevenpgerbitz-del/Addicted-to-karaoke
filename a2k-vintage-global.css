@@ -1,0 +1,468 @@
+/*
+ A2K VINTAGE — unified visual standard, 2026-11-14
+ Official design adopted from the live Find Karaoke vintage preview.
+ Purely presentational: preserves existing JS, data, accessibility and roles.
+ No font downloads or external resources. Accessible contrast and calm accents.
+ */
+:root{
+ --a2k-ink:#0d0a09;
+ --a2k-walnut:#211612;
+ --a2k-panel:#241712;
+ --a2k-panel-deep:#160f0d;
+ --a2k-oxblood:#681d19;
+ --a2k-oxblood-dark:#421310;
+ --a2k-brass:#ba9360;
+ --a2k-brass-soft:#896a49;
+ --a2k-cream:#f3e2c8;
+ --a2k-muted:#d6bea0;
+ --a2k-parchment:#e6c998;
+ --a2k-hairline:#674c32;
+ --a2k-vintage-surface:linear-gradient(118deg,#251814,#130e0c 65%,#251511);
+ --a2k-vintage-button:linear-gradient(160deg,#74241f,#481512);
+ --a2k-vintage-frame:inset 0 0 0 1px #ead09e24,0 2px 2px #0009;
+}
+html,body{background:#0b0908!important;}
+body,.app{color:var(--a2k-cream);}
+.app{
+ background:repeating-linear-gradient(140deg,transparent 0 28px,#a2773606 28px 29px),
+ linear-gradient(#0f0b0a,#100b09 55%,#0d0908)!important;
+}
+/* Global shell: header, scrolling screen, and persistent three-button nav. */
+body .app>header{
+ background:linear-gradient(100deg,#520b0d,#1a0b0a 28%,#0b0808 50%,#220b0b 74%,#540a0e)!important;
+ border-bottom:2px solid #b48a56!important;
+ box-shadow:inset 0 -1px #f2d59f26,0 1px 0 #000!important;
+}
+body .app>header img{filter:none!important;}
+body #unified-pages,
+body #venue-screen{
+ color:var(--a2k-cream)!important;
+ background:
+ radial-gradient(ellipse at 55% -15%,#602c2529,transparent 55%),
+ repeating-linear-gradient(140deg,transparent 0 27px,#cfa66805 27px 28px),
+ linear-gradient(160deg,#0f0c0a,#0b0a09 58%,#160f0c)!important;
+}
+body #unified-pages .unified-screen{color:var(--a2k-cream);}
+body #unified-nav{
+ background:linear-gradient(155deg,#651c19,#390e0d 53%,#631b17)!important;
+ border:1px solid #ad8656!important;
+ border-bottom:0!important;
+ box-shadow:inset 0 2px #e2c38a29,0 -3px 10px #0009!important;
+}
+body #unified-nav button{
+ color:var(--a2k-cream)!important;
+ text-shadow:none!important;
+}
+body #unified-nav button svg{stroke:currentColor;}
+body #unified-nav button.active{
+ color:#63221a!important;
+ background:repeating-linear-gradient(120deg,transparent 0 27px,#8c56200b 27px 28px),
+ linear-gradient(#f0ddb6,#dcb986)!important;
+ border:1.5px solid #ad8855!important;
+ border-radius:9px!important;
+ box-shadow:inset 0 0 0 2px #fff0ca,0 2px 4px #0008!important;
+ text-shadow:none!important;
+}
+body #unified-nav button:focus-visible,
+body .app button:focus-visible,
+body .app summary:focus-visible,
+dialog button:focus-visible,
+dialog input:focus-visible,
+dialog textarea:focus-visible,
+dialog select:focus-visible{
+ outline:2px solid #f5d7a4!important;
+ outline-offset:2px!important;
+}
+body #unified-nav button[hidden],body button[hidden]{display:none!important;}
+/* Keep the approved artwork on Home. Add quiet engraved framing, not overlays. */
+#home-screen .approved-home{
+ background:#090807!important;
+ border-left:1px solid #765738;
+ border-right:1px solid #765738;
+ box-shadow:inset 0 0 0 2px #b48c4b1a;
+}
+#home-screen .approved-find{
+ border-radius:8px;
+}
+#home-screen .approved-find:focus-visible{outline:3px solid #f4d7a5!important;}
+#home-screen .approved-logo,#home-screen .approved-scene{
+ filter:none!important;
+}
+/* Find Karaoke is now a single vintage design, as approved. */
+#find-screen{
+ color:var(--a2k-cream)!important;
+}
+#find-screen .atk-find-style-switch{display:none!important;}
+#find-screen .atk-vintage-slogan{display:block;}
+/* Sign-in: restrained parchment details; keep Google's official button intact. */
+#signin-screen .auth-wrap{color:var(--a2k-cream)!important;}
+#signin-screen .auth-heading h1,#signin-screen .auth-card h2{
+ color:var(--a2k-cream)!important;
+ text-shadow:none!important;
+ font-family:Georgia,serif!important;
+}
+#signin-screen .auth-heading h1::after{
+ background:linear-gradient(90deg,transparent,#c5a271,transparent)!important;
+ box-shadow:none!important;
+}
+#signin-screen .auth-heading p,.auth-name-note{color:var(--a2k-muted)!important;}
+#auth-guest.auth-card,
+#signin-screen .auth-card{
+ background:var(--a2k-vintage-surface)!important;
+ border:1.5px solid var(--a2k-brass)!important;
+ border-radius:13px!important;
+ box-shadow:var(--a2k-vintage-frame)!important;
+}
+#auth-guest .auth-or span,
+#auth-guest .auth-mode label{
+ color:var(--a2k-cream)!important;
+}
+#auth-guest .auth-mode input:not([type="checkbox"]):not([type="radio"]),
+#auth-guest .auth-mode select{
+ background:linear-gradient(#e8d0a8,#e0bf8e)!important;
+ color:#2d1914!important;
+ border:1.5px solid #a07b50!important;
+ border-radius:8px!important;
+ box-shadow:inset 0 0 0 1px #fff1d155!important;
+}
+#auth-guest .auth-mode input::placeholder{color:#775a45!important;opacity:1;}
+#auth-guest .auth-mode button[type="submit"],
+#auth-guest .auth-mode .member-button{
+ background:var(--a2k-vintage-button)!important;
+ border:1px solid #c39862!important;
+ border-radius:9px!important;
+ color:var(--a2k-cream)!important;
+ box-shadow:inset 0 0 0 1px #f0d29a26!important;
+}
+/* Avoid recoloring the embedded first-party Google sign-in control. */
+#auth-guest .atk-google-direct,
+#auth-guest .atk-google-direct *{filter:none!important;}
+/* Signed-in profile: vintage nameplate and simple brass-framed cards. */
+#auth-profile{color:var(--a2k-cream)!important;}
+#auth-profile .member-hero{
+ border:1.5px solid #a07c51!important;
+ border-radius:15px!important;
+ background:radial-gradient(ellipse at top left,#61241d48,transparent 62%),
+ linear-gradient(145deg,#321915,#150e0c)!important;
+ box-shadow:inset 0 0 0 2px #e1bc8324!important;
+}
+#auth-profile .member-avatar{
+ border:2px solid #d8b17b!important;
+ background:#281712!important;
+ box-shadow:inset 0 0 0 2px #120a09,0 2px 5px #0009!important;
+}
+#auth-profile .member-camera{
+ border-color:#c9a26a!important;
+ box-shadow:0 2px 5px #000b!important;
+}
+#auth-profile .member-hero h2,
+#auth-profile .member-identity-line h2{
+ font-family:Georgia,serif!important;
+ font-style:italic!important;
+ color:#f5dfba!important;
+ text-shadow:none!important;
+}
+#auth-profile .member-muted{color:var(--a2k-muted)!important;}
+/* Verified blue and Founder gold retain their semantic colors. */
+#auth-profile .member-verified-check,#auth-profile .founder-badge{filter:none;}
+#auth-profile .profile-action-grid .profile-management-label{
+ border-top:1px solid #886749!important;
+ color:#ddc49d!important;
+ font:700 13px/1.4 Georgia,serif!important;
+}
+#auth-profile .profile-action,
+#auth-profile .profile-nav-card,
+#auth-profile button.profile-nav-card,
+#auth-profile .member-panel{
+ background:var(--a2k-vintage-surface)!important;
+ border:1.5px solid #a17b4e!important;
+ border-radius:12px!important;
+ box-shadow:inset 0 0 0 1px #edcd9230,0 2px 2px #0009!important;
+ color:var(--a2k-cream)!important;
+}
+#auth-profile .profile-action{min-height:48px;}
+#auth-profile .profile-nav-card>summary,
+#auth-profile button.profile-nav-card{color:var(--a2k-cream)!important;}
+#auth-profile .profile-nav-card .profile-nav-title,
+#auth-profile .profile-nav-title{
+ color:var(--a2k-cream)!important;
+ font-family:Georgia,serif!important;
+ font-weight:700!important;
+}
+#auth-profile .profile-nav-card small,
+#auth-profile .profile-nav-card .member-muted{
+ color:var(--a2k-muted)!important;
+}
+#auth-profile .profile-nav-card .profile-ui-icon,
+#auth-profile .profile-action .profile-ui-icon{
+ color:var(--a2k-brass)!important;
+ stroke:currentColor!important;
+}
+#auth-profile .profile-section-top>strong,
+#profile-section-dialog .profile-section-top>strong{
+ color:var(--a2k-cream)!important;
+ font-family:Georgia,serif!important;
+}
+#auth-profile .profile-section-edit,
+#profile-section-dialog .profile-section-edit{
+ background:linear-gradient(#5b2924,#321813)!important;
+ border:1px solid #9f7a51!important;
+ border-radius:8px!important;
+ box-shadow:none!important;
+ color:var(--a2k-cream)!important;
+}
+#profile-section-dialog .profile-identity,
+#profile-section-dialog .profile-story,
+#profile-section-dialog .profile-about-awards{
+ border-color:#7b5c3d!important;
+}
+/* Venue Detail header, reviews, photos, schedules and action tabs. */
+#venue-screen .identity{
+ border:1.5px solid #a58152;
+ border-radius:13px;
+ padding:10px;
+ background:var(--a2k-vintage-surface);
+ box-shadow:var(--a2k-vintage-frame);
+}
+#venue-screen .identity img{
+ border:2px solid #c3a16f!important;
+ border-radius:8px!important;
+}
+#venue-screen .identity h1{
+ font-family:Georgia,serif!important;
+ font-style:italic!important;
+ color:#f5e0bc!important;
+ text-shadow:none!important;
+}
+#venue-screen .identity .tagline{
+ font-family:Georgia,serif!important;
+ color:var(--a2k-muted)!important;
+}
+#venue-screen .chip,
+#venue-screen .chips .chip{
+ color:#f4ddba!important;
+ border:1px solid #987349!important;
+ background:linear-gradient(#60231f,#341611)!important;
+ border-radius:8px!important;
+ box-shadow:none!important;
+}
+#venue-screen .location{
+ border-color:#846344!important;
+ color:var(--a2k-cream)!important;
+}
+#venue-screen .addr small{color:var(--a2k-muted)!important;}
+#venue-screen .direction,
+#venue-screen .atk-venue-community-actions button,
+#venue-screen .actions button:not(:disabled){
+ color:var(--a2k-cream)!important;
+ background:var(--a2k-vintage-button)!important;
+ border:1px solid #b9915e!important;
+ border-radius:9px!important;
+ box-shadow:inset 0 0 0 1px #edc89026!important;
+ text-shadow:none!important;
+}
+#venue-screen .tabs{
+ gap:6px!important;
+}
+#venue-screen .tabs button{
+ background:linear-gradient(#302019,#160f0d)!important;
+ border:1px solid #9e7e58!important;
+ border-radius:10px!important;
+ color:var(--a2k-cream)!important;
+ box-shadow:none!important;
+}
+#venue-screen .tabs button[aria-selected="true"]{
+ color:#632018!important;
+ background:linear-gradient(#f0dcad,#dfbd88)!important;
+ border-color:#b38a55!important;
+ box-shadow:inset 0 0 0 2px #fff0cc!important;
+}
+#venue-screen .tabs button[aria-selected="true"] svg{
+ color:#632018!important;
+}
+#venue-screen .content :is(.event,.review-card,.review-list>details,.review-summary,.photo-item,.schedule-card,.info-card,.amenity-card),
+#venue-screen .content>section{
+ color:var(--a2k-cream)!important;
+ background:var(--a2k-vintage-surface)!important;
+ border:1px solid #9d7a50!important;
+ border-radius:12px!important;
+ box-shadow:inset 0 0 0 1px #e9cc9b1b!important;
+}
+#venue-screen .content h2,#venue-screen .content h3{
+ font-family:Georgia,serif!important;
+ color:var(--a2k-cream)!important;
+}
+#venue-screen .foot{color:var(--a2k-muted)!important;}
+/* Dialogs of all types: shared stage-panel finish without touching geometry or scroll logic. */
+dialog:not([class=""]){
+ background:var(--a2k-vintage-surface)!important;
+ color:var(--a2k-cream)!important;
+ border-color:#b18c5e!important;
+ box-shadow:0 18px 48px #000c,inset 0 0 0 1px #edd19d21!important;
+}
+dialog::backdrop{background:#000b!important;}
+:is(
+ #management-dialog,#profile-section-dialog,#member-dialog,
+ #atk-welcome-dialog,#atk-kj-dialog,
+ .atk-review-dialog,.atk-review-author-dialog,
+ .atk-venue-community-dialog,.atk-claim-dialog,.atk-claim-decision-dialog,
+ .vt-dialog,.mg3-dialog,#mg3-staff-dialog,
+ #atk-staff-notifications-dialog
+) :is(h1,h2,h3){
+ color:var(--a2k-cream)!important;
+ font-family:Georgia,serif!important;
+ text-shadow:none!important;
+}
+:is(
+ #management-dialog,#profile-section-dialog,#member-dialog,
+ .atk-review-dialog,.atk-venue-community-dialog,.vt-dialog,
+ #atk-welcome-dialog,#atk-kj-dialog
+) :is(p,small,label){
+ color:inherit;
+}
+/* Every popup remains mobile-friendly. No changes to close/back controls. */
+dialog :is(input:not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),select,textarea){
+ max-width:100%;
+ color:var(--a2k-cream)!important;
+ background:#2d1b16!important;
+ border:1px solid #9a7954!important;
+ border-radius:8px!important;
+ box-shadow:inset 0 1px 2px #0005!important;
+}
+dialog input::placeholder,dialog textarea::placeholder{color:#cab08e!important;opacity:1;}
+dialog :is(input,textarea,select):disabled{opacity:.6;}
+dialog :is(input[type="checkbox"],input[type="radio"]){accent-color:#a47b45;}
+/* Keep our red Save/Cancel action language, but age it to oxblood with brass edging. */
+:is(
+ .member-button,.profile-popup-close,
+ .management-close,
+ .atk-od-action,
+ .vt-btn,
+ .mg3-action,
+ .mg3-dialog-actions button,
+ .atk-community-dialog-actions button,
+ .atk-welcome-actions button,
+ .atk-kj-actions button,
+ #management-dialog .management-entry,
+ #management-dialog .management-tools button,
+ .atk-review-footer button,
+ .atk-approval-actions button
+){
+ color:var(--a2k-cream)!important;
+ background:var(--a2k-vintage-button)!important;
+ border:1px solid #b28b5b!important;
+ border-radius:9px!important;
+ box-shadow:inset 0 0 0 1px #efd09b2b!important;
+ text-shadow:none!important;
+}
+:is(.member-button,.profile-popup-close,.management-close,.atk-od-action,.vt-btn,.mg3-action):disabled{
+ opacity:.54!important;
+ cursor:not-allowed;
+}
+:is(.member-button,.profile-popup-close,.management-close,.atk-od-action,.vt-btn,.mg3-action):focus-visible{
+ outline:2px solid #efd2a3!important;
+ outline-offset:2px!important;
+}
+/* Section cards within the legacy and newer management tools. */
+#management-dialog .management-tools .management-entry,
+#management-dialog .management-tools>div,
+#management-dialog .management-user-head,
+#management-dialog .mv2-section,
+#management-dialog .mg2-section,
+#management-dialog .mg3-card,
+#management-dialog .mg3-bulk,
+#management-dialog .mg3-metric,
+#management-dialog .atk-approval-card,
+#management-dialog .mv2-overlay-panel,
+#management-dialog .mv2-directory,
+#management-dialog .mv2-filters-panel,
+#management-dialog .mg2-member-card,
+#management-dialog .mg2-filter-panel{
+ border-color:#9d7850!important;
+ background:var(--a2k-vintage-surface)!important;
+ box-shadow:inset 0 0 0 1px #e2bd8620!important;
+ color:var(--a2k-cream)!important;
+}
+#management-dialog .management-entry-icon{color:#d7b581!important;}
+#management-dialog :is(.management-user-head h2,.mv2-header h2,.mg2-header h2,.mg3-heading h2){
+ color:var(--a2k-cream)!important;
+ font-family:Georgia,serif!important;
+}
+#management-dialog :is(.mg3-heading,.management-user-head){
+ border-bottom-color:#947246!important;
+}
+#management-dialog :is(.mv2-toolbar,.mg2-toolbar,.mg3-toolbar,.mg3-filters){
+ color:var(--a2k-cream)!important;
+}
+#management-dialog :is(.mg3-card,.mg2-member-card,.mv2-directory,.atk-approval-card) strong{
+ color:#f2ddbb!important;
+}
+#management-dialog .mg3-rating,#management-dialog .mg3-card .mg3-rating{
+ color:#efd39f!important;
+}
+#management-dialog :is(.mg3-state,.mg2-badge,.mv2-status){
+ border-color:#a47e51;
+}
+#management-dialog :is(.mv2-tile-section,.mv2-field,.mg2-hero-info,.mg3-bulk-controls){
+ border-color:#846443!important;
+}
+#management-dialog .mg3-heading{
+ background:transparent!important;
+}
+/* Management tools displayed in other dialogs: same paper/wood/brass finish. */
+:is(
+ .vt-dialog .vt-panel,
+ .vt-dialog .vt-member,
+ .atk-od-workspace .atk-od-venue-card,
+ .atk-od-workspace .atk-od-request-card,
+ .atk-od-workspace .atk-od-stat,
+ .atk-od-workspace .atk-od-photo-panel,
+ .atk-od-workspace .atk-od-editor,
+ .atk-od-workspace .atk-od-photo-tile
+){
+ border-color:#9e7a50!important;
+ background:var(--a2k-vintage-surface)!important;
+ box-shadow:inset 0 0 0 1px #e7c08a26!important;
+ color:var(--a2k-cream)!important;
+}
+.vt-dialog .vt-footer{background:#180f0d!important;border-top-color:#7e5d3e!important;}
+.vt-dialog .vt-tile[aria-pressed="true"]{
+ background:linear-gradient(#742b23,#4b1915)!important;
+ border-color:#d6b17e!important;
+ color:var(--a2k-cream)!important;
+}
+.vt-dialog .vt-photo-item{border-color:#a58254!important;}
+.atk-od-workspace .atk-od-tab{
+ background:#321d18!important;
+ border-color:#936f4a!important;
+ color:var(--a2k-cream)!important;
+}
+.atk-od-workspace .atk-od-tab[aria-selected="true"],
+.atk-od-workspace .atk-od-tab[aria-pressed="true"],
+.atk-od-workspace .atk-od-tab.active{
+ background:linear-gradient(#793028,#471510)!important;
+ border-color:#d7af7d!important;
+}
+.atk-od-workspace .atk-od-venue-name{
+ color:var(--a2k-cream)!important;
+ font-family:Georgia,serif!important;
+ font-style:italic!important;
+}
+/* General role labels and notices stay readable. We don't recolor blue checks. */
+:is(#management-dialog,.vt-dialog,.atk-od-workspace) :is(.vt-muted,.atk-od-muted,.mg3-muted,.mv2-muted,.mg2-muted){
+ color:var(--a2k-muted)!important;
+}
+:is(#management-dialog,.vt-dialog,.atk-od-workspace) :is(.vt-label,.mg3-label,.mv2-label,.mg2-label){
+ color:#f0d8b2!important;
+}
+:where(.app) [hidden],dialog [hidden]{display:none!important;}
+/* Small screens retain useful tap targets and prevent horizontal overflow. */
+@media(max-width:440px){
+ #auth-profile .member-hero{padding:12px 9px!important;gap:10px!important;}
+ #venue-screen .identity{padding:9px!important;}
+ #venue-screen .tabs button{min-width:0;}
+ #management-dialog .management-tools .management-entry{min-width:0;overflow-wrap:anywhere;}
+}
+@media(prefers-reduced-motion:reduce){
+ .app button,.app .venue-teaser,dialog button{transition:none!important;animation:none!important;}
+}
