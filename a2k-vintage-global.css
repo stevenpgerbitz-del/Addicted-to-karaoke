@@ -1186,3 +1186,231 @@ body:has(#venue-screen:not([hidden])) .app>header>img{
  background:#201410!important;
  border-color:#866442!important;
 }
+
+
+/* v178 — one vintage wardrobe for every Profile section popup. */
+/* Shared modal frame and bottom action match the approved public venue cards. */
+#profile-section-dialog[open]{
+ box-sizing:border-box!important;
+ width:min(94vw,560px)!important;
+ max-height:min(88dvh,calc(100dvh - 28px))!important;
+ padding:17px 16px 16px!important;
+ background:
+  repeating-linear-gradient(140deg,transparent 0 29px,#b58b4b07 29px 30px),
+  linear-gradient(125deg,#2b1c16,#17100d 66%,#271711)!important;
+ color:var(--a2k-cream)!important;
+ border:1.5px solid #b48d5f!important;
+ border-radius:17px!important;
+ box-shadow:0 18px 48px #000c,inset 0 0 0 1px #efd09b26!important;
+ overflow:hidden!important;
+}
+#profile-section-dialog>#profile-section-title{
+ font:700 clamp(23px,6vw,29px)/1.2 Georgia,serif!important;
+ color:var(--a2k-cream)!important;
+ margin:0 0 13px!important;
+ text-shadow:none!important;
+}
+#profile-section-dialog #profile-section-content{
+ box-sizing:border-box!important;
+ max-height:calc(88dvh - 122px)!important;
+ min-width:0!important;
+ padding:0 2px 0 0!important;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ overscroll-behavior:contain!important;
+}
+#profile-section-dialog #profile-section-content>.member-panel,
+#profile-section-dialog #profile-section-content>.member-privacy{
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ color:var(--a2k-cream)!important;
+}
+#profile-section-dialog #profile-section-content>.member-panel>h3{
+ display:none!important; /* The dialog heading already identifies this section. */
+}
+#profile-section-dialog>.profile-popup-close{
+ width:100%!important;
+ min-height:46px!important;
+ margin:15px 0 0!important;
+ padding:10px 12px!important;
+ background:var(--a2k-vintage-button)!important;
+ color:var(--a2k-cream)!important;
+ border:1.5px solid #c09a66!important;
+ border-radius:9px!important;
+ box-shadow:inset 0 0 0 1px #edc89037!important;
+ font:700 16px Georgia,serif!important;
+ text-shadow:none!important;
+}
+
+/* Account: treat member info as an engraved nameplate, not stray text. */
+#profile-section-dialog #profile-section-content .member-panel:has(#auth-display-email){
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:center!important;
+ gap:7px!important;
+ padding:5px 4px 0!important;
+}
+#profile-section-dialog #auth-display-email{
+ color:var(--a2k-cream)!important;
+ font:500 14px/1.5 Arial,sans-serif!important;
+ overflow-wrap:anywhere!important;
+ text-align:center!important;
+ margin:2px 0 6px!important;
+}
+#profile-section-dialog :is(#auth-display-provider,#auth-display-membership){
+ color:var(--a2k-muted)!important;
+ font:400 13px/1.5 Arial,sans-serif!important;
+ text-align:center!important;
+ margin:0 0 4px!important;
+}
+#profile-section-dialog .member-panel:has(#auth-display-email)>div:has(>button){
+ width:100%!important;
+ padding-top:8px!important;
+}
+#profile-section-dialog .member-panel:has(#auth-display-email)>div>button{
+ display:block!important;
+ width:min(100%,230px)!important;
+ min-height:44px!important;
+ margin:auto!important;
+ background:var(--a2k-vintage-button)!important;
+ border:1.5px solid #c09a66!important;
+ border-radius:9px!important;
+ color:var(--a2k-cream)!important;
+ box-shadow:inset 0 0 0 1px #edc89037!important;
+ font:700 15px Georgia,serif!important;
+}
+
+/* Favorite Venues and My Reviews use the same understated empty state. */
+#profile-section-dialog #profile-section-content>.member-panel>p.member-muted{
+ margin:0!important;
+ padding:11px 12px!important;
+ border:1px solid #8d6c49!important;
+ border-radius:10px!important;
+ background:linear-gradient(135deg,#38231b,#261914)!important;
+ color:var(--a2k-muted)!important;
+ font:400 14px/1.5 Arial,sans-serif!important;
+ overflow-wrap:anywhere!important;
+}
+#profile-section-dialog #profile-section-content #atk-profile-favorites{
+ color:inherit!important;
+}
+
+/* Song shelf: the same oxblood/brass tiles as the venue tabs, with cream selection. */
+#profile-section-dialog .profile-song-panel>.member-heading .member-button{
+ width:100%!important;
+ min-height:46px!important;
+ background:var(--a2k-vintage-button)!important;
+ color:var(--a2k-cream)!important;
+ border:1.5px solid #c09a66!important;
+ border-radius:9px!important;
+ box-shadow:inset 0 0 0 1px #edc89037!important;
+ font:700 16px Georgia,serif!important;
+}
+#profile-section-dialog .profile-song-panel>.member-tabs{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:10px!important;
+ margin:8px 0 3px!important;
+ padding:0!important;
+ overflow:visible!important;
+}
+#profile-section-dialog .profile-song-panel>.member-tabs button{
+ box-sizing:border-box!important;
+ width:100%!important;
+ min-width:0!important;
+ min-height:82px!important;
+ padding:12px!important;
+ background:linear-gradient(155deg,#51251e,#2d1a15)!important;
+ color:var(--a2k-cream)!important;
+ border:1.5px solid #aa8255!important;
+ border-radius:10px!important;
+ box-shadow:inset 0 0 0 1px #daba8426!important;
+ font:700 clamp(13px,3.5vw,15px)/1.4 Georgia,serif!important;
+ white-space:normal!important;
+ overflow-wrap:anywhere!important;
+ text-align:left!important;
+}
+#profile-section-dialog .profile-song-panel>.member-tabs button.selected,
+#profile-section-dialog .profile-song-panel>.member-tabs button[aria-selected="true"]{
+ background:linear-gradient(#f2dfba,#dfbd87)!important;
+ color:#632119!important;
+ border:1.5px solid #b58d58!important;
+ box-shadow:inset 0 0 0 2px #fff0cc,0 2px 3px #0007!important;
+}
+#profile-section-dialog .profile-song-panel>.member-tabs.profile-song-category-open{
+ display:none!important;
+}
+
+/* About Me: antique brass section dividers, matching Edit buttons and role tiles. */
+#profile-section-dialog .member-about :is(
+ .profile-story,.profile-about-interests,.profile-about-awards,.profile-about-privacy
+ ){
+ border-color:#846441!important;
+}
+#profile-section-dialog .member-about .profile-section-top>strong{
+ color:var(--a2k-cream)!important;
+ font:700 clamp(16px,4.5vw,20px)/1.35 Georgia,serif!important;
+}
+#profile-section-dialog .member-about .profile-section-top .profile-section-edit{
+ min-width:70px!important;
+ min-height:39px!important;
+ padding:8px 12px!important;
+ background:var(--a2k-vintage-button)!important;
+ color:var(--a2k-cream)!important;
+ border:1px solid #b99160!important;
+ border-radius:9px!important;
+ box-shadow:inset 0 0 0 1px #edc89030!important;
+ font:700 13px Georgia,serif!important;
+}
+#profile-section-dialog .member-about :is(.profile-interest-chip,.profile-award-item){
+ background:linear-gradient(155deg,#51251e,#2d1a15)!important;
+ color:var(--a2k-cream)!important;
+ border:1px solid #9e7951!important;
+ box-shadow:inset 0 0 0 1px #e9cda121!important;
+}
+#profile-section-dialog .member-about :is(
+ .profile-identity-summary,.profile-privacy-summary span,.member-muted
+ ){
+ color:var(--a2k-muted)!important;
+}
+#profile-section-dialog .member-about .profile-privacy-summary strong{
+ color:var(--a2k-cream)!important;
+}
+#profile-section-dialog .member-about .profile-privacy-choice{
+ background:linear-gradient(155deg,#45221d,#261914)!important;
+ border:1px solid #98734c!important;
+ color:var(--a2k-cream)!important;
+}
+#profile-section-dialog .member-about .profile-privacy-choice:has(input:checked){
+ background:linear-gradient(#f2dfba,#dfbd87)!important;
+ border-color:#b58d58!important;
+}
+#profile-section-dialog .member-about .profile-privacy-choice:has(input:checked) :is(strong,small){
+ color:#632119!important;
+}
+
+/* Notification Center: same content-first dialog pattern when opened from Profile. */
+#atk-staff-notifications-dialog[open]{
+ justify-content:flex-start!important;
+ min-height:0!important;
+ height:max-content!important;
+ max-height:min(85dvh,calc(100dvh - 28px))!important;
+}
+#atk-staff-notifications-dialog>.atk-staff-notification-results{
+ flex:0 1 auto!important;
+ min-height:0!important;
+}
+#atk-staff-notifications-dialog>.atk-staff-notifications-close{
+ margin-top:10px!important;
+}
+@media(max-width:380px){
+ #profile-section-dialog[open]{padding:14px 12px!important;}
+ #profile-section-dialog .profile-song-panel>.member-tabs{gap:8px!important;}
+ #profile-section-dialog .profile-song-panel>.member-tabs button{
+  min-height:76px!important;padding:10px!important;
+ }
+}
