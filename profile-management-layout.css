@@ -67,3 +67,47 @@
   font:400 12px/1.45 Arial,sans-serif!important;
   color:#cfb7ab;
 }
+
+/* Build 162: the header only shows management shortcuts when applicable. */
+#auth-profile .member-hero .profile-action-grid:not(:has(>.profile-action:not([hidden]))){
+ display:none!important;
+}
+/* Keep basic profile editing with the other About Me sections. */
+#auth-profile .member-about>.profile-identity,
+#profile-section-dialog .member-about>.profile-identity{
+ min-width:0;
+ padding:4px 0 13px;
+ margin:0;
+}
+#auth-profile .member-about .profile-identity-summary,
+#profile-section-dialog .member-about .profile-identity-summary{
+ display:flex;
+ align-items:baseline;
+ justify-content:space-between;
+ flex-wrap:wrap;
+ gap:4px 10px;
+ margin:10px 0 4px;
+ color:#dbc1b4;
+ font:13px/1.45 Arial,sans-serif;
+}
+#auth-profile .member-about .profile-identity-summary strong,
+#profile-section-dialog .member-about .profile-identity-summary strong{
+ color:#f5e7da;
+ font-size:14px;
+ overflow-wrap:anywhere;
+}
+#auth-profile .member-about .profile-identity>.member-muted,
+#profile-section-dialog .member-about .profile-identity>.member-muted{
+ margin:5px 0 0;
+ color:#d4b8aa;
+ font:12px/1.45 Arial,sans-serif;
+}
+#auth-profile .member-about .profile-identity+.profile-story,
+#profile-section-dialog .member-about .profile-identity+.profile-story{
+ border-top:1px solid #6c4541;
+ padding-top:14px;
+}
+#profile-section-dialog .member-about:has(#member-privacy-editor:not([hidden]))>.profile-identity,
+#profile-section-dialog .member-about:has(#member-interests-editor:not([hidden]))>.profile-identity{
+ display:none!important;
+}
