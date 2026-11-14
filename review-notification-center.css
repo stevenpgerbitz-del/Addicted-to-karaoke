@@ -44,3 +44,108 @@
 }
 .atk-review-notification-hide svg{display:block;flex:none;width:19px;height:19px}
 .atk-review-notification-hide:focus-visible{outline:2px solid #f5e4d2;outline-offset:2px}
+
+
+/* v177 — compact vintage staff Notification Center. */
+#atk-staff-notifications-dialog[open]{
+ /* The previous flex layout stretched a single notice to nearly screen height. */
+ box-sizing:border-box!important;
+ width:min(94vw,500px)!important;
+ height:fit-content!important;
+ min-height:0!important;
+ max-height:calc(100dvh - 28px)!important;
+ max-height:min(84dvh,calc(100dvh - 28px))!important;
+ padding:17px 16px 15px!important;
+ gap:8px!important;
+ overflow:hidden!important;
+ background:linear-gradient(125deg,#261812,#160f0d 65%,#241511)!important;
+ border:1.5px solid #b38d5b!important;
+ border-radius:16px!important;
+ box-shadow:0 18px 48px #000c,inset 0 0 0 1px #efd09b26!important;
+ color:#f3e2c8!important;
+}
+#atk-staff-notifications-dialog .atk-staff-notification-results{
+ flex:0 1 auto!important;
+ min-height:0!important;
+ min-width:0!important;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ overscroll-behavior:contain!important;
+ padding-right:2px!important;
+}
+#atk-staff-notifications-dialog h2{
+ margin:0 0 2px!important;
+ color:#f3e2c8!important;
+ font:700 clamp(23px,6vw,29px)/1.18 Georgia,serif!important;
+}
+#atk-staff-notifications-dialog .atk-approval-intro{
+ margin:0 0 5px!important;
+ color:#d6bea0!important;
+ font:400 13px/1.45 Arial,sans-serif!important;
+}
+#atk-staff-notifications-dialog .atk-approval-summary{
+ margin:4px 0 8px!important;
+ padding:10px 12px!important;
+ border:1px solid #9d7951!important;
+ border-radius:10px!important;
+ background:linear-gradient(145deg,#43231c,#301b16)!important;
+ color:#f3e2c8!important;
+ box-shadow:inset 0 0 0 1px #e8cb9924!important;
+}
+#atk-staff-notifications-dialog .atk-approval-group-label{
+ margin:13px 0 7px!important;
+ color:#f3e2c8!important;
+ font:700 clamp(16px,4.2vw,19px)/1.25 Georgia,serif!important;
+}
+#atk-staff-notifications-dialog .atk-review-notification-card{
+ margin:7px 0 2px!important;
+ border:1px solid #a17b52!important;
+ border-radius:12px!important;
+ background:linear-gradient(145deg,#2b1c17,#1e1412)!important;
+ box-shadow:inset 0 0 0 1px #e6c99621!important;
+}
+#atk-staff-notifications-dialog .atk-review-notification-card>summary{
+ padding:12px!important;
+ color:#f3e2c8!important;
+}
+#atk-staff-notifications-dialog .atk-review-notification-card>summary small{
+ color:#d6bea0!important;
+}
+#atk-staff-notifications-dialog .atk-review-notification-card[open]>summary{
+ border-bottom:1px solid #806041!important;
+}
+#atk-staff-notifications-dialog .atk-review-notification-card .atk-approval-details{
+ color:#e8d5bd!important;
+}
+#atk-staff-notifications-dialog .atk-review-notification-card .atk-approval-details p{
+ line-height:1.5!important;
+}
+#atk-staff-notifications-dialog .atk-review-notification-hide,
+#atk-staff-notifications-dialog>.atk-staff-notifications-close{
+ min-height:44px!important;
+ border:1.5px solid #b9915e!important;
+ border-radius:9px!important;
+ background:linear-gradient(160deg,#74241f,#481512)!important;
+ color:#f3e2c8!important;
+ box-shadow:inset 0 0 0 1px #efd09b33!important;
+ font:700 13px Georgia,serif!important;
+ text-shadow:none!important;
+}
+#atk-staff-notifications-dialog>.atk-staff-notifications-close{
+ flex:none!important;
+ width:100%!important;
+ margin:9px 0 0!important;
+}
+#atk-staff-notifications-dialog .atk-review-notification-hide:focus-visible,
+#atk-staff-notifications-dialog>.atk-staff-notifications-close:focus-visible{
+ outline:2px solid #f5d7a4!important;
+ outline-offset:3px!important;
+}
+@media(max-width:380px){
+ #atk-staff-notifications-dialog[open]{
+  padding:14px 12px 12px!important;
+ }
+ #atk-staff-notifications-dialog .atk-review-notification-card>summary{
+  padding:10px!important;
+ }
+}
