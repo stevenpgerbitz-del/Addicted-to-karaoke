@@ -1,0 +1,45 @@
+/* A2K 161 — place the achievement gallery inside About Me. */
+#auth-profile .member-about .profile-about-awards,
+#profile-section-dialog .member-about .profile-about-awards{
+  border-top:1px solid #6c4541;
+  margin-top:0;
+  padding:15px 0 13px;
+  min-width:0;
+}
+#auth-profile .member-about .profile-about-awards>.member-muted,
+#profile-section-dialog .member-about .profile-about-awards>.member-muted{
+  display:block;margin:5px 0 11px;color:#d7baad;
+  font:12px/1.4 Arial,sans-serif;
+}
+#auth-profile .member-about .profile-about-awards .profile-award-list,
+#profile-section-dialog .member-about .profile-about-awards .profile-award-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+#auth-profile .member-about .profile-about-awards .profile-award-item,
+#profile-section-dialog .member-about .profile-about-awards .profile-award-item{
+  display:flex;flex-direction:column;gap:6px;min-width:0;
+  min-height:110px;padding:10px 9px;
+  border:1px solid #87554f;border-radius:10px;
+  background:#301b1d;color:#f7e6d8;
+}
+#auth-profile .member-about .profile-about-awards .profile-award-item strong,
+#profile-section-dialog .member-about .profile-about-awards .profile-award-item strong{
+  font-size:13px;line-height:1.28;overflow-wrap:anywhere;
+}
+#auth-profile .member-about .profile-about-awards .profile-award-item small,
+#profile-section-dialog .member-about .profile-about-awards .profile-award-item small{
+  font-size:11px;line-height:1.35;flex:1;color:#d8beb1;overflow-wrap:anywhere;
+}
+#auth-profile .member-about .profile-about-awards .profile-badge-remove,
+#profile-section-dialog .member-about .profile-about-awards .profile-badge-remove{
+  align-self:stretch;min-height:34px;
+  border:1px solid #ac6b60;border-radius:8px;
+  background:#482727;color:#f5e3d8;
+  font:700 12px Arial,sans-serif;
+}
+#profile-section-dialog .member-about:has(#member-interests-editor:not([hidden]))>.profile-about-awards,
+#profile-section-dialog .member-about:has(#member-privacy-editor:not([hidden]))>.profile-about-awards{
+  display:none!important;
+}
