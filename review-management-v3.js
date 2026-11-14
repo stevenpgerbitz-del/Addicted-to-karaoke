@@ -34,7 +34,7 @@ function build(){
  $('mg3-status').addEventListener('change',()=>{S.filter=$('mg3-status').value;S.page=1;S.selected.clear();load()});
  $('mg3-sort').addEventListener('change',()=>{S.sort=$('mg3-sort').value;S.page=1;S.selected.clear();load()});
  $('mg3-multiple').addEventListener('click',()=>toggleBulk(!S.bulk));
- $('mg3-all').addEventListener('click',()=>{for(const r of S.result?.rows||[]){if(S.selected.size>=20)break;S.selected.add(r.id)}render()});
+ $('mg3-all').addEventListener('click',()=>{for(const r of S.result?.rows||[]){if(S.selected.size>=20)break;if(allowed(r).length)S.selected.add(r.id)}render()});
  $('mg3-clear').addEventListener('click',()=>{S.selected.clear();render()});
  $('mg3-apply').addEventListener('click',()=>{
   const a=$('mg3-bulk-action').value,items=(S.result?.rows||[]).filter(r=>S.selected.has(r.id));
@@ -64,7 +64,8 @@ function renderMetrics(){
 }
 function renderBulk(){
  if(!S.bulk)return;
- const items=(S.result?.rows||[]).filter(r=>S.selected.has(r.id));
+ const eligible=(S.result?.rows||[]).filter(r=>allowed(r).length);
+ const items=eligible.filter(r=>S.selected.has(r.id));
  $('mg3-selected').textContent=items.length+' selected';
  const common=Object.keys(opts).filter(a=>items.length&&items.every(r=>allowed(r).includes(a)));
  const choice=$('mg3-bulk-action'),before=choice.value;
@@ -72,12 +73,12 @@ function renderBulk(){
  for(const a of common)choice.add(new Option(opts[a][0],a));
  choice.value=common.includes(before)?before:'';
  $('mg3-apply').disabled=!items.length||!common.length;
- $('mg3-all').disabled=items.length===(S.result?.rows||[]).length;
+ $('mg3-all').disabled=!eligible.length||items.length===eligible.length;
  $('mg3-bulk-hint').textContent=items.length&&!common.length?'Selected reviews have incompatible statuses. Clear or adjust your selection.':'Select up to 20 reviews with compatible statuses.';
 }
 function card(r){
  const outer=el('div','mg3-card-wrap');if(S.selected.has(r.id))outer.classList.add('mg3-selected-card');
- if(S.bulk){
+ if(S.bulk&&allowed(r).length){
   const select=button(S.selected.has(r.id)?'✓ Selected':'Select review',()=>{
    if(S.selected.has(r.id))S.selected.delete(r.id);
    else if(S.selected.size<20)S.selected.add(r.id);
@@ -114,13 +115,20 @@ function card(r){
   for(const a of acts)row.append(button(opts[a][0],()=>confirmAction(a,[r]),'mg3-action mg3-action-'+a));
   inside.append(row);
  }
- inside.append(el('p','mg3-muted','Actions are recorded in Activity Log. Unpublished reviews do not count toward venue ratings.'));
+ if(acts.length)inside.append(el('p','mg3-muted','Actions are recorded in Activity Log. Unpublished reviews do not count toward venue ratings.'));
  details.append(inside);outer.append(details);return outer;
 }
 function render(){
  if(!S.result)return;
  renderMetrics();const list=$('mg3-list');list.replaceChildren();
  const data=S.result,rows=data.rows||[],total=Number(data.total||0),pages=Math.max(1,Math.ceil(total/15));
+ const canManageOnPage=rows.some(r=>allowed(r).length>0);
+ $('mg3-multiple').hidden=!canManageOnPage;
+ if(S.bulk&&!canManageOnPage){
+  S.bulk=false;S.selected.clear();$('mg3-bulk').hidden=true;
+  $('mg3-multiple').setAttribute('aria-pressed','false');
+  $('mg3-multiple').textContent='Manage Multiple';
+ }
  $('mg3-count').textContent=total?((S.page-1)*15+1)+'–'+Math.min(S.page*15,total)+' of '+total+' reviews':'0 reviews found';
  if(rows.length)rows.forEach(r=>list.append(card(r)));
  else{const empty=el('div','mg3-empty');empty.append(el('strong','','Nothing to review here.'),el('p','','Try another status or search.'));list.append(empty)}
@@ -140,7 +148,7 @@ async function load(message=''){
   if(error)throw error;
   if(serial!==S.serial||authUser?.id!==user)return;
   if(!data||!Array.isArray(data.rows)||!data.stats)throw Error('Unexpected response from Review Management.');
-  S.result=data;render();
+  S.result=data;S.selected.clear();render();
  }catch(e){
   if(serial!==S.serial)return;
   $('mg3-list').replaceChildren(el('p','mg3-empty','Unable to load reviews: '+(e.message||'Please retry.')));
