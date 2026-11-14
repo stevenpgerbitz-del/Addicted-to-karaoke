@@ -9,14 +9,9 @@
   "theme_color": "#511514",
   "icons": [
     {
-      "src": "/favicon-64.png?v=1",
+      "src": "/favicon-64.png?v=2",
       "sizes": "64x64",
       "type": "image/png"
-    },
-    {
-      "src": "/favicon.svg?v=1",
-      "sizes": "any",
-      "type": "image/svg+xml"
     }
   ]
 }
