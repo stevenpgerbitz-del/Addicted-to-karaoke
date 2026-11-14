@@ -1285,7 +1285,7 @@ body:has(#venue-screen:not([hidden])) .app>header>img{
 }
 
 /* Favorite Venues and My Reviews use the same understated empty state. */
-#profile-section-dialog #profile-section-content>.member-panel>p.member-muted{
+#profile-section-dialog #profile-section-content>.member-panel>p.member-muted:not([id]){
  margin:0!important;
  padding:11px 12px!important;
  border:1px solid #8d6c49!important;
