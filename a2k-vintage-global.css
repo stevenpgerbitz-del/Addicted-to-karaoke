@@ -957,3 +957,53 @@ body:has(#venue-screen:not([hidden])) .app>header>img{
  #venue-screen .tabs{gap:5px!important;}
  #venue-screen .tabs button{font-size:11px!important;}
 }
+
+
+/* v175 — one header footprint and one public venue button family.
+   Venue Details now matches Find Karaoke's centered 3-column logo header.
+   The back control stays hidden; explicit grid placement keeps the image centered. */
+body:has(#venue-screen:not([hidden])) .app>header{
+ display:grid!important;
+ grid-template-columns:65px minmax(0,1fr) 65px!important;
+ align-items:center!important;
+ justify-content:normal!important;
+ gap:2px!important;
+ height:94px!important;
+ min-height:94px!important;
+ max-height:94px!important;
+ padding:4px 8px!important;
+}
+body:has(#venue-screen:not([hidden])) .app>header>img{
+ grid-column:2!important;
+ justify-self:center!important;
+ display:block!important;
+ flex:none!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:min(64vw,320px)!important;
+ height:auto!important;
+ max-height:84px!important;
+ object-fit:contain!important;
+ object-position:center!important;
+}
+/* The same vintage red finish on every available venue action and
+   unselected section tab. Parchment is strictly a selected/pressed state. */
+#venue-screen .atk-venue-community-actions #atk-venue-favorite:not([aria-pressed="true"]),
+#venue-screen .atk-venue-community-actions #atk-venue-claim-entry:not(:disabled),
+#venue-screen .atk-venue-community-actions button:not(#atk-venue-favorite):not(#atk-venue-claim-entry):not(:disabled),
+#venue-screen .tabs button:not([aria-selected="true"]),
+#venue-screen .actions button:not(:disabled){
+ background:var(--a2k-vintage-button)!important;
+ border:1.5px solid #c09a66!important;
+ border-radius:10px!important;
+ color:var(--a2k-cream)!important;
+ box-shadow:inset 0 0 0 1px #f0ca9440,0 2px 3px #0008!important;
+ text-shadow:none!important;
+}
+#venue-screen .atk-venue-community-actions button,
+#venue-screen .tabs button,
+#venue-screen .actions button{
+ font-family:Georgia,serif!important;
+ font-weight:700!important;
+ letter-spacing:0!important;
+}
