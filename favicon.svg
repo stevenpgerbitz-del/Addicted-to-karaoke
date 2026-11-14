@@ -1,37 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
-  <title id="title">Addicted to Karaoke</title>
-  <desc id="desc">Vintage silver microphone with a red heart-shaped cord on a dark burgundy background</desc>
-  <defs>
-    <radialGradient id="bg" cx="50%" cy="31%" r="85%">
-      <stop offset="0" stop-color="#51211e"/>
-      <stop offset=".58" stop-color="#250e10"/>
-      <stop offset="1" stop-color="#12090b"/>
-    </radialGradient>
-    <linearGradient id="metal" x1="0" x2="1">
-      <stop offset="0" stop-color="#776e68"/>
-      <stop offset=".22" stop-color="#f6ebda"/>
-      <stop offset=".5" stop-color="#bcb5af"/>
-      <stop offset=".76" stop-color="#f1e9dc"/>
-      <stop offset="1" stop-color="#5a5454"/>
-    </linearGradient>
-    <linearGradient id="brass" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#eed9ad"/>
-      <stop offset=".5" stop-color="#9a7547"/>
-      <stop offset="1" stop-color="#d5ae73"/>
-    </linearGradient>
-  </defs>
-  <rect x="4" y="4" width="248" height="248" rx="48" fill="url(#bg)"/>
-  <rect x="13" y="13" width="230" height="230" rx="39" fill="none" stroke="url(#brass)" stroke-width="5"/>
-  <path d="M126 211 C105 194 81 188 60 167 C43 151 44 123 64 115 C86 105 107 120 126 145 C147 118 169 107 189 115 C213 125 214 154 192 175 C173 193 149 204 126 220" fill="none" stroke="#590d11" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M126 211 C105 194 81 188 60 167 C43 151 44 123 64 115 C86 105 107 120 126 145 C147 118 169 107 189 115 C213 125 214 154 192 175 C173 193 149 204 126 220" fill="none" stroke="#de3638" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-  <g transform="rotate(26 129 93)">
-    <rect x="99" y="34" width="60" height="91" rx="30" fill="url(#metal)" stroke="#f5e4c5" stroke-width="3"/>
-    <path d="M108 51 Q128 45 150 51 M105 66 Q128 61 153 66 M105 81 Q129 75 153 81 M107 96 Q128 90 151 96 M111 109 Q128 103 147 109" fill="none" stroke="#413c3c" stroke-width="7" stroke-linecap="round"/>
-    <path d="M110 45 Q106 49 105 57 L105 101" fill="none" stroke="#fffae9" stroke-opacity=".75" stroke-width="4" stroke-linecap="round"/>
-    <path d="M103 119 Q129 132 156 119" fill="none" stroke="#6b5d54" stroke-width="5"/>
-    <path d="M116 127 L116 143 Q129 150 143 143 L143 127" fill="url(#metal)" stroke="#c7bba9" stroke-width="3"/>
-    <path d="M129 145 L129 192" fill="none" stroke="#a59d93" stroke-width="14" stroke-linecap="round"/>
-    <path d="M126 144 L126 188" fill="none" stroke="#f9e7ca" stroke-width="4" stroke-linecap="round"/>
-    <rect x="116" y="185" width="26" height="12" rx="5" fill="url(#metal)" stroke="#5b4e47" stroke-width="2"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Addicted to Karaoke vintage microphone with heart-shaped cable">
+ <title>Addicted to Karaoke — vintage microphone and connected red heart cable</title>
+ <image width="64" height="64" href="/favicon-64.png?v=2" />
 </svg>
