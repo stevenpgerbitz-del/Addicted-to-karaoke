@@ -94,7 +94,7 @@
  }
  function cardForSuspension(row){
   const {outer,inside}=detailCard(row.stage_name||'Member',
-    (row.active?'Review privileges suspended':'Suspension expired')+' · '+formatDate(row.created_at));
+    (row.active?'Review privileges suspended':'Suspension expired')+' · '+formatDate(row.active?row.created_at:(row.suspended_until||row.created_at)));
   inside.append(make('p','',Number(row.suspension_days||0)+'-day suspension · '+(row.active?'Active':'Expired')));
   inside.append(make('p','','Issued by: '+(row.issued_by||'Site Moderator')));
   inside.append(make('p','','Until: '+formatDate(row.suspended_until)));
