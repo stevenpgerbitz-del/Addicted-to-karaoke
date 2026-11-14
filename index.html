@@ -1132,7 +1132,7 @@ function openVenue(id){
  selectedVenue=id;
  const v=sampleVenues.find(x=>x.id===id);
  if(!v)return;
- window.selectedVenueSlug=Object.keys(slugToCard).find(slug=>slugToCard[slug]===id)||null;
+ window.selectedVenueSlug=v.shareSlug||v.slug||Object.keys(slugToCard).find(slug=>slugToCard[slug]===id)||null;
  const identity=document.querySelector('#venue-screen .identity');
  identity.querySelector('h1').textContent=v.name;
  const featuredPhoto=identity.querySelector('img');
@@ -1181,6 +1181,29 @@ const slugToCard={
  'the-high-note':'highnote','north-star-sing-along':'northstar',
  'spotlight-social':'spotlight'
 };
+
+/* v176 — name-based share URLs and compatibility with original venue links. */
+function atkReadableVenueSlug(value){
+ return String(value||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
+  .replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'venue';
+}
+function atkAssignPublicVenueSlugs(venues){
+ // Keep original database slug aliases so previously shared links keep working.
+ for(const venue of venues){
+  const preferred=atkReadableVenueSlug(venue.name);
+  let candidate=preferred;
+  if(slugToCard[candidate]&&slugToCard[candidate]!==venue.id){
+   candidate=preferred+'-'+atkReadableVenueSlug(venue.city||venue.state||'iowa');
+  }
+  if(slugToCard[candidate]&&slugToCard[candidate]!==venue.id){
+   candidate=candidate+'-'+String(venue.databaseId||venue.id).replace(/[^a-zA-Z0-9]/g,'').slice(0,8).toLowerCase();
+  }
+  let unique=candidate,suffix=2;
+  while(slugToCard[unique]&&slugToCard[unique]!==venue.id)unique=candidate+'-'+suffix++;
+  venue.shareSlug=unique;
+  slugToCard[unique]=venue.id;
+ }
+}
 function connectionNotice(message){
  let n=document.getElementById('db-connection-notice');
  if(!n){n=document.createElement('p');n.id='db-connection-notice';n.setAttribute('role','status');n.style.cssText='margin:12px 0;padding:10px 12px;border:1px solid #853a36;border-radius:12px;background:#210c0d;color:#f6ead7;font-size:13px;line-height:1.4';document.getElementById('find-results').insertAdjacentElement('beforebegin',n)}
@@ -1268,7 +1291,8 @@ async function loadLiveVenues(){
   const results=document.getElementById('find-results');
   // Only database-published entries are shown while the live service works.
   for(const slug of Object.keys(slugToCard))delete slugToCard[slug];
-  for(const item of live)slugToCard[item.slug]=item.id;
+  for(const item of live){if(item.slug)slugToCard[item.slug]=item.id;}
+  atkAssignPublicVenueSlugs(live);
   sampleVenues=live;
   results.replaceChildren(...live.map(atkCreatePublicVenueCard));
   document.getElementById('no-results').textContent='No matching published venues. Try another search or filter.';
