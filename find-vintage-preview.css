@@ -1,0 +1,189 @@
+/* A2K Vintage Preview — opt-in visual skin for the existing live Find Karaoke page.
+   Reuses the actual search, filters, venue cards, and nav handlers. */
+#find-screen .atk-find-style-switch {
+ display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+ padding:0;margin:0 0 12px;
+}
+#find-screen .atk-find-style-switch .atk-style-label{
+ color:#dbc8b7;font:700 12px/1.4 Arial,sans-serif;letter-spacing:.02em;
+ margin-right:2px;
+}
+#find-screen .atk-find-style-switch button{
+ appearance:none;min-height:38px;min-width:100px;max-width:100%;
+ padding:8px 13px;border:1px solid #8e5952;border-radius:9px;
+ background:#2b1b1d;color:#e9d5c4;font:700 12px/1.2 Arial,sans-serif;
+ box-shadow:none;cursor:pointer;
+}
+#find-screen .atk-find-style-switch button[aria-pressed="true"]{
+ background:#682723;border-color:#d6a878;color:#fff0d9;
+ box-shadow:inset 0 0 0 1px #d6a87830;
+}
+#find-screen .atk-find-style-switch button:focus-visible{
+ outline:2px solid #f4e4c8;outline-offset:2px;
+}
+#find-screen .atk-vintage-slogan{display:none;}
+/* The alternate theme only applies while Vintage is selected. */
+body:has(#find-screen.atk-vintage:not([hidden])) .app>header{
+ background:linear-gradient(110deg,#4a0a0b 0%,#140a09 30%,#100b09 70%,#4a0a0b 100%)!important;
+ border-bottom:2px solid #a77c49!important;
+ box-shadow:none!important;
+}
+body:has(#find-screen.atk-vintage:not([hidden])) #unified-pages{
+ background:repeating-linear-gradient(135deg,transparent 0 35px,#f4d7a503 35px 36px),
+ linear-gradient(165deg,#140f0d,#0b0a09 48%,#130d0c);
+}
+#find-screen.atk-vintage {
+ --atk-antique-gold:#c6a16f;
+ --atk-cream:#f0dfbd;
+ --atk-warm-gold:#dfc18c;
+ --atk-wine:#741b1b;
+ --atk-ink:#160f0c;
+ --atk-paper:#ebcea0;
+ color:var(--atk-cream);
+ padding-top:13px;
+}
+#find-screen.atk-vintage .atk-find-style-switch{margin:0 0 16px;}
+#find-screen.atk-vintage .atk-find-style-switch .atk-style-label{color:#dfc7a2;}
+#find-screen.atk-vintage .atk-find-style-switch button{
+ border-color:#aa895b;background:#21130f;color:#f3dbb6;
+}
+#find-screen.atk-vintage .atk-find-style-switch button[aria-pressed="true"]{
+ background:linear-gradient(145deg,#7f1717,#460b0c);border-color:#ddbf82;
+ box-shadow:inset 0 0 0 1px #dbbc7f55;
+}
+#find-screen.atk-vintage .atk-vintage-slogan{
+ display:block!important;text-align:center;
+ margin:0 auto 13px;max-width:535px;
+ color:#edd7ac;
+ font:italic 600 clamp(13px,3.4vw,17px)/1.5 Georgia,serif;
+ text-shadow:0 1px 0 #000;
+}
+#find-screen.atk-vintage>h1{
+ width:max-content;max-width:100%;box-sizing:border-box;
+ margin:0 auto 14px!important;padding:8px 23px 10px;
+ border:2px solid #be935c;border-radius:14px;
+ background:repeating-linear-gradient(120deg,transparent 0 22px,#73430e0a 22px 23px),
+ linear-gradient(145deg,#f0d8a8,#e1bd85 50%,#f1d5a4);
+ box-shadow:inset 0 0 0 2px #f9e2b6,0 2px 0 #694325;
+ color:#731d1b!important;text-shadow:none!important;
+ font:italic 700 clamp(30px,7vw,43px)/1.05 Georgia,serif!important;
+}
+#find-screen.atk-vintage>h1::after{display:none!important;}
+#find-screen.atk-vintage>.subtext:first-of-type{display:none!important;}
+#find-screen.atk-vintage .searchlabel{
+ display:block;margin:8px 0 7px;color:#f1ddb9!important;
+ font:700 16px/1.3 Georgia,serif;
+}
+#find-screen.atk-vintage #venue-search{
+ display:block;width:100%;min-height:49px;box-sizing:border-box;
+ padding:10px 15px;border:2px solid #c6a06d!important;border-radius:18px!important;
+ background:repeating-linear-gradient(130deg,transparent 0 24px,#8255220b 24px 25px),
+ linear-gradient(135deg,#f4deb7,#e6bf88)!important;
+ color:#311b15!important;font:500 16px Arial,sans-serif;
+ box-shadow:inset 0 0 0 2px #f7e5c9,0 2px 0 #4b2920!important;
+}
+#find-screen.atk-vintage #venue-search::placeholder{color:#735c4b;opacity:1;}
+#find-screen.atk-vintage .filterline{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:8px!important;margin:10px 0 15px!important;
+}
+#find-screen.atk-vintage .filterline label{
+ color:#f0dcb6!important;min-width:0;
+ font:700 12px/1.4 Georgia,serif!important;
+}
+#find-screen.atk-vintage .filterline select{
+ display:block;width:100%;min-width:0;box-sizing:border-box;
+ min-height:45px;margin-top:4px;padding:9px 7px!important;
+ border:1.5px solid #c9a36e!important;border-radius:14px!important;
+ color:#f8e6c9!important;font:600 12px Arial,sans-serif!important;
+ background:linear-gradient(#831e1d,#4c1011)!important;
+ box-shadow:inset 0 0 0 1px #120b0b55!important;
+}
+#find-screen.atk-vintage #results-count{
+ display:block;width:fit-content;max-width:100%;box-sizing:border-box;
+ margin:0 auto 15px!important;padding:8px 19px;
+ color:#74241d!important;
+ background:linear-gradient(145deg,#edd29c,#f4dfb5,#dfbb80);
+ border:1.5px solid #cba370;border-radius:9px;
+ box-shadow:inset 0 0 0 2px #fff0cc88;
+ text-align:center;
+ font:italic 700 17px/1.3 Georgia,serif;
+}
+#find-screen.atk-vintage #db-connection-notice{
+ display:none!important;
+}
+#find-screen.atk-vintage .hintbox{display:none!important;}
+#find-screen.atk-vintage #find-results{
+ display:grid;gap:10px!important;
+}
+#find-screen.atk-vintage .venue-teaser{
+ display:flex;align-items:center;gap:10px;min-height:90px;
+ margin:0!important;box-sizing:border-box;
+ border:2px solid #c6a16f!important;border-radius:16px!important;
+ background:repeating-linear-gradient(155deg,transparent 0 28px,#eed3a503 28px 29px),
+ linear-gradient(105deg,#1f1713,#120f0c 63%,#241712)!important;
+ box-shadow:inset 0 0 0 2px #edc78722,0 2px 3px #0008!important;
+ color:#eed9b7;
+ overflow:hidden;
+}
+#find-screen.atk-vintage .venue-teaser:focus-visible{
+ outline:3px solid #e7c38f!important;outline-offset:3px;
+}
+#find-screen.atk-vintage .venue-teaser:active{
+ transform:scale(.995);
+}
+#find-screen.atk-vintage .teaser-img{
+ width:31%;max-width:148px;min-width:90px;
+ height:90px;align-self:stretch;flex:none;
+ border-right:1px solid #9b7b50;
+ background:#21150e;overflow:hidden;
+}
+#find-screen.atk-vintage .teaser-img img{
+ display:block;width:100%;height:100%;object-fit:cover;
+}
+#find-screen.atk-vintage .teaser-copy{
+ display:flex;flex:1;min-width:0;gap:5px;
+ padding:8px 9px 8px 0;
+}
+#find-screen.atk-vintage .teaser-copy b{
+ font:italic 700 clamp(18px,4.4vw,23px)/1.08 Georgia,serif!important;
+ color:#f5ddb8;text-shadow:none!important;
+ overflow-wrap:anywhere;
+}
+#find-screen.atk-vintage .teaser-copy small{
+ font:500 12px/1.3 Arial,sans-serif;color:#e7d0aa;
+ overflow-wrap:anywhere;
+}
+#find-screen.atk-vintage .teaser-copy span{
+ font:600 12px/1.35 Arial,sans-serif;color:#cfb17a;
+ overflow-wrap:anywhere;
+}
+#find-screen.atk-vintage #no-results{
+ color:#f1d4aa;
+}
+body:has(#find-screen.atk-vintage:not([hidden])) #unified-nav{
+ background:linear-gradient(140deg,#5a0d0e,#330d0c 51%,#5b100d)!important;
+ border:1px solid #b58a56!important;border-bottom:0!important;
+ box-shadow:none!important;
+}
+body:has(#find-screen.atk-vintage:not([hidden])) #unified-nav button{
+ color:#f2dbb8!important;
+}
+body:has(#find-screen.atk-vintage:not([hidden])) #unified-nav button.active{
+ border:1px solid #c5a36c!important;border-radius:12px!important;
+ background:linear-gradient(135deg,#edd5a5,#deba7e)!important;
+ color:#70201a!important;
+ text-shadow:none!important;
+ box-shadow:inset 0 0 0 2px #f6e5c2!important;
+}
+@media(max-width:390px){
+ #find-screen .atk-find-style-switch button{min-width:84px;padding:8px 9px;}
+ #find-screen.atk-vintage .filterline{gap:5px!important;}
+ #find-screen.atk-vintage .filterline select{padding:8px 3px!important;font-size:11px!important;}
+ #find-screen.atk-vintage .teaser-img{width:30%;min-width:82px;height:94px;}
+ #find-screen.atk-vintage .teaser-copy{gap:4px;}
+ #find-screen.atk-vintage .teaser-copy b{font-size:17px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+ #find-screen.atk-vintage .venue-teaser{transition:none!important;}
+}
