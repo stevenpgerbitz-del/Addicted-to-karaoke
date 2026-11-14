@@ -1085,7 +1085,17 @@ function filterVenues(){
  });
  document.getElementById('no-results').hidden=visible>0;
 }
-document.addEventListener('DOMContentLoaded',()=>{navigate(['home','find','signin','venue'].includes(location.hash.slice(1))?location.hash.slice(1):'home');document.querySelectorAll('.venue-teaser').forEach(el=>el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}}));});
+document.addEventListener('DOMContentLoaded',()=>{
+ const entryRoute=location.hash.slice(1);
+ if(entryRoute.startsWith('venue/')){
+  // Show Find while the live venue list loads, without losing the deep link.
+  navigate('find');
+  try{history.replaceState(null,'','#'+entryRoute)}catch(e){}
+ }else{
+  navigate(['home','find','signin','venue'].includes(entryRoute)?entryRoute:'home');
+ }
+ document.querySelectorAll('.venue-teaser').forEach(el=>el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}}));
+});
 </script><script>
 let sampleVenues=[{"id":"velvet","name":"The Velvet Note","city":"Riverdale","region":"Central Iowa","genre":"Pop","rating":4.6,"address":"428 Maple Ave","image":"assets/atk-default-venue.webp","hasPhoto":false},{"id":"singing","name":"The Singing Lounge","city":"Riverdale","region":"Central Iowa","genre":"Country","rating":4.3,"address":"96 Main Street","image":"assets/atk-default-venue.webp","hasPhoto":false},{"id":"moonlight","name":"Moonlight Mic","city":"Des Moines","region":"Central Iowa","genre":"Pop","rating":4.8,"address":"Downtown district","image":"assets/atk-default-venue.webp","hasPhoto":false},{"id":"riverstage","name":"River Stage Karaoke","city":"Cedar Rapids","region":"Eastern Iowa","genre":"Rock","rating":4.2,"address":"Arts district","image":"assets/atk-default-venue.webp","hasPhoto":false},{"id":"highnote","name":"The High Note","city":"Iowa City","region":"Eastern Iowa","genre":"Indie","rating":4.9,"address":"College district","image":"assets/atk-default-venue.webp","hasPhoto":false},{"id":"northstar","name":"North Star Sing-Along","city":"Mason City","region":"Northern Iowa","genre":"Country","rating":3.9,"address":"Historic downtown","image":"assets/atk-default-venue.webp","hasPhoto":false},{"id":"spotlight","name":"Spotlight Social","city":"Council Bluffs","region":"Western Iowa","genre":"80s & 90s","rating":4.5,"address":"Main Street district","image":"assets/atk-default-venue.webp","hasPhoto":false}];
 let selectedVenue='velvet';
@@ -1315,7 +1325,20 @@ async function shareSelectedVenue(){
  try{if(navigator.share){await navigator.share({title:v.name+' · Addicted to Karaoke',url});return;}}catch(e){if(e.name==='AbortError')return;}
  try{await navigator.clipboard.writeText(url);message('Venue link copied!');}catch(e){window.prompt('Copy venue link:',url)}
 }
-window.addEventListener('hashchange',()=>{const hash=location.hash.slice(1);if(hash.startsWith('venue/')){const slug=decodeURIComponent(hash.slice(6));const v=sampleVenues.find(x=>x.id===slugToCard[slug]);if(v&&v.databaseId&&v.publication_status==='published')openVenue(v.id);else navigate('find');}else if(['home','find','signin'].includes(hash))navigate(hash)});
+window.addEventListener('hashchange',()=>{
+ const hash=location.hash.slice(1);
+ if(hash.startsWith('venue/')){
+  const requestedHash=location.hash;
+  Promise.resolve(window.liveVenueLoadPromise).then(()=>{
+   if(location.hash!==requestedHash)return;
+   let slug;
+   try{slug=decodeURIComponent(hash.slice(6));}catch(e){navigate('find');return;}
+   const v=sampleVenues.find(x=>x.id===slugToCard[slug]);
+   if(v&&v.databaseId&&v.publication_status==='published')openVenue(v.id);
+   else navigate('find');
+  });
+ }else if(['home','find','signin'].includes(hash))navigate(hash);
+});
 
 /* v4.5: Live, venue-specific reviews. All approved UI remains unchanged. */
 const liveReviewCache=new Map();
