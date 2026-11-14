@@ -479,3 +479,117 @@ dialog :is(input[type="checkbox"],input[type="radio"]){accent-color:#a47b45;}
 @media(prefers-reduced-motion:reduce){
  .app button,.app .venue-teaser,dialog button{transition:none!important;animation:none!important;}
 }
+
+
+/* v172 — venue buttons and selected navigation. This is the approved
+   vintage button hierarchy: parchment primary, lively oxblood secondary,
+   antique brass outlines. No black modern-looking action buttons. */
+/* Primary: Favorite, Claim and the venue Call/Share actions. */
+#venue-screen .atk-venue-community-actions #atk-venue-favorite,
+#venue-screen .atk-venue-community-actions #atk-venue-claim-entry:not(:disabled),
+#venue-screen .actions button:not(:disabled){
+ background:
+  repeating-linear-gradient(125deg,transparent 0 29px,#95601e0a 29px 30px),
+  linear-gradient(#f1ddb8,#dfbd87)!important;
+ border:1.5px solid #bd9764!important;
+ border-radius:10px!important;
+ color:#652119!important;
+ text-shadow:none!important;
+ box-shadow:inset 0 0 0 2px #fff0cb,0 2px 3px #0008!important;
+}
+#venue-screen .atk-venue-community-actions #atk-venue-favorite>span,
+#venue-screen .atk-venue-community-actions #atk-venue-claim-entry>span,
+#venue-screen .actions button:not(:disabled)>span{
+ color:inherit!important;
+}
+#venue-screen .atk-venue-community-actions #atk-venue-favorite[aria-pressed="true"]{
+ background:linear-gradient(#dbb77c,#f1dcae)!important;
+ border:2px solid #d6b17c!important;
+ color:#581b16!important;
+ box-shadow:inset 0 0 0 2px #ffefd0,0 0 0 2px #633321!important;
+}
+/* Secondary action: warm burgundy, not dark grey or black. */
+#venue-screen .atk-venue-community-actions button:not(#atk-venue-favorite):not(#atk-venue-claim-entry):not(:disabled){
+ background:linear-gradient(#963a31,#662019)!important;
+ color:#fff0d6!important;
+ border:1.5px solid #c7a06c!important;
+ border-radius:10px!important;
+ box-shadow:inset 0 0 0 1px #f3cc914d,0 2px 3px #0006!important;
+}
+/* A genuinely disabled claim is still disabled and visibly unavailable. */
+#venue-screen .atk-venue-community-actions #atk-venue-claim-entry:disabled{
+ background:linear-gradient(#c2aa88,#9f866a)!important;
+ border:1.5px solid #967751!important;
+ color:#4e3830!important;
+ opacity:.7!important;
+ cursor:not-allowed!important;
+ box-shadow:inset 0 0 0 1px #e7d1af50!important;
+}
+/* Consistent and clearly differentiated venue-section tabs. */
+#venue-screen .tabs button:not([aria-selected="true"]){
+ background:linear-gradient(#763128,#471914)!important;
+ border:1px solid #b28d60!important;
+ color:#f7e4c4!important;
+ border-radius:10px!important;
+ box-shadow:inset 0 0 0 1px #e0b87b29!important;
+ text-shadow:none!important;
+}
+#venue-screen .tabs button[aria-selected="true"]{
+ background:linear-gradient(#f1dfb9,#dfbc86)!important;
+ border:1.5px solid #b68e58!important;
+ color:#632119!important;
+ border-radius:10px!important;
+ box-shadow:inset 0 0 0 2px #fff0cf,0 2px 3px #0007!important;
+ text-shadow:none!important;
+}
+#venue-screen .tabs button svg,
+#venue-screen .tabs button[aria-selected="true"] svg{
+ color:inherit!important;
+ stroke:currentColor!important;
+}
+/* The About panel itself was retaining an older red outline. */
+#venue-screen article.content{
+ border:1.5px solid #b28c5a!important;
+ border-radius:13px!important;
+ background:var(--a2k-vintage-surface)!important;
+ box-shadow:inset 0 0 0 1px #d9b67b32!important;
+}
+#venue-screen article.content .rule{
+ border-top:1px solid #947146!important;
+}
+/* The venue already has bottom navigation: no unrelated header back arrow. */
+body:has(#venue-screen:not([hidden])) .app>header #unified-back{
+ display:none!important;
+}
+/* Correct the inherited bright-neon Home active state (previously beat our
+   global rule through more specific page selectors). Keep the graphic itself. */
+body:has(#home-screen:not([hidden])) #unified-nav button[data-page="home"].active{
+ background:
+  repeating-linear-gradient(125deg,transparent 0 27px,#8655190b 27px 28px),
+  linear-gradient(#f1ddb5,#dfbd88)!important;
+ color:#642119!important;
+ border:1.5px solid #bd965e!important;
+ border-radius:9px!important;
+ box-shadow:inset 0 0 0 2px #fff0ca,0 2px 4px #0007!important;
+ text-shadow:none!important;
+}
+body:has(#home-screen:not([hidden])) #unified-nav button[data-page="home"].active svg,
+body:has(#home-screen:not([hidden])) #unified-nav button[data-page="home"].active span{
+ color:#642119!important;
+ stroke:currentColor!important;
+ opacity:1!important;
+ filter:none!important;
+}
+/* Keep clear focus indication and existing tap sizes. */
+#venue-screen :is(.atk-venue-community-actions button,.tabs button,.actions button):focus-visible{
+ outline:2px solid #f2d39b!important;
+ outline-offset:3px!important;
+}
+@media(max-width:390px){
+ #venue-screen .atk-venue-community-actions{gap:8px;}
+ #venue-screen .atk-venue-community-actions button{
+  min-width:0;
+  padding-inline:6px;
+  overflow-wrap:anywhere;
+ }
+}
