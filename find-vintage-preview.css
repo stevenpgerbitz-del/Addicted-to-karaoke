@@ -344,3 +344,8 @@ body:has(#find-screen.atk-vintage:not([hidden])) #unified-nav button.active{
  #find-screen.atk-vintage .teaser-img{height:69px!important;}
  #find-screen.atk-vintage .teaser-copy b{font-size:clamp(16px,4.2vw,19px)!important;}
 }
+
+/* v167: The logo and official slogan identify this page.
+   Keep the Find Karaoke title in Current, omit its plaque in Vintage. */
+#find-screen.atk-vintage>h1{display:none!important;}
+#find-screen.atk-vintage .searchlabel{margin-top:9px!important;}
