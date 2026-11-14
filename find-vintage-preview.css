@@ -187,3 +187,160 @@ body:has(#find-screen.atk-vintage:not([hidden])) #unified-nav button.active{
 @media(prefers-reduced-motion:reduce){
  #find-screen.atk-vintage .venue-teaser{transition:none!important;}
 }
+
+
+/* v166: Match the APPROVED CONCEPT'S composition, not its fictional data.
+   A compact framed thumbnail sits within each card, with consistent proportions
+   on narrow mobile screens. The live venue information stays unchanged. */
+body:has(#find-screen.atk-vintage:not([hidden])) .app>header{
+ position:relative;
+ background:linear-gradient(100deg,#520a0b 0%,#210a09 27%,#090807 47%,#220b0a 73%,#560c0e 100%)!important;
+ border-bottom:2px solid #c5a26f!important;
+}
+body:has(#find-screen.atk-vintage:not([hidden])) .app>header::after{
+ content:"";position:absolute;pointer-events:none;
+ bottom:3px;left:3%;right:3%;height:1px;
+ background:linear-gradient(90deg,transparent,#e2c38f 18%,#e2c38f 82%,transparent);
+ opacity:.48;
+}
+#find-screen.atk-vintage{
+ padding-top:8px!important;
+}
+#find-screen.atk-vintage .atk-find-style-switch{
+ margin-bottom:12px!important;
+}
+#find-screen.atk-vintage .atk-vintage-slogan{
+ padding:7px 5px 3px;
+ margin:0 auto 9px!important;
+ max-width:540px;
+ border-top:1px solid #916c46;
+ color:#f0d5a8;
+ text-align:center;
+ font:italic 600 clamp(12px,3.2vw,16px)/1.45 Georgia,serif;
+}
+#find-screen.atk-vintage>h1{
+ position:relative!important;
+ isolation:isolate;
+ display:block;width:fit-content;max-width:100%;
+ margin:0 auto 13px!important;
+ padding:9px 24px 12px!important;
+ border:2px solid #b48a56!important;
+ border-radius:18px!important;
+ background:repeating-linear-gradient(113deg,transparent 0 24px,#9363360d 24px 25px),
+ linear-gradient(155deg,#f3e0bb,#e6c68f 55%,#ebd09b)!important;
+ box-shadow:0 1px 0 #55391c,inset 0 0 0 2px #f8e4ba,0 3px 4px #0007!important;
+ color:#701916!important;
+ text-align:center;
+ font:italic 700 clamp(28px,7.4vw,43px)/1.1 Georgia,serif!important;
+ text-shadow:0 1px #fff5d3!important;
+}
+#find-screen.atk-vintage>h1::before,
+#find-screen.atk-vintage>h1::after{
+ content:""!important;
+ display:block!important;
+ position:absolute;
+ top:50%;width:7px;height:7px;
+ margin-top:-3.5px;
+ border:1px solid #77572c;border-radius:50%;
+ background:radial-gradient(circle at 32% 30%,#e9cf91,#8b5429 65%,#46351e);
+ box-shadow:0 1px 1px #3b2418;
+}
+#find-screen.atk-vintage>h1::before{left:8px;}
+#find-screen.atk-vintage>h1::after{left:auto;right:8px;}
+#find-screen.atk-vintage .searchlabel{
+ margin:5px 0 6px!important;
+ font:700 15px/1.2 Georgia,serif!important;
+}
+#find-screen.atk-vintage #venue-search{
+ min-height:45px!important;
+ border-radius:15px!important;
+}
+#find-screen.atk-vintage .filterline{
+ margin:9px 0 12px!important;
+}
+#find-screen.atk-vintage .filterline label{
+ font:700 12px/1.3 Georgia,serif!important;
+}
+#find-screen.atk-vintage .filterline select{
+ min-height:42px!important;
+ padding:7px 6px!important;
+ border-radius:13px!important;
+}
+#find-screen.atk-vintage #results-count{
+ margin:1px auto 12px!important;
+ padding:7px 17px!important;
+ border-radius:6px!important;
+ font:italic 700 clamp(14px,4vw,17px)/1.3 Georgia,serif!important;
+}
+#find-screen.atk-vintage #find-results{
+ gap:8px!important;
+}
+#find-screen.atk-vintage .venue-teaser{
+ display:grid!important;
+ grid-template-columns: minmax(72px,26%) minmax(0,1fr)!important;
+ align-items:center!important;
+ column-gap:9px!important;
+ min-height:80px!important;
+ height:auto!important;
+ padding:5px!important;
+ border:2px solid #c6a16f!important;
+ border-radius:15px!important;
+ background:linear-gradient(112deg,#100e0c 0%,#0b0a08 58%,#17100d 100%)!important;
+ box-shadow:inset 0 0 0 1px #f0dbac29,0 2px 2px #0008!important;
+}
+#find-screen.atk-vintage .teaser-img{
+ display:block!important;
+ box-sizing:border-box!important;
+ align-self:center!important;
+ width:100%!important;max-width:none!important;min-width:0!important;
+ height:72px!important;
+ padding:2px!important;
+ border:1.5px solid #d3b27d!important;
+ border-radius:11px!important;
+ background:#120d0a!important;
+ overflow:hidden!important;
+}
+#find-screen.atk-vintage .teaser-img img{
+ display:block!important;
+ width:100%!important;height:100%!important;
+ object-fit:cover!important;
+ border-radius:8px!important;
+}
+#find-screen.atk-vintage .teaser-copy{
+ min-height:0!important;
+ display:flex!important;flex-direction:column!important;
+ justify-content:center!important;align-items:flex-start!important;
+ gap:4px!important;
+ padding:3px 5px 3px 0!important;
+}
+#find-screen.atk-vintage .teaser-copy b{
+ font:italic 700 clamp(17px,4.2vw,21px)/1.12 Georgia,serif!important;
+ color:#fae6c5!important;
+}
+#find-screen.atk-vintage .teaser-copy small{
+ font:500 clamp(10px,2.9vw,12px)/1.22 Arial,sans-serif!important;
+ color:#e4ccad!important;
+}
+#find-screen.atk-vintage .teaser-copy span{
+ font:500 clamp(10px,2.9vw,12px)/1.22 Arial,sans-serif!important;
+ color:#dfbf82!important;
+}
+body:has(#find-screen.atk-vintage:not([hidden])) #unified-nav{
+ border-top:2px solid #d0ab75!important;
+ border-radius:18px 18px 0 0!important;
+}
+body:has(#find-screen.atk-vintage:not([hidden])) #unified-nav button.active{
+ background:linear-gradient(135deg,#f1ddb3,#dec08c)!important;
+ border-radius:13px!important;
+ box-shadow:inset 0 0 0 2px #fce7c0!important;
+}
+/* At exceptionally narrow widths don't let fixed thumbnail dimensions
+   push copy or cards beyond the viewport. */
+@media(max-width:390px){
+ #find-screen.atk-vintage .venue-teaser{
+  grid-template-columns:minmax(69px,25%) minmax(0,1fr)!important;
+  column-gap:8px!important;
+ }
+ #find-screen.atk-vintage .teaser-img{height:69px!important;}
+ #find-screen.atk-vintage .teaser-copy b{font-size:clamp(16px,4.2vw,19px)!important;}
+}
