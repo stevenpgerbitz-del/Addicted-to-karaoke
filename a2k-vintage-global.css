@@ -593,3 +593,135 @@ body:has(#home-screen:not([hidden])) #unified-nav button[data-page="home"].activ
   overflow-wrap:anywhere;
  }
 }
+
+
+/* v173 — unified parchment dropdowns & repaired venue header.
+   Non-destructive visual update: retains native select values/change handlers.
+   Native mobile option pickers remain OS-controlled, their closed controls match A2K. */
+#find-screen.atk-vintage .filterline select,
+#signin-screen select,
+#auth-profile select,
+#venue-screen select,
+#management-dialog select,
+#profile-section-dialog select,
+#member-dialog select,
+#atk-welcome-dialog select,
+#atk-kj-dialog select,
+.vt-dialog select,
+.atk-od-workspace select,
+.atk-review-dialog select,
+.atk-venue-community-dialog select,
+.atk-claim-dialog select,
+.mg3-dialog select{
+ box-sizing:border-box!important;
+ min-width:0!important;
+ max-width:100%!important;
+ min-height:44px!important;
+ padding:8px 30px 8px 11px!important;
+ -webkit-appearance:none!important;
+ appearance:none!important;
+ background-color:#e8cf9f!important;
+ background-image:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='m2 2 5 5 5-5' fill='none' stroke='%23622119' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+  repeating-linear-gradient(110deg,transparent 0 29px,#70451b08 29px 30px),
+  linear-gradient(155deg,#f2dfb8,#dfbf8b)!important;
+ background-position:right 10px center,0 0,0 0!important;
+ background-size:14px 9px,auto,auto!important;
+ background-repeat:no-repeat,repeat,no-repeat!important;
+ border:1.5px solid #b58d58!important;
+ border-radius:9px!important;
+ color:#572017!important;
+ -webkit-text-fill-color:#572017!important;
+ font-family:Georgia,serif!important;
+ font-weight:700!important;
+ font-size:clamp(12px,3.2vw,14px)!important;
+ line-height:1.25!important;
+ box-shadow:inset 0 0 0 1.5px #ffefcc,0 2px 2px #0006!important;
+ text-shadow:none!important;
+ color-scheme:light!important;
+ cursor:pointer;
+}
+#find-screen.atk-vintage .filterline select{
+ width:100%!important;
+ margin-top:5px!important;
+}
+:is(#find-screen.atk-vintage,#signin-screen,#auth-profile,#venue-screen,
+#management-dialog,#profile-section-dialog,#member-dialog,#atk-welcome-dialog,
+#atk-kj-dialog,.vt-dialog,.atk-od-workspace,.atk-review-dialog,
+.atk-venue-community-dialog,.atk-claim-dialog,.mg3-dialog) select option{
+ background:#f0dcb3!important;
+ color:#532018!important;
+ font-weight:600;
+}
+:is(#find-screen.atk-vintage,#signin-screen,#auth-profile,#venue-screen,
+#management-dialog,#profile-section-dialog,#member-dialog,#atk-welcome-dialog,
+#atk-kj-dialog,.vt-dialog,.atk-od-workspace,.atk-review-dialog,
+.atk-venue-community-dialog,.atk-claim-dialog,.mg3-dialog) select:focus-visible{
+ outline:2px solid #efd3a4!important;
+ outline-offset:2px!important;
+}
+:is(#find-screen.atk-vintage,#signin-screen,#auth-profile,#venue-screen,
+#management-dialog,#profile-section-dialog,#member-dialog,#atk-welcome-dialog,
+#atk-kj-dialog,.vt-dialog,.atk-od-workspace,.atk-review-dialog,
+.atk-venue-community-dialog,.atk-claim-dialog,.mg3-dialog) select:disabled{
+ opacity:.55!important;
+ cursor:not-allowed!important;
+}
+/* Keep the same type hierarchy for action buttons across the public site.
+   Active/primary parchment, actionable secondary oxblood, brass edging. */
+#venue-screen .atk-venue-community-actions button,
+#venue-screen .tabs button,
+#venue-screen .actions button,
+#auth-profile .profile-action,
+#auth-profile .profile-section-edit,
+#profile-section-dialog .profile-section-edit{
+ font-family:Georgia,serif!important;
+ font-weight:700!important;
+ letter-spacing:0!important;
+}
+#venue-screen .atk-venue-community-actions button:not(:disabled),
+#venue-screen .tabs button:not(:disabled),
+#venue-screen .actions button:not(:disabled){
+ min-height:44px;
+}
+#venue-screen .atk-venue-community-actions button:disabled{
+ cursor:not-allowed!important;
+}
+/* The Back control had been hidden but its original 3-column CSS grid remained.
+   That put the logo in the 65px first column, collapsing it to a tiny image.
+   Center the remaining logo in its own row only on the venue page. */
+body:has(#venue-screen:not([hidden])) .app>header{
+ display:flex!important;
+ flex-direction:row!important;
+ justify-content:center!important;
+ align-items:center!important;
+ gap:0!important;
+ height:94px!important;
+ min-height:94px!important;
+ max-height:94px!important;
+ padding:3px 14px!important;
+ overflow:hidden!important;
+}
+body:has(#venue-screen:not([hidden])) .app>header #unified-back{
+ display:none!important;
+}
+body:has(#venue-screen:not([hidden])) .app>header>img{
+ display:block!important;
+ flex:0 1 320px!important;
+ width:min(74vw,320px)!important;
+ max-width:320px!important;
+ min-width:0!important;
+ height:83px!important;
+ max-height:83px!important;
+ object-fit:contain!important;
+ object-position:center!important;
+}
+@media(max-width:390px){
+ #find-screen.atk-vintage .filterline{gap:6px!important;}
+ #find-screen.atk-vintage .filterline select{
+  font-size:12px!important;
+  padding:8px 22px 8px 7px!important;
+  background-position:right 6px center,0 0,0 0!important;
+  background-size:11px 7px,auto,auto!important;
+ }
+}
