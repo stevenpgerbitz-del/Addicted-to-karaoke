@@ -358,3 +358,187 @@ border:1px solid #ac8b61;border-radius:10px;background:#492119;color:#e8d5b3;fon
  padding:8px 18px!important;
  margin:3px 0 12px!important;
 }
+
+
+/* Build 201 — calmer Find Karaoke controls and single public contribution entry. */
+#find-screen.atk-vintage .a2k-submit-source-hidden,
+#find-screen.atk-vintage .a2k-submit-source-hidden.atk-suggest-venue-cta{
+ display:none!important;
+}
+#find-screen.atk-vintage #a2k-search-filters{
+ margin:7px 0 10px!important;
+ padding:0!important;
+ border:1px solid #ae8858!important;
+ border-radius:10px!important;
+ background:linear-gradient(145deg,#251713,#160e0b)!important;
+ box-shadow:inset 0 0 0 1px #e2bf8530!important;
+}
+#find-screen.atk-vintage #a2k-search-filters > summary{
+ display:flex!important;
+ justify-content:space-between!important;
+ align-items:center!important;
+ flex-wrap:wrap!important;
+ column-gap:9px!important;
+ row-gap:3px!important;
+ min-height:43px!important;
+ padding:8px 12px!important;
+ list-style:none!important;
+ color:#f4ddb5!important;
+ cursor:pointer!important;
+}
+#find-screen.atk-vintage #a2k-search-filters > summary::-webkit-details-marker{display:none!important;}
+#find-screen.atk-vintage #a2k-search-filters > summary:focus-visible{
+ outline:2px solid #f1d8a7!important;
+ outline-offset:2px!important;
+}
+#find-screen.atk-vintage .a2k-search-filters-title{
+ font:700 15px/1.2 Georgia,serif!important;
+ color:#f6e2bf!important;
+}
+#find-screen.atk-vintage .a2k-search-filters-title::before{
+ content:"☷";
+ margin-right:8px;
+ color:#e2b980;
+}
+#find-screen.atk-vintage .a2k-search-filters-caption{
+ display:block!important;
+ flex:1!important;
+ min-width:125px!important;
+ overflow:hidden!important;
+ white-space:nowrap!important;
+ text-overflow:ellipsis!important;
+ color:#d5b997!important;
+ font:500 12px/1.3 Arial,sans-serif!important;
+ text-align:right!important;
+}
+#find-screen.atk-vintage #a2k-search-filters > summary::after{
+ content:"⌄";
+ margin-left:2px;
+ color:#ebc997;
+ font:700 18px/1 Georgia,serif;
+}
+#find-screen.atk-vintage #a2k-search-filters[open] > summary{
+ border-bottom:1px solid #775535!important;
+}
+#find-screen.atk-vintage #a2k-search-filters[open] > summary::after{content:"⌃";}
+#find-screen.atk-vintage #a2k-search-filters:not([open]) > .filterline{
+ display:none!important;
+}
+#find-screen.atk-vintage #a2k-search-filters[open] > .filterline{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ padding:12px!important;
+ margin:0!important;
+ gap:10px!important;
+}
+#find-screen.atk-vintage .a2k-event-filter{
+ margin:2px 0 8px!important;
+ gap:6px!important;
+}
+#find-screen.atk-vintage .a2k-event-filter button{
+ min-height:40px!important;
+ padding:7px 3px!important;
+ font-size:clamp(11px,2.8vw,13px)!important;
+}
+#find-screen.atk-vintage p#results-count{
+ display:block!important;
+ border:0!important;
+ background:none!important;
+ box-shadow:none!important;
+ border-radius:0!important;
+ margin:0 0 10px!important;
+ padding:2px 3px!important;
+ color:#d4bfa2!important;
+ text-align:left!important;
+ text-shadow:none!important;
+ font:600 13px/1.35 Arial,sans-serif!important;
+}
+#find-screen.atk-vintage p#results-count::before,
+#find-screen.atk-vintage p#results-count::after{
+ content:none!important;
+ display:none!important;
+}
+#find-screen.atk-vintage #a2k-community-submit-entry{
+ display:block!important;
+ width:100%!important;
+ min-height:44px!important;
+ margin:1px 0 12px!important;
+ padding:9px 12px!important;
+ border:1.5px solid #b99160!important;
+ border-radius:10px!important;
+ background:linear-gradient(155deg,#74221e,#4c1714)!important;
+ box-shadow:inset 0 0 0 1px #f3dba82b,0 2px 4px #0007!important;
+ color:#f5e2c2!important;
+ font:700 17px/1.25 Georgia,serif!important;
+ cursor:pointer!important;
+}
+#find-screen.atk-vintage #a2k-community-submit-entry:focus-visible{
+ outline:2px solid #eed1a1!important;
+ outline-offset:2px!important;
+}
+.a2k-submit-choice-dialog{
+ box-sizing:border-box!important;
+ width:min(94vw,430px)!important;
+ max-height:85dvh!important;
+ padding:0!important;
+ border:1.5px solid #c19b69!important;
+ border-radius:15px!important;
+ background:linear-gradient(145deg,#2b1b15,#150e0c)!important;
+ color:#f4dfbf!important;
+ box-shadow:0 18px 48px #000b!important;
+}
+.a2k-submit-choice-dialog::backdrop{background:#000b!important;}
+.a2k-submit-choice-shell{padding:19px 16px 15px;}
+.a2k-submit-choice-dialog h2{
+ margin:0 0 8px!important;
+ color:#f2deb9!important;
+ font:700 clamp(21px,5.2vw,27px)/1.2 Georgia,serif!important;
+}
+.a2k-submit-choice-dialog p{
+ margin:0 0 16px!important;
+ color:#d9c3a5!important;
+ font:13px/1.5 Arial,sans-serif!important;
+}
+.a2k-submit-choice-options{display:grid;gap:10px;}
+.a2k-submit-choice-option{
+ display:flex;
+ flex-direction:column;
+ align-items:flex-start;
+ gap:5px;
+ box-sizing:border-box;
+ width:100%;
+ min-height:71px;
+ padding:12px 14px;
+ border:1.5px solid #bc9462;
+ border-radius:10px;
+ background:linear-gradient(145deg,#392018,#251410);
+ color:#f5dfbc;
+ text-align:left;
+ cursor:pointer;
+}
+.a2k-submit-choice-option strong{
+ font:700 19px/1.2 Georgia,serif;
+ color:#f6dfbb;
+}
+.a2k-submit-choice-option small{
+ font:500 13px/1.3 Arial,sans-serif;
+ color:#dcc6a8;
+}
+.a2k-submit-choice-close{
+ display:block;
+ box-sizing:border-box;
+ width:100%;
+ min-height:44px;
+ margin-top:16px;
+ padding:9px 12px;
+ border:1.5px solid #b99160;
+ border-radius:9px;
+ background:linear-gradient(155deg,#74221e,#481713);
+ color:#f4dfbb;
+ font:700 16px Georgia,serif;
+ cursor:pointer;
+}
+.a2k-submit-choice-dialog button:focus-visible{
+ outline:2px solid #f3d8a8;
+ outline-offset:2px;
+}
