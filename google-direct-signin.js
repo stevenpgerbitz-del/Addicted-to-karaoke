@@ -1,6 +1,7 @@
-/* A2K Build 154 — Google's official button, directly exchanged for a Supabase session.
- * The previous Supabase OAuth redirect remains available as a fallback while testing.
- * No secret keys or identity tokens are persisted or logged by this module.
+/* A2K Build 188 — Google Identity Services only: verified Google credentials
+ * exchange directly for the existing Supabase user session. No legacy OAuth
+ * redirect or duplicate Google login controls. Email/password remains available.
+ * Never store or log Google identity tokens or secret keys.
  */
 (function(){
  'use strict';
@@ -14,13 +15,9 @@
 
  for(const id of modes){
   const mode=document.getElementById(id);
-  const original=mode?.querySelector('button.auth-google[onclick="authGoogle()"]');
-  if(!mode||!original)continue;
-  const mount=document.createElement('div');
-  mount.className='atk-google-direct';
-  mount.setAttribute('aria-label','Sign in securely with Google');
-  original.before(mount);
-  slots.set(id,{mode,mount,original,rendered:false});
+  const mount=mode?.querySelector('.atk-google-direct');
+  if(!mode||!mount)continue;
+  slots.set(id,{mode,mount,rendered:false});
  }
  if(!slots.size)return;
 
@@ -41,19 +38,6 @@
    const display=document.getElementById('auth-status');
    if(display)display.textContent=message||'';
   }
- }
- function fallback(slot){
-  slot.original.classList.remove('atk-google-legacy');
-  slot.original.replaceChildren();
-  const glyph=document.createElement('span');
-  glyph.className='google-g';glyph.textContent='G';
-  slot.original.append(glyph,document.createTextNode(' Continue with Google'));
-  slot.mount.replaceChildren();
-  slot.rendered=false;
- }
- function revealFallback(slot){
-  slot.original.classList.add('atk-google-legacy');
-  slot.original.replaceChildren(document.createTextNode('Use previous Google sign-in'));
  }
  function renderVisible(){
   if(!ready||!window.google?.accounts?.id)return;
@@ -76,10 +60,9 @@
     });
     if(slot.mount.children.length===0)continue;
     slot.rendered=true;
-    revealFallback(slot);
    }catch(error){
-    console.warn('Google sign-in button unavailable; keeping existing login.',error);
-    fallback(slot);
+    console.warn('Google sign-in button unavailable.',error);
+    status('Google sign-in could not load. Email sign-in is still available.');
    }
   }
  }
@@ -89,7 +72,7 @@
   // authClient is a top-level lexical variable declared in index.html.
   // Top-level 'let' bindings are not properties of window.
   if(typeof authClient==='undefined'||!authClient?.auth?.signInWithIdToken){
-   status('Sign-in service is not ready. Use the previous Google sign-in link.');
+   status('Google sign-in service is not ready. Refresh to try again, or use email sign-in.');
    return;
   }
   busy=true;
@@ -109,24 +92,20 @@
    status('Signed in with Google.');
   }catch(error){
    freshNonce=null;
-   console.warn('Google ID-token exchange failed; the old sign-in method is still available.');
-   status('Could not complete Google sign-in: '+(error?.message||'Please try the previous Google sign-in below.')+
-    ' You can use the previous Google sign-in link below, or reload to retry.');
-   // Do not reuse a spent nonce; keep the fallback, never auto-sign-in.
+   ready=false; // A used nonce must never be reused with a new credential.
+   console.warn('Google ID-token exchange failed.');
+   status('Could not complete Google sign-in: '+(error?.message||'Please try again.')+
+    ' Refresh to retry, or use email sign-in.');
    for(const slot of slots.values()){
-    if(slot.rendered){
-     slot.mount.replaceChildren();
-     slot.original.classList.remove('atk-google-legacy');
-     slot.original.replaceChildren(document.createTextNode('Continue with Google (previous method)'));
-     slot.rendered=false;
-    }
+    slot.mount.replaceChildren();
+    slot.rendered=false;
    }
   }finally{busy=false}
  }
 
  async function setup(){
   if(!window.crypto?.subtle||!window.crypto?.getRandomValues){
-   // Older/insecure browsers retain the original Supabase OAuth login button.
+   status('Secure Google sign-in is unavailable in this browser. Use email sign-in.');
    return;
   }
   try{
@@ -137,7 +116,8 @@
    script.src='https://accounts.google.com/gsi/client';
    script.onerror=()=>{
     freshNonce=null;
-    console.warn('Google sign-in library could not load; previous method stays available.');
+    console.warn('Google sign-in library could not load.');
+    status('Google sign-in could not load. Use email sign-in, or refresh to retry.');
    };
    script.onload=()=>{
     try{
@@ -154,12 +134,14 @@
      renderVisible();
     }catch(error){
      freshNonce=null;
-     console.warn('Google identity initialization failed; previous method stays available.',error);
+     console.warn('Google identity initialization failed.',error);
+     status('Google sign-in is temporarily unavailable. Use email sign-in, or refresh.');
     }
    };
    document.head.appendChild(script);
   }catch(error){
-   console.warn('Secure Google sign-in initialization unavailable; using previous method.',error);
+   console.warn('Secure Google sign-in initialization unavailable.',error);
+   status('Google sign-in could not initialize. Use email sign-in, or refresh.');
   }
  }
 
