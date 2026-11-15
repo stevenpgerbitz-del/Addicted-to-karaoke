@@ -1298,7 +1298,7 @@ function atkCreatePublicVenueCard(venue){
 async function loadLiveVenues(){
  connectionNotice('Loading published venues…');
  try{
-  const venues=await supabaseRead('venues?select=id,name,slug,city,state,postal_code,address_line1,phone,genres,tagline,description,publication_status,special_events_only&published=eq.true&order=name.asc');
+  const venues=await supabaseRead('venues?select=id,name,slug,city,state,postal_code,address_line1,phone,genres,tagline,description,publication_status,special_events_only,karaoke_schedule&published=eq.true&order=name.asc');
   if(!Array.isArray(venues))throw new Error('Unexpected venue response');
   // A review-service problem must never prevent published venues from appearing.
   let reviews=[];
@@ -1324,6 +1324,7 @@ async function loadLiveVenues(){
     address:row.address_line1||'Address not available',phone:row.phone||'',postal_code:row.postal_code||'',
     slug:row.slug,region:atkVenueRegion(row,original),
     tagline:row.tagline||'',publication_status:row.publication_status||'published',specialEventsOnly:row.special_events_only===true,
+    karaokeSchedule:Array.isArray(row.karaoke_schedule)?row.karaoke_schedule:[],
     genres,genre:genres[0]||'Other',
     rating:a&&a.count?a.sum/a.count:null,
     image:atkNoPhotoIllustration,
