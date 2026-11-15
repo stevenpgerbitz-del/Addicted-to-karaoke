@@ -1,5 +1,5 @@
-/* A2K build 207: clickable, privacy-aware KJ host profile cards.
-   Test mode is a visual preview only; it does not create a hosting record. */
+/* A2K build 208: privacy-aware KJ host profile cards.
+   Temporary Founder-only UI preview does not write any hosting data. */
 (function(){
 'use strict';
 let dialog=null;
@@ -31,7 +31,6 @@ function ensureDialog(){
 function renderCard(profile,{venueName='',day='',demo=false}={}){
   const box=dialog.querySelector('#a2k-kj-host-profile-body');
   box.replaceChildren();
-  if(demo)box.append(element('div','a2k-kj-profile-test-label','FOUNDER-ONLY PREVIEW · NO REAL HOST ASSIGNMENT'));
   const row=element('div','a2k-kj-host-profile-heading');
   const avatar=element('div','a2k-kj-host-profile-avatar');
   if(!demo && profile.avatar_path){
@@ -44,11 +43,11 @@ function renderCard(profile,{venueName='',day='',demo=false}={}){
   }else avatar.textContent='🎤';
   const name=element('div','a2k-kj-host-profile-names');
   name.append(element('strong','',profile.stage_name));
-  name.append(element('span','a2k-kj-host-profile-chip',demo?'Demo KJ':'KJ Host'));
+  name.append(element('span','a2k-kj-host-profile-chip','KJ Host'));
   row.append(avatar,name);
   box.append(row);
   if(venueName)box.append(element('p','a2k-kj-host-profile-venue',
-    (demo?'Example at ':'Hosting at ')+venueName+(day&&!demo?' · '+day:'')));
+    'Hosting at '+venueName+(day?' · '+day:'')));
   box.append(element('h3','','About the Host'));
   box.append(element('p','a2k-kj-host-profile-bio',
     profile.bio?.trim()||'This host has not added an About Me description yet.'));
@@ -57,8 +56,7 @@ function renderCard(profile,{venueName='',day='',demo=false}={}){
     if(!Number.isNaN(time.getTime()))box.append(element('p','a2k-kj-host-profile-since',
       'A2K member since '+time.toLocaleDateString('en-US',{month:'long',year:'numeric'})));
   }
-  if(demo)box.append(element('p','a2k-kj-host-profile-disclaimer',
-    'This is a sample profile card to test the design. It is not a real KJ, booking, or public event.'));
+  if(demo)box.append(element('p','a2k-kj-host-profile-disclaimer','Preview visible only to the Founder.'));
 }
 async function openKjHostProfile(userId,venueName,day){
   const dlg=ensureDialog();
@@ -85,26 +83,29 @@ async function openKjHostProfile(userId,venueName,day){
   }
 }
 function founderPreview(box,venue){
-  // Only one demo venue, only for the actual Founder. Never publicly advertise
-  // the fictional host, and never create a database schedule or fake user.
+  // Temporary local preview only: Founder-only, no database user, no public
+  // hosting relationship. Remove this function once the visual is approved.
   if(typeof authUser==='undefined'||!authUser||
      typeof memberFounderId==='undefined'||authUser.id!==memberFounderId||
      venue?.name!=="Doc's Lounge")return;
   if(box.querySelector('.a2k-kj-founder-preview'))return;
+  const saturday=[...box.querySelectorAll('.venue-schedule-line')]
+    .find(line=>line.querySelector('b')?.textContent==='Saturday');
+  if(!saturday)return;
   const section=element('div','a2k-kj-founder-preview');
-  section.append(element('small','','FOUNDER TEST ONLY · Not part of the venue schedule'));
-  const button=element('button','a2k-kj-host-link','Hosted by Sample KJ (Preview)');
+  const button=element('button','a2k-kj-host-link','🎤 Hosted by DJ Copper Mic');
   button.type='button';
+  button.setAttribute('aria-label','View DJ Copper Mic KJ profile preview');
   button.addEventListener('click',()=>{
     const dlg=ensureDialog();
     renderCard({
-      stage_name:'Sample KJ',
-      bio:'This example shows how an approved karaoke host’s public About Me details will appear to singers. Their actual stage name, image and description will come from their A2K member profile.'
-    },{venueName:venue.name,demo:true});
+      stage_name:'DJ Copper Mic',
+      bio:'Karaoke is about making everyone feel welcome on stage. I enjoy classic rock, country, pop, and those unexpected crowd favorites. My goal is to keep the rotation fair, the music sounding great, and the energy going all night.'
+    },{venueName:venue.name,day:'Saturday',demo:true});
     if(!dlg.open)dlg.showModal();
   });
   section.append(button);
-  box.append(section);
+  saturday.insertAdjacentElement('afterend',section);
 }
 window.a2kOpenKjHostProfile=openKjHostProfile;
 window.a2kMountKjHostPreview=founderPreview;
