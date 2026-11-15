@@ -155,6 +155,71 @@
     const b=fmt(event.end_at,{year:'numeric',month:'2-digit',day:'2-digit'});
     return dayDate(event.start_at)+' · '+time(event.start_at)+'–'+(a!==b?'Next day ':'')+time(event.end_at);
   }
+
+  function installCompactSearchFilters(){
+    const line=document.querySelector('#find-screen .filterline');
+    if(!line||byId('a2k-search-filters'))return;
+    const details=node('details','a2k-search-filters');
+    details.id='a2k-search-filters';
+    const header=node('summary','a2k-search-filters-toggle');
+    const title=node('strong','a2k-search-filters-title','Filter results');
+    const caption=node('span','a2k-search-filters-caption','State · City · Genre · Reviews');
+    header.append(title,caption);
+    line.insertAdjacentElement('beforebegin',details);
+    details.append(header,line);
+    const setCaption=()=>{
+      const state=byId('region-filter');
+      const city=byId('city-filter');
+      const genre=byId('genre-filter');
+      const review=byId('review-filter');
+      const parts=[
+        state?.selectedOptions[0]?.textContent||'All States',
+        city?.selectedOptions[0]?.textContent||'All Cities'
+      ];
+      if(genre?.value)parts.push(genre.selectedOptions[0].textContent);
+      if(review?.value&&review.value!=='0')parts.push(review.selectedOptions[0].textContent);
+      caption.textContent=parts.join(' · ');
+    };
+    for(const id of ['region-filter','city-filter','genre-filter','review-filter']){
+      const select=byId(id);
+      select?.addEventListener('change',setCaption);
+      select?.addEventListener('a2k-update-label',setCaption);
+    }
+    setCaption();
+  }
+  function buildSubmitChoice(){
+    let dialog=byId('a2k-submit-choice-dialog');
+    if(dialog)return dialog;
+    dialog=node('dialog','a2k-submit-choice-dialog');
+    dialog.id='a2k-submit-choice-dialog';
+    const shell=node('div','a2k-submit-choice-shell');
+    const title=node('h2','','What would you like to submit?');
+    const note=node('p','','Anyone can suggest a place or a special karaoke night. Submissions are reviewed before appearing publicly.');
+    const options=node('div','a2k-submit-choice-options');
+    const venueChoice=node('button','a2k-submit-choice-option');
+    venueChoice.type='button';
+    venueChoice.append(node('strong','','Karaoke Venue'),node('small','','Add a place that hosts karaoke'));
+    venueChoice.onclick=()=>{
+      dialog.close();
+      // Preserve the existing guest submission form and its approval process.
+      byId('atk-suggest-venue-entry')?.click();
+    };
+    const eventChoice=node('button','a2k-submit-choice-option');
+    eventChoice.type='button';
+    eventChoice.append(node('strong','','One-Time Event'),node('small','','Share a special date and time'));
+    eventChoice.onclick=()=>{
+      dialog.close();
+      buildSubmit();
+      if(!submitDialog.open)submitDialog.showModal();
+    };
+    options.append(venueChoice,eventChoice);
+    const close=node('button','a2k-submit-choice-close','Close');
+    close.type='button';close.onclick=()=>dialog.close();
+    shell.append(title,note,options,close);
+    dialog.append(shell);
+    document.body.append(dialog);
+    return dialog;
+  }
   function createFilter(){
     if(!byId('find-results')||byId('a2k-event-filter'))return;
     const search=byId('venue-search');
@@ -177,13 +242,18 @@
       filter.append(b);
     }
     byId('results-count').insertAdjacentElement('beforebegin',filter);
-    installLocationFilters();enhanceFindFilters();
-    const suggest=node('button','a2k-special-entry','＋ Submit a Special Event');
-    suggest.id='a2k-special-submit-entry';suggest.type='button';
-    suggest.onclick=()=>{buildSubmit();submitDialog.showModal()};
-    const oldSuggest=document.querySelector('#find-screen .atk-suggest-venue-cta');
-    if(oldSuggest)oldSuggest.insertAdjacentElement('afterend',suggest);
-    else byId('find-results').insertAdjacentElement('beforebegin',suggest);
+    installLocationFilters();enhanceFindFilters();installCompactSearchFilters();
+    const originalVenueSubmit=document.querySelector('#find-screen .atk-suggest-venue-cta');
+    if(originalVenueSubmit)originalVenueSubmit.classList.add('a2k-submit-source-hidden');
+    const submitEntry=node('button','a2k-community-submit-entry','＋ Submit Karaoke');
+    submitEntry.id='a2k-community-submit-entry';
+    submitEntry.type='button';
+    submitEntry.setAttribute('aria-haspopup','dialog');
+    submitEntry.onclick=()=>{
+      const chooser=buildSubmitChoice();
+      if(!chooser.open)chooser.showModal();
+    };
+    byId('find-results').insertAdjacentElement('beforebegin',submitEntry);
   }
   function makeCard(event){
     const card=node('button','a2k-event-card');
