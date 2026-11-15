@@ -753,3 +753,187 @@
  }
  html.a2k-desktop-live .a2k-d-directory-grid{grid-template-columns:1fr!important}
 }
+
+
+/* Build 216 — desktop refinements only, no tablet/mobile overrides. */
+@media(min-width:1024px){
+  /* A venue is a main-screen sibling of unified-pages. Give it the SAME
+     grid cell and width as the central desktop panel (fixes thin columns). */
+  html.a2k-desktop-live body #unified-pages[hidden]{
+    display:none!important;
+  }
+  html.a2k-desktop-live body #venue-screen:not([hidden]){
+    display:block!important;
+    grid-column:2!important;
+    grid-row:2!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    height:auto!important;
+    max-height:none!important;
+    padding:18px clamp(16px,2vw,32px) 42px!important;
+    margin:0!important;
+    overflow:visible!important;
+    align-self:stretch!important;
+    justify-self:stretch!important;
+    box-sizing:border-box!important;
+    background:linear-gradient(145deg,#1a0d0a,#100807 75%)!important;
+  }
+  html.a2k-desktop-live body #venue-screen .identity,
+  html.a2k-desktop-live body #venue-screen .location,
+  html.a2k-desktop-live body #venue-screen #content{
+    width:100%;min-width:0;max-width:none;
+  }
+  html.a2k-desktop-live body #venue-screen .identity{
+    grid-template-columns:minmax(175px,27%) minmax(0,1fr)!important;
+    gap:22px!important;align-items:start;
+  }
+  html.a2k-desktop-live body #venue-screen .identity img{
+    max-height:245px!important;
+    aspect-ratio:4/3!important;
+  }
+  html.a2k-desktop-live body #venue-screen .identity h1{
+    font-size:clamp(28px,2.7vw,44px)!important;
+  }
+  /* Use more breathing room for the two REAL HTML header actions. */
+  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member{
+    inset:32% 2.2% auto auto!important;
+    width:25.7%!important;height:32%!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    padding:6px 7px!important;
+    gap:12px!important;
+    box-sizing:border-box!important;
+    border-radius:24px!important;
+    background:linear-gradient(90deg,rgba(20,7,6,.96),rgba(24,9,7,.9))!important;
+    box-shadow:0 0 16px 12px rgba(19,6,5,.55)!important;
+  }
+  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member button,
+  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member button:first-child,
+  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member button:last-child{
+    position:relative!important;
+    inset:auto!important;
+    flex:1 1 0!important;
+    width:auto!important;min-width:0!important;
+    height:100%!important;min-height:40px!important;
+    padding:7px clamp(8px,1.1vw,17px)!important;
+    gap:8px!important;
+    border:1.5px solid #c49c67!important;
+    border-radius:16px!important;
+    font:700 clamp(12px,1.14vw,17px)/1.15 Georgia,serif!important;
+    letter-spacing:0!important;white-space:nowrap!important;
+    color:#f7e5c6!important;
+    background:linear-gradient(180deg,#5d2019,#31100c)!important;
+    text-shadow:none!important;
+    box-sizing:border-box!important;
+  }
+  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member button:last-child{
+    background:linear-gradient(180deg,#442017,#23100c)!important;
+  }
+  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member button:hover{
+    background:linear-gradient(180deg,#762d22,#4b1711)!important;
+  }
+  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member button[hidden]{
+    display:none!important;
+  }
+  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member.a2k-d-member-signed:not(.a2k-d-member-manager)
+     button:first-child{flex:1 1 100%!important}
+  /* Portal and all its existing top-level tools now occupy the center panel.
+     Edit/confirmation dialogs elsewhere retain their normal modal behavior. */
+  html.a2k-desktop-live body.a2k-desktop-management-active #unified-pages{
+    display:block!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #unified-pages > .unified-screen{
+    display:none!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #a2k-desktop-management-workspace{
+    display:block!important;
+    margin:0!important;padding:6px 0 28px!important;
+    width:100%!important;max-width:none!important;min-width:0!important;
+    color:#f5dfbb;
+  }
+  html.a2k-desktop-live body #a2k-desktop-management-workspace[hidden]{
+    display:none!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open]{
+    position:relative!important;inset:auto!important;
+    display:block!important;
+    width:100%!important;max-width:none!important;
+    height:auto!important;min-height:0!important;max-height:none!important;
+    margin:0!important;padding:10px 8px 16px!important;
+    overflow:visible!important;overscroll-behavior:auto!important;
+    border:0!important;border-radius:0!important;
+    box-shadow:none!important;
+    background:transparent!important;
+    color:#f7e4c6!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog::backdrop{
+    display:none!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog > h2{
+    font:italic 700 clamp(29px,3vw,38px)/1.2 Georgia,serif!important;
+    color:#f5deb6!important;margin:0 0 11px!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog > p{
+    font:16px/1.5 Georgia,serif!important;margin:0 0 20px!important;
+    color:#d9c4a5!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog > .management-tools:not([hidden]),
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog #atk-backup-home:not([hidden]){
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:15px!important;
+    align-content:start!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    margin:12px 0 19px!important;
+    overflow:visible!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog .management-entry{
+    min-height:112px!important;max-width:none!important;
+    padding:18px 20px!important;
+    border:1.5px solid #b7915f!important;
+    border-radius:13px!important;
+    background:linear-gradient(135deg,#3f1610,#1c0c09)!important;
+    box-shadow:inset 0 0 0 1px #dab38125,0 3px 8px #0006!important;
+    color:#f8dfb9!important;
+    font:700 clamp(17px,1.7vw,21px)/1.25 Georgia,serif!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog .management-entry:hover{
+    background:linear-gradient(135deg,#642218,#2a120e)!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog .management-entry small{
+    margin-top:7px!important;font:14px/1.4 Arial,sans-serif!important;
+    color:#e1c4a0!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog > section:not([hidden]),
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog > .management-tools:not([hidden]){
+    flex:none!important;
+    width:100%!important;max-width:none!important;
+    min-height:0!important;max-height:none!important;
+    overflow:visible!important;
+    padding-right:0!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog
+    .atk-history-footer{
+    margin-top:18px!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog
+    .atk-history-footer .management-close{
+    max-width:320px!important;margin-left:auto!important;
+    background:linear-gradient(180deg,#72251c,#50150e)!important;
+    border-color:#ba8d5b!important;color:#f8e5c7!important;
+  }
+}
+@media(min-width:1024px) and (max-width:1240px){
+  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member{
+    width:28%!important;right:1.8%!important;gap:7px!important;
+  }
+  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member button{
+    padding:4px 6px!important;gap:5px!important;font-size:12px!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog
+    .management-tools:not([hidden]){
+    gap:11px!important;
+  }
+}

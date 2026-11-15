@@ -133,6 +133,17 @@
  }
  // Mobile: called after the section moves into the existing modal.
  window.atkMyReviewsLoad=()=>load(0);
+ // The desktop accordion may be opened while the auth session is restoring.
+ // Recheck it as soon as the account becomes visible instead of leaving
+ // the stale "Sign in" message in an already-authenticated profile.
+ const profile=document.getElementById('auth-profile');
+ if(profile){
+  const retryOnSignIn=()=>{
+   if(profile.hidden||!document.querySelector('#atk-my-reviews-entry[open]'))return;
+   queueMicrotask(()=>{if(active())load(0);});
+  };
+  new MutationObserver(retryOnSignIn).observe(profile,{attributes:true,attributeFilter:['hidden']});
+ }
  // Desktop: its accordion opens inline.
  document.addEventListener('toggle',e=>{
   if(e.target?.matches?.('#atk-my-reviews-entry')&&e.target.open)load(0);
