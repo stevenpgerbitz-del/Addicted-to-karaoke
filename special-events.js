@@ -10,6 +10,119 @@
     if(text!==undefined)item.textContent=String(text);
     return item;
   };
+
+  // State and City filters replace the old Iowa-only region buckets.
+  const US_STATES=[
+    ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],
+    ['CA','California'],['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],
+    ['FL','Florida'],['GA','Georgia'],['HI','Hawaii'],['ID','Idaho'],
+    ['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],
+    ['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],
+    ['MA','Massachusetts'],['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],
+    ['MO','Missouri'],['MT','Montana'],['NE','Nebraska'],['NV','Nevada'],
+    ['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],['NY','New York'],
+    ['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+    ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],
+    ['SD','South Dakota'],['TN','Tennessee'],['TX','Texas'],['UT','Utah'],
+    ['VT','Vermont'],['VA','Virginia'],['WA','Washington'],['WV','West Virginia'],
+    ['WI','Wisconsin'],['WY','Wyoming'],['DC','District of Columbia']
+  ];
+  function syncCities(){
+    const city=byId('city-filter'),state=byId('region-filter')?.value||'';
+    if(!city)return;
+    const places=typeof sampleVenues!=='undefined'&&Array.isArray(sampleVenues)?sampleVenues:[];
+    const cities=[...new Set(places.filter(v=>!state||String(v.state||'').toUpperCase()===state)
+      .map(v=>String(v.city||'').trim()).filter(Boolean))]
+      .sort((a,b)=>a.localeCompare(b));
+    const signature=state+'|'+cities.join('|');
+    if(city.dataset.signature===signature)return;
+    const selected=city.value;
+    city.replaceChildren(node('option','','All Cities'));
+    city.options[0].value='';
+    for(const name of cities){
+      const option=node('option','',name);option.value=name;city.append(option);
+    }
+    city.value=cities.includes(selected)?selected:'';
+    city.dataset.signature=signature;
+    city.dispatchEvent(new Event('a2k-update-label'));
+  }
+  function installLocationFilters(){
+    const state=byId('region-filter');if(!state||byId('city-filter'))return;
+    const label=state.closest('label');
+    if(label?.firstChild?.nodeType===3)label.firstChild.textContent='State';
+    state.replaceChildren();
+    const all=node('option','','All States');all.value='';state.append(all);
+    for(const [code,name] of US_STATES){
+      const item=node('option','',name);item.value=code;state.append(item);
+    }
+    const cityLabel=node('label','a2k-city-filter-label','City');
+    const city=node('select');city.id='city-filter';
+    cityLabel.append(city);label.insertAdjacentElement('afterend',cityLabel);
+    state.onchange=()=>{syncCities();window.filterVenues()};
+    city.onchange=()=>window.filterVenues();
+    syncCities();
+  }
+  /* Android native option menus cannot be styled. The original selects still
+     drive search; an accessible vintage dialog replaces only their appearance. */
+  function enhanceFindSelect(select){
+    if(!select||select.dataset.a2kEnhanced==='yes')return;
+    select.dataset.a2kEnhanced='yes';
+    const title=select.closest('label')?.childNodes[0]?.textContent?.trim()||'Filter';
+    const trigger=node('button','a2k-vintage-select-trigger');
+    trigger.type='button';trigger.setAttribute('aria-haspopup','dialog');
+    trigger.setAttribute('aria-label','Choose '+title);
+    const value=node('span','a2k-vintage-select-value');
+    const arrow=node('span','a2k-vintage-select-arrow','⌄');arrow.setAttribute('aria-hidden','true');
+    trigger.append(value,arrow);
+    const update=()=>{value.textContent=select.selectedOptions[0]?.textContent||'Choose';};
+    select.addEventListener('change',update);
+    select.addEventListener('a2k-update-label',update);
+    select.insertAdjacentElement('afterend',trigger);
+    select.classList.add('a2k-native-filter-hidden');
+    select.tabIndex=-1;select.setAttribute('aria-hidden','true');
+    trigger.onclick=()=>openVintagePicker(select,title);
+    update();
+  }
+  function openVintagePicker(select,title){
+    const dialog=node('dialog','a2k-vintage-picker');
+    const shell=node('div','a2k-vintage-picker-shell');
+    const heading=node('h2','', 'Choose '+title);
+    shell.append(heading);
+    const options=[...select.options].filter(opt=>!opt.disabled);
+    const list=node('div','a2k-vintage-picker-list');
+    if(options.length>8){
+      const search=node('input','a2k-vintage-picker-search');
+      search.type='search';search.placeholder='Search '+title.toLowerCase();
+      search.setAttribute('aria-label','Search '+title.toLowerCase());
+      search.oninput=()=>{
+        const q=search.value.trim().toLowerCase();
+        for(const button of list.children)button.hidden=!button.textContent.toLowerCase().includes(q);
+      };
+      shell.append(search);
+    }
+    for(const option of options){
+      const button=node('button','a2k-vintage-picker-option',option.textContent);
+      button.type='button';button.dataset.selected=String(option.value===select.value);
+      button.setAttribute('aria-pressed',String(option.value===select.value));
+      button.onclick=()=>{
+        select.value=option.value;
+        select.dispatchEvent(new Event('change',{bubbles:true}));
+        dialog.close();
+      };
+      list.append(button);
+    }
+    shell.append(list);
+    const close=node('button','a2k-vintage-picker-close','Close');
+    close.type='button';close.onclick=()=>dialog.close();
+    shell.append(close);dialog.append(shell);document.body.append(dialog);
+    dialog.addEventListener('close',()=>dialog.remove(),{once:true});
+    dialog.showModal();
+    list.querySelector('[data-selected="true"]')?.scrollIntoView({block:'nearest'});
+  }
+  function enhanceFindFilters(){
+    for(const id of ['region-filter','city-filter','genre-filter','review-filter'])
+      enhanceFindSelect(byId(id));
+  }
   const fmt=(value,opts)=>new Intl.DateTimeFormat('en-US',Object.assign({timeZone:TIME_ZONE},opts)).format(new Date(value));
   const dayDate=value=>fmt(value,{weekday:'short',month:'short',day:'numeric',year:'numeric'});
   const time=value=>fmt(value,{hour:'numeric',minute:'2-digit',hour12:true}).replace(':00 ',' ');
@@ -44,6 +157,7 @@
       filter.append(b);
     }
     byId('results-count').insertAdjacentElement('beforebegin',filter);
+    installLocationFilters();enhanceFindFilters();
     const suggest=node('button','a2k-special-entry','＋ Submit a Special Event');
     suggest.id='a2k-special-submit-entry';suggest.type='button';
     suggest.onclick=()=>{buildSubmit();submitDialog.showModal()};
@@ -136,7 +250,9 @@
   function filterCombined(){
     const parent=byId('find-results');if(!parent)return;
     const q=(byId('venue-search')?.value||'').trim().toLowerCase();
-    const region=byId('region-filter')?.value||'';
+    syncCities();
+    const state=byId('region-filter')?.value||'';
+    const city=byId('city-filter')?.value||'';
     const genre=byId('genre-filter')?.value||'';
     const rating=Number(byId('review-filter')?.value||0);
     const now=new Date();
@@ -163,13 +279,14 @@
         ...(place?.karaokeSchedule||[]).map(slot=>slot.day),
         next?dayDate(next.startAt):''].filter(Boolean).join(' ').toLowerCase();
       const matchesText=!q||text.includes(q);
-      const matchesRegion=!region||place?.region===region;
+      const matchesState=!state||String(place?.state||'').toUpperCase()===state;
+      const matchesCity=!city||place?.city===city;
       const matchesGenre=!genre||(place?.genres||[]).includes(genre);
       const matchesRating=rating===0||(Number.isFinite(place?.rating)&&place.rating>=rating);
       // Venues added solely for one-time events are represented by their event
       // cards and can still be opened from those cards.
       card.hidden=mode==='events'||!place||place.specialEventsOnly||
-        !matchesText||!matchesRegion||!matchesGenre||!matchesRating;
+        !matchesText||!matchesState||!matchesCity||!matchesGenre||!matchesRating;
       if(!card.hidden){
         shownVenues++;
         if(!next)unscheduled++;
@@ -184,13 +301,14 @@
         place?.name,place?.city,place?.state,place?.address]
         .filter(Boolean).join(' ').toLowerCase();
       const matches=!q||corpus.includes(q);
-      const matchesRegion=!region||(place?.region===region);
+      const matchesState=!state||String(place?.state||'').toUpperCase()===state;
+      const matchesCity=!city||place?.city===city;
       const matchesGenre=!genre||(place?.genres||[]).includes(genre);
       const matchesRating=rating===0||(Number.isFinite(place?.rating)&&place.rating>=rating);
       // Already-ended events are excluded both by the database query and here,
       // in case the user leaves this page open until the event passes.
       card.hidden=mode==='venues'||new Date(event.end_at)<=now||
-        !matches||!matchesRegion||!matchesGenre||!matchesRating;
+        !matches||!matchesState||!matchesCity||!matchesGenre||!matchesRating;
       if(!card.hidden)shownEvents++;
       byCard.set(card,new Date(event.start_at).getTime());
     });
@@ -315,6 +433,7 @@
       '<label>Event title<input name="title" required maxlength="180" minlength="5" placeholder="e.g. Holiday Karaoke"></label>'+
       '<label>Venue name<input name="venue_name" required maxlength="150"></label>'+
       '<label>City<input name="city" required maxlength="100"></label>'+
+       '<label>State (two-letter code)<input name="state" required minlength="2" maxlength="2" pattern="[A-Za-z]{2}" value="IA" autocapitalize="characters" autocomplete="address-level1"></label>'+
       '<label>Street address (optional)<input name="address" maxlength="220"></label>'+
       '<label>Date<input type="date" name="day" required></label>'+
       '<label>Starts<input type="time" name="start" required></label>'+
@@ -347,7 +466,7 @@
     const payload={
       title:String(data.get('title')||'').trim(),
       venue_name:String(data.get('venue_name')||'').trim(),
-      city:String(data.get('city')||'').trim(),state:'IA',
+      city:String(data.get('city')||'').trim(),state:String(data.get('state')||'').trim().toUpperCase(),
       address:String(data.get('address')||'').trim()||null,
       start_at,end_at,
       host_name:String(data.get('host_name')||'').trim()||null,
@@ -356,6 +475,9 @@
     };
     if(!payload.title||payload.venue_name.length<2||payload.city.length<2){
       status.textContent='Please fill in the title, venue, and city.';return;
+    }
+    if(!US_STATES.some(([code])=>code===payload.state)){
+      status.textContent='Enter a valid two-letter U.S. state code.';return;
     }
     if(new Date(end_at)-new Date(start_at)>86400000){
       status.textContent='One-time events must be less than 24 hours.';return;
