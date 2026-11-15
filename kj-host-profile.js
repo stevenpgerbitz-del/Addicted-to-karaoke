@@ -210,7 +210,7 @@ async function mountRatings(hostId,venueId,demo,root){
     comment.rows=3;comment.placeholder='Share what fellow singers should know…';
     commentLabel.append(comment);form.append(commentLabel);
     form.append(element('p','a2k-kj-inline-note',demo?
-      'Founder preview only. This form does not submit a real review.':
+      'Demo preview only. This form does not submit a real review.':
       'New KJ ratings are held for moderation before appearing publicly.'));
     const buttons=element('div','a2k-kj-inline-actions');
     const cancel=element('button','','Cancel');cancel.type='button';
@@ -253,7 +253,7 @@ async function mountRatings(hostId,venueId,demo,root){
   if(demo){
     reviewCount=demoRows.length;
     score.textContent='🎤 4.5 / 5';
-    count.textContent='2 reviews · Preview';
+    count.textContent='2 sample reviews · Demo';
     eligible=true;hasMore=true;action.hidden=false;
     return;
   }
@@ -320,7 +320,7 @@ function renderCard(profile,{venueName='',day='',timeRange='',venueId=null,demo=
     if(!Number.isNaN(time.getTime()))box.append(element('p','a2k-kj-host-profile-since',
       'A2K member since '+time.toLocaleDateString('en-US',{month:'long',year:'numeric'})));
   }
-  if(demo)box.append(element('p','a2k-kj-host-profile-disclaimer','Preview visible only to the Founder.'));
+  if(demo)box.append(element('p','a2k-kj-host-profile-disclaimer','DEMO PROFILE — Example information and sample reviews only. No real member ratings are included.'));
 }
 async function openKjHostProfile(userId,venueName,day,timeRange='',venueId=null){
   const dlg=ensureDialog();
@@ -331,6 +331,21 @@ async function openKjHostProfile(userId,venueName,day,timeRange='',venueId=null)
     if(!userId || typeof authClient==='undefined' || !authClient)throw Error('Profile unavailable');
     // Direct query is subject to member_profiles RLS. Private profiles do not
     // become readable merely because a schedule links to their user ID.
+    // The sample KJ profile is tied to Bob's account in kj_review_hosts.
+    // Only published demo data is displayed here; Bob's private member
+    // profile and real review counts remain protected by their own RLS.
+    const {data:host,error:hostError}=await authClient.from('kj_review_hosts')
+      .select('user_id,stage_name,enabled').eq('user_id',userId)
+      .eq('enabled',true).maybeSingle();
+    if(hostError)throw hostError;
+    if(host?.stage_name==='DJ Copper Mic (Demo)'){
+      if(!dlg.open)return;
+      renderCard({
+        stage_name:'DJ Copper Mic (Demo)',
+        bio:'Karaoke is about making everyone feel welcome on stage. I enjoy classic rock, country, pop, and those unexpected crowd favorites. My goal is to keep the rotation fair, the music sounding great, and the energy going all night.'
+      },{venueName,day,timeRange,venueId,demo:true});
+      return;
+    }
     const {data,error}=await authClient.from('member_profiles')
       .select('user_id,stage_name,bio,avatar_path,created_at')
       .eq('user_id',userId).maybeSingle();
@@ -402,19 +417,16 @@ function founderPreview(box,venue){
   const button=element('button','a2k-kj-host-link');
   const preview=previewReviews();
   const previewScore=preview.reduce((sum,item)=>sum+reviewAverage(item),0)/preview.length;
-  const previewRating=hostLinkParts(button,'🎤 Hosted by DJ Copper Mic');
+  const previewRating=hostLinkParts(button,'🎤 DJ Copper Mic (Demo)');
   previewRating.textContent='🎤 '+previewScore.toFixed(1)+'/5';
   previewRating.title='Founder-only preview rating';
   button.type='button';
-  button.setAttribute('aria-label','View DJ Copper Mic KJ profile preview');
+  button.setAttribute('aria-label','View DJ Copper Mic demo profile linked to Bob');
   button.addEventListener('click',()=>{
-    const dlg=ensureDialog();
-    renderCard({
-      stage_name:'DJ Copper Mic',
-      bio:'Karaoke is about making everyone feel welcome on stage. I enjoy classic rock, country, pop, and those unexpected crowd favorites. My goal is to keep the rotation fair, the music sounding great, and the energy going all night.'
-    },{venueName:venue.name,day:'Saturday',
-      timeRange:saturday.querySelector('span')?.textContent?.trim()||'',venueId:venue.databaseId||null,demo:true});
-    if(!dlg.open)dlg.showModal();
+    void openKjHostProfile('ead825e0-0cf2-4404-b04b-5376dede2b84',
+      venue.name,'Saturday',
+      saturday.querySelector('span')?.textContent?.trim()||'',
+      venue.databaseId||null);
   });
   section.append(button);
   saturday.insertAdjacentElement('afterend',section);
