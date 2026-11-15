@@ -116,7 +116,15 @@ function card(r){
   inside.append(row);
  }
  if(acts.length)inside.append(el('p','mg3-muted','Actions are recorded in Activity Log. Unpublished reviews do not count toward venue ratings.'));
- details.append(inside);outer.append(details);return outer;
+ details.append(inside);outer.append(details);
+ // Keep the recoverable delete action discoverable without expanding every
+ // review card; the same confirmation, reason, role check and audit RPC apply.
+ if(acts.includes('archive')){
+   const remove=button('Soft Delete (Recoverable)',()=>confirmAction('archive',[r]),
+     'mg3-action mg3-action-archive mg3-quick-soft-delete');
+   outer.append(remove);
+ }
+ return outer;
 }
 function render(){
  if(!S.result)return;
