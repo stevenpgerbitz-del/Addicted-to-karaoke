@@ -20,7 +20,7 @@
   const match=String(time||'').match(/^([01]\d|2[0-3]):([0-5]\d)/);
   if(!match)return '';
   const hr=Number(match[1]);
-  return String(hr%12||12)+(match[2]==='00'?'':':'+match[2])+(hr<12?' AM':' PM');
+  return String(hr%12||12)+':'+match[2]+(hr<12?' AM':' PM');
  };
  const chicagoDay=()=>new Intl.DateTimeFormat('en-US',{
   weekday:'long',timeZone:'America/Chicago'
@@ -142,8 +142,8 @@
     return;
    }
    const sorted=[...candidates].sort((a,b)=>{
-    const aRating=Number.isFinite(Number(a.rating))?Number(a.rating):-1;
-    const bRating=Number.isFinite(Number(b.rating))?Number(b.rating):-1;
+    const aRating=a.rating!==null&&a.rating!==undefined&&Number.isFinite(Number(a.rating))?Number(a.rating):-1;
+    const bRating=b.rating!==null&&b.rating!==undefined&&Number.isFinite(Number(b.rating))?Number(b.rating):-1;
     return bRating-aRating||String(a.name).localeCompare(String(b.name));
    });
    const featured=sorted[0];
@@ -156,7 +156,7 @@
    info.append(create('strong','',featured.name));
    info.append(create('small','',[featured.city,featured.state].filter(Boolean).join(', ')));
    if(featured.tagline)info.append(create('em','',featured.tagline));
-   if(Number.isFinite(Number(featured.rating))){
+   if(featured.rating!==null&&featured.rating!==undefined&&Number.isFinite(Number(featured.rating))){
     info.append(create('small','a2k-b-rating','★ '+Number(featured.rating).toFixed(1)+' / 5'));
    }else info.append(create('small','a2k-b-rating','Not rated yet'));
    host.append(img,info);
@@ -185,6 +185,8 @@
   void loadStats();
   void loadFeatured();
   void loadTonight();
+  // Venue cover images arrive asynchronously after the public listing loads.
+  window.setTimeout(()=>{if(root()&&!root().hidden)void loadFeatured()},1600);
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
  else init();
