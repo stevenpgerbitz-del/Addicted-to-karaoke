@@ -553,15 +553,54 @@ border:1px solid #ac8b61;border-radius:10px;background:#492119;color:#e8d5b3;fon
 }
 
 
-/* Build 205 — true uniform list cards.
-   The grid sizes every visible venue AND event row to the tallest card's
-   natural content height. No hardcoded card heights or clipped long titles. */
+/* Build 206 — compact, genuinely uniform venue and special-event cards.
+   Do not let one long card stretch every other row (old grid-auto-rows:1fr).
+   Two-line title limit keeps names identifiable; tapping reveals full details. */
 #find-screen.atk-vintage #find-results{
- grid-auto-rows:1fr!important;
+ grid-auto-rows:100px!important;
  align-items:stretch!important;
 }
 #find-screen.atk-vintage #find-results > :is(.venue-teaser,.a2k-event-card):not([hidden]){
  box-sizing:border-box!important;
- height:auto!important;
+ height:100px!important;
+ min-height:100px!important;
+ max-height:100px!important;
  align-self:stretch!important;
+ overflow:hidden!important;
+}
+#find-screen.atk-vintage #find-results :is(.teaser-copy,.a2k-event-card-copy){
+ min-height:0!important;
+ gap:2px!important;
+}
+#find-screen.atk-vintage #find-results :is(.teaser-copy,.a2k-event-card-copy) > b{
+ font-size:clamp(16px,4.2vw,18px)!important;
+ line-height:1.08!important;
+ display:-webkit-box!important;
+ -webkit-box-orient:vertical!important;
+ -webkit-line-clamp:2!important;
+ line-clamp:2;
+ overflow:hidden!important;
+}
+#find-screen.atk-vintage #find-results :is(.teaser-copy,.a2k-event-card-copy) > small,
+#find-screen.atk-vintage #find-results :is(.teaser-copy,.a2k-event-card-copy) > span:not(.a2k-next-session):not(.a2k-event-tag){
+ font-size:11px!important;
+ line-height:1.15!important;
+}
+#find-screen.atk-vintage #find-results .venue-teaser .teaser-copy .a2k-next-session{
+ font-size:11px!important;
+ line-height:1.18!important;
+ margin-top:2px!important;
+ display:-webkit-box!important;
+ -webkit-box-orient:vertical!important;
+ -webkit-line-clamp:2!important;
+ line-clamp:2;
+ overflow:hidden!important;
+}
+#find-screen.atk-vintage #find-results .a2k-event-card-copy .a2k-event-tag{
+ font-size:9px!important;
+ line-height:1.12!important;
+ letter-spacing:.65px!important;
+}
+#find-screen.atk-vintage #find-results .a2k-event-card .a2k-event-date-tile{
+ height:65px!important;
 }
