@@ -551,3 +551,17 @@ border:1px solid #ac8b61;border-radius:10px;background:#492119;color:#e8d5b3;fon
 #find-screen.atk-vintage #find-results .a2k-event-card[hidden]{
  display:none!important;
 }
+
+
+/* Build 205 — true uniform list cards.
+   The grid sizes every visible venue AND event row to the tallest card's
+   natural content height. No hardcoded card heights or clipped long titles. */
+#find-screen.atk-vintage #find-results{
+ grid-auto-rows:1fr!important;
+ align-items:stretch!important;
+}
+#find-screen.atk-vintage #find-results > :is(.venue-teaser,.a2k-event-card):not([hidden]){
+ box-sizing:border-box!important;
+ height:auto!important;
+ align-self:stretch!important;
+}
