@@ -1419,3 +1419,91 @@
    grid-template-columns:1fr!important;
  }
 }
+
+
+/* Members and public profiles share the desktop center panel. No private data. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile{
+   display:flex;flex-direction:column;align-items:stretch;
+   gap:9px!important;
+   padding:17px!important;min-height:160px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile-head{
+   display:flex;gap:13px;align-items:center;min-width:0;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-avatar{
+   display:grid;place-items:center;flex:none;
+   width:60px;height:60px;border-radius:50%;
+   border:2px solid #b38c59;background:linear-gradient(#652a20,#3c150f);
+   color:#ffe6b8;font:700 26px Georgia,serif;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-avatar-large{
+   width:102px;height:102px;font-size:46px;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile-head h3{
+   margin:0 0 6px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-summary{
+   margin:0!important;max-height:3em;overflow:hidden;
+   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+   line-height:1.5!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile .a2k-d-directory-action{
+   margin-top:auto!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-back{
+   display:inline-flex;justify-content:center;align-items:center;
+   min-height:41px;width:auto;max-width:240px;
+   margin:0 0 19px;padding:9px 15px;
+   border:1px solid #c49b68;border-radius:9px;
+   background:linear-gradient(#5c2018,#3c100e);
+   color:#f6dcba;font:700 15px Georgia,serif;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-hero{
+   display:flex;align-items:center;gap:23px;
+   padding:23px;border:1.5px solid #c29a66;border-radius:15px;
+   background:linear-gradient(112deg,#4c1710,#1c0d0b);
+   box-shadow:0 4px 12px #0008;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-hero h1{
+   margin:0 0 9px!important;
+   font:italic 700 clamp(28px,2.8vw,40px)/1.15 Georgia,serif!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-hero p{
+   margin:7px 0!important;
+   font:15px/1.5 Georgia,serif!important;color:#e6cdb1!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-section{
+   margin:17px 0 0;padding:22px;
+   border:1.5px solid #a98758;border-radius:14px;
+   background:linear-gradient(125deg,#2b1510,#160b09);
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-section h2{
+   margin:0 0 14px!important;
+   font:700 25px Georgia,serif!important;
+   color:#f5d8aa!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-badges{
+   display:flex;flex-wrap:wrap;gap:9px;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-badge{
+   display:inline-block;
+   padding:9px 13px;border:1px solid #c49a5e;border-radius:20px;
+   background:linear-gradient(#40200f,#1e0d08);
+   font:700 14px Georgia,serif;color:#f3d395;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-songs{
+   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-song{
+   margin:0!important;padding:12px!important;
+   border:1px solid #7e5e3f;border-radius:8px;
+   background:#21120e;color:#f4debd;
+   font:14px/1.4 Georgia,serif!important;
+ }
+}
+@media(min-width:1024px) and (max-width:1230px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-songs{
+   grid-template-columns:1fr!important;
+ }
+}
