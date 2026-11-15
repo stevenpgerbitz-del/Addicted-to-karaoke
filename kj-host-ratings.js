@@ -1,4 +1,4 @@
-/* A2K build 193: verified KJ ratings, not venue reviews. */
+/* A2K build 194: verified KJ ratings, not venue reviews. */
 (function(){
 'use strict';
 var CATEGORIES=[
@@ -70,6 +70,7 @@ function makeReviewDialog(){
  reviewDialog.querySelector('#a2k-kj-write').onclick=()=>{state.mode='compose';state.draft={};renderCompose();updateActionBar()};
  reviewDialog.querySelector('#a2k-kj-cancel-form').onclick=()=>{state.mode='list';reviewDialog.querySelector('#a2k-kj-feedback').textContent='';updateActionBar()};
  reviewDialog.querySelector('#a2k-kj-submit').onclick=submit;
+ reviewDialog.querySelector('#a2k-kj-compose').addEventListener('submit',e=>{e.preventDefault();submit()});
  reviewDialog.querySelector('#a2k-kj-sort').onchange=e=>{state.sort=e.target.value;renderReviews()};
  reviewDialog.addEventListener('cancel',e=>{if(state.busy){e.preventDefault()}});
 }
@@ -273,14 +274,20 @@ function makeModerationDialog(){
  document.body.append(moderationDialog);
  moderationDialog.querySelector('#a2k-kj-moderation-close').onclick=()=>moderationDialog.close();
  moderationDialog.querySelector('#a2k-kj-moderation-filter').onchange=refreshModeration;
- var management=document.querySelector('#management-dialog .management-tools');
- if(management){
-  var button=el('button','management-entry','🎤 KJ Review Moderation');
-  button.id='a2k-kj-management-entry';button.type='button';
-  var small=el('small','', 'Approve, reject, or hide reviews of verified KJ hosts');
-  button.append(small);button.onclick=moderationOpen;
-  management.append(button);
- }
+
+}
+function ensureKjReviewManagementEntry(){
+ var panel=document.getElementById('management-reviews');
+ if(!panel || document.getElementById('a2k-kj-management-entry'))return;
+ var button=el('button','a2k-kj-mini-button a2k-kj-review-switch','🎤 Manage KJ Host Reviews');
+ button.id='a2k-kj-management-entry';button.type='button';button.hidden=true;
+ button.onclick=moderationOpen;
+ var header=panel.querySelector('.mg3-heading');
+ if(header)header.insertAdjacentElement('afterend',button);
+ else panel.prepend(button);
+ db()?.rpc('is_platform_founder').then(result=>{
+   button.hidden=result?.error || result?.data!==true;
+ }).catch(()=>{button.hidden=true});
 }
 async function moderationOpen(){
  if(!db()||!user())return;
@@ -331,6 +338,15 @@ async function refreshModeration(){
 function init(){
  if(!document.querySelector('#venue-screen .actions')||!document.getElementById('management-dialog'))return;
  makeReviewDialog();makeModerationDialog();
+ if(typeof window.managementReviewsOpen==='function'){
+  var originalReviewManagementOpen=window.managementReviewsOpen;
+  window.managementReviewsOpen=function(){
+   var result=originalReviewManagementOpen.apply(this,arguments);
+   ensureKjReviewManagementEntry();
+   return result;
+  };
+ }
+
  if(typeof window.openVenue==='function'){
   var originalOpen=window.openVenue;
   window.openVenue=function(){
