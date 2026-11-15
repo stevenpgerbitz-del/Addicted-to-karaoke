@@ -25,7 +25,7 @@ background:#251712;border-bottom:1px solid #a67a50}
 #viewer-header button{width:auto;min-height:35px;padding:6px 11px;font-size:13px}
 #viewer-header .preview-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
 #viewer-header span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:7px}
-#toggle-header{background:linear-gradient(#e9d1a6,#c4a176);color:#482019;border-color:#f3ddb8}
+
 @media(max-width:440px){#viewer-header{padding:5px 8px}#viewer-header span{font-size:11px}#viewer-header button{padding:6px 8px;font-size:12px}}
 body.in-preview main{display:none}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
@@ -34,12 +34,12 @@ body.in-preview main{display:none}
 <body>
 <main>
 <h1>A2K Desktop Design</h1>
-<p>Compare the original with a seamless vintage desktop header before we change the main website. The approved phone and tablet layouts remain unchanged.</p>
+<p>Inspect the desktop design built from the original A2K lounge reference, with live venue and community data. Phone and tablet layouts are unchanged.</p>
 <p>For the best experience, open A2K on your laptop or desktop. You can also inspect the wide-screen version here on your phone.</p>
-<button id="show-preview" type="button">Preview seamless desktop header</button>
+<button id="show-preview" type="button">View matching desktop design</button>
 <a href="./#home">Open normal A2K site</a>
 </main>
-<div id="viewer-header"><span>Desktop Header · Swipe to inspect</span><div class="preview-actions"><button type="button" id="toggle-header" aria-pressed="true">Original</button><button type="button" id="close-preview">Close</button></div></div>
+<div id="viewer-header"><span>A2K Desktop · Swipe to inspect</span><div class="preview-actions"><button type="button" id="close-preview">Close</button></div></div>
 <div id="viewer"><iframe title="Live A2K desktop layout" loading="lazy" src="about:blank"></iframe></div>
 <script>
 (function(){
@@ -49,72 +49,9 @@ body.in-preview main{display:none}
  const viewer=document.getElementById('viewer');
  const bar=document.getElementById('viewer-header');
  const frame=viewer.querySelector('iframe');
- let refined=true;
- const headerRefinement=`
- @media(min-width:1024px){
-   /* Single, continuous vintage fabric backdrop across the full header. */
-   html.a2k-desktop-live #a2k-desktop-header{
-     height:194px!important;
-     background:#190c09!important;
-     background-image:linear-gradient(to bottom,#110807 0%,#2c130f 48%,#1b0c09 82%,#100807 100%)!important;
-     background-size:100% 100%!important;
-     background-repeat:no-repeat!important;
-     border-bottom:2px solid #a98457!important;
-     box-shadow:inset 0 1px rgba(218,174,111,.24),inset 0 -8px 17px rgba(0,0,0,.43)!important;
-   }
-   html.a2k-desktop-live #a2k-desktop-header::before{
-     content:'';pointer-events:none;position:absolute;inset:0;z-index:0;
-     background:
-       radial-gradient(ellipse 350px 135px at 50% 58%,rgba(118,36,21,.29),transparent 100%),
-       repeating-linear-gradient(90deg,transparent 0 84px,rgba(214,157,104,.012) 84px 85px,transparent 85px 168px);
-   }
-   html.a2k-desktop-live #a2k-desktop-header::after{
-     content:'';pointer-events:none;position:absolute;left:0;right:0;bottom:0;height:3px;z-index:3;
-     background:linear-gradient(to bottom,rgba(243,211,164,.65),rgba(106,66,36,.54));
-   }
-   html.a2k-desktop-live .a2k-desktop-brand{
-     width:540px!important;max-width:calc(100% - 80px)!important;
-     height:194px!important;z-index:1!important;overflow:visible!important;
-     background:transparent!important;
-   }
-   html.a2k-desktop-live .a2k-desktop-brand img{
-     display:block!important;width:auto!important;height:100%!important;
-     max-width:100%!important;max-height:100%!important;object-fit:contain!important;
-     transform:none!important;
-     mix-blend-mode:screen!important;
-     filter:contrast(1.06) saturate(.93) brightness(.98)!important;
-     -webkit-mask-image:radial-gradient(ellipse 76% 86% at 50% 50%,#000 57%,transparent 100%)!important;
-     mask-image:radial-gradient(ellipse 76% 86% at 50% 50%,#000 57%,transparent 100%)!important;
-   }
-   html.a2k-desktop-live .a2k-desktop-member{display:none!important}
-   html.a2k-desktop-live #a2k-desktop-sidebar{min-height:calc(100vh - 194px)!important}
-   html.a2k-desktop-live body #unified-pages,
-   html.a2k-desktop-live body:has(#home-screen:not([hidden])) #unified-pages{
-     min-height:calc(100vh - 194px)!important;padding-top:15px!important;
-   }
- }
- `;
- function applyHeaderPreview(){
-   const doc=frame.contentDocument;
-   if(!doc||!frame.src.includes('index.html'))return;
-   let style=doc.getElementById('a2k-header-refinement-preview');
-   if(!style){
-     style=doc.createElement('style');style.id='a2k-header-refinement-preview';
-     style.textContent=headerRefinement;doc.head.append(style);
-   }
-   style.disabled=!refined;
- }
- frame.addEventListener('load',applyHeaderPreview);
- const toggle=document.getElementById('toggle-header');
- toggle.addEventListener('click',()=>{
-   refined=!refined;
-   toggle.textContent=refined?'Original':'Refined';
-   toggle.setAttribute('aria-pressed',String(refined));
-   applyHeaderPreview();
- });
 
  document.getElementById('show-preview').onclick=()=>{
-   frame.src='./index.html?a2k_desktop_preview=1#home';
+   frame.src='./index.html?a2k_desktop_preview=1&v=214#home';
    document.body.classList.add('in-preview');
    viewer.classList.add('open');
    bar.classList.add('open');
