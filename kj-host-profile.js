@@ -1,4 +1,4 @@
-/* A2K build 210: profile-integrated KJ ratings, verified reviews and inline moderation-ready review form.
+/* A2K build 211: show approved host ratings beside schedule names, plus profile-integrated reviews.
    Temporary Founder-only UI preview does not write any hosting data. */
 (function(){
 'use strict';
@@ -346,6 +346,48 @@ async function openKjHostProfile(userId,venueName,day,timeRange='',venueId=null)
     console.warn('KJ profile card unavailable',error);
   }
 }
+
+/* Decorates links with approved KJ review scores; no separate venue ratings. */
+const kjVenueScoreCache=new Map();
+function venueScore(hostId){
+  if(!kjVenueScoreCache.has(hostId)){
+    const request=(async()=>{
+      if(typeof authClient==='undefined'||!authClient)return null;
+      const result=await authClient.from('kj_review_scores')
+        .select('review_count,average_score').eq('host_user_id',hostId).maybeSingle();
+      if(result.error)throw result.error;
+      return result.data||{review_count:0,average_score:null};
+    })();
+    kjVenueScoreCache.set(hostId,request);
+    request.catch(()=>kjVenueScoreCache.delete(hostId));
+  }
+  return kjVenueScoreCache.get(hostId);
+}
+function hostLinkParts(button,label){
+  button.replaceChildren();
+  const name=element('span','a2k-kj-host-link-name',label);
+  const rating=element('span','a2k-kj-host-link-score');
+  button.append(name,rating);
+  return rating;
+}
+async function decorateKjVenueLink(button,hostId,label){
+  const rating=hostLinkParts(button,label);
+  if(!hostId)return;
+  try{
+    const score=await venueScore(hostId);
+    if(!button.isConnected||!rating.isConnected||!score)return;
+    const count=Number(score.review_count)||0;
+    const average=Number(score.average_score);
+    rating.textContent=count&&Number.isFinite(average)?
+      '🎤 '+average.toFixed(1)+'/5' : 'No ratings yet';
+    rating.title=count?
+      count+' approved KJ review'+(count===1?'':'s'):
+      'No approved KJ reviews yet';
+  }catch(error){
+    console.warn('KJ venue rating unavailable',error);
+    // Do not invent ratings if the public scores endpoint is temporarily down.
+  }
+}
 function founderPreview(box,venue){
   // Temporary local preview only: Founder-only, no database user, no public
   // hosting relationship. Remove this function once the visual is approved.
@@ -357,7 +399,12 @@ function founderPreview(box,venue){
     .find(line=>line.querySelector('b')?.textContent==='Saturday');
   if(!saturday)return;
   const section=element('div','a2k-kj-founder-preview');
-  const button=element('button','a2k-kj-host-link','🎤 Hosted by DJ Copper Mic');
+  const button=element('button','a2k-kj-host-link');
+  const preview=previewReviews();
+  const previewScore=preview.reduce((sum,item)=>sum+reviewAverage(item),0)/preview.length;
+  const previewRating=hostLinkParts(button,'🎤 Hosted by DJ Copper Mic');
+  previewRating.textContent='🎤 '+previewScore.toFixed(1)+'/5';
+  previewRating.title='Founder-only preview rating';
   button.type='button';
   button.setAttribute('aria-label','View DJ Copper Mic KJ profile preview');
   button.addEventListener('click',()=>{
@@ -372,6 +419,7 @@ function founderPreview(box,venue){
   section.append(button);
   saturday.insertAdjacentElement('afterend',section);
 }
+window.a2kDecorateKjVenueLink=decorateKjVenueLink;
 window.a2kOpenKjHostProfile=openKjHostProfile;
 window.a2kMountKjHostPreview=founderPreview;
 })();
