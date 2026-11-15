@@ -138,7 +138,7 @@ a{color:inherit}
  'html.a2k-desktop-mode body #venue-screen{max-width:1020px!important}',
  'html.a2k-desktop-mode body :is(dialog,.management-dialog,.member-dialog){max-width:min(92vw,690px)!important}',
  '@media(max-width:850px){html.a2k-desktop-mode body #home-screen .a2k-b-home{grid-template-columns:1fr!important}html.a2k-desktop-mode body #home-screen .a2k-b-section{grid-column:1!important}html.a2k-desktop-mode body #find-screen.atk-vintage #find-results{grid-template-columns:1fr!important}}'
- ].join('\\n');
+ ].join('\n');
  function activePage(page){
   const key=Object.prototype.hasOwnProperty.call(labels,page)?page:(page==='venue'?'find':'home');
   buttons.forEach(b=>{if(b.dataset.page===key)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
