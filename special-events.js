@@ -1,4 +1,4 @@
-/* A2K 195 — upcoming one-time karaoke events, integrated with Find Karaoke */
+/* A2K 198 — upcoming one-time karaoke events, integrated with Find Karaoke */
 (function () {
   'use strict';
   const TIME_ZONE='America/Chicago';
@@ -79,36 +79,129 @@
     if(typeof window.filterVenues==='function')window.filterVenues();
     renderVenueEvents();
   }
+  // Next upcoming occurrence of each published weekly schedule.
+  // Use Iowa local calendar days and actual timestamps, including after-midnight
+  // finishes, instead of sorting by weekday text or venue name.
+  const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const nextCache={minute:-1,byId:new Map()};
+  function chicagoDateKey(when){
+    const parts=new Intl.DateTimeFormat('en-US',{
+      timeZone:TIME_ZONE,year:'numeric',month:'2-digit',day:'2-digit'
+    }).formatToParts(when);
+    const part=type=>parts.find(p=>p.type===type)?.value;
+    return part('year')+'-'+part('month')+'-'+part('day');
+  }
+  function addDays(day,offset){
+    const d=new Date(day+'T12:00:00Z');
+    d.setUTCDate(d.getUTCDate()+offset);
+    return d.toISOString().slice(0,10);
+  }
+  function nextKaraoke(venueItem,now){
+    const schedule=Array.isArray(venueItem?.karaokeSchedule)?venueItem.karaokeSchedule:[];
+    if(!schedule.length || venueItem.specialEventsOnly)return null;
+    const currentMinute=Math.floor(now.getTime()/60000);
+    if(nextCache.minute!==currentMinute){
+      nextCache.minute=currentMinute;nextCache.byId.clear();
+    }
+    if(nextCache.byId.has(venueItem.id))return nextCache.byId.get(venueItem.id);
+    const today=chicagoDateKey(now);
+    let next=null;
+    for(let offset=-1;offset<=7;offset++){
+      const date=addDays(today,offset);
+      const weekday=DAY_NAMES[new Date(date+'T12:00:00Z').getUTCDay()];
+      for(const slot of schedule){
+        if(String(slot?.day||'').toLowerCase()!==weekday.toLowerCase())continue;
+        const start=String(slot.start||''),end=String(slot.end||'');
+        if(!/^\d{2}:\d{2}$/.test(start)||!/^\d{2}:\d{2}$/.test(end)||start===end)continue;
+        let startAt,endAt;
+        try{
+          startAt=new Date(toIso(date,start));
+          endAt=new Date(toIso(end<=start?addDays(date,1):date,end));
+        }catch(_){continue}
+        if(endAt<=now||endAt<=startAt)continue;
+        if(!next||startAt<next.startAt)next={startAt,endAt,ongoing:startAt<=now};
+      }
+    }
+    nextCache.byId.set(venueItem.id,next);
+    return next;
+  }
+  function whenLabel(session){
+    if(!session)return 'Karaoke times not confirmed';
+    const day=datePart=>fmt(datePart,{weekday:'short',month:'short',day:'numeric'});
+    const endsNextDay=chicagoDateKey(session.startAt)!==chicagoDateKey(session.endAt);
+    return (session.ongoing?'🎤 Happening now · ':'🎤 Next: ')+
+      day(session.startAt)+' · '+time(session.startAt)+'–'+
+      (endsNextDay?'next day ':'')+time(session.endAt);
+  }
   function filterCombined(){
     const parent=byId('find-results');if(!parent)return;
     const q=(byId('venue-search')?.value||'').trim().toLowerCase();
     const region=byId('region-filter')?.value||'';
     const genre=byId('genre-filter')?.value||'';
     const rating=Number(byId('review-filter')?.value||0);
-    let shownVenues=0,shownEvents=0;
+    const now=new Date();
+    let shownVenues=0,shownEvents=0,unscheduled=0;
+    const byCard=new Map();
     parent.querySelectorAll('.venue-teaser').forEach(card=>{
-      // A venue added solely to host a dated event is represented by its event
-      // card, not a second permanent "weekly karaoke" venue card.
-      const item=(typeof sampleVenues!=='undefined')?sampleVenues.find(v=>v.id===card.dataset.venue):null;
-      if(mode==='events'||item?.specialEventsOnly)card.hidden=true;
-      if(!card.hidden)shownVenues++;
+      const place=typeof sampleVenues!=='undefined'?
+        sampleVenues.find(v=>v.id===card.dataset.venue):null;
+      const next=place?nextKaraoke(place,now):null;
+      const label=card.querySelector('.teaser-copy');
+      if(place&&label){
+        let nextText=label.querySelector('.a2k-next-session');
+        if(!nextText){
+          nextText=node('span','a2k-next-session');
+          label.append(nextText);
+        }
+        nextText.textContent=whenLabel(next)+
+          (next&&place.publication_status==='under_review'?' · Schedule under review':'');
+      }
+      // The original venue filters already applied search, region, genre and rating.
+      // "Special event only" venues appear via their dated event cards instead.
+      if(mode==='events'||place?.specialEventsOnly)card.hidden=true;
+      if(!card.hidden){
+        shownVenues++;
+        if(!next)unscheduled++;
+      }
+      byCard.set(card,next?next.startAt.getTime():Infinity);
     });
     parent.querySelectorAll('.a2k-event-card').forEach(card=>{
       const event=rows.find(item=>item.id===card.dataset.eventId);
       const place=event&&venue(event);
       if(!event){card.hidden=true;return}
-      const corpus=[event.title,event.description,event.host_name,place?.name,place?.city,place?.state,place?.address]
+      const corpus=[event.title,event.description,event.host_name,
+        place?.name,place?.city,place?.state,place?.address]
         .filter(Boolean).join(' ').toLowerCase();
       const matches=!q||corpus.includes(q);
       const matchesRegion=!region||(place?.region===region);
       const matchesGenre=!genre||(place?.genres||[]).includes(genre);
       const matchesRating=rating===0||(Number.isFinite(place?.rating)&&place.rating>=rating);
-      card.hidden=mode==='venues'||!matches||!matchesRegion||!matchesGenre||!matchesRating;
+      // Already-ended events are excluded both by the database query and here,
+      // in case the user leaves this page open until the event passes.
+      card.hidden=mode==='venues'||new Date(event.end_at)<=now||
+        !matches||!matchesRegion||!matchesGenre||!matchesRating;
       if(!card.hidden)shownEvents++;
+      byCard.set(card,new Date(event.start_at).getTime());
     });
+    // Every visible result is in one chronological list: ongoing sessions first,
+    // then the soonest weekly show or one-time event. Unscheduled venues come last.
+    // Sorting DOM nodes retains their existing click, keyboard and profile handlers.
+    const cards=Array.from(parent.querySelectorAll('.venue-teaser, .a2k-event-card'));
+    cards.sort((a,b)=>{
+      const aa=byCard.get(a)??Infinity,bb=byCard.get(b)??Infinity;
+      if(aa!==bb)return aa-bb;
+      return a.textContent.localeCompare(b.textContent);
+    });
+    parent.append(...cards);
     byId('no-results').hidden=shownVenues+shownEvents>0;
     const count=byId('results-count');
-    if(count)count.textContent='Showing '+shownVenues+' venues · '+shownEvents+' upcoming events';
+    if(count){
+      count.textContent=
+        (mode==='events'?'Upcoming special events: '+shownEvents:
+         mode==='venues'?'Showing '+shownVenues+' venues by next karaoke date':
+         'Coming up: '+(shownVenues-unscheduled+shownEvents)+' scheduled nights')+
+         (unscheduled?' · '+unscheduled+' venue'+(unscheduled===1?'':'s')+' without confirmed times':'');
+    }
   }
   async function refresh(){
     if(busy)return;
