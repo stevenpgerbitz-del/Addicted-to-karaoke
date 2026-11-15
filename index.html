@@ -2192,7 +2192,8 @@ async function memberLoadBadges(id){
   'founder','super_admin','admin','moderator',
   'review_1','review_25','review_75','review_100','founding_kj',
   'member_10','member_100','member_1000',
-  'venue_1','venue_10','venue_25','venue_100'
+  'venue_1','venue_10','venue_25','venue_100',
+  'song_1','song_25','song_75','song_100'
  ]);
  const rows=(data||[]).sort((a,b)=>
   (a.profile_badge_types?.sort_order??100)-(b.profile_badge_types?.sort_order??100));
@@ -2243,7 +2244,7 @@ async function memberLoadBadges(id){
   card.append(image,name,desc,earned);
   awards.append(card);
  }
- if(!achievements)awards.textContent='No achievements earned yet. Your first approved review or published venue contribution will appear here.';
+ if(!achievements)awards.textContent='No achievements earned yet. Add your first song, publish a venue contribution, or write an approved review to start collecting.';
 }
 let profileActiveSection=null;
 function profileCloseSection(){
@@ -2338,7 +2339,7 @@ if(!confirm('Delete "'+song.title+' — '+song.artist+'" from your song library?
 const r=await authClient.from('karaoke_songs').delete().eq('id',id).eq('user_id',authUser.id).select('id');
 if(r.error){alert('Could not delete song: '+r.error.message);return}
 if(!r.data?.length){alert('Song was not deleted. Please refresh and try again.');return}
-memberSongs=memberSongs.filter(item=>item.id!==id);memberRender();
+memberSongs=memberSongs.filter(item=>item.id!==id);memberRender();await memberLoadBadges(authUser.id);
 }
 function memberSearchSongs(value){memberSongQuery=value;const field=document.getElementById('member-song-search');const start=field?.selectionStart;memberRender();const updated=document.getElementById('member-song-search');if(updated){updated.focus();try{updated.setSelectionRange(start,start)}catch(e){}}}
 
@@ -2455,7 +2456,7 @@ async function memberSubmit(e){e.preventDefault();const data=new FormData(e.targ
  if(r.error)throw r.error;
  memberProfile.bio=bio;
  document.getElementById('member-bio').textContent=bio||'Tell the karaoke community about yourself!';
- }else{const payload={user_id:authUser.id,title:String(data.get('title')).trim(),artist:String(data.get('artist')).trim(),key_change:Number(data.get('key_change')),tempo_change:Number(data.get('tempo_change')),list_type:String(data.get('list_type')),favorite:data.has('favorite'),notes:String(data.get('notes')).trim()};if(!payload.title||!payload.artist)throw Error('Title and artist are required.');if(memberEditing.type==='song'&&memberSongStep===1)throw Error('Please continue to Step 2.');if(songLookupAlreadySaved(payload.title,payload.artist))throw Error('Already in My Songs. Edit the existing song instead.');let q=memberEditing.id?authClient.from('karaoke_songs').update(payload).eq('id',memberEditing.id).eq('user_id',authUser.id):authClient.from('karaoke_songs').insert(payload);const r=await q;if(r.error)throw r.error;const reload=await authClient.from('karaoke_songs').select('*').eq('user_id',authUser.id).order('created_at',{ascending:false});if(reload.error)throw reload.error;memberSongs=reload.data||[];memberRender()}document.getElementById('member-dialog').close()}catch(x){err.textContent=x.message||'Could not save changes.'}}
+ }else{const payload={user_id:authUser.id,title:String(data.get('title')).trim(),artist:String(data.get('artist')).trim(),key_change:Number(data.get('key_change')),tempo_change:Number(data.get('tempo_change')),list_type:String(data.get('list_type')),favorite:data.has('favorite'),notes:String(data.get('notes')).trim()};if(!payload.title||!payload.artist)throw Error('Title and artist are required.');if(memberEditing.type==='song'&&memberSongStep===1)throw Error('Please continue to Step 2.');if(songLookupAlreadySaved(payload.title,payload.artist))throw Error('Already in My Songs. Edit the existing song instead.');let q=memberEditing.id?authClient.from('karaoke_songs').update(payload).eq('id',memberEditing.id).eq('user_id',authUser.id):authClient.from('karaoke_songs').insert(payload);const r=await q;if(r.error)throw r.error;const reload=await authClient.from('karaoke_songs').select('*').eq('user_id',authUser.id).order('created_at',{ascending:false});if(reload.error)throw reload.error;memberSongs=reload.data||[];memberRender();await memberLoadBadges(authUser.id)}document.getElementById('member-dialog').close()}catch(x){err.textContent=x.message||'Could not save changes.'}}
 /* Changes stay local until Save Changes is pressed. */
 let memberPrivacySaving=false;
 const memberVisibilityLabels={public:'Public',members:'Members Only',private:'Private'};
@@ -3799,7 +3800,7 @@ async function atkVenuePhotosRender(){
  }catch(error){status.textContent='Could not load venue photos: '+(error.message||'Please try again.')}
 }
 
-const SITE_BUILD_VERSION="2026.11.14-190";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=183"></script><script src="venue-phone.js?v=130"></script><script src="venue-management-v2.js?v=131"></script><script src="venue-photos-v2.js?v=149"></script><script src="user-management-v2.js?v=134"></script><script src="review-experience.js?v=147"></script><script src="review-privileges-management.js?v=140"></script><script src="member-session-notices.js?v=141"></script><script src="review-notification-center.js?v=177"></script><script src="review-reporting.js?v=142"></script><script src="review-management-v3.js?v=161"></script><script src="venue-review-filters.js?v=148"></script><script src="venue-claims.js?v=153"></script><script src="venue-claim-admin.js?v=151"></script><script src="venue-claim-notifications.js?v=152"></script><script src="venue-team.js?v=159"></script><script src="venue-owner-dashboard.js?v=159"></script><script src="google-direct-signin.js?v=188"></script><script src="profile-my-reviews.js?v=179"></script><script src="home-option-b.js?v=184"></script><script src="guest-venue-submit.js?v=183"></script><script src="founder-test-reset.js?v=189"></script><dialog id="atk-suggest-venue-dialog" aria-labelledby="atk-suggest-venue-title">
+const SITE_BUILD_VERSION="2026.11.14-191";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=183"></script><script src="venue-phone.js?v=130"></script><script src="venue-management-v2.js?v=131"></script><script src="venue-photos-v2.js?v=149"></script><script src="user-management-v2.js?v=134"></script><script src="review-experience.js?v=147"></script><script src="review-privileges-management.js?v=140"></script><script src="member-session-notices.js?v=141"></script><script src="review-notification-center.js?v=177"></script><script src="review-reporting.js?v=142"></script><script src="review-management-v3.js?v=161"></script><script src="venue-review-filters.js?v=148"></script><script src="venue-claims.js?v=153"></script><script src="venue-claim-admin.js?v=151"></script><script src="venue-claim-notifications.js?v=152"></script><script src="venue-team.js?v=159"></script><script src="venue-owner-dashboard.js?v=159"></script><script src="google-direct-signin.js?v=188"></script><script src="profile-my-reviews.js?v=179"></script><script src="home-option-b.js?v=184"></script><script src="guest-venue-submit.js?v=183"></script><script src="founder-test-reset.js?v=189"></script><dialog id="atk-suggest-venue-dialog" aria-labelledby="atk-suggest-venue-title">
  <form id="atk-suggest-venue-form" class="atk-suggest-venue-form">
   <div class="atk-suggest-venue-body">
    <h2 id="atk-suggest-venue-title">Suggest a Karaoke Venue</h2>
