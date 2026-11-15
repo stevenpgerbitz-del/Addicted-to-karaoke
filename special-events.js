@@ -156,9 +156,20 @@
         nextText.textContent=whenLabel(next)+
           (next&&place.publication_status==='under_review'?' · Schedule under review':'');
       }
-      // The original venue filters already applied search, region, genre and rating.
-      // "Special event only" venues appear via their dated event cards instead.
-      if(mode==='events'||place?.specialEventsOnly)card.hidden=true;
+      // Search applies to dates and weekdays as well as venue details.
+      // All existing region, genre and review filters are preserved.
+      const text=[place?.name,place?.city,place?.state,place?.address,place?.region,
+        ...(place?.genres||[]),
+        ...(place?.karaokeSchedule||[]).map(slot=>slot.day),
+        next?dayDate(next.startAt):''].filter(Boolean).join(' ').toLowerCase();
+      const matchesText=!q||text.includes(q);
+      const matchesRegion=!region||place?.region===region;
+      const matchesGenre=!genre||(place?.genres||[]).includes(genre);
+      const matchesRating=rating===0||(Number.isFinite(place?.rating)&&place.rating>=rating);
+      // Venues added solely for one-time events are represented by their event
+      // cards and can still be opened from those cards.
+      card.hidden=mode==='events'||!place||place.specialEventsOnly||
+        !matchesText||!matchesRegion||!matchesGenre||!matchesRating;
       if(!card.hidden){
         shownVenues++;
         if(!next)unscheduled++;
@@ -169,7 +180,7 @@
       const event=rows.find(item=>item.id===card.dataset.eventId);
       const place=event&&venue(event);
       if(!event){card.hidden=true;return}
-      const corpus=[event.title,event.description,event.host_name,
+      const corpus=[event.title,event.description,event.host_name,dayDate(event.start_at),
         place?.name,place?.city,place?.state,place?.address]
         .filter(Boolean).join(' ').toLowerCase();
       const matches=!q||corpus.includes(q);
@@ -377,6 +388,18 @@
       window.openVenue=function(){
         const result=originalOpen.apply(this,arguments);
         renderVenueEvents();return result;
+      };
+    }
+    // Returning to Find Karaoke updates the list after time passes.
+    const oldNavigate=window.navigate;
+    if(typeof oldNavigate==='function'){
+      window.navigate=function(page){
+        const result=oldNavigate.apply(this,arguments);
+        if(page==='find'){
+          if(typeof window.filterVenues==='function')window.filterVenues();
+          refresh();
+        }
+        return result;
       };
     }
     Promise.resolve(window.liveVenueLoadPromise).then(refresh,refresh);
