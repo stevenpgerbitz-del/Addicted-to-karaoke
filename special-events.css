@@ -1,0 +1,53 @@
+
+/* A2K Special Events — integrated with Find Karaoke and venue detail, no extra nav */
+#find-screen .a2k-event-filter{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 12px}
+#find-screen .a2k-event-filter button{min-width:0;padding:11px 4px;min-height:42px;border:1.5px solid #c7a271;
+border-radius:11px;background:linear-gradient(145deg,#361d17,#1d120f);color:#f1dbb9;
+font:700 clamp(11px,2.8vw,14px)/1.25 Georgia,serif;}
+#find-screen .a2k-event-filter button[aria-pressed=true]{background:linear-gradient(150deg,#f2dfb7,#dfbe88);color:#4a1b17;border:2px solid #f2dbae}
+#find-screen .a2k-event-card{display:flex;align-items:center;gap:10px;padding:9px 10px;border:2px solid #c7a271;
+border-radius:16px;background:linear-gradient(145deg,#432018,#1d130f 73%,#381c16);
+box-shadow:inset 0 0 0 1px #f6dda728,0 2px 5px #0008;
+color:#f0d7b2;min-height:94px;cursor:pointer;}
+#find-screen .a2k-event-card[hidden]{display:none!important}
+#find-screen .a2k-event-card:focus-visible,#find-screen .a2k-event-filter button:focus-visible{outline:3px solid #efd4a1;outline-offset:2px}
+.a2k-event-card .a2k-event-date-tile{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
+width:80px;height:76px;padding:4px;background:linear-gradient(140deg,#edd3a4,#cc9b62);
+border:2px solid #f5e1b9;border-radius:11px;color:#481e18;text-align:center}
+.a2k-event-date-tile strong{font:800 13px Arial,sans-serif;letter-spacing:.7px}
+.a2k-event-date-tile b{font:800 30px/1 Georgia,serif}
+.a2k-event-date-tile small{font:700 11px Arial,sans-serif}
+.a2k-event-card .a2k-event-card-copy{min-width:0;display:flex;flex-direction:column;gap:3px}
+.a2k-event-card-copy .a2k-event-tag{font:800 10px Arial,sans-serif;letter-spacing:1px;color:#e8bb80}
+.a2k-event-card-copy b{font:700 clamp(16px,4vw,20px)/1.17 Georgia,serif;color:#ffe0b4;overflow-wrap:anywhere}
+.a2k-event-card-copy small{font:13px/1.35 Arial,sans-serif;color:#e3c8a9}
+.a2k-event-card-copy span{font:12px/1.35 Arial,sans-serif;color:#dcb48b}
+.a2k-special-entry{display:block;width:100%;margin:0 0 9px;min-height:42px;
+border:1.5px solid #b8915e;border-radius:11px;background:linear-gradient(140deg,#73221d,#481613);
+color:#f7e2c2;font:700 17px Georgia,serif}
+.a2k-special-dialog{width:min(95vw,580px);max-height:88dvh;padding:0;border:1.5px solid #d1af79;border-radius:17px;
+background:linear-gradient(155deg,#342019,#140e0b);color:#f6ddbc;box-shadow:0 15px 50px #000b}
+.a2k-special-dialog::backdrop{background:#000b}
+.a2k-special-dialog .a2k-special-shell{padding:20px 16px 15px;max-height:88dvh;overflow-y:auto}
+.a2k-special-dialog h2{font:700 clamp(22px,5.5vw,29px) Georgia,serif;color:#f6dfbb;margin:0 0 10px}
+.a2k-special-dialog h3{font:700 19px Georgia,serif;color:#eac797;margin:5px 0}
+.a2k-special-dialog p{font:14px/1.5 Arial,sans-serif;color:#e0c5a8;margin:9px 0}
+.a2k-special-dialog .a2k-special-status{font:700 12px Arial,sans-serif;letter-spacing:.7px;color:#eec98c}
+.a2k-special-dialog label{display:grid;gap:5px;margin:10px 0;font:700 14px Georgia,serif;color:#edd3ae}
+.a2k-special-dialog input,.a2k-special-dialog textarea,.a2k-special-dialog select{
+width:100%;box-sizing:border-box;min-height:43px;border:1.5px solid #c7a674;border-radius:10px;
+background:linear-gradient(145deg,#f5e4c2,#dfbb86);color:#46221b;padding:10px;font:15px Arial,sans-serif}
+.a2k-special-dialog textarea{min-height:72px;resize:vertical}
+.a2k-special-dialog .a2k-special-actions{display:grid;gap:8px;margin-top:18px}
+.a2k-special-actions button{padding:10px;min-height:43px;border:1.5px solid #b99969;border-radius:11px;
+background:linear-gradient(145deg,#78251f,#491614);color:#f5dfbf;font:700 16px Georgia,serif}
+.a2k-special-actions button:disabled{opacity:.6}
+.a2k-special-dialog .a2k-special-feedback{min-height:15px;font:14px/1.45 Arial,sans-serif;color:#ffdaaa}
+.a2k-special-dialog [hidden]{display:none!important}
+.a2k-venue-events{border:1px solid #a88452;border-radius:14px;margin:12px auto;padding:12px;max-width:840px;
+background:linear-gradient(145deg,#341b17,#1b120f);color:#e9d3b1}
+.a2k-venue-events[hidden]{display:none!important}
+.a2k-venue-events h3{margin:0 0 8px;font:700 20px Georgia,serif;color:#f8dfb6}
+.a2k-venue-events button{display:block;width:100%;text-align:left;margin:6px 0;padding:10px;
+border:1px solid #ac8b61;border-radius:10px;background:#492119;color:#e8d5b3;font:700 14px/1.4 Georgia,serif}
+#a2k-special-event-dialog .a2k-event-datetime{font:700 18px Georgia,serif;color:#f9d5a0}
