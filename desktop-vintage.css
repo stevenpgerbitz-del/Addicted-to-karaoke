@@ -1507,3 +1507,18 @@
    grid-template-columns:1fr!important;
  }
 }
+
+
+@media(min-width:1024px){
+ html.a2k-desktop-live #management-reviews .mg3-quick-soft-delete{
+   display:block;max-width:100%;min-height:42px;
+   margin:8px 0 1px auto;padding:9px 16px;
+   border:1px solid #bf9563;border-radius:8px;
+   background:linear-gradient(#51231b,#32130f);
+   color:#f6d6b3;font:700 13px Georgia,serif;
+   cursor:pointer;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-quick-soft-delete:focus-visible{
+   outline:2px solid #f4dcac;outline-offset:2px;
+ }
+}
