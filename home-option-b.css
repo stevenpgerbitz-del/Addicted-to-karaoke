@@ -463,3 +463,37 @@ body:has(#home-screen:not([hidden])) #unified-nav button.active :is(svg,span){
 body:has(#home-screen:not([hidden])) #home-screen{
  padding-bottom:4px!important;
 }
+
+/* v183 — use leftover phone height to restore visual balance.
+   This changes only dimensions, never our approved vintage palette. */
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-hero .approved-logo{
+ height:calc(clamp(123px,21dvh,166px) + var(--a2k-b-hero-extra,0px))!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-hero .approved-logo{
+ height:calc(clamp(107px,17.6dvh,145px) + var(--a2k-b-hero-extra,0px))!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-tonight{
+ min-height:calc(85px + var(--a2k-b-tonight-extra,0px))!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-tonight-grid{
+ min-height:calc(85px + var(--a2k-b-tonight-extra,0px))!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-tonight,
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-tonight-grid{
+ min-height:calc(77px + var(--a2k-b-tonight-extra,0px))!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-feature{
+ min-height:calc(105px + var(--a2k-b-feature-extra,0px))!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-feature{
+ min-height:calc(94px + var(--a2k-b-feature-extra,0px))!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-feature-photo{
+ max-height:none!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-section{
+ margin-bottom:calc(10px + var(--a2k-b-gap-extra,0px))!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-section{
+ margin-bottom:calc(7px + var(--a2k-b-gap-extra,0px))!important;
+}
