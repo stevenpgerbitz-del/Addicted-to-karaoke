@@ -309,3 +309,52 @@ border:1px solid #ac8b61;border-radius:10px;background:#492119;color:#e8d5b3;fon
  outline:2px solid #f7d7a1;
  outline-offset:2px;
 }
+
+
+/* Build 200 — correction: simple vintage controls, never pills-inside-pills. */
+#find-screen.atk-vintage .filterline .a2k-vintage-select-trigger{
+ box-sizing:border-box!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ gap:8px!important;
+ width:100%!important;
+ min-width:0!important;
+ height:44px!important;
+ min-height:44px!important;
+ margin-top:5px!important;
+ padding:8px 12px!important;
+ border:1.5px solid #b58d58!important;
+ border-radius:10px!important;
+ background:linear-gradient(160deg,#f2dfb8,#dfbf8b)!important;
+ color:#572017!important;
+ box-shadow:inset 0 0 0 1px #fff1d1,0 2px 2px #0006!important;
+ font:700 14px/1.2 Georgia,serif!important;
+ text-align:left!important;
+ white-space:nowrap!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+}
+#find-screen.atk-vintage .filterline .a2k-vintage-select-trigger::after{
+ content:"⌄";
+ display:block;
+ flex:none;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ color:#653027!important;
+ font:700 20px/1 Georgia,serif!important;
+}
+#find-screen.atk-vintage .filterline label{
+ font-size:13px!important;
+ line-height:1.2!important;
+}
+#find-screen.atk-vintage p#results-count{
+ font-size:clamp(13px,3.6vw,16px)!important;
+ line-height:1.3!important;
+ text-align:center!important;
+ padding:8px 18px!important;
+ margin:3px 0 12px!important;
+}
