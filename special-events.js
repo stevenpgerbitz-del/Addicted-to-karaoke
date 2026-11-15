@@ -27,6 +27,32 @@
     ['VT','Vermont'],['VA','Virginia'],['WA','Washington'],['WV','West Virginia'],
     ['WI','Wisconsin'],['WY','Wyoming'],['DC','District of Columbia']
   ];
+  function syncStates(){
+    const state=byId('region-filter');if(!state)return;
+    const places=typeof sampleVenues!=='undefined'&&Array.isArray(sampleVenues)?sampleVenues:[];
+    // Only publicly listed venues contribute state choices.
+    const present=new Set(places.map(v=>String(v.state||'').trim().toUpperCase()).filter(Boolean));
+    const available=US_STATES.filter(([code])=>present.has(code));
+    const signature=available.map(([code])=>code).join('|');
+    if(state.dataset.signature===signature)return;
+    const previous=state.value;
+    state.replaceChildren();
+    if(available.length!==1){
+      const all=node('option','',available.length?'All States':'No States Available');
+      all.value='';state.append(all);
+    }
+    for(const [code,name] of available){
+      const opt=node('option','',name);opt.value=code;state.append(opt);
+    }
+    state.value=available.length===1?available[0][0]:
+      available.some(([code])=>code===previous)?previous:'';
+    state.dataset.signature=signature;
+    if(previous!==state.value){
+      const city=byId('city-filter');
+      if(city){city.value='';city.dataset.signature='';}
+    }
+    state.dispatchEvent(new Event('a2k-update-label'));
+  }
   function syncCities(){
     const city=byId('city-filter'),state=byId('region-filter')?.value||'';
     if(!city)return;
@@ -51,16 +77,12 @@
     const label=state.closest('label');
     if(label?.firstChild?.nodeType===3)label.firstChild.textContent='State';
     state.replaceChildren();
-    const all=node('option','','All States');all.value='';state.append(all);
-    for(const [code,name] of US_STATES){
-      const item=node('option','',name);item.value=code;state.append(item);
-    }
     const cityLabel=node('label','a2k-city-filter-label','City');
     const city=node('select');city.id='city-filter';
     cityLabel.append(city);label.insertAdjacentElement('afterend',cityLabel);
     state.onchange=()=>{syncCities();window.filterVenues()};
     city.onchange=()=>window.filterVenues();
-    syncCities();
+    syncStates();syncCities();
   }
   /* Android native option menus cannot be styled. The original selects still
      drive search; an accessible vintage dialog replaces only their appearance. */
@@ -71,10 +93,8 @@
     const trigger=node('button','a2k-vintage-select-trigger');
     trigger.type='button';trigger.setAttribute('aria-haspopup','dialog');
     trigger.setAttribute('aria-label','Choose '+title);
-    const value=node('span','a2k-vintage-select-value');
-    const arrow=node('span','a2k-vintage-select-arrow','⌄');arrow.setAttribute('aria-hidden','true');
-    trigger.append(value,arrow);
-    const update=()=>{value.textContent=select.selectedOptions[0]?.textContent||'Choose';};
+    // Plain text avoids the site's older ".filterline span" pill styling.
+    const update=()=>{trigger.textContent=select.selectedOptions[0]?.textContent||'Choose';};
     select.addEventListener('change',update);
     select.addEventListener('a2k-update-label',update);
     select.insertAdjacentElement('afterend',trigger);
@@ -250,7 +270,7 @@
   function filterCombined(){
     const parent=byId('find-results');if(!parent)return;
     const q=(byId('venue-search')?.value||'').trim().toLowerCase();
-    syncCities();
+    syncStates();syncCities();
     const state=byId('region-filter')?.value||'';
     const city=byId('city-filter')?.value||'';
     const genre=byId('genre-filter')?.value||'';
@@ -327,9 +347,9 @@
     if(count){
       count.textContent=
         (mode==='events'?'Upcoming special events: '+shownEvents:
-         mode==='venues'?'Showing '+shownVenues+' venues by next karaoke date':
+         mode==='venues'?'Showing '+shownVenues+' venues':
          'Coming up: '+(shownVenues-unscheduled+shownEvents)+' scheduled nights')+
-         (unscheduled?' · '+unscheduled+' venue'+(unscheduled===1?'':'s')+' without confirmed times':'');
+         (unscheduled&&mode!=='events'?' · '+unscheduled+' more venues':'');
     }
   }
   async function refresh(){
