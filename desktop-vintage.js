@@ -54,8 +54,8 @@
  function activeMenu(){
    const current=page();
    const siblings={
-     home:['home','community','about'],
-     find:['find','venues','events','hosts'],
+     home:['home','about'],
+     find:['find','events','hosts'],
      signin:['signin']
    };
    if(!(siblings[current]||[]).includes(selectedDesktopTab))selectedDesktopTab=current;
@@ -65,7 +65,12 @@
      else button.removeAttribute('aria-current');
    });
  }
+ function clearDirectory(){
+   const find=document.getElementById('find-screen');
+   if(find)find.classList.remove('a2k-d-directory-active');
+ }
  function go(pageName){
+   clearDirectory();
    if(typeof window.navigate==='function')window.navigate(pageName);
    else window.location.hash='#'+pageName;
    activeMenu();
@@ -75,26 +80,61 @@
    hero.id='a2k-desktop-header';
    hero.setAttribute('role','banner');
    const brand=el('button','a2k-desktop-brand');
-   brand.type='button';brand.setAttribute('aria-label','A2K Home');
-   brand.addEventListener('click',()=>go('home'));
-   const approved=document.querySelector('#home-screen .a2k-b-hero .approved-logo');
-   if(approved){
-     const image=el('img');
-     image.alt='Addicted to Karaoke — Built for singers, powered by KJs, and bringing the karaoke community together';
-     image.src=approved.src;
-     brand.append(image);
-   }else brand.textContent='Addicted to Karaoke';
+   brand.type='button';brand.setAttribute('aria-label','Addicted to Karaoke Home');
+   brand.addEventListener('click',()=>{selectedDesktopTab='home';go('home')});
    hero.append(brand);
    const member=el('div','a2k-desktop-member');
-   const signin=el('button','a2k-d-signin','Sign In');
-   signin.type='button';signin.setAttribute('aria-label','Sign in or open your profile');
-   signin.addEventListener('click',()=>{selectedDesktopTab='signin';go('signin');if(typeof window.authMode==='function')window.authMode('login')});
-   const join=el('button','a2k-d-join','Join A2K');
-   join.type='button';join.setAttribute('aria-label','Join Addicted to Karaoke');
-   join.addEventListener('click',()=>{selectedDesktopTab='signin';go('signin');if(typeof window.authMode==='function')window.authMode('register')});
+   const signin=el('button','a2k-d-signin');
+   signin.type='button';
+   const join=el('button','a2k-d-join');
+   join.type='button';
+   function buttonLabel(button,label,type){
+     button.replaceChildren();
+     const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+     svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');
+     svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
+     svg.setAttribute('stroke-width','1.85');
+     svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');
+     const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+     path.setAttribute('d',type==='person'?'M4 21v-2a8 8 0 0 1 16 0v2 M12 12a4 4 0 1 0 0-8a4 4 0 0 0 0 8':
+       type==='manage'?'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z':
+       'M16 20v-2a5 5 0 0 0-5-5H7a5 5 0 0 0-5 5v2 M9 10a4 4 0 1 0 0-8a4 4 0 0 0 0 8 M18 8v8 M14 12h8');
+     svg.append(path);
+     button.append(svg,document.createTextNode(label));
+     button.setAttribute('aria-label',label);
+   }
+   signin.addEventListener('click',()=>{
+     selectedDesktopTab='signin';go('signin');
+     if(document.getElementById('auth-profile')?.hidden&&typeof window.authMode==='function')window.authMode('login');
+   });
+   join.addEventListener('click',()=>{
+     if(!document.getElementById('auth-profile')?.hidden){
+       if(!document.getElementById('management-open')?.hidden&&typeof window.managementOpen==='function')window.managementOpen();
+       else{selectedDesktopTab='signin';go('signin')}
+       return;
+     }
+     selectedDesktopTab='signin';go('signin');
+     if(typeof window.authMode==='function')window.authMode('register');
+   });
    member.append(signin,join);
    hero.append(member);
    app.insertAdjacentElement('afterbegin',hero);
+   const profile=document.getElementById('auth-profile');
+   const management=document.getElementById('management-open');
+   const sync=()=>{
+     const signed=!!profile&&!profile.hidden;
+     const manager=signed&&!!management&&!management.hidden;
+     buttonLabel(signin,signed?'My Profile':'Sign In','person');
+     buttonLabel(join,signed?'Management':'Join','manage');
+     if(!signed)buttonLabel(join,'Join','group');
+     join.hidden=signed&&!manager;
+     member.classList.toggle('a2k-d-member-signed',signed);
+     member.classList.toggle('a2k-d-member-manager',manager);
+   };
+   sync();
+   if(profile)new MutationObserver(sync).observe(profile,{attributes:true,attributeFilter:['hidden']});
+   if(management)new MutationObserver(sync).observe(management,{attributes:true,attributeFilter:['hidden']});
+   window.addEventListener('pageshow',sync);
  }
  function showAbout(){
    let dialog=document.getElementById('a2k-d-about-dialog');
@@ -106,49 +146,151 @@
      const note=el('p','','Find local karaoke nights, discover venues and hosts, and share your karaoke experiences with the community.');
      const close=el('button','a2k-d-about-close','Close');
      close.type='button';close.onclick=()=>dialog.close();
-     dialog.append(title,slogan,note,close);
+     const build=el('p','a2k-d-build','Build: '+(document.querySelector('[data-build-version]')?.textContent||'Unavailable'));
+     build.setAttribute('aria-label','Troubleshooting build version');
+     dialog.append(title,slogan,note,build,close);
      document.body.append(dialog);
    }
    if(!dialog.open)dialog.showModal();
  }
- function chooseFindMode(key){
-   const mode=key==='events'?'events':key==='venues'?'venues':'all';
-   const button=document.querySelector('#a2k-event-filter [data-mode="'+mode+'"]');
-   if(button)button.click();
+
+ function directoryView(){
+   const find=document.getElementById('find-screen');
+   if(!find)return null;
+   let shell=document.getElementById('a2k-d-directory');
+   if(!shell){
+     shell=el('section','a2k-d-directory');
+     shell.id='a2k-d-directory';
+     shell.setAttribute('aria-live','polite');
+     find.append(shell);
+   }
+   return shell;
+ }
+ async function getPublishedRows(url){
+   if(typeof window.supabaseRead==='function')return window.supabaseRead(url);
+   if(typeof supabaseRead==='function')return supabaseRead(url);
+   throw Error('Venue database is not available.');
+ }
+ function directoryCard(title,subtitle,body){
+   const card=el('article','a2k-d-directory-card');
+   const heading=el('h3','',title);
+   card.append(heading);
+   if(subtitle)card.append(el('p','a2k-d-directory-meta',subtitle));
+   if(body)card.append(el('p','',body));
+   return card;
+ }
+ function dateAndTime(value){
+   const date=new Date(value);
+   if(Number.isNaN(date.getTime()))return 'Time to be announced';
+   return new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',
+     weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(date);
+ }
+ async function drawDirectory(kind){
+   const shell=directoryView();if(!shell)return;
+   const headline=kind==='hosts'?'KJ Hosts':'Upcoming Karaoke Events';
+   const intro=kind==='hosts'?'Meet the karaoke hosts in our community. Only published hosts are listed.':
+      'Special karaoke nights and one-time events coming up soon.';
+   shell.replaceChildren(el('h1','',headline),el('p','a2k-d-directory-intro',intro));
+   const search=el('input','a2k-d-directory-search');
+   search.type='search';search.placeholder=kind==='hosts'?'Search KJ hosts':'Search upcoming events';
+   search.setAttribute('aria-label',search.placeholder);
+   shell.append(search);
+   const list=el('div','a2k-d-directory-grid');
+   list.append(el('p','a2k-d-directory-info','Loading published listings…'));
+   shell.append(list);
+   let cards=[];
+   search.addEventListener('input',()=>{
+     const query=search.value.toLocaleLowerCase().trim();
+     let found=0;
+     for(const card of cards){
+       const matches=card.textContent.toLocaleLowerCase().includes(query);
+       card.hidden=!matches;if(matches)found++;
+     }
+     let empty=shell.querySelector('.a2k-d-directory-filter-empty');
+     if(!empty){empty=el('p','a2k-d-directory-filter-empty','No matches found.');shell.append(empty)}
+     empty.hidden=found!==0||!cards.length;
+   });
+   try{
+     if(kind==='hosts'){
+       const data=await Promise.all([
+         getPublishedRows('kj_review_hosts?select=user_id,stage_name,enabled&enabled=eq.true&order=stage_name.asc'),
+         getPublishedRows('kjs?select=id,display_name,bio,published&published=eq.true&order=display_name.asc')
+       ]);
+       if(!shell.isConnected||selectedDesktopTab!==kind)return;
+       const reviewHosts=Array.isArray(data[0])?data[0]:[];
+       const published=Array.isArray(data[1])?data[1]:[];
+       const seen=new Set();
+       const profiles=[];
+       for(const host of reviewHosts){
+         if(!host?.stage_name)continue;
+         const name=String(host.stage_name);
+         seen.add(name.toLocaleLowerCase().trim());
+         profiles.push({name,userId:host.user_id});
+       }
+       for(const host of published){
+         if(!host?.display_name)continue;
+         const name=String(host.display_name);
+         if(seen.has(name.toLocaleLowerCase().trim()))continue;
+         profiles.push({name,bio:host.bio||''});
+       }
+       profiles.sort((x,y)=>x.name.localeCompare(y.name));
+       for(const host of profiles){
+         const card=directoryCard(host.name,'Karaoke host',host.bio||'');
+         if(host.userId&&typeof window.a2kOpenKjHostProfile==='function'){
+           const action=el('button','a2k-d-directory-action','View KJ Profile');
+           action.type='button';action.onclick=()=>window.a2kOpenKjHostProfile(host.userId,'','');
+           card.append(action);
+         }
+         cards.push(card);
+       }
+       list.replaceChildren(...cards);
+       if(!cards.length)list.append(el('p','a2k-d-directory-info','No published KJ host profiles yet. Hosts will appear here when their listings are approved.'));
+     }else{
+       const now=encodeURIComponent(new Date().toISOString());
+       const events=await getPublishedRows('karaoke_special_events?select=id,venue_id,title,start_at,end_at,host_name,description,status&status=eq.published&end_at=gt.'+now+'&order=start_at.asc&limit=150');
+       if(!shell.isConnected||selectedDesktopTab!==kind)return;
+       const rows=Array.isArray(events)?events:[];
+       for(const event of rows){
+         const venue=typeof sampleVenues==='undefined'?null:sampleVenues.find(v=>String(v.databaseId)===String(event.venue_id)&&v.publication_status==='published');
+         const city=venue?[venue.name,venue.city,venue.state].filter(Boolean).join(' · '):'Published karaoke event';
+         const card=directoryCard(event.title||'Karaoke Event',dateAndTime(event.start_at)+' · '+city,event.description||'');
+         if(event.host_name)card.append(el('p','a2k-d-directory-meta','Host: '+event.host_name));
+         if(venue&&typeof openVenue==='function'){
+           const action=el('button','a2k-d-directory-action','View Venue');
+           action.type='button';action.onclick=()=>openVenue(venue.id);
+           card.append(action);
+         }
+         cards.push(card);
+       }
+       list.replaceChildren(...cards);
+       if(!cards.length)list.append(el('p','a2k-d-directory-info','No published upcoming special events right now. Check again soon.'));
+     }
+     search.dispatchEvent(new Event('input'));
+   }catch(error){
+     console.warn('Could not load desktop '+kind+' directory',error);
+     list.replaceChildren(el('p','a2k-d-directory-info','Unable to load listings right now. Please try again.'));
+   }
  }
  function sidebarGo(key){
-   selectedDesktopTab=key;
-   if(key==='about'){showAbout();activeMenu();return}
-   if(key==='community'){
-     go('home');
-     window.requestAnimationFrame(()=>{
-       document.querySelector('#home-screen .a2k-b-stats')?.scrollIntoView({block:'center',behavior:'smooth'});
-     });
-     activeMenu();return;
+   if(key==='about'){showAbout();return}
+   if(key==='hosts'||key==='events'){
+     go('find');selectedDesktopTab=key;
+     const find=document.getElementById('find-screen');
+     if(find)find.classList.add('a2k-d-directory-active');
+     activeMenu();
+     void drawDirectory(key);
+     return;
    }
-   if(['venues','events','hosts'].includes(key)){
-     go('find');
-     window.requestAnimationFrame(()=>{
-       chooseFindMode(key);
-       if(key==='hosts'){
-         const input=document.getElementById('venue-search');
-         if(input){input.placeholder='Search KJ host or venue';input.focus()}
-       }
-     });
-     activeMenu();return;
-   }
-   go(key);
+   selectedDesktopTab=key;go(key);
    activeMenu();
  }
  function makeSidebar(app){
    const sidebar=el('aside','a2k-desktop-sidebar');
    sidebar.id='a2k-desktop-sidebar';
    sidebar.setAttribute('aria-label','Desktop navigation');
-   sidebar.append(el('p','a2k-d-nav-caption','Explore A2K'));
    const items=[
-     ['home','Home'],['find','Find Karaoke'],['venues','Venues'],
-     ['hosts','KJ Hosts'],['events','Events'],['community','Community'],
-     ['about','About A2K']
+     ['home','Home'],['find','Find Karaoke'],
+     ['hosts','KJ Hosts'],['events','Events'],['about','About']
    ];
    for(const [key,label] of items){
      const button=el('button','a2k-d-nav-btn');
@@ -156,14 +298,6 @@
      button.append(icon(key),document.createTextNode(label));
      button.addEventListener('click',()=>sidebarGo(key));
      sidebar.append(button);
-   }
-   const approved=document.querySelector('#home-screen .a2k-b-hero .approved-logo');
-   if(approved){
-     const decor=el('div','a2k-d-sidebar-microphone');
-     decor.setAttribute('aria-hidden','true');
-     const image=el('img');
-     image.src=approved.src;image.alt='';
-     decor.append(image);sidebar.append(decor);
    }
    const pages=document.getElementById('unified-pages');
    app.insertBefore(sidebar,pages);
