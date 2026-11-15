@@ -199,7 +199,7 @@
   // Compact tiers can leave a large void. Reinvest the unused height in
   // the existing hero, event cards and feature card instead of adding new UI.
   if(!overflow()&&content.classList.contains('a2k-b-compact')){
-   const remaining=Math.max(0,Math.min(225,panel.clientHeight-panel.scrollHeight-6));
+   const remaining=Math.max(0,Math.min(225,panel.clientHeight-content.getBoundingClientRect().height-6));
    if(remaining>14){
     content.style.setProperty('--a2k-b-hero-extra',Math.floor(remaining*.52)+'px');
     content.style.setProperty('--a2k-b-tonight-extra',Math.floor(remaining*.18)+'px');
