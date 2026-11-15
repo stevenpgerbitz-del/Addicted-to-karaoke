@@ -239,3 +239,32 @@
  .a2k-kj-inline-choices{gap:3px}
  .a2k-kj-inline-choices button{font-size:12px}
 }
+
+
+/* Build 211 — KJ rating visible beside the host name on venue schedules. */
+.venue-live-schedule .a2k-kj-host-link{
+ display:inline-flex!important;
+ align-items:center!important;
+ flex-wrap:wrap!important;
+ justify-content:flex-start!important;
+ gap:4px 9px!important;
+ max-width:100%!important;
+ white-space:normal!important;
+}
+.venue-live-schedule .a2k-kj-host-link-name{
+ display:inline!important;
+ font:inherit!important;
+ color:inherit!important;
+}
+.venue-live-schedule .a2k-kj-host-link-score{
+ display:inline!important;
+ flex:none!important;
+ padding:3px 7px!important;
+ border:1px solid #ad7953!important;
+ border-radius:7px!important;
+ background:#51201a!important;
+ color:#f4dfb8!important;
+ font:700 12px/1.25 Arial,sans-serif!important;
+ white-space:nowrap!important;
+}
+.venue-live-schedule .a2k-kj-host-link-score:empty{display:none!important;}
