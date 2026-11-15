@@ -1414,3 +1414,58 @@ body:has(#venue-screen:not([hidden])) .app>header>img{
   min-height:76px!important;padding:10px!important;
  }
 }
+
+
+/* v187 — ONE approved stage banner across every public screen.
+   Home already displays this image at its natural size. Non-Home screens use
+   the same art in the shared shell header: no framed mini-logo or duplicate
+   slogan; standard vintage spacing and fixed bottom navigation remain. */
+body:not(:has(#home-screen:not([hidden]))) .app>header{
+ display:block!important;
+ width:100%!important;
+ height:auto!important;
+ min-height:0!important;
+ max-height:none!important;
+ flex:0 0 auto!important;
+ padding:0!important;
+ margin:0!important;
+ overflow:hidden!important;
+ background:#110a09!important;
+ border-bottom:1px solid #7d5d3c!important;
+ box-shadow:0 3px 12px #0009!important;
+}
+body:not(:has(#home-screen:not([hidden]))) .app>header>img{
+ display:block!important;
+ grid-column:auto!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:none!important;
+ height:auto!important;
+ max-height:none!important;
+ flex:none!important;
+ object-fit:cover!important;
+ object-position:center!important;
+ mix-blend-mode:normal!important;
+ -webkit-mask-image:none!important;
+ mask-image:none!important;
+ filter:brightness(.90) saturate(.79)!important;
+}
+body:not(:has(#home-screen:not([hidden]))) .app>header #unified-back{
+ display:none!important;
+}
+body:not(:has(#home-screen:not([hidden]))) .app>header::after{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ pointer-events:none!important;
+ left:0!important;
+ right:0!important;
+ bottom:0!important;
+ height:18px!important;
+ border:0!important;
+ background:linear-gradient(transparent,#0f0908cc)!important;
+ opacity:1!important;
+}
+#find-screen.atk-vintage .atk-vintage-slogan{
+ display:none!important;
+}
