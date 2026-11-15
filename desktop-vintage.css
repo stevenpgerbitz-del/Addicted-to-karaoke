@@ -1237,3 +1237,185 @@
     grid-column:1/-1;margin:0!important;
   }
 }
+
+
+/* Build 217: management sections have desktop grids, not 525px mobile panels. */
+@media(min-width:1024px){
+ html.a2k-desktop-live body.a2k-desktop-management-active
+   #management-dialog[open]:has(> #management-users:not([hidden])),
+ html.a2k-desktop-live body.a2k-desktop-management-active
+   #management-dialog[open]:has(> #management-member-details:not([hidden])),
+ html.a2k-desktop-live body.a2k-desktop-management-active
+   #management-dialog[open]:has(> #management-reviews:not([hidden])){
+   display:block!important;
+   width:100%!important;max-width:none!important;
+   min-height:0!important;height:auto!important;
+   max-height:none!important;overflow:visible!important;
+   margin:0!important;padding:9px 10px 24px!important;
+   border:0!important;border-radius:0!important;
+   background:transparent!important;box-shadow:none!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active
+   #management-dialog > #management-users:not([hidden]),
+ html.a2k-desktop-live body.a2k-desktop-management-active
+   #management-dialog > #management-member-details:not([hidden]),
+ html.a2k-desktop-live body.a2k-desktop-management-active
+   #management-dialog > #management-reviews:not([hidden]){
+   display:block!important;width:100%!important;max-width:none!important;
+   min-width:0!important;max-height:none!important;overflow:visible!important;
+   padding:0!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-header h2,
+ html.a2k-desktop-live #management-member-details .mg2-details-header h2{
+   font:italic 700 33px/1.15 Georgia,serif!important;
+   color:#f6ddba!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-header{margin-bottom:18px!important}
+ html.a2k-desktop-live #management-users .mg2-search-label{
+   max-width:640px!important;margin:0 0 17px!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-search-label input{
+   min-height:47px!important;font-size:15px!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-toolbar{
+   grid-template-columns:130px repeat(2,minmax(0,240px))!important;
+   justify-content:start!important;gap:12px!important;margin-bottom:13px!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-filter-button,
+ html.a2k-desktop-live #management-users .mg2-toolbar-label select{
+   height:46px!important;min-height:46px!important;
+   font-size:14px!important;padding:10px!important;
+   border-color:#a17e57!important;background:#28130f!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-more-filters:not([hidden]){
+   max-width:520px!important;gap:15px!important;margin-bottom:13px!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-attention,
+ html.a2k-desktop-live #management-users .mg2-directory{
+   max-width:none!important;width:100%!important;
+   margin-top:16px!important;padding-top:13px!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-block-heading h3{
+   font:700 24px/1.2 Georgia,serif!important;
+   color:#f4d7ad!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-approval-action{
+   max-width:650px!important;min-height:75px!important;
+   padding:15px!important;border-color:#aa855c!important;
+   background:linear-gradient(125deg,#3b160f,#1b0b08)!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-recent-list,
+ html.a2k-desktop-live #management-users .mg2-results{
+   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:13px!important;
+   align-items:start!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-member-card{
+   min-height:96px!important;padding:16px!important;
+   background:linear-gradient(110deg,#371610,#1c0e0a)!important;
+   border:1.5px solid #a58459!important;border-radius:13px!important;
+   box-shadow:inset 0 1px 0 #e3b17e1e!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-member-info strong{
+   font:700 19px/1.2 Georgia,serif!important;color:#f8dab5!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-member-info small{
+   font-size:13px!important;
+ }
+ html.a2k-desktop-live #management-users .mg2-avatar{
+   width:62px!important;height:62px!important;
+ }
+ html.a2k-desktop-live #management-member-details.mg2-details-screen:not([hidden]){
+   display:grid!important;
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   align-items:start!important;gap:16px!important;
+ }
+ html.a2k-desktop-live #management-member-details .mg2-details-header,
+ html.a2k-desktop-live #management-member-details .mg2-member-hero{
+   grid-column:1/-1!important;width:100%!important;
+ }
+ html.a2k-desktop-live #management-member-details .mg2-member-hero{
+   min-height:145px!important;gap:22px!important;padding:24px!important;
+   background:linear-gradient(120deg,#421811,#1c0d09)!important;
+   border:1.5px solid #bd9763!important;
+ }
+ html.a2k-desktop-live #management-member-details .mg2-avatar-large{
+   width:94px!important;height:94px!important;
+ }
+ html.a2k-desktop-live #management-member-details .mg2-hero-info h3{
+   font:700 29px/1.18 Georgia,serif!important;
+ }
+ html.a2k-desktop-live #management-member-details > .mg2-section{
+   grid-column:1/-1!important;
+   display:block!important;margin:0!important;padding:19px!important;
+ }
+ html.a2k-desktop-live #management-member-details .mg2-permissions-values{
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:15px 20px!important;
+ }
+ html.a2k-desktop-live #management-member-details > .mg2-disclosure{
+   grid-column:auto!important;min-width:0!important;margin:0!important;
+ }
+ html.a2k-desktop-live #management-member-details .mg2-section,
+ html.a2k-desktop-live #management-member-details .mg2-disclosure{
+   background:linear-gradient(125deg,#341711,#1c0d0a)!important;
+   border:1px solid #a27e52!important;border-radius:12px!important;
+ }
+ html.a2k-desktop-live #management-member-details .mg2-disclosure-button{
+   min-height:64px!important;font-size:18px!important;
+ }
+ /* Review Management: center content fills screen, confirmation remains modal. */
+ html.a2k-desktop-live #management-reviews .mg3-heading{
+   position:relative!important;top:auto!important;
+   background:transparent!important;padding:0 0 13px!important;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-heading h2{
+   font:italic 700 32px Georgia,serif!important;
+   color:#f4d8b2!important;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-heading p{
+   font:15px/1.5 Georgia,serif!important;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-metrics{
+   display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+   gap:14px!important;margin:9px 0 19px!important;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-metric{
+   min-height:97px!important;padding:16px!important;
+   border:1.5px solid #a17e57!important;
+   background:linear-gradient(#35170e,#1d0d09)!important;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-metric strong{
+   font-size:29px!important;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-list{
+   display:grid!important;
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:14px!important;align-items:start!important;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-card-wrap,
+ html.a2k-desktop-live #management-reviews .mg3-card{
+   min-width:0!important;width:100%!important;
+   max-width:none!important;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-card{
+   border-color:#a7865e!important;border-radius:13px!important;
+   background:linear-gradient(135deg,#361711,#1c0d0b)!important;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-card-head{
+   padding:15px!important;gap:10px!important;
+ }
+ html.a2k-desktop-live #management-reviews .mg3-search{
+   max-width:700px!important;
+ }
+}
+@media(min-width:1024px) and (max-width:1250px){
+ html.a2k-desktop-live #management-users .mg2-recent-list,
+ html.a2k-desktop-live #management-users .mg2-results,
+ html.a2k-desktop-live #management-reviews .mg3-list{
+   grid-template-columns:1fr!important;
+ }
+ html.a2k-desktop-live #management-member-details .mg2-permissions-values{
+   grid-template-columns:1fr!important;
+ }
+}
