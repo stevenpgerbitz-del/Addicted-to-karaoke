@@ -261,8 +261,8 @@
     const raw=String(title||'').trim();
     if(!raw||raw!==raw.toLocaleUpperCase('en-US'))return raw;
     return raw.toLocaleLowerCase('en-US')
-      .replace(/(^|[\\s-])([a-z])/g,(_match,sep,letter)=>sep+letter.toLocaleUpperCase('en-US'))
-      .replace(/\\b(Kj|Dj|Usa|A2k)\\b/g,word=>word.toLocaleUpperCase('en-US'));
+      .replace(/(^|[\s-])([a-z])/g,(_match,sep,letter)=>sep+letter.toLocaleUpperCase('en-US'))
+      .replace(/\b(Kj|Dj|Usa|A2k)\b/g,word=>word.toLocaleUpperCase('en-US'));
   }
   function makeCard(event){
     const card=node('button','a2k-event-card');
