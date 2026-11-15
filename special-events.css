@@ -65,3 +65,15 @@ border:1px solid #ac8b61;border-radius:10px;background:#492119;color:#e8d5b3;fon
 .a2k-special-approval-buttons button{flex:1;min-height:44px;background:linear-gradient(135deg,#792820,#441815);color:#f4d7ae;border:1px solid #b69263;border-radius:10px;font:700 15px Georgia,serif}
 .a2k-special-approval-buttons button:disabled{opacity:.5}
 .a2k-special-approval-card a{font:700 14px Arial,sans-serif;color:#f3d39d;text-decoration:underline}
+
+/* The next karaoke start is prominent even on compact venue cards. */
+#find-screen.atk-vintage .venue-teaser .teaser-copy .a2k-next-session{
+ display:block!important;
+ font:700 12px/1.35 Arial,sans-serif!important;
+ color:#f1c68e!important;
+ margin-top:4px;
+ overflow-wrap:anywhere;
+}
+#find-screen.atk-vintage #results-count{
+ margin-top:8px;
+}
