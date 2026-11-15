@@ -280,6 +280,10 @@
            const action=el('button','a2k-d-directory-action','View KJ Profile');
            action.type='button';action.onclick=()=>window.a2kOpenKjHostProfile(host.userId,'','');
            card.append(action);
+           const memberProfile=el('button','a2k-d-directory-action a2k-d-profile-action','View Member Profile');
+           memberProfile.type='button';
+           memberProfile.onclick=()=>void window.a2kOpenMemberProfile?.(host.userId,'hosts');
+           card.append(memberProfile);
          }
          cards.push(card);
        }
