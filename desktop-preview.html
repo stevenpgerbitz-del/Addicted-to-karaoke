@@ -1,200 +1,61 @@
 <!doctype html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#160e0b">
-<meta name="description" content="A2K desktop layout preview — the existing mobile/tablet site is unchanged.">
-<title>A2K Desktop Layout Preview · Addicted to Karaoke</title>
-<link rel="icon" href="./favicon-64.png">
+<meta name="theme-color" content="#150e0b">
+<title>A2K Desktop Preview — Addicted to Karaoke</title>
 <style>
-:root{color-scheme:dark;--ink:#100c0a;--panel:#211712;--cream:#f1dec0;--muted:#cfb99a;--gold:#b89562;--red:#62211b}
+:root{color-scheme:dark;font-family:Arial,sans-serif}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#0d0b09;color:var(--cream);font-family:Arial,Helvetica,sans-serif}
-body{background:radial-gradient(ellipse at 50% 0,#45201a36,transparent 46%),#0d0b09}
-button,a{font:inherit}
-a{color:inherit}
-.site{display:flex;flex-direction:column;min-height:100dvh;width:min(100%,1600px);margin:auto}
-.site-header{
- position:relative;display:flex;align-items:center;justify-content:space-between;gap:18px;
- height:128px;flex:none;padding:8px clamp(20px,3vw,42px);
- border-bottom:1px solid #7a5338;background:
- linear-gradient(90deg,#260f0e,#130d0b 34%,#170e0b 75%,#260f0e);
-}
-.brand{display:flex;align-items:center;justify-content:flex-start;min-width:0;flex:1;height:100%;gap:14px}
-.brand img{display:block;width:min(54vw,670px);max-width:100%;height:110px;object-fit:contain;object-position:left center;filter:saturate(.92)}
-.brand-title{color:#f6dfbf;font:italic 700 clamp(22px,3vw,38px)/1.1 Georgia,serif}
-.brand-copy{display:none}
-.site-header .site-note{flex:none;max-width:205px;text-align:right;color:#c8b397;font:12px/1.45 Arial,sans-serif}
-.site-header .site-note strong{display:block;color:#e5ccac;font-size:13px}
-.workspace{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:0;flex:1}
-.menu{padding:26px 16px 22px 20px;border-right:1px solid #6b4b35;
- background:linear-gradient(180deg,#1d1511,#130f0d 55%,#17110e)}
-.menu h2{margin:0 0 19px;padding-left:13px;font:700 11px/1 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#bfa27c}
-.menu-list{display:flex;flex-direction:column;gap:5px}
-.menu-btn{display:flex;gap:11px;align-items:center;width:100%;padding:13px 14px;
- border:1px solid transparent;border-radius:9px;background:transparent;color:#ddcbb1;
- text-align:left;font:700 16px Georgia,serif;cursor:pointer}
-.menu-btn svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.menu-btn:hover{background:#38251f}
-.menu-btn:focus-visible,.frame-link:focus-visible{outline:2px solid #f5d8a5;outline-offset:2px}
-.menu-btn[aria-current="page"]{border-color:#b8915e;background:#e7d1a7;color:#57231a;box-shadow:inset 0 0 0 1px #fff3d9}
-.menu-description{margin:24px 12px 0;padding-top:17px;border-top:1px solid #6b4c3670;
- color:#b7a287;font:12px/1.6 Arial,sans-serif}
-.content{min-width:0;background:linear-gradient(125deg,#140f0c,#0d0a09)}
-.content-top{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:52px;
- padding:12px 24px 10px;border-bottom:1px solid #60483460}
-.crumb{font:700 16px Georgia,serif;color:#e8d4b2}
-.preview-label{font:700 11px/1.4 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#b79b75}
-.frame{width:100%;height:calc(100dvh - 180px);min-height:480px;border:0;display:block;background:#0e0b09}
-.footer{padding:10px 20px 12px;text-align:right;border-top:1px solid #604734;color:#a99478;font:11px/1.4 Arial,sans-serif}
-.small-device{display:none}
-@media(max-width:899px){
- .site{display:none}
- .small-device{min-height:100dvh;display:grid;place-content:center;gap:13px;
- padding:25px 25px 35px;text-align:center;background:#120e0c}
- .small-device h1{color:#eddbc0;font:italic 700 27px/1.15 Georgia,serif;margin:0}
- .small-device p{max-width:430px;margin:0 auto;color:#d1bca0;line-height:1.5;font-size:15px}
- .small-device .frame-link,.small-device button{display:block;max-width:360px;width:100%;
- margin:0 auto;padding:13px;border:1px solid #bc9462;border-radius:9px;
- background:#71231b;color:#f5e0bc;text-decoration:none;font-weight:700;cursor:pointer}
- body.show-desktop{width:1100px;min-width:1100px;overflow-x:auto}
- body.show-desktop .small-device{display:none}
- body.show-desktop .site{display:flex;width:1100px}
- body.show-desktop .workspace{grid-template-columns:190px minmax(0,1fr)}
- body.show-desktop .site-header{height:120px}
- body.show-desktop .frame{height:950px}
-}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+body{margin:0;background:radial-gradient(ellipse at center top,#47231b,#120e0c 55%);color:#f4dfbe}
+main{min-height:100dvh;display:grid;align-content:center;justify-items:center;gap:12px;padding:22px;text-align:center}
+h1{margin:0;color:#f3dfbf;font:italic 700 29px/1.15 Georgia,serif}
+p{max-width:440px;margin:0 0 8px;color:#d6bea0;font:15px/1.55 Arial,sans-serif}
+button,a{display:block;width:min(100%,370px);padding:13px 17px;border-radius:10px;
+border:1px solid #bc935e;background:linear-gradient(#74221b,#4b1611);
+color:#f4dfbe;text-decoration:none;text-align:center;font:700 15px Georgia,serif;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid #f2d7aa;outline-offset:2px}
+#viewer{display:none;width:100%;height:calc(100dvh - 48px);overflow:auto;background:#100c0a}
+#viewer.open{display:block}
+#viewer iframe{display:block;width:1440px;height:1100px;min-height:100%;border:0;background:#100c0a}
+#viewer-header{display:none;height:48px;align-items:center;justify-content:space-between;padding:5px 12px;
+background:#251712;border-bottom:1px solid #a67a50}
+#viewer-header.open{display:flex}
+#viewer-header span{font:700 13px Georgia,serif}
+#viewer-header button{width:auto;min-height:35px;padding:6px 11px;font-size:13px}
+body.in-preview main{display:none}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<div class="small-device">
- <h1>A2K Desktop Preview</h1>
- <p>Your approved phone and tablet website is unchanged. This separate preview is designed for wider screens.</p>
- <p>On Android Chrome, select <strong>Desktop site</strong> from the browser menu to see the full layout, or open the preview on a computer.</p>
- <button id="force" type="button">View desktop layout anyway</button>
- <a class="frame-link" href="./#home">Return to A2K mobile</a>
-</div>
-<div class="site" id="desktop-layout">
- <header class="site-header">
-  <div class="brand"><img id="brand-logo" alt="Addicted to Karaoke — Built for singers, powered by KJs, and bringing the karaoke community together" hidden>
-    <div class="brand-copy" id="brand-copy"><span class="brand-title">Addicted to Karaoke</span></div>
-  </div>
-  <div class="site-note"><strong>Desktop Layout Preview</strong> Same A2K. More room to sing.</div>
- </header>
- <div class="workspace">
-  <aside class="menu" aria-label="Desktop navigation">
-   <h2>Explore A2K</h2>
-   <nav class="menu-list" aria-label="Main navigation">
-    <button class="menu-btn" type="button" data-page="home" aria-current="page">
-     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-6v-7H9v7H3z"/></svg>Home
-    </button>
-    <button class="menu-btn" type="button" data-page="find">
-     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>Find Karaoke
-    </button>
-    <button class="menu-btn" type="button" data-page="signin">
-     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 3.5-8 8-8s8 3 8 8"/></svg><span id="profile-label">Profile / Sign In</span>
-    </button>
-   </nav>
-   <p class="menu-description">Your venue listings, hosting schedules, reviews, and profile are the same ones used on mobile.</p>
-  </aside>
-  <main class="content" aria-label="A2K main content">
-   <div class="content-top"><span class="crumb" id="crumb">Home</span><span class="preview-label">Layout preview · Real A2K content</span></div>
-   <iframe id="site-frame" class="frame" title="A2K existing website content" src="./index.html#home"></iframe>
-  </main>
- </div>
- <footer class="footer">Layout preview only · Current mobile/tablet design remains untouched · Forms here can affect real A2K data</footer>
-</div>
+<main>
+<h1>A2K Desktop Design</h1>
+<p>The vintage lounge desktop design is now part of A2K on computers. Our approved phone and tablet website remains unchanged.</p>
+<p>For the best experience, open A2K on your laptop or desktop. You can also inspect the wide-screen version here on your phone.</p>
+<button id="show-preview" type="button">View desktop layout on this phone</button>
+<a href="./#home">Open normal A2K site</a>
+</main>
+<div id="viewer-header"><span>A2K Desktop Preview · Scroll horizontally to inspect</span><button type="button" id="close-preview">Close</button></div>
+<div id="viewer"><iframe title="Live A2K desktop layout" loading="lazy" src="about:blank"></iframe></div>
 <script>
 (function(){
  'use strict';
- const frame=document.getElementById('site-frame');
- const buttons=[...document.querySelectorAll('.menu-btn')];
- const crumb=document.getElementById('crumb');
- const logo=document.getElementById('brand-logo');
- const copy=document.getElementById('brand-copy');
- const labels={home:'Home',find:'Find Karaoke',signin:'Profile / Sign In'};
- const desktopOverrides=[
- 'html.a2k-desktop-mode,html.a2k-desktop-mode body{overflow-y:auto!important;width:100%!important;min-width:0!important;height:auto!important}',
- 'html.a2k-desktop-mode body .app{width:100%!important;max-width:none!important;margin:0!important;height:auto!important;min-height:100dvh!important;overflow:visible!important;display:block!important;background:transparent!important}',
- 'html.a2k-desktop-mode body .app>header{display:none!important}',
- 'html.a2k-desktop-mode body #unified-nav{display:none!important}',
- 'html.a2k-desktop-mode body #unified-pages{display:block!important;overflow:visible!important;width:100%!important;height:auto!important;min-height:100vh!important;padding:20px 26px 34px!important}',
- 'html.a2k-desktop-mode body .unified-screen{width:100%!important;max-width:1040px!important;margin:0 auto!important;height:auto!important;min-height:0!important;overflow:visible!important;padding:0 0 30px!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-home{display:grid!important;width:100%!important;max-width:none!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:22px!important;padding:0!important;margin:0!important;height:auto!important;overflow:visible!important;align-items:start!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-hero{display:none!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-find{grid-column:1/-1!important;margin:0!important;min-height:84px!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-section[aria-labelledby="a2k-b-tonight-title"]{grid-column:1!important;margin:0!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-section[aria-labelledby="a2k-b-feature-title"]{grid-column:2!important;margin:0!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-tonight-grid{grid-template-columns:1fr!important;gap:10px!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-tonight{min-height:116px!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-feature{min-height:242px!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-feature-photo{max-height:235px!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-stats{grid-column:1/-1!important;margin:0!important}',
- 'html.a2k-desktop-mode body #home-screen .a2k-b-build{grid-column:1/-1!important;margin:0!important}',
- 'html.a2k-desktop-mode body #find-screen.atk-vintage #find-results{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}',
- 'html.a2k-desktop-mode body #find-screen.atk-vintage #venue-search{width:100%!important}',
- 'html.a2k-desktop-mode body #venue-screen{max-width:1020px!important}',
- 'html.a2k-desktop-mode body :is(dialog,.management-dialog,.member-dialog){max-width:min(92vw,690px)!important}',
- '@media(max-width:850px){html.a2k-desktop-mode body #home-screen .a2k-b-home{grid-template-columns:1fr!important}html.a2k-desktop-mode body #home-screen .a2k-b-section{grid-column:1!important}html.a2k-desktop-mode body #find-screen.atk-vintage #find-results{grid-template-columns:1fr!important}}'
- ].join('\n');
- function activePage(page){
-  const key=Object.prototype.hasOwnProperty.call(labels,page)?page:(page==='venue'?'find':'home');
-  buttons.forEach(b=>{if(b.dataset.page===key)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
-  crumb.textContent=page==='venue'?'Venue Details':(labels[key]||'Home');
- }
- function currentFramePage(){
-  let hash='';
-  try{hash=frame.contentWindow.location.hash||''}catch(_){}
-  const page=hash.replace(/^#/,'').split('/')[0];
-  return page==='venue'?'venue':(labels[page]?page:'home');
- }
- function syncFromFrame(){
-  const page=currentFramePage();activePage(page);
-  const urlHash=page==='venue'?'#find':'#'+page;
-  history.replaceState(null,'',location.pathname+location.search+urlHash);
-  try{
-    const inner=frame.contentDocument;
-    const isSignedIn=inner&&inner.getElementById('auth-profile')&&!inner.getElementById('auth-profile').hidden;
-    if(isSignedIn)document.getElementById('profile-label').textContent='Profile';
-  }catch(_){}
- }
- function navigate(page){
-  if(!labels[page])return;
-  try{
-   const w=frame.contentWindow;
-   if(typeof w.navigate==='function')w.navigate(page);
-   else w.location.hash='#'+page;
-  }catch(_){frame.src='./index.html#'+page}
-  activePage(page);
-  history.replaceState(null,'',location.pathname+location.search+'#'+page);
- }
- function decorateFrame(){
-  try{
-   const doc=frame.contentDocument;
-   if(!doc||!doc.documentElement)return;
-   doc.documentElement.classList.add('a2k-desktop-mode');
-   let style=doc.getElementById('a2k-preview-overrides');
-   if(!style){style=doc.createElement('style');style.id='a2k-preview-overrides';doc.head.append(style)}
-   style.textContent=desktopOverrides;
-   const src=doc.querySelector('#home-screen .approved-logo');
-   if(src&&src.src){logo.src=src.src;logo.hidden=false;copy.hidden=true;}
-   else {logo.hidden=true;copy.style.display='block'}
-   frame.contentWindow.addEventListener('hashchange',syncFromFrame);
-   syncFromFrame();
-  }catch(error){
-   console.warn('A2K desktop preview unavailable',error);
-   crumb.textContent='Unable to load preview';
-  }
- }
- frame.addEventListener('load',decorateFrame);
- buttons.forEach(button=>button.addEventListener('click',()=>navigate(button.dataset.page)));
- document.getElementById('force').addEventListener('click',()=>document.body.classList.add('show-desktop'));
- const start=(location.hash||'#home').slice(1);
- if(labels[start]&&start!=='home')frame.src='./index.html#'+start;
- activePage(labels[start]?start:'home');
+ const goodDesktop=matchMedia('(min-width:1024px) and (hover:hover) and (pointer:fine)').matches;
+ if(goodDesktop){location.replace('./#home');return;}
+ const viewer=document.getElementById('viewer');
+ const bar=document.getElementById('viewer-header');
+ const frame=viewer.querySelector('iframe');
+ document.getElementById('show-preview').onclick=()=>{
+   frame.src='./index.html?a2k_desktop_preview=1#home';
+   document.body.classList.add('in-preview');
+   viewer.classList.add('open');
+   bar.classList.add('open');
+ };
+ document.getElementById('close-preview').onclick=()=>{
+   viewer.classList.remove('open');bar.classList.remove('open');
+   document.body.classList.remove('in-preview');
+   frame.src='about:blank';
+ };
 })();
 </script>
-</body>
-</html>
+</body></html>
