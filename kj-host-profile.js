@@ -1,4 +1,4 @@
-/* A2K build 209: privacy-aware KJ host profile cards with schedule details.
+/* A2K build 210: profile-integrated KJ ratings, verified reviews and inline moderation-ready review form.
    Temporary Founder-only UI preview does not write any hosting data. */
 (function(){
 'use strict';
@@ -28,7 +28,262 @@ function ensureDialog(){
   document.body.append(dialog);
   return dialog;
 }
-function renderCard(profile,{venueName='',day='',timeRange='',demo=false}={}){
+
+const ratingCategories=[
+  {key:'host_personality',label:'Host Personality'},
+  {key:'rotation_fairness',label:'Song Rotation & Fairness'},
+  {key:'sound_quality',label:'Sound Quality'},
+  {key:'song_selection',label:'Song Selection'},
+  {key:'crowd_engagement',label:'Crowd Engagement'}
+];
+function reviewAverage(review){
+  const nums=ratingCategories.map(c=>Number(review[c.key])).filter(v=>v>=1&&v<=5);
+  return nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:0;
+}
+function dateLabel(value){
+  const date=new Date(String(value).slice(0,10)+'T12:00:00');
+  return Number.isNaN(date.getTime())?'Unknown date':date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function todayLocal(){
+  const d=new Date();
+  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+}
+function previewReviews(){
+  return [
+    {id:'preview-1',reviewer_name:'Karaoke Fan',attended_on:'2026-11-14',
+     venue_name:"Doc's Lounge",host_personality:5,rotation_fairness:5,
+     sound_quality:4,song_selection:5,crowd_engagement:5,
+     comment:'Great energy and a fair rotation. Everyone had a chance to sing.'},
+    {id:'preview-2',reviewer_name:'Saturday Singer',attended_on:'2026-11-07',
+     venue_name:"Doc's Lounge",host_personality:4,rotation_fairness:4,
+     sound_quality:5,song_selection:4,crowd_engagement:4,
+     comment:'Friendly host, clear sound, and a fun night of karaoke.'}
+  ];
+}
+function reviewCard(review,venueName){
+  const card=element('article','a2k-kj-host-review-card');
+  const header=element('div','a2k-kj-host-review-heading');
+  header.append(element('strong','',review.reviewer_name||'Karaoke Member'),
+    element('strong','', '🎤 '+reviewAverage(review).toFixed(1)+'/5'));
+  card.append(header);
+  const where=element('p','a2k-kj-host-review-location',
+    'Rated at '+(venueName||'Venue not specified')+' · '+dateLabel(review.attended_on));
+  card.append(where);
+  if(review.comment)card.append(element('p','a2k-kj-host-review-comment',review.comment));
+  const details=element('details','a2k-kj-host-review-details');
+  details.append(element('summary','','Category ratings'));
+  const scores=element('div','a2k-kj-host-review-scores');
+  for(const c of ratingCategories){
+    const score=Number(review[c.key]);
+    scores.append(element('div','',c.label+': '+(score>=1&&score<=5?score+'/5':'N/A')));
+  }
+  details.append(scores);card.append(details);
+  return card;
+}
+async function mountRatings(hostId,venueId,demo,root){
+  const section=element('section','a2k-kj-host-rating-section');
+  const details=element('details','a2k-kj-host-rating-details');
+  const summary=element('summary','a2k-kj-host-rating-summary');
+  const score=element('strong','','🎤 KJ Reviews');
+  const count=element('span','','Loading ratings…');
+  summary.append(score,count);
+  details.append(summary);
+  const list=element('div','a2k-kj-host-review-list');
+  list.hidden=true;
+  details.append(list);
+  const action=element('button','a2k-kj-rate-action','Rate This KJ');
+  action.type='button';action.hidden=true;
+  const formMount=element('div','a2k-kj-host-review-compose');
+  formMount.hidden=true;
+  const feedback=element('p','a2k-kj-host-rating-feedback');
+  feedback.setAttribute('role','status');
+  section.append(details,action,formMount,feedback);
+  root.append(section);
+  let eligible=demo,reviewCount=0,loaded=0,loading=false,hasMore=false;
+  let venueNames=new Map(),venueOptions=[],draft={},started=false;
+  const demoRows=demo?previewReviews():[];
+  const showStatus=(msg)=>{feedback.textContent=msg;};
+  const loadVenues=async(ids)=>{
+    const need=ids.filter(id=>id&&!venueNames.has(id));
+    if(!need.length)return;
+    const response=await authClient.from('venues').select('id,name,city').in('id',[...new Set(need)]);
+    if(response.error)throw response.error;
+    for(const venue of response.data||[])venueNames.set(venue.id,venue.name);
+  };
+  const addReviewRows=async()=>{
+    if(loading||!hasMore)return;
+    loading=true;
+    const more=list.querySelector('.a2k-kj-host-review-more');
+    if(more)more.disabled=true;
+    try{
+      let rows;
+      if(demo){rows=demoRows.slice(loaded,loaded+5);}
+      else{
+        const response=await authClient.from('kj_reviews')
+          .select('id,reviewer_name,venue_id,attended_on,host_personality,rotation_fairness,sound_quality,song_selection,crowd_engagement,comment,created_at')
+          .eq('host_user_id',hostId).eq('status','approved')
+          .order('created_at',{ascending:false}).range(loaded,loaded+4);
+        if(response.error)throw response.error;
+        rows=response.data||[];
+        await loadVenues(rows.map(item=>item.venue_id));
+      }
+      if(more)more.remove();
+      for(const review of rows){
+        list.append(reviewCard(review,demo?review.venue_name:venueNames.get(review.venue_id)));
+      }
+      loaded+=rows.length;
+      hasMore=loaded<reviewCount&&rows.length>0;
+      if(hasMore){
+        const next=element('button','a2k-kj-host-review-more','Show more reviews');
+        next.type='button';next.onclick=addReviewRows;list.append(next);
+      }else if(!loaded)list.append(element('p','a2k-kj-host-review-empty',
+        'No approved reviews yet. Be the first to share your karaoke experience.'));
+    }catch(e){showStatus('Could not load KJ reviews. Please try again.');console.warn('KJ reviews',e)}
+    finally{loading=false;if(more?.isConnected)more.disabled=false}
+  };
+  details.addEventListener('toggle',()=>{
+    if(!details.open)return;
+    list.hidden=false;
+    if(!started&&eligible){started=true;addReviewRows();}
+    if(!eligible)list.replaceChildren(element('p','','Reviews will be available after host verification.'));
+  });
+  const startRating=async()=>{
+    if(!demo&&!authUser){showStatus('Please sign in to rate this KJ.');return;}
+    if(!demo&&authUser?.id===hostId){showStatus('You cannot rate yourself.');return;}
+    if(!eligible)return;
+    formMount.hidden=false;action.hidden=true;details.open=false;showStatus('');
+    try{
+      if(!demo){
+        const linked=await authClient.from('kj_review_venues')
+          .select('venue_id').eq('host_user_id',hostId);
+        if(linked.error)throw linked.error;
+        const ids=[...new Set((linked.data||[]).map(row=>row.venue_id))];
+        await loadVenues(ids);
+        venueOptions=ids.map(id=>({id,name:venueNames.get(id)||'Venue'}));
+      }else venueOptions=[{id:'preview-docs',name:"Doc's Lounge"}];
+      buildForm();
+    }catch(e){showStatus('Unable to prepare review form. Please try again.');formMount.hidden=true;action.hidden=false;}
+  };
+  function buildForm(){
+    draft={};
+    formMount.replaceChildren();
+    const form=element('form','a2k-kj-inline-review-form');
+    form.noValidate=false;
+    form.append(element('h3','','Rate This KJ'));
+    const dateLabelEl=element('label','', 'When did you attend?');
+    const date=element('input');date.type='date';date.name='attended_on';date.required=true;
+    date.value=todayLocal();date.max=todayLocal();
+    const yearAgo=new Date();yearAgo.setFullYear(yearAgo.getFullYear()-1);
+    date.min=[yearAgo.getFullYear(),String(yearAgo.getMonth()+1).padStart(2,'0'),String(yearAgo.getDate()).padStart(2,'0')].join('-');
+    dateLabelEl.append(date);form.append(dateLabelEl);
+    const venueLabel=element('label','', 'Where did you see this KJ?');
+    const select=element('select');select.name='venue_id';
+    const empty=element('option','','Other / not listed');empty.value='';select.append(empty);
+    for(const venue of venueOptions){
+      const option=element('option','',venue.name);
+      option.value=venue.id;select.append(option);
+    }
+    if(venueId&&venueOptions.some(x=>x.id===venueId))select.value=venueId;
+    if(demo)select.value='preview-docs';
+    venueLabel.append(select);form.append(venueLabel);
+    for(const category of ratingCategories){
+      const group=element('fieldset','a2k-kj-inline-category');
+      group.append(element('legend','',category.label));
+      const choices=element('div','a2k-kj-inline-choices');
+      draft[category.key]=0;
+      for(const value of [0,1,2,3,4,5]){
+        const choice=element('button','',value===0?'N/A':String(value));
+        choice.type='button';choice.dataset.score=String(value);
+        choice.setAttribute('aria-label',category.label+': '+(value===0?'not applicable':value+' out of 5'));
+        choice.setAttribute('aria-pressed',String(value===0));
+        choice.onclick=()=>{
+          draft[category.key]=value;
+          for(const button of choices.children)
+            button.setAttribute('aria-pressed',String(Number(button.dataset.score)===value));
+        };
+        choices.append(choice);
+      }
+      group.append(choices);form.append(group);
+    }
+    const commentLabel=element('label','', 'Your review (optional)');
+    const comment=element('textarea');comment.name='comment';comment.maxLength=1000;
+    comment.rows=3;comment.placeholder='Share what fellow singers should know…';
+    commentLabel.append(comment);form.append(commentLabel);
+    form.append(element('p','a2k-kj-inline-note',demo?
+      'Founder preview only. This form does not submit a real review.':
+      'New KJ ratings are held for moderation before appearing publicly.'));
+    const buttons=element('div','a2k-kj-inline-actions');
+    const cancel=element('button','','Cancel');cancel.type='button';
+    cancel.onclick=()=>{formMount.hidden=true;formMount.replaceChildren();action.hidden=false;showStatus('');};
+    const send=element('button','','Submit Review');send.type='submit';
+    buttons.append(cancel,send);form.append(buttons);
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();
+      if(!form.reportValidity())return;
+      if(!ratingCategories.some(c=>draft[c.key]>0)){
+        showStatus('Please rate at least one category.');return;
+      }
+      if(demo){
+        showStatus('Preview complete. No review was saved.');
+        formMount.hidden=true;formMount.replaceChildren();action.hidden=false;return;
+      }
+      if(!authUser||authUser.id===hostId){showStatus('Sign in with a different account to rate this KJ.');return;}
+      send.disabled=true;cancel.disabled=true;showStatus('Submitting your review…');
+      const payload={
+        host_user_id:hostId,reviewer_id:authUser.id,
+        venue_id:select.value||null,attended_on:date.value,
+        comment:comment.value.trim(),status:'pending'
+      };
+      for(const c of ratingCategories)payload[c.key]=draft[c.key]||null;
+      try{
+        const saved=await authClient.from('kj_reviews').insert(payload);
+        if(saved.error)throw saved.error;
+        showStatus('Review submitted for moderation. Thank you!');
+        formMount.hidden=true;formMount.replaceChildren();action.hidden=false;
+      }catch(error){
+        showStatus(error.code==='23505'?
+          'You already reviewed this KJ for that performance date.':
+          (error.message||'Could not submit review. Please try again.'));
+      }finally{send.disabled=false;cancel.disabled=false;}
+    });
+    formMount.append(form);
+    date.focus();
+  }
+  action.onclick=startRating;
+  if(demo){
+    reviewCount=demoRows.length;
+    score.textContent='🎤 4.5 / 5';
+    count.textContent='2 reviews · Preview';
+    eligible=true;hasMore=true;action.hidden=false;
+    return;
+  }
+  if(!hostId||typeof authClient==='undefined'||!authClient){
+    count.textContent='Ratings unavailable';return;
+  }
+  try{
+    const [host,stats]=await Promise.all([
+      authClient.from('kj_review_hosts').select('user_id,enabled').eq('user_id',hostId).eq('enabled',true).maybeSingle(),
+      authClient.from('kj_review_scores').select('review_count,average_score').eq('host_user_id',hostId).maybeSingle()
+    ]);
+    if(!root.isConnected)return;
+    if(host.error)throw host.error;
+    if(!host.data){count.textContent='Awaiting verified KJ status';return;}
+    eligible=true;
+    if(stats.error)throw stats.error;
+    reviewCount=Math.max(0,Number(stats.data?.review_count)||0);
+    if(reviewCount){
+      const average=Number(stats.data?.average_score)||0;
+      score.textContent='🎤 '+average.toFixed(1)+' / 5';
+    }else score.textContent='🎤 Not rated yet';
+    count.textContent=reviewCount+' approved review'+(reviewCount===1?'':'s')+' · View details';
+    hasMore=true;action.hidden=false;
+  }catch(e){
+    count.textContent='Ratings unavailable';
+    console.warn('KJ rating summary unavailable',e);
+  }
+}
+
+function renderCard(profile,{venueName='',day='',timeRange='',venueId=null,demo=false}={}){
   const box=dialog.querySelector('#a2k-kj-host-profile-body');
   box.replaceChildren();
   const row=element('div','a2k-kj-host-profile-heading');
@@ -46,6 +301,7 @@ function renderCard(profile,{venueName='',day='',timeRange='',demo=false}={}){
   name.append(element('span','a2k-kj-host-profile-chip','KJ Host'));
   row.append(avatar,name);
   box.append(row);
+  mountRatings(profile.user_id||null,venueId,demo,box);
   if(venueName){
     const schedule=element('section','a2k-kj-host-profile-schedule');
     schedule.append(element('h3','','Hosting Schedule'));
@@ -66,7 +322,7 @@ function renderCard(profile,{venueName='',day='',timeRange='',demo=false}={}){
   }
   if(demo)box.append(element('p','a2k-kj-host-profile-disclaimer','Preview visible only to the Founder.'));
 }
-async function openKjHostProfile(userId,venueName,day,timeRange=''){
+async function openKjHostProfile(userId,venueName,day,timeRange='',venueId=null){
   const dlg=ensureDialog();
   const box=dlg.querySelector('#a2k-kj-host-profile-body');
   box.replaceChildren(element('p','', 'Loading KJ profile…'));
@@ -84,7 +340,7 @@ async function openKjHostProfile(userId,venueName,day,timeRange=''){
       box.textContent='This member has not made their profile available to you.';
       return;
     }
-    renderCard(data,{venueName,day,timeRange});
+    renderCard(data,{venueName,day,timeRange,venueId});
   }catch(error){
     if(dlg.open)box.textContent='This KJ profile is unavailable right now.';
     console.warn('KJ profile card unavailable',error);
@@ -110,7 +366,7 @@ function founderPreview(box,venue){
       stage_name:'DJ Copper Mic',
       bio:'Karaoke is about making everyone feel welcome on stage. I enjoy classic rock, country, pop, and those unexpected crowd favorites. My goal is to keep the rotation fair, the music sounding great, and the energy going all night.'
     },{venueName:venue.name,day:'Saturday',
-      timeRange:saturday.querySelector('span')?.textContent?.trim()||'',demo:true});
+      timeRange:saturday.querySelector('span')?.textContent?.trim()||'',venueId:venue.databaseId||null,demo:true});
     if(!dlg.open)dlg.showModal();
   });
   section.append(button);
