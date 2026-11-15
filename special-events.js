@@ -255,10 +255,19 @@
     };
     byId('find-results').insertAdjacentElement('beforebegin',submitEntry);
   }
+  // Present submitted ALL-CAPS event titles in the same style as ordinary titles.
+  // Keep the original title in the database and in searchable text.
+  function displayEventTitle(title){
+    const raw=String(title||'').trim();
+    if(!raw||raw!==raw.toLocaleUpperCase('en-US'))return raw;
+    return raw.toLocaleLowerCase('en-US')
+      .replace(/(^|[\\s-])([a-z])/g,(_match,sep,letter)=>sep+letter.toLocaleUpperCase('en-US'))
+      .replace(/\\b(Kj|Dj|Usa|A2k)\\b/g,word=>word.toLocaleUpperCase('en-US'));
+  }
   function makeCard(event){
     const card=node('button','a2k-event-card');
     card.type='button';card.dataset.eventId=event.id;
-    card.setAttribute('aria-label','View '+event.title+' on '+dayDate(event.start_at));
+    card.setAttribute('aria-label','View '+displayEventTitle(event.title)+' on '+dayDate(event.start_at));
     const date=node('div','a2k-event-date-tile');
     date.append(
       node('strong','',fmt(event.start_at,{month:'short'}).toUpperCase()),
@@ -268,7 +277,7 @@
     const copy=node('div','a2k-event-card-copy'),v=venue(event);
     copy.append(
       node('span','a2k-event-tag','✦ ONE-TIME EVENT'),
-      node('b','',event.title),
+      node('b','',displayEventTitle(event.title)),
       node('small','',(v?v.name+' · ':'')+(v?.city||'Iowa')+', '+(v?.state||'IA')),
       node('span','',time(event.start_at)+'–'+time(event.end_at)+(event.host_name?' · '+event.host_name:''))
     );
@@ -468,7 +477,7 @@
     buildDetails();
     const place=venue(event);
     detailsDialog.dataset.venueId=event.venue_id;
-    byId('a2k-special-detail-title').textContent=event.title;
+    byId('a2k-special-detail-title').textContent=displayEventTitle(event.title);
     byId('a2k-special-detail-datetime').textContent=dateLine(event);
     byId('a2k-special-detail-venue').textContent=place?.name||'Karaoke venue';
     byId('a2k-special-detail-address').textContent=
@@ -495,7 +504,7 @@
     const matches=rows.filter(event=>event.venue_id===place.databaseId);
     section.hidden=matches.length===0;
     for(const event of matches){
-      const button=node('button','','✦ '+dayDate(event.start_at)+' · '+time(event.start_at)+' · '+event.title);
+      const button=node('button','','✦ '+dayDate(event.start_at)+' · '+time(event.start_at)+' · '+displayEventTitle(event.title));
       button.type='button';button.onclick=()=>openDetails(event.id);list.append(button);
     }
   }
