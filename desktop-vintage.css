@@ -1212,3 +1212,28 @@
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
   }
 }
+
+
+@media(min-width:1024px){
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-event-card{
+    display:grid!important;
+    grid-template-columns:85px minmax(0,1fr)!important;
+    align-items:center!important;gap:15px!important;
+    padding:12px!important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-event-card .a2k-event-date-tile{
+    grid-column:1;grid-row:1;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    width:85px;height:93px;min-width:85px;
+    background:linear-gradient(#f5deb4,#d3a46d);
+    border:1.5px solid #ffe6bd;border-radius:10px;color:#4a2016;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-event-info{
+    grid-column:2;grid-row:1;
+    min-width:0;display:flex;flex-direction:column;gap:5px;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-event-info h3{margin:0!important}
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-event-card > .a2k-d-directory-action{
+    grid-column:1/-1;margin:0!important;
+  }
+}
