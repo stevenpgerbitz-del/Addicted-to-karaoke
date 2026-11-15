@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="230" viewBox="0 0 1600 230" role="img" aria-label="Dark vintage karaoke lounge with burgundy booths, curtains, wood table and candlelight">
+<defs>
+ <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#0d0604"/><stop offset=".6" stop-color="#29120e"/><stop offset="1" stop-color="#130807"/></linearGradient>
+ <linearGradient id="leather" x2=".2" y2="1"><stop stop-color="#853020"/><stop offset=".3" stop-color="#51140f"/><stop offset=".72" stop-color="#260a09"/><stop offset="1" stop-color="#150606"/></linearGradient>
+ <linearGradient id="curtain" x2="1" y2="0"><stop stop-color="#340606"/><stop offset=".24" stop-color="#9e1510"/><stop offset=".45" stop-color="#430606"/><stop offset=".7" stop-color="#b62317"/><stop offset="1" stop-color="#230403"/></linearGradient>
+ <radialGradient id="amber"><stop stop-color="#f4b65f" stop-opacity=".65"/><stop offset=".38" stop-color="#aa451b" stop-opacity=".22"/><stop offset="1" stop-color="#230907" stop-opacity="0"/></radialGradient>
+ <radialGradient id="glow"><stop stop-color="#e4a352"/><stop offset=".7" stop-color="#9e4f17"/><stop offset="1" stop-color="#22100b"/></radialGradient>
+ <linearGradient id="wood" x2="0" y2="1"><stop stop-color="#7b3918"/><stop offset=".48" stop-color="#3a180e"/><stop offset="1" stop-color="#1b0b07"/></linearGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="9"/></filter>
+ <pattern id="tuft" width="93" height="64" patternUnits="userSpaceOnUse" patternTransform="translate(0,6)">
+   <path d="M0 32L46 0L93 32L46 64Z" fill="none" stroke="#b66242" stroke-opacity=".20" stroke-width="1.7"/>
+   <circle cx="46" cy="32" r="3" fill="#b86c41"/><circle cx="45" cy="31" r="1.4" fill="#150706"/>
+ </pattern>
+ <pattern id="bottles" width="50" height="74" patternUnits="userSpaceOnUse">
+  <rect x="17" y="25" width="15" height="38" rx="3" fill="#5d2315" stroke="#b57b45" stroke-width=".8"/>
+  <rect x="21" y="16" width="7" height="12" rx="1" fill="#513528"/>
+  <rect x="19" y="39" width="11" height="12" fill="#d6a348" opacity=".33"/>
+ </pattern>
+ <radialGradient id="shade"><stop stop-color="#000" stop-opacity="0"/><stop offset=".65" stop-color="#000" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".7"/></radialGradient>
+</defs>
+<rect width="1600" height="230" fill="url(#wall)"/>
+<rect x="0" y="0" width="1600" height="230" fill="#200b09" opacity=".32"/>
+<rect x="80" y="0" width="235" height="100" fill="url(#bottles)" opacity=".62"/>
+<rect x="75" y="84" width="270" height="7" fill="#63331e" opacity=".75"/>
+<rect x="75" y="90" width="270" height="2" fill="#dd9d60" opacity=".28"/>
+<ellipse cx="126" cy="40" rx="170" ry="120" fill="url(#amber)"/>
+<ellipse cx="1407" cy="78" rx="210" ry="155" fill="url(#amber)"/>
+<path d="M0 0H150 Q120 78 55 137L15 168 0 175Z" fill="url(#curtain)" stroke="#b44a25" stroke-opacity=".35" stroke-width="2"/>
+<path d="M0 0L68 0Q37 80 0 162M83 0Q49 94 0 185M116 0Q85 106 0 215" stroke="#f66a3b" stroke-opacity=".18" stroke-width="5" fill="none"/>
+<path d="M1600 0H1500Q1510 85 1555 134L1600 164Z" fill="url(#curtain)" stroke="#b44a25" stroke-opacity=".35" stroke-width="2"/>
+<path d="M1550 0Q1571 90 1600 143M1526 0Q1541 110 1600 198" stroke="#f66a3b" stroke-opacity=".2" stroke-width="5" fill="none"/>
+<rect x="43" y="107" width="412" height="160" rx="47" fill="url(#leather)" stroke="#9e492f" stroke-width="3"/>
+<rect x="56" y="117" width="395" height="140" rx="40" fill="url(#tuft)" opacity=".74"/>
+<path d="M58 172Q250 145 454 178" stroke="#c0744c" stroke-opacity=".25" stroke-width="4" fill="none"/>
+<rect x="1265" y="125" width="350" height="140" rx="48" fill="url(#leather)" stroke="#8f422a" stroke-width="3"/>
+<rect x="1278" y="136" width="322" height="120" rx="35" fill="url(#tuft)" opacity=".56"/>
+<ellipse cx="1351" cy="202" rx="235" ry="39" fill="#000" opacity=".48" filter="url(#soft)"/>
+<ellipse cx="1345" cy="194" rx="200" ry="29" fill="url(#wood)" stroke="#915021" stroke-width="3"/>
+<ellipse cx="1345" cy="190" rx="197" ry="22" fill="#3c1a0c" stroke="#b87b38" stroke-opacity=".52" stroke-width="1.5"/>
+<path d="M1323 206L1312 251M1368 206L1376 251" stroke="#2b110b" stroke-width="14"/>
+<ellipse cx="1353" cy="116" rx="83" ry="76" fill="url(#amber)"/>
+<rect x="1335" y="122" width="36" height="54" rx="6" fill="#613518" stroke="#e7a35a" stroke-width="2"/>
+<rect x="1339" y="132" width="28" height="33" rx="4" fill="url(#glow)" opacity=".87"/>
+<path d="M1352 123Q1338 110 1352 94Q1368 111 1352 123Z" fill="#ffd28b"/>
+<path d="M1352 122Q1347 115 1352 105Q1358 114 1352 122Z" fill="#fff3ce"/>
+<ellipse cx="1353" cy="154" rx="35" ry="40" fill="#f89e37" opacity=".22" filter="url(#soft)"/>
+<rect width="1600" height="230" fill="url(#shade)" opacity=".47"/>
+<path d="M0 228H1600" stroke="#a97c4a" stroke-width="3"/>
+</svg>
