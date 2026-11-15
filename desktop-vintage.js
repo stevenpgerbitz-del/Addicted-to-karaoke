@@ -55,7 +55,7 @@
    const current=page();
    const siblings={
      home:['home','about'],
-     find:['find','events','hosts'],
+     find:['find','events','hosts','members'],
      signin:['signin']
    };
    if(!(siblings[current]||[]).includes(selectedDesktopTab))selectedDesktopTab=current;
@@ -326,12 +326,13 @@
  }
  function sidebarGo(key){
    if(key==='about'){showAbout();return}
-   if(key==='hosts'||key==='events'){
+   if(key==='hosts'||key==='events'||key==='members'){
      go('find');selectedDesktopTab=key;
      const find=document.getElementById('find-screen');
      if(find)find.classList.add('a2k-d-directory-active');
      activeMenu();
-     void drawDirectory(key);
+     if(key==='members')void window.a2kOpenMembersDirectory?.(directoryView());
+     else void drawDirectory(key);
      return;
    }
    selectedDesktopTab=key;go(key);
@@ -343,7 +344,7 @@
    sidebar.setAttribute('aria-label','Desktop navigation');
    const items=[
      ['home','Home'],['find','Find Karaoke'],
-     ['hosts','KJ Hosts'],['events','Events'],['about','About']
+     ['hosts','KJ Hosts'],['events','Events'],['members','Members'],['about','About']
    ];
    for(const [key,label] of items){
      const button=el('button','a2k-d-nav-btn');
