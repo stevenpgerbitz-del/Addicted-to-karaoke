@@ -604,3 +604,44 @@ border:1px solid #ac8b61;border-radius:10px;background:#492119;color:#e8d5b3;fon
 #find-screen.atk-vintage #find-results .a2k-event-card .a2k-event-date-tile{
  height:65px!important;
 }
+
+
+/* Schedule tab: one-time events use the same date tile as Find Karaoke. */
+#venue-screen #content .a2k-venue-events{
+  width:100%;max-width:none;min-width:0;
+  margin:22px 0 0;padding:16px 0 0;
+  border:0;border-top:1px solid #956b42;border-radius:0;
+  background:transparent;box-shadow:none;
+}
+#venue-screen #content .a2k-venue-events h3{
+  font:italic 700 22px/1.2 Georgia,serif;
+  color:#f6d7a5;margin:0 0 13px;
+}
+#venue-screen #content .a2k-venue-events-items{
+  display:grid;gap:10px;grid-template-columns:1fr;
+}
+#venue-screen #content .a2k-venue-events .a2k-event-card{
+  display:flex;align-items:center;gap:12px;
+  width:100%;min-width:0;min-height:93px;
+  margin:0;padding:9px 12px;
+  border:1.5px solid #bb965f;border-radius:12px;
+  background:linear-gradient(115deg,#3b1610,#1c0b09);
+  color:#f1daba;text-align:left;
+  font:inherit;
+}
+#venue-screen #content .a2k-venue-events .a2k-event-date-tile{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:75px;height:73px;min-width:75px;
+  background:linear-gradient(#f2dcae,#d0a169);
+  border:1px solid #f9e4bb;border-radius:9px;color:#4b2015;
+}
+#venue-screen #content .a2k-venue-events .a2k-event-card-copy{
+  min-width:0;display:flex;flex-direction:column;gap:3px;
+}
+#venue-screen #content .a2k-venue-events .a2k-event-card-copy b{
+  font:700 17px/1.25 Georgia,serif;color:#f8debb;
+}
+#venue-screen #content .a2k-venue-events .a2k-event-card-copy small,
+#venue-screen #content .a2k-venue-events .a2k-event-card-copy span:last-child{
+  font:13px/1.4 Arial,sans-serif;color:#dec5a6;
+}
