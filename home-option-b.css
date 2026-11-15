@@ -497,3 +497,26 @@ body:has(#home-screen:not([hidden])) #home-screen{
 #home-screen .a2k-b-home.a2k-b-tight .a2k-b-section{
  margin-bottom:calc(7px + var(--a2k-b-gap-extra,0px))!important;
 }
+
+
+/* v185 — restore the approved edge-to-edge Home marquee.
+   The no-scroll fit tiers may compact the cards, but must never shrink the
+   banner into a fixed-height "contain" box with side gutters.  Allow natural
+   aspect-ratio height and scrolling when necessary instead. */
+#home-screen .a2k-b-hero{
+ width:100vw!important;
+ max-width:none!important;
+ height:auto!important;
+ margin-left:calc(50% - 50vw)!important;
+ margin-right:calc(50% - 50vw)!important;
+}
+#home-screen .a2k-b-home .a2k-b-hero .approved-logo,
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-hero .approved-logo,
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-hero .approved-logo{
+ display:block!important;
+ width:100%!important;
+ height:auto!important;
+ max-height:none!important;
+ object-fit:cover!important;
+ object-position:center!important;
+}
