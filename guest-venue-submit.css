@@ -1,0 +1,102 @@
+/* A2K v183 — public community venue suggestions.
+   Same oxblood/cream/brass system as Find Karaoke, no neon. */
+#find-screen .atk-suggest-venue-entry{
+ display:flex;align-items:center;justify-content:center;gap:9px;
+ width:100%;min-height:47px;margin:12px 0 17px;padding:10px 14px;
+ border:1.5px solid #b99160;border-radius:11px;
+ background:var(--a2k-vintage-button);
+ color:var(--a2k-cream);font:700 17px/1.25 Georgia,serif;
+ box-shadow:inset 0 0 0 1px #f3dba82b,0 2px 4px #0007;
+ cursor:pointer;
+}
+#find-screen .atk-suggest-venue-entry svg{
+ width:21px;height:21px;stroke:currentColor;fill:none;
+ stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+}
+#find-screen .atk-suggest-venue-hint{
+ margin:-10px 0 17px;text-align:center;
+ font:400 12px/1.4 Arial,sans-serif;
+ color:#ccb69a;
+}
+#atk-suggest-venue-dialog[open]{
+ box-sizing:border-box;position:fixed;inset:0;
+ width:min(94vw,520px);max-width:none;
+ height:auto;max-height:min(89dvh,780px);
+ margin:auto;overflow:hidden;padding:0;
+ border:1.5px solid #b8905e;border-radius:16px;
+ background:linear-gradient(135deg,#291a15,#17100d 70%,#271711);
+ color:var(--a2k-cream,#f3e2c8);
+ box-shadow:0 20px 55px #000c,inset 0 0 0 1px #e3c28d29;
+}
+#atk-suggest-venue-dialog::backdrop{background:#000c}
+#atk-suggest-venue-dialog .atk-suggest-venue-form{
+ display:flex;flex-direction:column;
+ min-height:0;max-height:min(89dvh,780px);
+}
+#atk-suggest-venue-dialog .atk-suggest-venue-body{
+ overflow-y:auto;overscroll-behavior:contain;min-height:0;
+ padding:17px 17px 10px;
+}
+#atk-suggest-venue-dialog h2{
+ margin:0 0 8px;color:#f3e2c8;
+ font:700 clamp(22px,5.7vw,28px)/1.2 Georgia,serif;
+}
+#atk-suggest-venue-dialog .atk-suggest-venue-subtitle{
+ margin:0 0 16px;color:#d8c1a4;
+ font:400 13px/1.5 Arial,sans-serif;
+}
+#atk-suggest-venue-dialog .atk-suggest-venue-fields{
+ display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;
+}
+#atk-suggest-venue-dialog .atk-suggest-venue-fields label{
+ min-width:0;display:flex;flex-direction:column;gap:5px;
+ font:700 14px/1.3 Georgia,serif;color:#f2dec1;
+}
+#atk-suggest-venue-dialog .atk-suggest-venue-fields label.full{
+ grid-column:1/-1;
+}
+#atk-suggest-venue-dialog :is(input:not([type="hidden"]),textarea){
+ box-sizing:border-box;display:block;width:100%;min-height:42px;
+ padding:10px 11px;border:1px solid #a78254;border-radius:9px;
+ background:linear-gradient(#f1dfbc,#e0c697);
+ box-shadow:inset 0 0 0 1px #fff1d1;
+ color:#532019;font:500 15px/1.3 Arial,sans-serif;
+ -webkit-text-fill-color:#532019;
+}
+#atk-suggest-venue-dialog textarea{
+ min-height:92px;resize:vertical;line-height:1.4;
+}
+#atk-suggest-venue-dialog :is(input,textarea):focus-visible{
+ outline:2px solid #f6d7a3;outline-offset:3px;
+}
+#atk-suggest-venue-dialog :is(input,textarea)::placeholder{
+ color:#765d44;opacity:.88;
+}
+#atk-suggest-venue-dialog .atk-suggest-venue-status{
+ min-height:0;margin:10px 0 0;
+ color:#f3dec1;font:500 13px/1.45 Arial,sans-serif;
+}
+#atk-suggest-venue-dialog .atk-suggest-venue-status[data-error="true"]{
+ color:#ffbdb0;
+}
+#atk-suggest-venue-dialog .atk-suggest-venue-actions{
+ display:grid;grid-template-columns:1fr 1fr;gap:10px;
+ flex:none;padding:10px 17px 15px;
+ border-top:1px solid #846441;background:#211510;
+}
+#atk-suggest-venue-dialog .atk-suggest-venue-actions button{
+ min-height:45px;border:1.5px solid #b99160;border-radius:9px;
+ background:var(--a2k-vintage-button);
+ color:var(--a2k-cream);font:700 14px Georgia,serif;
+ box-shadow:inset 0 0 0 1px #f3dba82b;
+}
+#atk-suggest-venue-dialog button:disabled{opacity:.6;cursor:wait}
+#atk-suggest-venue-dialog .atk-suggest-honeypot{
+ position:absolute!important;left:-10000px!important;
+ width:1px!important;height:1px!important;
+ overflow:hidden!important;opacity:0!important;pointer-events:none!important;
+}
+@media(max-width:350px){
+ #atk-suggest-venue-dialog .atk-suggest-venue-body{padding:13px 12px}
+ #atk-suggest-venue-dialog .atk-suggest-venue-actions{padding:8px 12px 12px}
+}
