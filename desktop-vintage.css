@@ -546,3 +546,210 @@
    font:700 16px Georgia,serif;cursor:pointer;
  }
 }
+
+
+/* Desktop polish 215: sharp account controls, real desktop profile, focused menus. */
+@media (min-width:1024px) {
+ html.a2k-desktop-live .a2k-desktop-member{
+   display:flex!important;align-items:stretch!important;gap:7px!important;
+   padding:0!important;
+   background:linear-gradient(90deg,rgba(29,9,8,.98),rgba(25,8,7,.98))!important;
+   border-radius:28px!important;
+ }
+ html.a2k-desktop-live .a2k-desktop-member button{
+   display:flex!important;
+   align-items:center!important;justify-content:center!important;
+   gap:5px!important;
+   border:1.5px solid #d9b782!important;
+   border-radius:28px!important;
+   box-shadow:inset 0 1px 0 #fff1c12a,0 2px 4px #0008!important;
+   background:linear-gradient(#581b18,#35100e)!important;
+   color:#f9e8c8!important;
+   white-space:nowrap!important;
+   font:700 clamp(11px,1.12vw,16px)/1.1 Georgia,serif!important;
+   text-shadow:0 1px 2px #180604!important;
+   transition:background-color .14s ease!important;
+ }
+ html.a2k-desktop-live .a2k-desktop-member button:first-child{
+   left:0!important;right:auto!important;width:45.5%!important;
+ }
+ html.a2k-desktop-live .a2k-desktop-member button:last-child{
+   right:0!important;left:auto!important;width:51%!important;
+   background:linear-gradient(#281711,#140e0c)!important;
+ }
+ html.a2k-desktop-live .a2k-desktop-member button[hidden]{
+   display:none!important;
+ }
+ html.a2k-desktop-live .a2k-desktop-member.a2k-d-member-signed:not(.a2k-d-member-manager)
+ button:first-child{
+   width:100%!important;background:linear-gradient(#581b18,#35100e)!important;
+ }
+ html.a2k-desktop-live .a2k-desktop-member button svg{
+   display:block;flex:none;width:clamp(12px,1.4vw,20px);
+   height:clamp(12px,1.4vw,20px);stroke:currentColor;
+ }
+ html.a2k-desktop-live .a2k-desktop-member button:hover{
+   background:linear-gradient(#792720,#4b1711)!important;
+ }
+ html.a2k-desktop-live .a2k-desktop-member button:focus-visible{
+   outline:2px solid #fff1c7!important;outline-offset:2px!important;
+ }
+ html.a2k-desktop-live #a2k-desktop-sidebar{gap:5px!important}
+ html.a2k-desktop-live #a2k-desktop-sidebar>.a2k-d-nav-btn:first-child{
+   margin-top:13px!important;
+ }
+ html.a2k-desktop-live #a2k-desktop-sidebar .a2k-d-nav-btn{
+   font:700 19px/1.14 Georgia,serif!important;
+ }
+ html.a2k-desktop-live #signin-screen:has(#auth-profile:not([hidden])) {
+   padding:7px 0 20px!important;width:100%!important;
+   max-width:1180px!important;
+ }
+ html.a2k-desktop-live #signin-screen .auth-wrap{
+   width:100%!important;max-width:min(94%,590px)!important;margin:0 auto!important;
+ }
+ html.a2k-desktop-live #signin-screen:has(#auth-profile:not([hidden])) .auth-wrap{
+   width:100%!important;max-width:1160px!important;margin:0 auto!important;
+ }
+ html.a2k-desktop-live #signin-screen #auth-profile:not([hidden]){
+   width:100%!important;max-width:1160px!important;
+   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   align-items:start!important;gap:15px 18px!important;
+   padding-bottom:30px!important;
+ }
+ html.a2k-desktop-live #auth-profile > .member-hero{
+   grid-column:1/-1!important;
+   display:grid!important;
+   grid-template-columns:120px minmax(0,1fr) minmax(220px,260px)!important;
+   align-items:center!important;gap:12px 19px!important;
+   min-width:0!important;padding:16px 21px!important;margin:0!important;
+ }
+ html.a2k-desktop-live #auth-profile > .member-hero > .member-avatar-wrap{
+   grid-column:1!important;grid-row:1!important;
+ }
+ html.a2k-desktop-live #auth-profile > .member-hero > .member-avatar-wrap + div{
+   grid-column:2!important;grid-row:1!important;min-width:0;
+ }
+ html.a2k-desktop-live #auth-profile > .member-hero > .profile-action-grid{
+   grid-column:3!important;grid-row:1!important;
+   min-width:0!important;margin:0!important;
+   display:grid!important;grid-template-columns:1fr!important;gap:5px!important;
+ }
+ html.a2k-desktop-live #auth-profile > .member-hero > .profile-action-grid > .profile-action{
+   grid-column:1!important;
+ }
+ html.a2k-desktop-live #auth-profile > .member-hero > div:last-child{
+   grid-column:3!important;grid-row:2!important;
+ }
+ html.a2k-desktop-live #auth-profile .member-avatar{
+   width:110px!important;height:110px!important;
+ }
+ html.a2k-desktop-live #auth-profile .member-identity-line h2{
+   font-size:clamp(30px,2.6vw,43px)!important;
+ }
+ html.a2k-desktop-live #auth-profile > .profile-nav-card,
+ html.a2k-desktop-live #auth-profile > button.profile-nav-card,
+ html.a2k-desktop-live #auth-profile > details.profile-nav-card{
+   width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;
+   box-sizing:border-box!important;
+ }
+ html.a2k-desktop-live #auth-profile .profile-nav-card,
+ html.a2k-desktop-live #auth-profile .member-panel{
+   min-width:0!important;max-width:none!important;
+ }
+ html.a2k-desktop-live #auth-profile .member-privacy{
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ html.a2k-desktop-live #auth-profile .member-privacy-item{
+   min-width:0!important;
+ }
+ html.a2k-desktop-live #auth-profile > dialog{
+   grid-column:1/-1;
+ }
+ html.a2k-desktop-live #find-screen.a2k-d-directory-active > :not(#a2k-d-directory){
+   display:none!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory{
+   display:block!important;width:100%!important;max-width:none!important;
+   margin:0!important;padding:2px 3px 20px!important;
+   color:#f3dbb6!important;
+ }
+ html.a2k-desktop-live .a2k-d-directory h1{
+   margin:0 0 8px!important;color:#f8e4c3!important;
+   font:italic 700 clamp(28px,2.7vw,38px)/1.2 Georgia,serif!important;
+   text-align:left!important;text-shadow:none!important;
+ }
+ html.a2k-desktop-live .a2k-d-directory h1::after{
+   display:block!important;width:100%!important;height:1px!important;
+   margin:13px 0!important;content:""!important;
+   background:linear-gradient(90deg,#c9a071,#62452e)!important;
+   box-shadow:none!important;
+ }
+ html.a2k-desktop-live .a2k-d-directory-intro{
+   color:#d9c2a5!important;font:16px/1.5 Georgia,serif!important;margin:0 0 14px!important;
+ }
+ html.a2k-desktop-live .a2k-d-directory-search{
+   display:block;width:100%;max-width:530px;
+   border:1.5px solid #b58b58;border-radius:11px;
+   background:#21110d;color:#f2dfc3;min-height:46px;
+   padding:11px 15px;font:16px Arial,sans-serif;margin:0 0 18px;
+ }
+ html.a2k-desktop-live .a2k-d-directory-search:focus-visible{
+   outline:2px solid #f2daa9;outline-offset:2px;
+ }
+ html.a2k-desktop-live .a2k-d-directory-grid{
+   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;
+ }
+ html.a2k-desktop-live .a2k-d-directory-card{
+   min-width:0;box-sizing:border-box;
+   border:1.5px solid #bf9564;border-radius:14px;
+   background:linear-gradient(130deg,#42130f,#1a0c08);
+   box-shadow:inset 0 0 0 2px #6b402b66,0 3px 7px #0007;
+   padding:17px 18px;color:#f3debe;
+ }
+ html.a2k-desktop-live .a2k-d-directory-card h3{
+   font:700 24px/1.2 Georgia,serif;margin:0 0 7px;color:#f6dbad;
+ }
+ html.a2k-desktop-live .a2k-d-directory-card p{
+   font:15px/1.5 Georgia,serif;color:#dcc9ae;margin:7px 0;overflow-wrap:anywhere;
+ }
+ html.a2k-desktop-live .a2k-d-directory-card .a2k-d-directory-meta{
+   color:#efc890;font-weight:700;
+ }
+ html.a2k-desktop-live .a2k-d-directory-action{
+   border:1px solid #d8aa6e;border-radius:8px;
+   background:linear-gradient(#75251b,#4b100e);color:#fff0d1;
+   padding:10px 15px;margin-top:10px;
+   font:700 15px Georgia,serif;cursor:pointer;
+ }
+ html.a2k-desktop-live .a2k-d-directory-info{
+   color:#dec3a2;font:16px/1.5 Georgia,serif;
+   padding:16px;border:1px solid #8c6d49;border-radius:11px;
+   background:#2b1712;
+ }
+ html.a2k-desktop-live .a2k-d-directory-filter-empty[hidden]{
+   display:none!important;
+ }
+ html.a2k-desktop-live .a2k-d-directory-filter-empty{
+   color:#dec3a2;font:15px/1.4 Georgia,serif;
+ }
+ html.a2k-desktop-live .a2k-d-about-dialog .a2k-d-build{
+   border-top:1px solid #a07b53;padding-top:13px;margin-top:15px;
+   color:#efd2a8;font:700 15px Georgia,serif;
+ }
+}
+@media (min-width:1024px) and (max-width:1230px){
+ html.a2k-desktop-live #signin-screen #auth-profile:not([hidden]){
+   grid-template-columns:1fr 1fr!important;
+ }
+ html.a2k-desktop-live #auth-profile > .member-hero{
+   grid-template-columns:100px minmax(0,1fr)!important;
+ }
+ html.a2k-desktop-live #auth-profile > .member-hero > .profile-action-grid{
+   grid-column:1/-1!important;grid-row:2!important;
+ }
+ html.a2k-desktop-live #auth-profile > .member-hero > div:last-child{
+   grid-column:1/-1!important;grid-row:3!important;
+ }
+ html.a2k-desktop-live .a2k-d-directory-grid{grid-template-columns:1fr!important}
+}
