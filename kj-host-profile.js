@@ -1,4 +1,4 @@
-/* A2K build 208: privacy-aware KJ host profile cards.
+/* A2K build 209: privacy-aware KJ host profile cards with schedule details.
    Temporary Founder-only UI preview does not write any hosting data. */
 (function(){
 'use strict';
@@ -28,7 +28,7 @@ function ensureDialog(){
   document.body.append(dialog);
   return dialog;
 }
-function renderCard(profile,{venueName='',day='',demo=false}={}){
+function renderCard(profile,{venueName='',day='',timeRange='',demo=false}={}){
   const box=dialog.querySelector('#a2k-kj-host-profile-body');
   box.replaceChildren();
   const row=element('div','a2k-kj-host-profile-heading');
@@ -46,8 +46,16 @@ function renderCard(profile,{venueName='',day='',demo=false}={}){
   name.append(element('span','a2k-kj-host-profile-chip','KJ Host'));
   row.append(avatar,name);
   box.append(row);
-  if(venueName)box.append(element('p','a2k-kj-host-profile-venue',
-    'Hosting at '+venueName+(day?' · '+day:'')));
+  if(venueName){
+    const schedule=element('section','a2k-kj-host-profile-schedule');
+    schedule.append(element('h3','','Hosting Schedule'));
+    schedule.append(element('strong','a2k-kj-host-profile-venue',venueName));
+    if(day||timeRange){
+      const when=[day,timeRange].filter(Boolean).join(' · ');
+      schedule.append(element('p','a2k-kj-host-profile-hours',when));
+    }
+    box.append(schedule);
+  }
   box.append(element('h3','','About the Host'));
   box.append(element('p','a2k-kj-host-profile-bio',
     profile.bio?.trim()||'This host has not added an About Me description yet.'));
@@ -58,7 +66,7 @@ function renderCard(profile,{venueName='',day='',demo=false}={}){
   }
   if(demo)box.append(element('p','a2k-kj-host-profile-disclaimer','Preview visible only to the Founder.'));
 }
-async function openKjHostProfile(userId,venueName,day){
+async function openKjHostProfile(userId,venueName,day,timeRange=''){
   const dlg=ensureDialog();
   const box=dlg.querySelector('#a2k-kj-host-profile-body');
   box.replaceChildren(element('p','', 'Loading KJ profile…'));
@@ -76,7 +84,7 @@ async function openKjHostProfile(userId,venueName,day){
       box.textContent='This member has not made their profile available to you.';
       return;
     }
-    renderCard(data,{venueName,day});
+    renderCard(data,{venueName,day,timeRange});
   }catch(error){
     if(dlg.open)box.textContent='This KJ profile is unavailable right now.';
     console.warn('KJ profile card unavailable',error);
@@ -101,7 +109,8 @@ function founderPreview(box,venue){
     renderCard({
       stage_name:'DJ Copper Mic',
       bio:'Karaoke is about making everyone feel welcome on stage. I enjoy classic rock, country, pop, and those unexpected crowd favorites. My goal is to keep the rotation fair, the music sounding great, and the energy going all night.'
-    },{venueName:venue.name,day:'Saturday',demo:true});
+    },{venueName:venue.name,day:'Saturday',
+      timeRange:saturday.querySelector('span')?.textContent?.trim()||'',demo:true});
     if(!dlg.open)dlg.showModal();
   });
   section.append(button);
