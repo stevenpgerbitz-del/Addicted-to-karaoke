@@ -53,7 +53,12 @@
  }
  function activeMenu(){
    const current=page();
-   if(current!=='find'&&selectedDesktopTab!==current)selectedDesktopTab=current;
+   const siblings={
+     home:['home','community','about'],
+     find:['find','venues','events','hosts'],
+     signin:['signin']
+   };
+   if(!(siblings[current]||[]).includes(selectedDesktopTab))selectedDesktopTab=current;
    const which=selectedDesktopTab;
    document.querySelectorAll('#a2k-desktop-sidebar .a2k-d-nav-btn').forEach(button=>{
      if(button.dataset.page===which)button.setAttribute('aria-current','page');
