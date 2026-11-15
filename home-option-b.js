@@ -187,10 +187,26 @@
  function fitHome(){
   const panel=root(),content=panel?.querySelector('.a2k-b-home');
   if(!panel||!content||panel.hidden||panel.clientHeight<150)return;
+  // Reset the previous fit so measurements respond to orientation or font changes.
+  for(const key of ['--a2k-b-hero-extra','--a2k-b-tonight-extra',
+                    '--a2k-b-feature-extra','--a2k-b-gap-extra']){
+   content.style.removeProperty(key);
+  }
   content.classList.remove('a2k-b-compact','a2k-b-tight');
   const overflow=()=>panel.scrollHeight>panel.clientHeight+3;
   if(overflow())content.classList.add('a2k-b-compact');
   if(overflow())content.classList.add('a2k-b-tight');
+  // Compact tiers can leave a large void. Reinvest the unused height in
+  // the existing hero, event cards and feature card instead of adding new UI.
+  if(!overflow()&&content.classList.contains('a2k-b-compact')){
+   const remaining=Math.max(0,Math.min(225,panel.clientHeight-panel.scrollHeight-6));
+   if(remaining>14){
+    content.style.setProperty('--a2k-b-hero-extra',Math.floor(remaining*.52)+'px');
+    content.style.setProperty('--a2k-b-tonight-extra',Math.floor(remaining*.18)+'px');
+    content.style.setProperty('--a2k-b-feature-extra',Math.floor(remaining*.18)+'px');
+    content.style.setProperty('--a2k-b-gap-extra',Math.floor(remaining*.12/4)+'px');
+   }
+  }
   if(!overflow()&&panel.scrollTop)panel.scrollTop=0;
  }
  function queueHomeFit(){
