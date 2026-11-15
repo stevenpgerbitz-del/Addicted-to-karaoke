@@ -520,3 +520,12 @@ body:has(#home-screen:not([hidden])) #home-screen{
  object-fit:cover!important;
  object-position:center!important;
 }
+
+
+/* v186 — give the full-width marquee a little breathing room above Find Karaoke.
+   Applies even when the Home fit calculation switches to compact/tight. */
+#home-screen .a2k-b-home .a2k-b-hero,
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-hero,
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-hero{
+ margin-bottom:16px!important;
+}
