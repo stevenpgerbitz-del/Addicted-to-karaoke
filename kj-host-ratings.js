@@ -171,12 +171,12 @@ function renderCompose(){
  }
  if(state.venueId && state.hostVenues.some(x=>x.id===state.venueId))select.value=state.venueId;
  var root=form.querySelector('#a2k-kj-rating-questions');root.replaceChildren();
- for(var category of CATEGORIES){
+ for(let category of CATEGORIES){
   var section=el('section','a2k-kj-category');
   section.append(el('strong','',category.label));
-  var group=el('div','a2k-kj-rating-choices');
-  for(var score of [0,1,2,3,4,5]){
-   var b=el('button','',score===0?'N/A':'🎤 '+score);
+  let group=el('div','a2k-kj-rating-choices');
+  for(let score of [0,1,2,3,4,5]){
+   let b=el('button','',score===0?'N/A':'🎤 '+score);
    b.type='button';b.dataset.key=category.key;b.dataset.score=String(score);
    b.setAttribute('aria-label',category.label+': '+(score===0?'not applicable':score+' of 5 microphones'));
    b.setAttribute('aria-pressed',score===0?'true':'false');
@@ -232,7 +232,7 @@ async function refreshVenueHostButtons(){
   var ids=[...new Set(links.data.map(x=>x.host_user_id))];
   var hosts=await db().from('kj_review_hosts').select('user_id,stage_name').eq('enabled',true).in('user_id',ids);
   if(hosts.error||wrapper.dataset.venue!==callId)return;
-  for(var host of hosts.data||[]){
+  for(let host of hosts.data||[]){
    var button=el('button','a2k-kj-mini-button','🎤 Rate '+host.stage_name);
    button.type='button';button.onclick=()=>open(host.user_id,venueId);
    wrapper.append(button);
@@ -302,7 +302,7 @@ async function refreshModeration(){
   var ids=[...new Set(rows.map(x=>x.host_user_id))];
   var hostResult=await db().from('kj_review_hosts').select('user_id,stage_name').in('user_id',ids);
   var hosts=hostResult.data||[];
-  for(var r of rows){
+  for(let r of rows){
    var card=el('article','a2k-kj-review-card');
    var host=hosts.find(x=>x.user_id===r.host_user_id);
    card.append(el('strong','', (host?.stage_name||'KJ Host')+' · '+r.reviewer_name));
@@ -313,9 +313,9 @@ async function refreshModeration(){
    for(var cat of CATEGORIES)box.append(el('div','',cat.label+': '+(r[cat.key]===null?'N/A':r[cat.key]+'/5')));
    details.append(box);card.append(details);
    var actions=el('div','a2k-kj-review-moderate');
-   for(var action of [{status:'approved',label:'Approve'},{status:'hidden',label:'Hide'},{status:'rejected',label:'Reject'}]){
+   for(let action of [{status:'approved',label:'Approve'},{status:'hidden',label:'Hide'},{status:'rejected',label:'Reject'}]){
     if(action.status===r.status)continue;
-    var b=el('button','',action.label);b.type='button';
+    let b=el('button','',action.label);b.type='button';
     b.onclick=async()=>{
      b.disabled=true;
      var save=await db().from('kj_reviews').update({status:action.status}).eq('id',r.id).select('id').single();
