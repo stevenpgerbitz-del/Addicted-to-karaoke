@@ -487,25 +487,35 @@
     byId('a2k-special-view-venue').hidden=!place;
     if(!detailsDialog.open)detailsDialog.showModal();
   }
+  // Venue-specific one-time nights belong INSIDE Schedule, alongside
+  // regular recurring nights. Reuse the same published event rows and date
+  // cards shown in Find Karaoke; never make a duplicate event record.
   function makeVenueSection(){
-    if(byId('a2k-venue-special-events'))return;
-    const anchor=document.querySelector('#venue-screen .actions');
-    if(!anchor)return;
-    const section=node('section','a2k-venue-events');
-    section.id='a2k-venue-special-events';section.hidden=true;
-    section.append(node('h3','', 'Upcoming Special Events'),node('div','a2k-venue-events-items'));
-    anchor.insertAdjacentElement('afterend',section);
+    const panel=byId('content');
+    const selected=document.querySelector('#venue-screen .tabs [data-tab="schedule"][aria-selected="true"]');
+    if(!panel||!selected)return null;
+    let section=byId('a2k-venue-special-events');
+    if(section?.parentNode!==panel)section=null;
+    if(!section){
+      section=node('section','a2k-venue-events');
+      section.id='a2k-venue-special-events';section.hidden=true;
+      section.append(node('h3','', 'Upcoming Special Events'),node('div','a2k-venue-events-items'));
+      panel.append(section);
+    }
+    return section;
   }
   function renderVenueEvents(){
-    const section=byId('a2k-venue-special-events');if(!section)return;
+    const section=makeVenueSection();
+    if(!section)return;
     const place=typeof sampleVenues==='undefined'?null:sampleVenues.find(v=>v.id===selectedVenue);
     const list=section.querySelector('.a2k-venue-events-items');list.replaceChildren();
     if(!place?.databaseId){section.hidden=true;return}
-    const matches=rows.filter(event=>event.venue_id===place.databaseId);
+    const matches=rows.filter(event=>String(event.venue_id)===String(place.databaseId));
     section.hidden=matches.length===0;
     for(const event of matches){
-      const button=node('button','','✦ '+dayDate(event.start_at)+' · '+time(event.start_at)+' · '+displayEventTitle(event.title));
-      button.type='button';button.onclick=()=>openDetails(event.id);list.append(button);
+      const card=makeCard(event);
+      card.classList.add('a2k-venue-schedule-event');
+      list.append(card);
     }
   }
   function toIso(date,time){
@@ -596,7 +606,13 @@
   }
   function init(){
     if(!byId('find-screen')||!byId('find-results'))return;
-    createFilter();makeVenueSection();
+    createFilter();
+    // The existing Schedule button renders its content during the click.
+    // Populate the new Schedule-specific event section after that render.
+    document.querySelector('#venue-screen .tabs')?.addEventListener('click',event=>{
+      if(event.target.closest('[data-tab="schedule"]'))
+        queueMicrotask(renderVenueEvents);
+    });
     const originalFilter=window.filterVenues;
     if(typeof originalFilter==='function'){
       window.filterVenues=function(){

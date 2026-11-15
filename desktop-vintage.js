@@ -13,6 +13,7 @@
    hosts:'M12 3a4 4 0 0 1 4 4v5a4 4 0 0 1-8 0V7a4 4 0 0 1 4-4ZM5 11v1a7 7 0 0 0 14 0v-1M12 19v3M8 22h8',
    events:'M4 5h16v16H4zM7 3v5M17 3v5M4 10h16M8 14h3M14 14h3M8 18h3',
    community:'M9 10a3 3 0 1 0 0-6a3 3 0 0 0 0 6ZM3 20v-3a6 6 0 0 1 12 0v3H3ZM18 5a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5v1h-4',
+   members:'M9 10a3 3 0 1 0 0-6a3 3 0 0 0 0 6ZM3 20v-3a6 6 0 0 1 12 0v3H3ZM18 5a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5v1h-4',
    about:'M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20ZM12 10v7M12 7h.01',
    profile:'M4 21c0-5 3.5-8 8-8s8 3 8 8'
  };
@@ -55,7 +56,7 @@
    const current=page();
    const siblings={
      home:['home','about'],
-     find:['find','events','hosts'],
+     find:['find','events','hosts','members'],
      signin:['signin']
    };
    if(!(siblings[current]||[]).includes(selectedDesktopTab))selectedDesktopTab=current;
@@ -234,12 +235,55 @@
          profiles.push({name,bio:host.bio||''});
        }
        profiles.sort((x,y)=>x.name.localeCompare(y.name));
+       const ratings=new Map();
+       // Only public, approved KJ ratings count. Do not count pending
+       // moderation items or display sample reviews as real ratings.
+       try{
+         const publishedScores=await getPublishedRows(
+           'kj_review_scores?select=host_user_id,review_count,average_score');
+         for(const item of Array.isArray(publishedScores)?publishedScores:[]){
+           ratings.set(item.host_user_id,item);
+         }
+       }catch(err){
+         console.warn('KJ public rating summaries unavailable',err);
+       }
        for(const host of profiles){
          const card=directoryCard(host.name,'Karaoke host',host.bio||'');
+         const rating=el('div','a2k-d-kj-list-rating');
+         const score=el('strong');
+         const context=el('small');
+         if(host.name==='DJ Copper Mic (Demo)'){
+           const sample=window.a2kKjDemoRating?.();
+           if(sample?.count){
+             score.textContent='🎤 '+sample.average.toFixed(1)+' / 5';
+             context.textContent=sample.count+' sample reviews · DEMO ONLY';
+           }else{
+             score.textContent='🎤 Demo rating unavailable';
+             context.textContent='Demo profile — not a verified rating';
+           }
+           rating.classList.add('a2k-d-kj-list-rating-demo');
+         }else{
+           const publishedRating=host.userId?ratings.get(host.userId):null;
+           const count=Number(publishedRating?.review_count)||0;
+           const average=Number(publishedRating?.average_score);
+           if(count>0&&Number.isFinite(average)){
+             score.textContent='🎤 '+average.toFixed(1)+' / 5';
+             context.textContent=count+' approved review'+(count===1?'':'s');
+           }else{
+             score.textContent='🎤 Not rated yet';
+             context.textContent='No approved KJ reviews';
+           }
+         }
+         rating.append(score,context);
+         card.append(rating);
          if(host.userId&&typeof window.a2kOpenKjHostProfile==='function'){
            const action=el('button','a2k-d-directory-action','View KJ Profile');
            action.type='button';action.onclick=()=>window.a2kOpenKjHostProfile(host.userId,'','');
            card.append(action);
+           const memberProfile=el('button','a2k-d-directory-action a2k-d-profile-action','View Member Profile');
+           memberProfile.type='button';
+           memberProfile.onclick=()=>void window.a2kOpenMemberProfile?.(host.userId,'hosts');
+           card.append(memberProfile);
          }
          cards.push(card);
        }
@@ -254,7 +298,21 @@
          const venue=typeof sampleVenues==='undefined'?null:sampleVenues.find(v=>String(v.databaseId)===String(event.venue_id)&&v.publication_status==='published');
          const city=venue?[venue.name,venue.city,venue.state].filter(Boolean).join(' · '):'Published karaoke event';
          const card=directoryCard(event.title||'Karaoke Event',dateAndTime(event.start_at)+' · '+city,event.description||'');
-         if(event.host_name)card.append(el('p','a2k-d-directory-meta','Host: '+event.host_name));
+         card.classList.add('a2k-d-directory-event-card');
+         const dateObj=new Date(event.start_at);
+         if(!Number.isNaN(dateObj.getTime())){
+           const local=(opts)=>new Intl.DateTimeFormat('en-US',Object.assign({timeZone:'America/Chicago'},opts)).format(dateObj);
+           const dateTile=el('div','a2k-event-date-tile');
+           dateTile.append(
+             el('strong','',local({month:'short'}).toUpperCase()),
+             el('b','',local({day:'numeric'})),
+             el('small','',local({year:'numeric'}))
+           );
+           const copy=el('div','a2k-d-event-info');
+           copy.replaceChildren(...Array.from(card.childNodes));
+           card.append(dateTile,copy);
+         }
+         if(event.host_name)card.querySelector('.a2k-d-event-info, .a2k-d-directory-card')?.append(el('p','a2k-d-directory-meta','Host: '+event.host_name));
          if(venue&&typeof openVenue==='function'){
            const action=el('button','a2k-d-directory-action','View Venue');
            action.type='button';action.onclick=()=>openVenue(venue.id);
@@ -273,12 +331,13 @@
  }
  function sidebarGo(key){
    if(key==='about'){showAbout();return}
-   if(key==='hosts'||key==='events'){
+   if(key==='hosts'||key==='events'||key==='members'){
      go('find');selectedDesktopTab=key;
      const find=document.getElementById('find-screen');
      if(find)find.classList.add('a2k-d-directory-active');
      activeMenu();
-     void drawDirectory(key);
+     if(key==='members')void window.a2kOpenMembersDirectory?.(directoryView());
+     else void drawDirectory(key);
      return;
    }
    selectedDesktopTab=key;go(key);
@@ -290,7 +349,7 @@
    sidebar.setAttribute('aria-label','Desktop navigation');
    const items=[
      ['home','Home'],['find','Find Karaoke'],
-     ['hosts','KJ Hosts'],['events','Events'],['about','About']
+     ['hosts','KJ Hosts'],['events','Events'],['members','Members'],['about','About']
    ];
    for(const [key,label] of items){
      const button=el('button','a2k-d-nav-btn');

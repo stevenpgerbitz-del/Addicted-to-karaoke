@@ -3,8 +3,8 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const cats=[['kj_host','KJ / Host'],['food','Food'],['venue_size','Venue Size'],['song_selection','Song Selection'],['wait_time','Wait Time'],['sound_quality','Sound Quality'],['atmosphere','Atmosphere']];
-const names={pending:'Pending',approved:'Published',hidden:'Hidden',archived:'Archived',rejected:'Rejected'};
-const opts={approve:['Approve & Publish','Publish','Publish this review and include its ratings.'],reject:['Reject Review','Reject','Reject this pending review, keeping a recoverable record.'],hide:['Hide Review','Hide','Remove the review and its scores from public view.'],archive:['Archive Review','Archive','Archive this review without deleting its history.'],spam:['Spam & Archive','Archive as Spam','Archive as spam and exclude its ratings.'],restore:['Restore Review','Restore','Republish the review and include its ratings again.']};
+const names={pending:'Pending',approved:'Published',hidden:'Hidden',archived:'Soft Deleted',rejected:'Rejected'};
+const opts={approve:['Approve & Publish','Publish','Publish this review and include its ratings.'],reject:['Reject Review','Reject','Reject this pending review, keeping a recoverable record.'],hide:['Hide Review','Hide','Remove the review and its scores from public view.'],archive:['Soft Delete Review','Soft Delete','Remove this review from public view while keeping it recoverable in Soft Deleted. A reason is required and this action is logged.'],spam:['Spam & Soft Delete','Soft Delete as Spam','Remove this spam review from public ratings while retaining a recoverable moderation record.'],restore:['Restore Review','Restore','Republish the review and include its ratings again.']};
 const S={page:1,filter:'all',sort:'newest',search:'',bulk:false,selected:new Set(),result:null,serial:0,busy:false,choice:null,dialog:null,debounce:null};
 let built=false;
 function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=String(txt);return n}
@@ -21,7 +21,7 @@ function build(){
  '<div class="mg3-metrics" id="mg3-metrics" aria-label="Review counts"></div>',
  '<div class="mg3-search"><label for="mg3-search">Find a review</label><input id="mg3-search" type="search" maxlength="120" autocomplete="off" placeholder="Reviewer, venue or review text"></div>',
  '<div class="mg3-filters"><label for="mg3-status">Status<select id="mg3-status">',
- '<option value="all">All reviews</option><option value="pending">Pending</option><option value="approved">Published</option><option value="reported">Reported</option><option value="hidden">Hidden</option><option value="archived">Archived</option><option value="rejected">Rejected</option></select></label>',
+ '<option value="all">All reviews</option><option value="pending">Pending</option><option value="approved">Published</option><option value="reported">Reported</option><option value="hidden">Hidden</option><option value="archived">Soft Deleted</option><option value="rejected">Rejected</option></select></label>',
  '<label for="mg3-sort">Sort by<select id="mg3-sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="rating_high">Highest rated</option><option value="rating_low">Lowest rated</option></select></label></div>',
  '<div class="mg3-toolbar"><span id="mg3-count">Loading reviews…</span><button type="button" id="mg3-multiple" aria-pressed="false">Manage Multiple</button></div>',
  '<div id="mg3-bulk" class="mg3-bulk" hidden><div class="mg3-bulk-top"><strong id="mg3-selected">0 selected</strong><button type="button" id="mg3-all">Select visible</button><button type="button" id="mg3-clear">Clear</button></div>',
@@ -116,7 +116,15 @@ function card(r){
   inside.append(row);
  }
  if(acts.length)inside.append(el('p','mg3-muted','Actions are recorded in Activity Log. Unpublished reviews do not count toward venue ratings.'));
- details.append(inside);outer.append(details);return outer;
+ details.append(inside);outer.append(details);
+ // Keep the recoverable delete action discoverable without expanding every
+ // review card; the same confirmation, reason, role check and audit RPC apply.
+ if(acts.includes('archive')){
+   const remove=button('Soft Delete (Recoverable)',()=>confirmAction('archive',[r]),
+     'mg3-action mg3-action-archive mg3-quick-soft-delete');
+   outer.append(remove);
+ }
+ return outer;
 }
 function render(){
  if(!S.result)return;

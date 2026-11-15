@@ -431,6 +431,12 @@ function founderPreview(box,venue){
   section.append(button);
   saturday.insertAdjacentElement('afterend',section);
 }
+// Return sample metrics only; never store them as real reviews.
+window.a2kKjDemoRating=()=>{
+  const samples=previewReviews();
+  return {average:samples.length?samples.reduce((sum,r)=>sum+reviewAverage(r),0)/samples.length:0,
+    count:samples.length};
+};
 window.a2kDecorateKjVenueLink=decorateKjVenueLink;
 window.a2kOpenKjHostProfile=openKjHostProfile;
 window.a2kMountKjHostPreview=founderPreview;
