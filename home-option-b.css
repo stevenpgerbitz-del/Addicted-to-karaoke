@@ -260,3 +260,206 @@ body:has(#home-screen:not([hidden])) #unified-nav button.active :is(svg,span){
  #home-screen .a2k-b-tonight-body small{font-size:10px}
  #home-screen .a2k-b-heading h2{font-size:18px!important}
 }
+
+/* v182 — smart no-scroll fit for Option B.
+   JS selects compact/tight only if the Home content exceeds its usable height.
+   Keep scroll as a safe fallback for very small screens or enlarged type. */
+@media (max-width:650px){
+ body:has(#home-screen:not([hidden])) #unified-nav{
+  min-height:74px!important;
+  max-height:88px!important;
+  padding:5px 8px calc(6px + env(safe-area-inset-bottom))!important;
+  gap:7px!important;
+ }
+ body:has(#home-screen:not([hidden])) #unified-nav button{
+  padding:5px 3px!important;
+  gap:3px!important;
+  font-size:14px!important;
+ }
+ body:has(#home-screen:not([hidden])) #unified-nav button svg{
+  width:26px!important;height:26px!important;
+ }
+ body:has(#home-screen:not([hidden])) #unified-nav button span{
+  font-size:13px!important;white-space:nowrap!important;
+ }
+}
+/* Moderate fit tier: preserve the full logo and all four Spotlight totals. */
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-hero{
+ margin-bottom:7px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-hero .approved-logo{
+ height:clamp(123px,21dvh,166px)!important;
+ max-height:166px!important;
+ width:100%!important;
+ object-fit:contain!important;
+ object-position:center!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-find{
+ min-height:67px!important;
+ grid-template-columns:48px 1px minmax(0,1fr) 13px!important;
+ gap:9px!important;
+ padding:7px 10px!important;
+ margin:4px 0 11px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-find-pin svg{
+ width:39px!important;height:46px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-find-text strong{
+ font-size:clamp(19px,5vw,25px)!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-find-text small{
+ font-size:clamp(11px,2.9vw,13px)!important;
+ line-height:1.22!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-section{
+ margin-bottom:10px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-heading{
+ margin-bottom:5px!important;gap:6px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-heading h2{
+ font-size:clamp(18px,4.7vw,22px)!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-tonight-grid{
+ gap:7px!important;min-height:85px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-tonight{
+ min-height:85px!important;
+ padding:5px!important;
+ gap:5px!important;
+ grid-template-columns:35% minmax(0,1fr)!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-tonight-photo{
+ min-height:73px!important;max-height:98px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-tonight-body{
+ gap:2px!important;padding:1px 0!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-tonight-body strong{
+ font-size:clamp(11px,3vw,14px)!important;
+ line-height:1.15!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-tonight-body small{
+ font-size:clamp(10px,2.55vw,12px)!important;
+ line-height:1.18!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-tag{
+ padding:2px 5px!important;
+ font-size:10px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-tonight.a2k-b-browse{
+ grid-template-columns:37px minmax(0,1fr)!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-browse-icon{
+ width:34px!important;height:34px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-feature{
+ min-height:105px!important;
+ padding:6px!important;gap:8px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-feature-photo{
+ min-height:91px!important;max-height:112px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-feature-copy{
+ gap:3px!important;padding:1px 0!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-feature-copy strong{
+ font-size:clamp(16px,4.5vw,21px)!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-feature-copy small,
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-feature-copy em{
+ font-size:clamp(11px,2.9vw,13px)!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-feature-copy em{
+ -webkit-line-clamp:1!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-stats{
+ margin-top:10px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-spotlight-heading{
+ min-height:27px!important;
+ padding:3px 13px!important;
+ font-size:clamp(16px,4.2vw,20px)!important;
+ margin-bottom:-7px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-stats-grid{
+ padding:13px 4px 7px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-stat svg{
+ width:22px!important;height:22px!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-stat strong{
+ font-size:clamp(16px,4.2vw,21px)!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-stat span{
+ font-size:clamp(10px,2.65vw,12px)!important;
+}
+#home-screen .a2k-b-home.a2k-b-compact .a2k-b-build{
+ margin:5px auto 3px!important;font-size:10px!important;
+}
+/* Extra-small fit tier is used only if moderate compression is insufficient. */
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-hero{
+ margin-bottom:4px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-hero .approved-logo{
+ height:clamp(107px,17.6dvh,145px)!important;
+ max-height:145px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-find{
+ min-height:59px!important;
+ grid-template-columns:38px 1px minmax(0,1fr) 11px!important;
+ gap:7px!important;
+ padding:5px 8px!important;
+ margin:3px 0 8px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-find-pin svg{
+ width:33px!important;height:38px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-find-text strong{
+ font-size:clamp(17px,4.7vw,22px)!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-section{
+ margin-bottom:7px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-heading{
+ margin-bottom:4px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-heading h2{
+ font-size:clamp(17px,4.4vw,20px)!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-tonight,
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-tonight-grid{
+ min-height:77px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-tonight-photo{
+ min-height:65px!important;max-height:82px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-feature{
+ min-height:94px!important;padding:5px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-feature-photo{
+ min-height:82px!important;max-height:94px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-stats{
+ margin-top:6px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-spotlight-heading{
+ min-height:25px!important;padding:2px 11px!important;
+ font-size:clamp(15px,4vw,18px)!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-stats-grid{
+ padding:11px 4px 6px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-stat svg{
+ width:19px!important;height:19px!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-stat strong{
+ font-size:clamp(15px,4vw,19px)!important;
+}
+#home-screen .a2k-b-home.a2k-b-tight .a2k-b-build{
+ margin:3px auto 0!important;
+}
+/* Ensure the Home panel can use all space up to the persistent bottom nav. */
+body:has(#home-screen:not([hidden])) #home-screen{
+ padding-bottom:4px!important;
+}
