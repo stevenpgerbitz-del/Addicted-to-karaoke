@@ -54,3 +54,11 @@
 .a2k-kj-review-moderate{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
 .a2k-kj-review-moderate button{flex:1;font-size:13px;min-height:38px}
 @media(max-width:420px){.a2k-kj-inner{padding:16px 12px}.a2k-kj-rating-choices{gap:3px}.a2k-kj-review-card{padding:9px}}
+
+/* Subsection of the EXISTING Review Management workspace, not a new portal tile. */
+#management-reviews .a2k-kj-review-switch{
+ display:block;width:100%;min-height:43px;text-align:center;margin:8px 0 14px;
+ background:linear-gradient(140deg,#74211c,#481614);
+ border-color:#c49a62;
+}
+#management-reviews .a2k-kj-review-switch[hidden]{display:none!important}
