@@ -87,7 +87,10 @@
     const rating=Number(byId('review-filter')?.value||0);
     let shownVenues=0,shownEvents=0;
     parent.querySelectorAll('.venue-teaser').forEach(card=>{
-      if(mode==='events')card.hidden=true;
+      // A venue added solely to host a dated event is represented by its event
+      // card, not a second permanent "weekly karaoke" venue card.
+      const item=(typeof sampleVenues!=='undefined')?sampleVenues.find(v=>v.id===card.dataset.venue):null;
+      if(mode==='events'||item?.specialEventsOnly)card.hidden=true;
       if(!card.hidden)shownVenues++;
     });
     parent.querySelectorAll('.a2k-event-card').forEach(card=>{
