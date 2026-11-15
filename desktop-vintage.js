@@ -1,9 +1,11 @@
-/* A2K build 212 — desktop shell.
+/* A2K build 213 — desktop shell, with tablet-friendly pointer detection.
    Uses the existing A2K screens, authentication, listings and handlers.
    The approved phone/tablet UI remains unchanged below 1024 CSS pixels. */
 (function(){
  'use strict';
  const breakpoint=window.matchMedia('(min-width:1024px)');
+ const mouseInput=window.matchMedia('(hover: hover) and (pointer: fine)');
+ const explicitPreview=new URLSearchParams(location.search).has('a2k_desktop_preview');
  const iconPaths={
    home:'M3 10.5 12 3l9 7.5V21h-6v-7H9v7H3z',
    find:'M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 0 1 16 0Z',
@@ -160,7 +162,7 @@
    }
  }
  function switchLayout(){
-   document.documentElement.classList.toggle('a2k-desktop-live',breakpoint.matches);
+   document.documentElement.classList.toggle('a2k-desktop-live',breakpoint.matches&&(mouseInput.matches||explicitPreview));
  }
  function init(){
    if(mounted)return;
@@ -177,4 +179,6 @@
  else init();
  if(typeof breakpoint.addEventListener==='function')breakpoint.addEventListener('change',switchLayout);
  else if(typeof breakpoint.addListener==='function')breakpoint.addListener(switchLayout);
+ if(typeof mouseInput.addEventListener==='function')mouseInput.addEventListener('change',switchLayout);
+ else if(typeof mouseInput.addListener==='function')mouseInput.addListener(switchLayout);
 })();
