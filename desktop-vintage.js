@@ -234,8 +234,47 @@
          profiles.push({name,bio:host.bio||''});
        }
        profiles.sort((x,y)=>x.name.localeCompare(y.name));
+       const ratings=new Map();
+       // Only public, approved KJ ratings count. Do not count pending
+       // moderation items or display sample reviews as real ratings.
+       try{
+         const publishedScores=await getPublishedRows(
+           'kj_review_scores?select=host_user_id,review_count,average_score');
+         for(const item of Array.isArray(publishedScores)?publishedScores:[]){
+           ratings.set(item.host_user_id,item);
+         }
+       }catch(err){
+         console.warn('KJ public rating summaries unavailable',err);
+       }
        for(const host of profiles){
          const card=directoryCard(host.name,'Karaoke host',host.bio||'');
+         const rating=el('div','a2k-d-kj-list-rating');
+         const score=el('strong');
+         const context=el('small');
+         if(host.name==='DJ Copper Mic (Demo)'){
+           const sample=window.a2kKjDemoRating?.();
+           if(sample?.count){
+             score.textContent='🎤 '+sample.average.toFixed(1)+' / 5';
+             context.textContent=sample.count+' sample reviews · DEMO ONLY';
+           }else{
+             score.textContent='🎤 Demo rating unavailable';
+             context.textContent='Demo profile — not a verified rating';
+           }
+           rating.classList.add('a2k-d-kj-list-rating-demo');
+         }else{
+           const publishedRating=host.userId?ratings.get(host.userId):null;
+           const count=Number(publishedRating?.review_count)||0;
+           const average=Number(publishedRating?.average_score);
+           if(count>0&&Number.isFinite(average)){
+             score.textContent='🎤 '+average.toFixed(1)+' / 5';
+             context.textContent=count+' approved review'+(count===1?'':'s');
+           }else{
+             score.textContent='🎤 Not rated yet';
+             context.textContent='No approved KJ reviews';
+           }
+         }
+         rating.append(score,context);
+         card.append(rating);
          if(host.userId&&typeof window.a2kOpenKjHostProfile==='function'){
            const action=el('button','a2k-d-directory-action','View KJ Profile');
            action.type='button';action.onclick=()=>window.a2kOpenKjHostProfile(host.userId,'','');
