@@ -1,0 +1,219 @@
+/* A2K desktop vintage lounge, build 212.
+   At desktop widths only. Does not alter phone/tablet layouts. */
+#a2k-desktop-header,#a2k-desktop-sidebar,#a2k-desktop-upcoming{display:none}
+@media(min-width:1024px){
+ html.a2k-desktop-live,html.a2k-desktop-live body{width:100%!important;min-width:0!important;height:auto!important;overflow-x:hidden!important;overflow-y:auto!important;background:#0c0908!important}
+ html.a2k-desktop-live body:has(#home-screen:not([hidden])){overflow:auto!important}
+ html.a2k-desktop-live body .app,
+ html.a2k-desktop-live body:has(#home-screen:not([hidden])) .app{
+   display:grid!important;grid-template-columns:224px minmax(0,1fr)!important;
+   align-items:start!important;width:min(100%,1600px)!important;max-width:1600px!important;
+   min-height:100vh!important;height:auto!important;margin:0 auto!important;
+   overflow:visible!important;background:#100c0a!important;
+   border-left:1px solid #64432e;border-right:1px solid #64432e;
+ }
+ html.a2k-desktop-live .app>header:not(#a2k-desktop-header){display:none!important}
+ html.a2k-desktop-live #a2k-desktop-header{
+   position:relative;isolation:isolate;grid-column:1/-1;grid-row:1;display:flex;
+   align-items:center;justify-content:center;width:100%;height:214px;
+   border-bottom:2px solid #aa804c;
+   background:#130a08 url('assets/a2k-lounge-desktop.svg') center center / cover no-repeat;
+   overflow:hidden;
+ }
+ html.a2k-desktop-live .a2k-desktop-brand{
+   display:flex;align-items:center;justify-content:center;
+   width:min(64vw,760px);height:208px;position:relative;z-index:1;
+   overflow:hidden;cursor:pointer;border:0;background:none;padding:0;
+ }
+ html.a2k-desktop-live .a2k-desktop-brand img{
+   display:block;max-width:100%;width:100%;max-height:100%;height:auto;object-fit:contain;
+   filter:saturate(.94) brightness(.96);
+   -webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);
+   mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);
+ }
+ html.a2k-desktop-live .a2k-desktop-brand:focus-visible{outline:2px solid #edd5a2;outline-offset:-5px}
+ html.a2k-desktop-live .a2k-desktop-member{
+   position:absolute;right:20px;top:15px;z-index:2;display:flex;gap:8px;
+ }
+ html.a2k-desktop-live .a2k-desktop-member button{
+   min-height:38px;padding:8px 15px;border:1px solid #b89465;border-radius:9px;
+   background:#491b16e8;color:#f3ddbc;font:700 13px Georgia,serif;cursor:pointer;
+ }
+ html.a2k-desktop-live .a2k-desktop-member button:focus-visible{outline:2px solid #f4daae;outline-offset:2px}
+ html.a2k-desktop-live #a2k-desktop-sidebar{
+   position:sticky;top:0;grid-column:1;grid-row:2;display:flex;flex-direction:column;
+   gap:7px;min-height:calc(100vh - 214px);padding:25px 15px 28px;
+   border-right:1px solid #604a37;
+   background:linear-gradient(180deg,#23130f,#1c120f 60%,#110d0b);
+ }
+ html.a2k-desktop-live .a2k-d-nav-caption{
+   margin:0 0 11px 9px;color:#c6a981;
+   text-transform:uppercase;letter-spacing:.13em;font:700 11px/1.3 Arial,sans-serif;
+ }
+ html.a2k-desktop-live .a2k-d-nav-btn{
+   display:flex;gap:12px;align-items:center;width:100%;min-height:46px;
+   padding:11px 13px;border:1px solid transparent;border-radius:9px;
+   background:transparent;color:#edd6b5;text-align:left;
+   font:700 15px/1.15 Georgia,serif;cursor:pointer;
+ }
+ html.a2k-desktop-live .a2k-d-nav-btn:hover{background:#4a251e6d}
+ html.a2k-desktop-live .a2k-d-nav-btn[aria-current="page"]{
+   border-color:#b18b5b;background:linear-gradient(#edd5ab,#ddbd8d);
+   color:#57231c;box-shadow:inset 0 0 0 1px #fff2d5;
+ }
+ html.a2k-desktop-live .a2k-d-nav-btn svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ html.a2k-desktop-live .a2k-d-nav-btn:focus-visible{outline:2px solid #f3d3a4;outline-offset:2px}
+ html.a2k-desktop-live .a2k-d-nav-note{
+   margin:23px 9px 0;padding:14px 0 0;border-top:1px solid #65452d;
+   color:#bfa787;font:12px/1.55 Arial,sans-serif;
+ }
+ html.a2k-desktop-live #unified-nav{display:none!important}
+ html.a2k-desktop-live body #unified-pages,
+ html.a2k-desktop-live body:has(#home-screen:not([hidden])) #unified-pages{
+   display:block!important;grid-column:2;grid-row:2;min-width:0;width:100%!important;
+   padding:20px clamp(18px,2.2vw,30px) 32px!important;margin:0!important;
+   overflow:visible!important;min-height:calc(100vh - 214px)!important;
+   height:auto!important;background:linear-gradient(135deg,#150f0d,#0e0b09)!important;
+ }
+ html.a2k-desktop-live body .unified-screen,
+ html.a2k-desktop-live body:not(:has(#home-screen:not([hidden]))) .unified-screen{
+   width:100%!important;max-width:1180px!important;margin:0 auto!important;
+   min-height:0!important;padding:0 0 18px!important;
+ }
+ html.a2k-desktop-live #home-screen{
+   width:100%!important;max-width:none!important;min-height:0!important;
+   height:auto!important;overflow:visible!important;padding:0!important;
+   background:transparent!important;scrollbar-gutter:auto!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-home{
+   display:grid!important;grid-template-columns:minmax(0,1.84fr) minmax(285px,1fr)!important;
+   grid-template-rows:auto auto auto auto;gap:16px 23px!important;
+   width:100%!important;max-width:none!important;height:auto!important;
+   min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important;
+   background:none!important;align-items:start!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-hero{display:none!important}
+ html.a2k-desktop-live #home-screen .a2k-b-home .a2k-b-find{
+   grid-column:1;grid-row:1;width:100%!important;max-width:none!important;
+   min-height:116px!important;height:100%!important;
+   margin:0!important;padding:13px 15px!important;align-self:stretch;
+   grid-template-columns:58px 1px minmax(0,1fr) 16px!important;gap:11px!important;
+   border-radius:13px!important;font-size:inherit!important;
+   background:linear-gradient(125deg,#751e1b,#46120f)!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-find-pin svg{width:48px!important;height:51px!important}
+ html.a2k-desktop-live #home-screen .a2k-b-find-text strong{font-size:clamp(24px,2.25vw,32px)!important}
+ html.a2k-desktop-live #home-screen .a2k-b-find-text small{font-size:14px!important}
+ html.a2k-desktop-live #home-screen .a2k-b-section[aria-labelledby="a2k-b-tonight-title"]{
+   grid-column:1;grid-row:2;margin:0!important;min-width:0;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-section[aria-labelledby="a2k-b-feature-title"]{
+   grid-column:1;grid-row:3;margin:0!important;min-width:0;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-home .a2k-b-heading h2{font-size:24px!important}
+ html.a2k-desktop-live #home-screen .a2k-b-tonight-grid{
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;
+   min-height:114px!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-home .a2k-b-tonight{
+   grid-template-columns:36% minmax(0,1fr)!important;
+   min-height:120px!important;height:auto!important;padding:7px!important;gap:8px!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-tonight-photo{
+   min-height:105px!important;max-height:none!important;height:100%!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-tonight-body{gap:4px!important}
+ html.a2k-desktop-live #home-screen .a2k-b-tonight-body strong{font-size:16px!important}
+ html.a2k-desktop-live #home-screen .a2k-b-tonight-body small{font-size:12px!important}
+ html.a2k-desktop-live #home-screen .a2k-b-feature{
+   min-height:205px!important;height:auto!important;grid-template-columns:43% minmax(0,1fr)!important;
+   padding:9px!important;gap:14px!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-feature-photo{
+   min-height:180px!important;max-height:220px!important;height:100%!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-feature-copy strong{font-size:clamp(20px,2vw,26px)!important}
+ html.a2k-desktop-live #home-screen .a2k-b-home .a2k-b-stats{
+   grid-column:2;grid-row:1;margin:0!important;min-width:0;align-self:stretch!important;
+   border:1.5px solid #ae8959;border-radius:13px;
+   background:linear-gradient(125deg,#291b14,#170f0d);padding:11px 11px 12px!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-stats .a2k-b-spotlight-heading{
+   max-width:100%!important;width:100%!important;min-height:0!important;
+   padding:2px 5px 11px!important;margin:0!important;
+   background:none!important;border:0!important;box-shadow:none!important;
+   color:#ecd3ab!important;font:italic 700 18px/1.22 Georgia,serif!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-stats-grid{
+   grid-template-columns:repeat(4,minmax(0,1fr))!important;
+   padding:4px 0 0!important;gap:0!important;
+   background:transparent!important;border:0!important;box-shadow:none!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-stat svg{width:21px!important;height:21px!important}
+ html.a2k-desktop-live #home-screen .a2k-b-stat strong{font-size:18px!important}
+ html.a2k-desktop-live #home-screen .a2k-b-stat span{font-size:11px!important}
+ html.a2k-desktop-live #home-screen #a2k-desktop-upcoming{
+   display:block!important;grid-column:2;grid-row:2 / span 2;align-self:start;
+   min-width:0;padding:13px 12px 14px;border:1.5px solid #ae8959;
+   border-radius:13px;background:linear-gradient(125deg,#261811,#130d0b);
+ }
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-heading{
+   display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;
+ }
+ html.a2k-desktop-live #a2k-desktop-upcoming h2{
+   margin:0!important;color:#f0dbb8!important;font:italic 700 19px/1.2 Georgia,serif!important;
+ }
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-view-all{
+   border:0;background:none;color:#e9c594;
+   font:italic 700 12px Georgia,serif;cursor:pointer;white-space:nowrap;
+ }
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-list{display:grid;gap:10px}
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-item{
+   display:grid;grid-template-columns:88px minmax(0,1fr);gap:11px;
+   width:100%;min-height:96px;padding:7px;border:1px solid #a57c4c;
+   border-radius:10px;background:linear-gradient(130deg,#3b2119,#1d120e);
+   text-align:left;color:#e9d6b7;cursor:pointer;
+ }
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-item img{
+   width:88px;height:80px;object-fit:cover;border-radius:7px;border:1px solid #956d42;
+ }
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-copy{
+   display:flex;flex-direction:column;min-width:0;gap:4px;
+ }
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-copy strong{
+   font:700 15px/1.2 Georgia,serif;color:#f2dcb8;overflow-wrap:anywhere;
+ }
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-copy small{
+   color:#d8bda0;font:12px/1.25 Arial,sans-serif;
+ }
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-empty{
+   margin:4px 0;color:#d6bb9b;font:13px/1.55 Arial,sans-serif;
+ }
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-item:focus-visible,
+ html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-view-all:focus-visible{
+   outline:2px solid #f3d4a0;outline-offset:2px;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-build{
+   grid-column:1/-1;grid-row:4;margin:5px auto 0!important;
+ }
+ html.a2k-desktop-live #find-screen.atk-vintage #find-results{
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;
+ }
+ html.a2k-desktop-live #find-screen.atk-vintage #venue-search{width:100%!important}
+ html.a2k-desktop-live #venue-screen{max-width:1160px!important}
+ html.a2k-desktop-live #auth-profile{max-width:1100px!important}
+ html.a2k-desktop-live :is(dialog,.management-dialog,.member-dialog){
+   max-width:min(90vw,720px)!important;
+ }
+}
+@media(min-width:1024px) and (max-width:1210px){
+ html.a2k-desktop-live #home-screen .a2k-b-home{
+   grid-template-columns:minmax(0,1.6fr) minmax(250px,1fr)!important;column-gap:14px!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-tonight-grid{grid-template-columns:1fr!important}
+ html.a2k-desktop-live #home-screen .a2k-b-tonight{min-height:95px!important}
+ html.a2k-desktop-live #home-screen .a2k-b-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ html.a2k-desktop-live #home-screen .a2k-b-stat:nth-child(2){border-right:0}
+ html.a2k-desktop-live #home-screen .a2k-b-stat{padding:4px!important}
+ html.a2k-desktop-live #find-screen.atk-vintage #find-results{grid-template-columns:1fr!important}
+}
