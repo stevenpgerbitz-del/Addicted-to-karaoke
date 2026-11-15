@@ -1522,3 +1522,13 @@
    outline:2px solid #f4dcac;outline-offset:2px;
  }
 }
+
+
+@media(min-width:1024px){
+ html.a2k-desktop-live #management-users .mg2-recent-list[hidden],
+ html.a2k-desktop-live #management-users .mg2-results[hidden],
+ html.a2k-desktop-live #management-users .mg2-attention[hidden],
+ html.a2k-desktop-live #management-users .mg2-directory-hint[hidden]{
+   display:none!important;
+ }
+}
