@@ -79,3 +79,28 @@
   background:linear-gradient(145deg,#83251e,#521411);
   color:#f4ddb6;font:700 16px Georgia,serif;cursor:pointer;
 }
+
+/* Build 209: clearly grouped venue + day + time in KJ profile dialog. */
+.a2k-kj-host-profile-schedule{
+  margin:4px 0 14px;
+  padding:11px 13px;
+  border:1px solid #896644;
+  border-radius:10px;
+  background:linear-gradient(145deg,#2d1a14,#20110d);
+}
+.a2k-kj-host-profile-schedule h3{
+  margin:0 0 7px!important;
+  color:#efd7ab;
+  font:700 15px/1.2 Georgia,serif!important;
+}
+.a2k-kj-host-profile-schedule .a2k-kj-host-profile-venue{
+  display:block;
+  margin:0 0 5px;
+  color:#f5e0c0;
+  font:italic 700 18px/1.25 Georgia,serif;
+}
+.a2k-kj-host-profile-schedule .a2k-kj-host-profile-hours{
+  margin:0;
+  color:#dfc29b;
+  font:700 14px/1.35 Arial,sans-serif;
+}
