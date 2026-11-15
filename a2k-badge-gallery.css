@@ -47,3 +47,11 @@
 #profile-section-dialog #member-achievement-list .a2k-badge-card .a2k-badge-earned{
  font:11px/1.2 Arial,sans-serif;color:#cdae85;margin-top:3px;
 }
+
+/* Founder is the exclusive collectible in the existing two-column gallery. */
+#auth-profile #member-achievement-list .a2k-founder-medal,
+#profile-section-dialog #member-achievement-list .a2k-founder-medal{
+ border:2px solid #d4ad69;
+ background:radial-gradient(ellipse at 50% 12%,#57402a,#22160f 70%,#100d0a);
+ box-shadow:inset 0 0 0 1px #f0d39a55,0 3px 8px #0008;
+}
