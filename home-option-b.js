@@ -180,8 +180,44 @@
    }
   }catch(e){console.warn('A2K Home: community counts unavailable',e);}
  }
+ /* v182 — measure visible Home content and choose the gentlest fit tier.
+    Never clip or hide Community Spotlight; allow scrolling for short windows
+    and large accessibility font settings. */
+ let fitQueued=false;
+ function fitHome(){
+  const panel=root(),content=panel?.querySelector('.a2k-b-home');
+  if(!panel||!content||panel.hidden||panel.clientHeight<150)return;
+  content.classList.remove('a2k-b-compact','a2k-b-tight');
+  const overflow=()=>panel.scrollHeight>panel.clientHeight+3;
+  if(overflow())content.classList.add('a2k-b-compact');
+  if(overflow())content.classList.add('a2k-b-tight');
+  if(!overflow()&&panel.scrollTop)panel.scrollTop=0;
+ }
+ function queueHomeFit(){
+  if(fitQueued)return;
+  fitQueued=true;
+  requestAnimationFrame(()=>{fitQueued=false;fitHome();});
+ }
+ function setupHomeFit(){
+  const panel=root(),content=panel?.querySelector('.a2k-b-home');
+  if(!panel||!content)return;
+  // Rendered async venue cards and statistics can change section height.
+  new MutationObserver(queueHomeFit).observe(content,{
+   subtree:true,childList:true,characterData:true
+  });
+  new MutationObserver(queueHomeFit).observe(panel,{
+   attributes:true,attributeFilter:['hidden']
+  });
+  window.addEventListener('resize',queueHomeFit,{passive:true});
+  window.visualViewport?.addEventListener('resize',queueHomeFit,{passive:true});
+  document.fonts?.ready?.then(queueHomeFit);
+  const logo=content.querySelector('.approved-logo');
+  if(logo&&!logo.complete)logo.addEventListener('load',queueHomeFit,{once:true});
+  queueHomeFit();
+ }
  function init(){
   if(!root()||!document.getElementById('a2k-b-tonight'))return;
+  setupHomeFit();
   void loadStats();
   void loadFeatured();
   void loadTonight();
