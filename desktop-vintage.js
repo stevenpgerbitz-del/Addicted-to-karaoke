@@ -293,7 +293,21 @@
          const venue=typeof sampleVenues==='undefined'?null:sampleVenues.find(v=>String(v.databaseId)===String(event.venue_id)&&v.publication_status==='published');
          const city=venue?[venue.name,venue.city,venue.state].filter(Boolean).join(' · '):'Published karaoke event';
          const card=directoryCard(event.title||'Karaoke Event',dateAndTime(event.start_at)+' · '+city,event.description||'');
-         if(event.host_name)card.append(el('p','a2k-d-directory-meta','Host: '+event.host_name));
+         card.classList.add('a2k-d-directory-event-card');
+         const dateObj=new Date(event.start_at);
+         if(!Number.isNaN(dateObj.getTime())){
+           const local=(opts)=>new Intl.DateTimeFormat('en-US',Object.assign({timeZone:'America/Chicago'},opts)).format(dateObj);
+           const dateTile=el('div','a2k-event-date-tile');
+           dateTile.append(
+             el('strong','',local({month:'short'}).toUpperCase()),
+             el('b','',local({day:'numeric'})),
+             el('small','',local({year:'numeric'}))
+           );
+           const copy=el('div','a2k-d-event-info');
+           copy.replaceChildren(...Array.from(card.childNodes));
+           card.append(dateTile,copy);
+         }
+         if(event.host_name)card.querySelector('.a2k-d-event-info, .a2k-d-directory-card')?.append(el('p','a2k-d-directory-meta','Host: '+event.host_name));
          if(venue&&typeof openVenue==='function'){
            const action=el('button','a2k-d-directory-action','View Venue');
            action.type='button';action.onclick=()=>openVenue(venue.id);
