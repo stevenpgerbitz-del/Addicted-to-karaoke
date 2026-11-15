@@ -13,20 +13,22 @@ function approvalCenterDate(t){
  const d=new Date(t);return Number.isNaN(d.valueOf())?'Unknown date':d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
 }
 function approvalCenterSetBadge(data){
- const count=Number(data.total_pending||0)+Number(data.report_count||0)+Number(data.photo_count||0);
+ const count=Number(data.total_pending||0)+Number(data.report_count||0)+Number(data.photo_count||0)+Number(data.suggestion_count||0);
  document.getElementById('management-approval-count').textContent=count+' pending decision'+(count===1?'':'s')+' · New member updates';
 }
 async function approvalCenterBadge(){
  const owner=authUser?.id;if(!owner||!authClient)return;
  try{
-  const [base,reports,photos]=await Promise.all([
+  const [base,reports,photos,suggestions]=await Promise.all([
    authClient.rpc('founder_approval_center'),
    authClient.from('venue_reports').select('id',{count:'exact',head:true}).eq('status','pending'),
-   authClient.from('venue_photos').select('id',{count:'exact',head:true}).eq('moderation_status','pending').eq('published',false)
+   authClient.from('venue_photos').select('id',{count:'exact',head:true}).eq('moderation_status','pending').eq('published',false),
+   authClient.from('venue_suggestions').select('id',{count:'exact',head:true}).eq('status','submitted')
   ]);
   if(base.error)throw base.error;
   if(authUser?.id!==owner)return;
-  atkApprovalData={...base.data,report_count:reports.error?0:reports.count||0,photo_count:photos.error?0:photos.count||0};
+  atkApprovalData={...base.data,report_count:reports.error?0:reports.count||0,photo_count:photos.error?0:photos.count||0,
+   suggestion_count:suggestions.error?0:suggestions.count||0};
   approvalCenterSetBadge(atkApprovalData);
  }catch(error){console.warn('Approval count unavailable',error)}
 }
@@ -56,23 +58,27 @@ async function approvalCenterRefresh(success=''){
  const request=++atkApprovalSerial,owner=authUser?.id;
  document.getElementById('atk-approval-summary').textContent='Checking pending approvals…';
  try{
-  const [base,reports,photos]=await Promise.all([
+  const [base,reports,photos,suggestions]=await Promise.all([
    authClient.rpc('founder_approval_center'),
    authClient.from('venue_reports')
     .select('id,venue_id,reporter_id,reason,note,status,created_at,venues(name,city,state)')
     .eq('status','pending').order('created_at',{ascending:true}).limit(150),
    authClient.from('venue_photos')
     .select('id,venue_id,storage_path,caption,created_at,uploader_user_id,venues(name,city,state)')
-    .eq('moderation_status','pending').eq('published',false).order('created_at',{ascending:true}).limit(150)
+    .eq('moderation_status','pending').eq('published',false).order('created_at',{ascending:true}).limit(150),
+   authClient.from('venue_suggestions')
+    .select('id,name,city,state,address_line1,postal_code,karaoke_details,status,submitted_at')
+    .eq('status','submitted').order('submitted_at',{ascending:true}).limit(100)
   ]);
   if(base.error)throw base.error;
   if(reports.error)throw reports.error;
   if(photos.error)throw photos.error;
+  if(suggestions.error)throw suggestions.error;
   const data=base.data;
   if(!data||!Array.isArray(data.venues)||!Array.isArray(data.hosting)||!Array.isArray(data.recent_members))throw Error('Unexpected approval results');
   if(request!==atkApprovalSerial||authUser?.id!==owner||document.getElementById('management-approvals').hidden)return;
-  atkApprovalData={...data,reports:reports.data||[],photos:photos.data||[],
-   report_count:reports.data?.length||0,photo_count:photos.data?.length||0};
+  atkApprovalData={...data,reports:reports.data||[],photos:photos.data||[],suggestions:suggestions.data||[],
+   report_count:reports.data?.length||0,photo_count:photos.data?.length||0,suggestion_count:suggestions.data?.length||0};
   approvalCenterSetBadge(atkApprovalData);approvalCenterRender();
   approvalCenterMessage(success);
  }catch(e){
@@ -93,6 +99,56 @@ function approvalCenterDetails(title,subtitle){
  const inside=approvalCenterEl('div',undefined,'atk-approval-details');card.append(inside);
  return {card,inside};
 }
+/* Guest-submitted listings remain hidden until staff explicitly publishes them. */
+function approvalCenterGuestSuggestionCard(item){
+ const {card,inside}=approvalCenterDetails(item.name,
+  [item.city,item.state].filter(Boolean).join(', ')+' · Guest suggestion · Hidden');
+ inside.append(approvalCenterEl('p',[item.address_line1,item.city,item.state,item.postal_code].filter(Boolean).join(', ')));
+ if(item.karaoke_details)inside.append(approvalCenterEl('p','Karaoke information: '+item.karaoke_details));
+ inside.append(approvalCenterEl('p',
+  'Accept moves this suggestion to the hidden Submitted venue queue. It does NOT publish it.',
+  'atk-approval-note'));
+ const reason=approvalCenterEl('textarea',undefined,'atk-approval-reason');
+ reason.hidden=true;reason.maxLength=400;reason.placeholder='Reason for declining (required)';
+ reason.setAttribute('aria-label','Reason for declining suggestion');inside.append(reason);
+ const actions=approvalCenterEl('div',undefined,'atk-approval-actions');
+ const decline=approvalCenterButton('Decline',()=>{
+  if(reason.hidden){reason.hidden=false;decline.textContent='Confirm Decline';approve.textContent='Add to Venue Queue';reason.focus();return;}
+  if(reason.value.trim().length<5){approvalCenterMessage('Please enter at least five characters explaining the decline.');reason.focus();return;}
+  approvalCenterGuestSuggestionAction(item,'decline',reason.value.trim(),card);
+ });
+ const approve=approvalCenterButton('Add to Venue Queue',()=>{
+  if(approve.textContent!=='Confirm Queue'){
+   approve.textContent='Confirm Queue';reason.hidden=true;decline.textContent='Decline';
+   approvalCenterMessage('This creates a hidden Submitted venue. It will NOT be publicly visible.');return;
+  }
+  approvalCenterGuestSuggestionAction(item,'accept','Guest venue suggestion accepted for review.',card);
+ });
+ actions.append(decline,approve);inside.append(actions);
+ return card;
+}
+async function approvalCenterGuestSuggestionAction(item,decision,reason,card){
+ if(atkApprovalSaving)return;
+ atkApprovalSaving=true;
+ const buttons=[...card.querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);
+ approvalCenterMessage('Saving community venue decision…');
+ try{
+  const {data,error}=await authClient.rpc('founder_decide_venue_suggestion',{
+   p_suggestion_id:item.id,p_decision:decision,p_reason:reason
+  });
+  if(error)throw error;
+  if(!data||data.status!==(decision==='accept'?'accepted':'declined'))
+   throw Error('Decision could not be confirmed.');
+  atkApprovalSaving=false;
+  await approvalCenterRefresh(decision==='accept'?
+   'Venue suggestion moved to the hidden Submitted queue for verification.':
+   'Venue suggestion declined. Decision recorded in Activity History.');
+ }catch(error){
+  atkApprovalSaving=false;buttons.forEach(b=>b.disabled=false);
+  approvalCenterMessage('Unable to process suggestion: '+(error.message||'Please retry.'));
+ }
+}
+
 function approvalCenterVenueCard(v){
  const visible=v.publication_status==='under_review'?'Under Review · Visible':'Submitted · Hidden';
  const {card,inside}=approvalCenterDetails(v.name,[v.city,v.state].filter(Boolean).join(', ')+' · '+visible);
@@ -315,14 +371,15 @@ function approvalCenterRender(){
  const section=document.getElementById('management-approvals');
  if(section)section.scrollTop=0;
  const venues=Array.isArray(data.venues)?data.venues:[];
+ const suggestions=Array.isArray(data.suggestions)?data.suggestions:[];
  const hosting=Array.isArray(data.hosting)?data.hosting:[];
  const reports=Array.isArray(data.reports)?data.reports:[];
  const photos=Array.isArray(data.photos)?data.photos:[];
  const members=Array.isArray(data.recent_members)?data.recent_members:[];
- const total=Number(data.total_pending||0)+reports.length+photos.length;
+ const total=Number(data.total_pending||0)+suggestions.length+reports.length+photos.length;
  const summary=document.getElementById('atk-approval-summary');
  summary.textContent=total
-  ? total+' item'+(total===1?'':'s')+' awaiting review · '+Number(data.venue_count||0)+' venue'+(Number(data.venue_count||0)===1?'':'s')+' · '+Number(data.hosting_count||0)+' KJ request'+(Number(data.hosting_count||0)===1?'':'s')+' · '+reports.length+' report'+(reports.length===1?'':'s')+' · '+photos.length+' photo'+(photos.length===1?'':'s')
+  ? total+' item'+(total===1?'':'s')+' awaiting review · '+(Number(data.venue_count||0)+suggestions.length)+' venue suggestion'+((Number(data.venue_count||0)+suggestions.length)===1?'':'s')+' · '+Number(data.hosting_count||0)+' KJ request'+(Number(data.hosting_count||0)===1?'':'s')+' · '+reports.length+' report'+(reports.length===1?'':'s')+' · '+photos.length+' photo'+(photos.length===1?'':'s')
   : 'All caught up — no approvals waiting.';
  const filter=document.getElementById('atk-approval-filter').value;
  const showVenues=filter==='all'||filter==='venues';
@@ -330,9 +387,12 @@ function approvalCenterRender(){
  const showMembers=filter==='all'||filter==='members';
  const showReports=filter==='all'||filter==='reports';
  const showPhotos=filter==='all'||filter==='photos';
- if(showVenues&&(venues.length||filter==='venues')){
-  approvalCenterGroup(root,'Venue submissions'+(venues.length?' · '+venues.length:''));
-  if(!venues.length)root.append(approvalCenterEl('p','No venue submissions waiting for review.','atk-approval-muted'));
+ if(showVenues&&(venues.length||suggestions.length||filter==='venues')){
+  approvalCenterGroup(root,'Guest venue suggestions · '+suggestions.length);
+  if(!suggestions.length)root.append(approvalCenterEl('p','No guest suggestions waiting.','atk-approval-muted'));
+  for(const item of suggestions)root.append(approvalCenterGuestSuggestionCard(item));
+  approvalCenterGroup(root,'Submitted venues · '+venues.length);
+  if(!venues.length)root.append(approvalCenterEl('p','No submitted venues waiting for publication.','atk-approval-muted'));
   for(const venue of venues)root.append(approvalCenterVenueCard(venue));
  }
  if(showHosting&&(hosting.length||filter==='hosting')){
@@ -391,7 +451,7 @@ const atkOriginalApprovalSetBadge=approvalCenterSetBadge;
 approvalCenterSetBadge=function(data){
  if(!data)return;
  if(atkUnclaimedPhotoCount!==null)data.photo_count=atkUnclaimedPhotoCount;
- const count=Number(data.total_pending||0)+Number(data.report_count||0)+Number(data.photo_count||0);
+ const count=Number(data.total_pending||0)+Number(data.report_count||0)+Number(data.photo_count||0)+Number(data.suggestion_count||0);
  const members=(data.recent_members||[]).filter(m=>!atkDismissedMemberIds.has(m.id)).length;
  document.getElementById('management-approval-count').textContent=
   count+' pending decision'+(count===1?'':'s')+(members?' · '+members+' new member'+(members===1?'':'s'):'');
