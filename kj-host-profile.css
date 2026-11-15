@@ -104,3 +104,138 @@
   color:#dfc29b;
   font:700 14px/1.35 Arial,sans-serif;
 }
+
+
+/* Build 210 — KJ ratings integrated inside the existing profile popup. */
+.a2k-kj-host-rating-section{
+ margin:0 0 14px;
+ border:1px solid #a07b52;
+ border-radius:10px;
+ background:linear-gradient(145deg,#291811,#1b100d);
+ overflow:hidden;
+}
+.a2k-kj-host-rating-details{
+ display:block;margin:0;
+}
+.a2k-kj-host-rating-summary{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ gap:4px 10px;min-height:48px;padding:10px 12px;
+ list-style:none;cursor:pointer;color:#f4ddb8;
+}
+.a2k-kj-host-rating-summary::-webkit-details-marker{display:none}
+.a2k-kj-host-rating-summary strong{
+ font:italic 700 19px/1.2 Georgia,serif;color:#f4dfbc;
+}
+.a2k-kj-host-rating-summary span{
+ flex:1;text-align:right;
+ font:700 12px/1.3 Arial,sans-serif;color:#e1bf91;
+}
+.a2k-kj-host-rating-summary::after{
+ content:"⌄";color:#e1c19a;font:700 17px/1 Georgia,serif;
+}
+.a2k-kj-host-rating-details[open] .a2k-kj-host-rating-summary{
+ border-bottom:1px solid #785738;
+}
+.a2k-kj-host-rating-details[open] .a2k-kj-host-rating-summary::after{content:"⌃"}
+.a2k-kj-host-rating-summary:focus-visible{
+ outline:2px solid #efd3a1;outline-offset:-3px;
+}
+.a2k-kj-host-review-list{padding:4px 10px 10px;max-height:310px;overflow-y:auto}
+.a2k-kj-host-review-list[hidden],.a2k-kj-host-review-compose[hidden],.a2k-kj-host-rating-section button[hidden]{display:none!important}
+.a2k-kj-host-review-card{
+ padding:10px;margin:9px 0;
+ border:1px solid #9d7750;border-radius:9px;
+ background:#352018;
+}
+.a2k-kj-host-review-heading{display:flex;justify-content:space-between;gap:7px;align-items:center}
+.a2k-kj-host-review-heading strong{font:700 13px/1.3 Georgia,serif;color:#f4dfbc}
+.a2k-kj-host-review-location{
+ margin:7px 0 0;color:#dfbd91;
+ font:700 12px/1.35 Arial,sans-serif;
+}
+.a2k-kj-host-review-comment{
+ margin:8px 0 0;color:#e8d3b2;
+ font:13px/1.45 Arial,sans-serif;overflow-wrap:anywhere;white-space:pre-wrap;
+}
+.a2k-kj-host-review-details{margin:8px 0 0;padding-top:6px;border-top:1px solid #785c41}
+.a2k-kj-host-review-details summary{color:#eec89b;cursor:pointer;font:700 12px/1.4 Georgia,serif}
+.a2k-kj-host-review-scores{margin:8px 0;color:#e5cfb2;font:12px/1.6 Arial,sans-serif}
+.a2k-kj-host-review-more{
+ display:block;width:100%;min-height:40px;padding:8px 10px;
+ border:1px solid #bc9566;border-radius:8px;
+ background:#44241e;color:#f2d8b5;font:700 13px Georgia,serif;cursor:pointer;
+}
+.a2k-kj-host-review-empty{margin:10px 0;color:#e2c6a4;font:13px/1.4 Arial,sans-serif}
+.a2k-kj-rate-action{
+ display:block;width:calc(100% - 20px);min-height:41px;
+ margin:4px 10px 10px;padding:8px 12px;
+ border:1.5px solid #c6a06c;border-radius:9px;
+ background:linear-gradient(145deg,#852921,#511612);
+ color:#f4ddba;font:700 15px/1.25 Georgia,serif;
+ cursor:pointer;
+}
+.a2k-kj-host-review-compose{padding:12px;border-top:1px solid #785738}
+.a2k-kj-inline-review-form{display:flex;flex-direction:column;gap:11px}
+.a2k-kj-inline-review-form h3{
+ margin:0!important;font:700 19px/1.2 Georgia,serif;color:#f5dfbb;
+}
+.a2k-kj-inline-review-form label{
+ display:grid;gap:6px;margin:0;color:#f3d9b6;font:700 13px/1.35 Georgia,serif;
+}
+.a2k-kj-inline-review-form input,
+.a2k-kj-inline-review-form select,
+.a2k-kj-inline-review-form textarea{
+ box-sizing:border-box;display:block;width:100%;min-height:42px;
+ margin:0;padding:9px 11px;border:1px solid #c5a476;border-radius:8px;
+ background:linear-gradient(150deg,#f3ddbc,#ddbc8b);
+ color:#4d211b;font:14px Arial,sans-serif;
+}
+.a2k-kj-inline-review-form textarea{resize:vertical;min-height:74px}
+.a2k-kj-inline-category{
+ margin:0;padding:8px 0 10px;border:0;border-bottom:1px solid #89644670;min-width:0;
+}
+.a2k-kj-inline-category legend{
+ padding:0;margin-bottom:4px;color:#f4dfbb;
+ font:700 14px/1.35 Georgia,serif;
+}
+.a2k-kj-inline-choices{
+ display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;min-width:0;
+}
+.a2k-kj-inline-choices button{
+ min-width:0;min-height:39px;padding:5px 0;
+ border:1px solid #a3825e;border-radius:8px;
+ background:linear-gradient(145deg,#3a2019,#21130e);
+ color:#eddbc0;font:700 13px Arial,sans-serif;
+ cursor:pointer;
+}
+.a2k-kj-inline-choices button[aria-pressed="true"]{
+ border:2px solid #f5d7a4;
+ background:linear-gradient(145deg,#edd4ab,#d6ad77);
+ color:#54221c;
+}
+.a2k-kj-inline-note{
+ margin:0;color:#d9bb94;font:12px/1.45 Arial,sans-serif;
+}
+.a2k-kj-inline-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.a2k-kj-inline-actions button{
+ min-height:42px;padding:8px;
+ border:1px solid #c09b68;border-radius:8px;
+ background:linear-gradient(145deg,#842820,#521612);
+ color:#f6dfbf;font:700 14px Georgia,serif;
+}
+.a2k-kj-host-rating-feedback{
+ margin:0 11px 9px;color:#e9c895;
+ font:13px/1.4 Arial,sans-serif;
+}
+.a2k-kj-host-rating-feedback:empty{display:none}
+.a2k-kj-host-rating-section button:focus-visible,
+.a2k-kj-host-rating-section summary:focus-visible,
+.a2k-kj-host-rating-section :is(select,input,textarea):focus-visible{
+ outline:2px solid #f4daaf;outline-offset:2px;
+}
+@media(max-width:375px){
+ .a2k-kj-host-rating-summary strong{font-size:17px}
+ .a2k-kj-host-rating-summary span{font-size:11px}
+ .a2k-kj-inline-choices{gap:3px}
+ .a2k-kj-inline-choices button{font-size:12px}
+}
