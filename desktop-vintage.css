@@ -519,3 +519,30 @@
  html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-item{grid-template-columns:85px minmax(0,1fr)!important}
  html.a2k-desktop-live #a2k-desktop-upcoming .a2k-d-upcoming-item img{width:85px!important}
 }
+
+@media (min-width:1024px) {
+ html.a2k-desktop-live #home-screen .a2k-b-stats{
+   min-height:174px!important;
+   display:flex!important;flex-direction:column!important;justify-content:flex-end!important;
+ }
+ html.a2k-desktop-live #home-screen .a2k-b-stats-grid{
+   margin-top:auto!important;min-height:91px!important;
+   align-items:center!important;
+ }
+ html.a2k-desktop-live .a2k-d-about-dialog{
+   width:min(90vw,500px);max-width:500px;padding:24px;
+   border:2px solid #c6a071;border-radius:16px;
+   background:linear-gradient(#3d110e,#1c0b08);
+   color:#f2ddbc;box-shadow:0 22px 65px #000b;
+   font-family:Georgia,serif;
+ }
+ html.a2k-desktop-live .a2k-d-about-dialog::backdrop{background:#0009}
+ html.a2k-desktop-live .a2k-d-about-dialog h2{font:italic 700 26px Georgia,serif;margin:0 0 14px}
+ html.a2k-desktop-live .a2k-d-about-dialog p{font:16px/1.55 Georgia,serif;margin:10px 0}
+ html.a2k-desktop-live .a2k-d-about-close{
+   display:block;margin:20px 0 0 auto;padding:10px 23px;
+   border:1px solid #d3a574;border-radius:9px;
+   color:#f4dfbb;background:linear-gradient(#72221a,#4a0d0b);
+   font:700 16px Georgia,serif;cursor:pointer;
+ }
+}
