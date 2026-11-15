@@ -1469,3 +1469,16 @@ body:not(:has(#home-screen:not([hidden]))) .app>header::after{
 #find-screen.atk-vintage .atk-vintage-slogan{
  display:none!important;
 }
+
+
+/* Find has an older, more-specific decorative header rule. Keep the new
+   shared marquee's border and lower vignette identical to Home. */
+body:has(#find-screen.atk-vintage:not([hidden])) .app>header{
+ border-bottom:1px solid #7d5d3c!important;
+ background:#110a09!important;
+}
+body:has(#find-screen.atk-vintage:not([hidden])) .app>header::after{
+ left:0!important;right:0!important;bottom:0!important;height:18px!important;
+ background:linear-gradient(transparent,#0f0908cc)!important;
+ opacity:1!important;
+}
