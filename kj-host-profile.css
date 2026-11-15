@@ -1,4 +1,4 @@
-/* Build 207: KJ name links and venue profile-card popup, A2K vintage theme. */
+/* Build 208: KJ links and natural-looking Founder-only profile preview. */
 .venue-live-schedule .a2k-kj-host-link{
   display:inline-flex;align-items:center;justify-content:flex-start;
   min-height:36px;max-width:100%;width:max-content;
@@ -13,12 +13,11 @@
   outline:2px solid #eecb93;outline-offset:2px;
 }
 .venue-live-schedule .a2k-kj-founder-preview{
-  margin:15px 0 0;padding:12px;border:1px dashed #bd905f;
-  border-radius:10px;background:#24130f;
+  display:flex;align-items:center;justify-content:flex-start;
+  margin:4px 0 9px;padding:0;border:0;border-radius:0;background:none;
 }
-.venue-live-schedule .a2k-kj-founder-preview small{
-  display:block;margin-bottom:5px;color:#dcb784;
-  font:700 11px/1.4 Arial,sans-serif;letter-spacing:.2px;
+.venue-live-schedule .a2k-kj-founder-preview .a2k-kj-host-link{
+  margin:0;
 }
 .a2k-kj-host-profile-dialog{
   box-sizing:border-box;width:min(92vw,440px);max-height:86dvh;
