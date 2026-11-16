@@ -36,7 +36,7 @@ function setup(){
  const awardPanel=el('div','member-panel member-about a2k-profile-awards-panel');
  awardPanel.append(badges);awardCard.details.append(awardPanel);
  awardCard.summary.onclick=event=>typeof profileSectionTap==='function'?profileSectionTap(event,awardCard.summary):true;
- const settingsCard=detailsCard('a2k-profile-settings','⚙ Settings','Privacy, contact visibility and notifications');
+ const settingsCard=detailsCard('a2k-profile-settings','⚙ Settings','Favorite music genres, privacy, contact preferences and notifications');
  settingsPanel=el('div','member-panel member-about a2k-profile-settings-panel');
  privacy.classList.add('a2k-settings-privacy');
  settingsPanel.append(privacy);
