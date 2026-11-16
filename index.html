@@ -1018,7 +1018,7 @@ padding:13px 3px!important;min-height:66px
  </section>
  <section class="profile-about-privacy" aria-label="Privacy and Visibility">
   <div class="profile-section-top"><strong class="profile-privacy-title"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>Privacy &amp; Visibility</strong><button type="button" class="profile-section-edit" id="member-privacy-edit" onclick="memberPrivacyEdit()" aria-label="Edit Privacy and Visibility">Edit</button></div>
-  <div id="member-privacy-summary" class="profile-privacy-summary"><div><span>Profile Visibility</span><strong id="member-profile-visibility-summary">Public</strong></div><div><span>Song List Visibility</span><strong id="member-song-visibility-summary">Private</strong></div></div>
+  <div id="member-privacy-summary" class="profile-privacy-summary"><div><span>Profile Visibility</span><strong id="member-profile-visibility-summary">Public</strong></div><div><span>Song List Visibility</span><strong id="member-song-visibility-summary">Private</strong></div><div><span>Member Directory</span><strong id="member-directory-visibility-summary">Listed</strong></div></div>
   <div id="member-privacy-editor" hidden>
    <p class="profile-privacy-help">Choose who can see your profile and karaoke songs.</p>
    <fieldset class="profile-privacy-fieldset"><legend>Profile Visibility</legend><label class="profile-privacy-choice"><input type="radio" name="profile_visibility" value="public"><span><strong>Public</strong><small>Everyone can see my profile</small></span></label>
@@ -1027,6 +1027,7 @@ padding:13px 3px!important;min-height:66px
    <fieldset class="profile-privacy-fieldset"><legend>My Karaoke Songs</legend><label class="profile-privacy-choice"><input type="radio" name="song_visibility" value="public"><span><strong>Public</strong><small>Everyone can see my songs</small></span></label>
 <label class="profile-privacy-choice"><input type="radio" name="song_visibility" value="members"><span><strong>Members Only</strong><small>Registered members can see my songs</small></span></label>
 <label class="profile-privacy-choice"><input type="radio" name="song_visibility" value="private"><span><strong>Private</strong><small>Only me</small></span></label></fieldset>
+   <div class="a2k-directory-privacy"><strong>Member Directory</strong><p>Choose whether your profile appears in the searchable Members directory. Your direct profile visibility is controlled above.</p><button type="button" id="member-directory-privacy-toggle" class="a2k-settings-tile" aria-pressed="true" onclick="memberDirectoryToggle()"><span class="a2k-settings-tile-symbol" aria-hidden="true">♧</span><strong>Show me in the Member Directory</strong><small id="member-directory-privacy-description">People can discover my profile when its visibility allows.</small></button></div>
    <div class="profile-interests-buttons"><button type="button" id="member-privacy-cancel" onclick="memberPrivacyCancel()">Cancel</button><button type="button" id="member-privacy-save" onclick="memberPrivacySave()">Save Changes</button></div>
   </div>
   <p id="member-privacy-feedback" role="status" aria-live="polite"></p>
@@ -2507,6 +2508,20 @@ async function memberSubmit(e){e.preventDefault();const data=new FormData(e.targ
  }else{const payload={user_id:authUser.id,title:String(data.get('title')).trim(),artist:String(data.get('artist')).trim(),key_change:Number(data.get('key_change')),tempo_change:Number(data.get('tempo_change')),list_type:String(data.get('list_type')),favorite:data.has('favorite'),notes:String(data.get('notes')).trim()};if(!payload.title||!payload.artist)throw Error('Title and artist are required.');if(memberEditing.type==='song'&&memberSongStep===1)throw Error('Please continue to Step 2.');if(songLookupAlreadySaved(payload.title,payload.artist))throw Error('Already in My Songs. Edit the existing song instead.');let q=memberEditing.id?authClient.from('karaoke_songs').update(payload).eq('id',memberEditing.id).eq('user_id',authUser.id):authClient.from('karaoke_songs').insert(payload);const r=await q;if(r.error)throw r.error;const reload=await authClient.from('karaoke_songs').select('*').eq('user_id',authUser.id).order('created_at',{ascending:false});if(reload.error)throw reload.error;memberSongs=reload.data||[];memberRender();await memberLoadBadges(authUser.id)}document.getElementById('member-dialog').close()}catch(x){err.textContent=x.message||'Could not save changes.'}}
 /* Changes stay local until Save Changes is pressed. */
 let memberPrivacySaving=false;
+let memberDirectoryDraft=true;
+function memberDirectoryToggle(){
+ memberDirectoryDraft=!memberDirectoryDraft;
+ memberDirectoryRenderDraft();
+}
+function memberDirectoryRenderDraft(){
+ const button=document.getElementById('member-directory-privacy-toggle');
+ const description=document.getElementById('member-directory-privacy-description');
+ if(!button)return;
+ button.setAttribute('aria-pressed',String(memberDirectoryDraft));
+ if(description)description.textContent=memberDirectoryDraft?
+   'People can discover my profile when its visibility allows.':
+   'Do not list me in Members search or directory cards.';
+}
 const memberVisibilityLabels={public:'Public',members:'Members Only',private:'Private'};
 function memberPrivacyRender(){
  if(!memberProfile)return;
@@ -2516,6 +2531,10 @@ function memberPrivacyRender(){
  const b=document.getElementById('member-song-visibility-summary');
  if(a)a.textContent=memberVisibilityLabels[profile];
  if(b)b.textContent=memberVisibilityLabels[songs];
+ memberDirectoryDraft=memberProfile.directory_visible!==false;
+ const directorySummary=document.getElementById('member-directory-visibility-summary');
+ if(directorySummary)directorySummary.textContent=memberDirectoryDraft?'Listed':'Hidden';
+ memberDirectoryRenderDraft();
  document.querySelectorAll('input[name="profile_visibility"]').forEach(input=>input.checked=input.value===profile);
  document.querySelectorAll('input[name="song_visibility"]').forEach(input=>input.checked=input.value===songs);
 }
@@ -2551,8 +2570,8 @@ async function memberPrivacySave(){
  const ownerId=authUser.id,save=document.getElementById('member-privacy-save'),cancel=document.getElementById('member-privacy-cancel'),feedback=document.getElementById('member-privacy-feedback');
  memberPrivacySaving=true;save.disabled=true;cancel.disabled=true;feedback.textContent='Saving privacy settings…';
  try{
-  const {data,error}=await authClient.from('member_profiles').update({profile_visibility:profile,song_visibility:song})
-   .eq('user_id',ownerId).select('profile_visibility,song_visibility').single();
+  const {data,error}=await authClient.from('member_profiles').update({profile_visibility:profile,song_visibility:song,directory_visible:memberDirectoryDraft})
+   .eq('user_id',ownerId).select('profile_visibility,song_visibility,directory_visible').single();
   if(error)throw error;
   if(authUser?.id!==ownerId)return;
   Object.assign(memberProfile,data);
@@ -3860,7 +3879,7 @@ async function atkVenuePhotosRender(){
  }catch(error){status.textContent='Could not load venue photos: '+(error.message||'Please try again.')}
 }
 
-const SITE_BUILD_VERSION="2026.11.16-223";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=183"></script><script src="venue-phone.js?v=130"></script><script src="venue-management-v2.js?v=131"></script><script src="venue-photos-v2.js?v=149"></script><script src="user-management-v2.js?v=134"></script><script src="review-experience.js?v=147"></script><script src="review-privileges-management.js?v=140"></script><script src="member-session-notices.js?v=141"></script><script src="review-notification-center.js?v=177"></script><script src="review-reporting.js?v=142"></script><script src="review-management-v3.js?v=217"></script><script src="venue-review-filters.js?v=148"></script><script src="venue-claims.js?v=153"></script><script src="venue-claim-admin.js?v=151"></script><script src="venue-claim-notifications.js?v=152"></script><script src="venue-team.js?v=159"></script><script src="venue-owner-dashboard.js?v=159"></script><script src="google-direct-signin.js?v=188"></script><script src="profile-my-reviews.js?v=180"></script><script src="home-option-b.js?v=218"></script><script src="guest-venue-submit.js?v=183"></script><script src="founder-test-reset.js?v=189"></script><script src="kj-host-ratings.js?v=194"></script><script src="special-events.js?v=217"></script><script src="special-events-approval.js?v=196"></script><script src="kj-host-profile.js?v=217"></script><dialog id="atk-suggest-venue-dialog" aria-labelledby="atk-suggest-venue-title">
+const SITE_BUILD_VERSION="2026.11.16-224";document.querySelectorAll("[data-build-version]").forEach(el=>{el.textContent=SITE_BUILD_VERSION});</script><script src="approval-center.js?v=183"></script><script src="venue-phone.js?v=130"></script><script src="venue-management-v2.js?v=131"></script><script src="venue-photos-v2.js?v=149"></script><script src="user-management-v2.js?v=134"></script><script src="review-experience.js?v=147"></script><script src="review-privileges-management.js?v=140"></script><script src="member-session-notices.js?v=141"></script><script src="review-notification-center.js?v=177"></script><script src="review-reporting.js?v=142"></script><script src="review-management-v3.js?v=217"></script><script src="venue-review-filters.js?v=148"></script><script src="venue-claims.js?v=153"></script><script src="venue-claim-admin.js?v=151"></script><script src="venue-claim-notifications.js?v=152"></script><script src="venue-team.js?v=159"></script><script src="venue-owner-dashboard.js?v=159"></script><script src="google-direct-signin.js?v=188"></script><script src="profile-my-reviews.js?v=180"></script><script src="home-option-b.js?v=218"></script><script src="guest-venue-submit.js?v=183"></script><script src="founder-test-reset.js?v=189"></script><script src="kj-host-ratings.js?v=194"></script><script src="special-events.js?v=217"></script><script src="special-events-approval.js?v=196"></script><script src="kj-host-profile.js?v=217"></script><dialog id="atk-suggest-venue-dialog" aria-labelledby="atk-suggest-venue-title">
  <form id="atk-suggest-venue-form" class="atk-suggest-venue-form">
   <div class="atk-suggest-venue-body">
    <h2 id="atk-suggest-venue-title">Suggest a Karaoke Venue</h2>
