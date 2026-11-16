@@ -1,11 +1,11 @@
 /* A2K 224: compact Members directory cards while preserving vintage theme. */
 @media(min-width:1200px){
- html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-grid{
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid{
   grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:11px!important;
  }
 }
 @media(min-width:1024px) and (max-width:1199px){
- html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-grid{
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid{
   grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;
  }
 }
@@ -39,7 +39,7 @@
 }
 /* Mobile directory cards remain single column and compact. */
 @media(max-width:1023px){
- #a2k-d-directory .a2k-d-directory-grid{grid-template-columns:1fr;gap:9px}
+ #a2k-d-directory .a2k-d-members-grid{grid-template-columns:1fr;gap:9px}
  #a2k-d-directory .a2k-d-member-tile{padding:12px;min-height:0}
  #a2k-d-directory .a2k-d-member-summary{font-size:12px;max-height:2.8em;overflow:hidden}
 }
