@@ -42,6 +42,68 @@ textarea{resize:vertical;min-height:160px;line-height:1.45}input:focus,select:fo
   .print-call .square{display:inline-block;border:1px solid #444;width:12px;height:12px;vertical-align:-2px;margin-right:6px}
   .print-call .small{color:#444}
 }
+
+/* Readable, uniform bingo squares: buttons need explicit color in dark UI theme. */
+.card-grid .bingo{min-width:0;width:100%;box-sizing:border-box}
+.card-grid .board{
+ width:100%;aspect-ratio:1/1;
+ display:grid;
+ grid-template-columns:repeat(var(--count),minmax(0,1fr));
+ grid-template-rows:repeat(var(--count),minmax(0,1fr));
+ gap:2px;
+}
+.card-grid .cell{
+ aspect-ratio:auto!important;
+ min-width:0;min-height:0;width:100%;height:100%;
+ display:flex;align-items:center;justify-content:center;
+ padding:3px!important;
+ line-height:1.13!important;
+ font-family:Arial,Helvetica,sans-serif!important;
+ font-size:clamp(9px,.95vw,12px)!important;
+ font-weight:700!important;
+ overflow-wrap:anywhere;word-break:break-word;
+ white-space:normal;
+}
+.card-grid button.cell.play{
+ appearance:none!important;display:flex!important;
+ border:0!important;border-radius:0!important;
+ background:#fffaf1!important;
+ color:#321914!important;
+ -webkit-text-fill-color:#321914!important;
+ text-shadow:none!important;
+ text-decoration:none!important;
+ cursor:pointer;
+}
+.card-grid button.cell.play.marked{
+ background:#dfb39e!important;
+ color:#321914!important;
+ -webkit-text-fill-color:#321914!important;
+ box-shadow:inset 0 0 0 2px #7b2520!important;
+}
+.card-grid .cell.free{
+ background:#edcdbb!important;
+ color:#732220!important;
+ font:700 13px Georgia,serif!important;
+}
+@media(max-width:680px){
+ .card-grid .board{aspect-ratio:1/1}
+ .card-grid .cell{font-size:clamp(8px,2.3vw,12px)!important}
+}
+@media print{
+ .card-grid{display:none!important}
+ #printArea .bingo,#printArea .cell{
+   -webkit-print-color-adjust:exact;print-color-adjust:exact;
+ }
+ #printArea .board{
+  display:grid;grid-template-columns:repeat(var(--count),minmax(0,1fr));
+  grid-template-rows:repeat(var(--count),minmax(0,1fr));
+ }
+ #printArea .cell{color:#2b1717!important;font-size:10.5px!important;min-width:0;min-height:0;overflow-wrap:anywhere}
+ #printArea .cell.free{color:#732220!important}
+ body[data-bingo-print="cards"] .print-call{display:none!important}
+ body[data-bingo-print="call-sheet"] .print-sheet{display:none!important}
+ #printArea > :last-child{page-break-after:auto!important;break-after:auto!important}
+}
 </style>
 </head>
 <body>
@@ -90,8 +152,9 @@ textarea{resize:vertical;min-height:160px;line-height:1.45}input:focus,select:fo
  <section id="result" class="panel" hidden>
   <h2>3. Ready for karaoke!</h2>
   <p id="summary" class="section-note"></p>
-  <div class="actions"><button type="button" class="btn" id="print">Print / Save as PDF</button><button type="button" class="btn secondary" id="resetCalls">Reset called songs</button></div>
-  <h3>Play on your phone — tap a square to mark it</h3>
+  <div class="actions"><button type="button" class="btn" id="print">Print Bingo Cards / Save PDF</button><button type="button" class="btn secondary" id="printHost">Print Host Call Sheet</button><button type="button" class="btn secondary" id="resetCalls">Reset called songs</button></div>
+  <p class="hint">Printing opens your device's print dialog. Choose a printer or “Save as PDF”; every generated card is included, not just the two previews.</p>
+  <h3>Card preview — tap squares to mark them on your device</h3>
   <div id="preview" class="card-grid"></div>
   <h3>Host song checklist <span id="calledCount" class="small"></span></h3>
   <p class="section-note">Tap a song after it plays. These checkmarks stay on your screen; the printable call sheet starts unchecked.</p>
@@ -181,7 +244,7 @@ function generate(){
  $('summary').textContent=count+' unique numbered card'+(count===1?'':'s')+' · '+size+'×'+size+' · '+songs.length+' songs in your list · '+used.size+' on the call sheet · Seed '+seed;
  const preview=$('preview');preview.replaceChildren();
  cards.slice(0,2).forEach((card,i)=>preview.append(cardElement(card,title,i+1,seed)));
- $('print').textContent='Print / Save '+count+' Cards as PDF';
+ $('print').textContent='Print '+count+' Bingo Card'+(count===1?'':'s')+' / Save PDF';
  renderCalls();buildPrint();message('Cards generated. The first two are shown below; all '+count+' are included when you print.');
  $('result').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -299,7 +362,14 @@ $('save').addEventListener('click',()=>{try{localStorage.setItem('a2k_bingo_song
 $('clear').addEventListener('click',()=>{try{localStorage.removeItem('a2k_bingo_songs_v1');message('Saved list cleared from this device.')}catch(e){showError('Could not clear saved list.')}})
 $('newSeed').addEventListener('click',newSeed);
 $('generate').addEventListener('click',generate);
-$('print').addEventListener('click',()=>{if(current)window.print()});
+function printBingo(mode){
+ if(!current)return;
+ document.body.dataset.bingoPrint=mode;
+ buildPrint();
+ window.print();
+}
+$('print').addEventListener('click',()=>printBingo('cards'));
+$('printHost').addEventListener('click',()=>printBingo('call-sheet'));
 $('resetCalls').addEventListener('click',()=>{if(current){current.called.clear();renderCalls()}});
 init();
 })();
