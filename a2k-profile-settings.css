@@ -1,0 +1,99 @@
+/* Build 222: Profile simplification and organized settings. */
+/* Display selected interests as plain words; editing still uses the approved selection tiles. */
+#auth-profile .member-about .profile-interest-badges,
+#profile-section-dialog .member-about .profile-interest-badges{
+ display:flex!important;flex-wrap:wrap!important;align-items:baseline!important;
+ gap:0!important;margin-top:9px!important;
+}
+#auth-profile .member-about .profile-interest-chip,
+#profile-section-dialog .member-about .profile-interest-chip{
+ display:inline-flex!important;align-items:baseline!important;gap:0!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ font:500 15px/1.5 Arial,sans-serif!important;color:#f8e4d1!important;
+}
+#auth-profile .member-about .profile-interest-chip svg,
+#profile-section-dialog .member-about .profile-interest-chip svg{display:none!important}
+#auth-profile .member-about .profile-interest-chip+.profile-interest-chip::before,
+#profile-section-dialog .member-about .profile-interest-chip+.profile-interest-chip::before{
+ content:"·";display:inline-block;padding:0 9px;color:#cba37a;font-weight:700;
+}
+/* Badges have an independent profile section; no redundant section title inside it. */
+#auth-profile .a2k-profile-awards-panel .profile-about-awards>.profile-section-top,
+#profile-section-dialog .a2k-profile-awards-panel .profile-about-awards>.profile-section-top{display:none!important}
+#auth-profile .a2k-profile-awards-panel .profile-about-awards,
+#profile-section-dialog .a2k-profile-awards-panel .profile-about-awards{
+ border:0!important;margin:0!important;padding:2px 0!important;
+}
+#auth-profile .a2k-profile-awards-panel .profile-about-awards>.member-muted,
+#profile-section-dialog .a2k-profile-awards-panel .profile-about-awards>.member-muted{
+ margin:0 0 13px!important;color:#dec0ab;font-size:13px;
+}
+#auth-profile .a2k-profile-awards-panel .profile-award-list,
+#profile-section-dialog .a2k-profile-awards-panel .profile-award-list{
+ display:flex;gap:12px;flex-wrap:wrap;
+}
+/* The standard About Me panel no longer carries privacy controls or awards. */
+#auth-profile .a2k-profile-settings-panel .a2k-settings-privacy{
+ margin:0;padding:0 0 17px;border:0;border-bottom:1px solid #795047;
+}
+#auth-profile .a2k-profile-settings-panel,
+#profile-section-dialog .a2k-profile-settings-panel{min-width:0}
+.a2k-profile-settings-panel .a2k-settings-privacy{
+ border:0!important;padding:2px 0 18px!important;margin:0 0 19px!important;
+ border-bottom:1px solid #70463d!important;
+}
+.a2k-profile-settings-panel .a2k-contact-settings,
+.a2k-profile-settings-panel .a2k-notification-settings{
+ border:0;border-bottom:1px solid #70463d;margin:0 0 20px;padding:0 0 20px;
+}
+.a2k-profile-settings-panel .a2k-notification-settings{border-bottom:0;padding-bottom:0;margin-bottom:0}
+.a2k-profile-settings-panel .a2k-contact-settings>.profile-section-top,
+.a2k-profile-settings-panel .a2k-notification-settings>.profile-section-top{
+ margin-bottom:11px;
+}
+.a2k-profile-settings-panel .profile-section-top>strong{color:#f7e7db;font:700 16px/1.3 Georgia,serif}
+.a2k-profile-settings-panel .a2k-settings-explain{
+ color:#dfc6b5;font:14px/1.5 Arial,sans-serif;margin:4px 0 13px;
+}
+.a2k-profile-settings-panel .a2k-settings-not-active{
+ color:#eecdb2;border-left:3px solid #ac7456;padding:8px 12px;
+ font:13px/1.5 Arial,sans-serif;background:#34201e;border-radius:0 8px 8px 0;
+}
+.a2k-settings-contact-group{display:grid;gap:11px;margin:13px 0 22px}
+.a2k-settings-contact-group h3{
+ font:700 16px/1.35 Georgia,serif;color:#f5d7b5;margin:0;
+}
+.a2k-settings-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.a2k-settings-field strong{font:700 13px Arial,sans-serif;color:#ead9cb}
+.a2k-settings-field input{
+ display:block;width:100%;box-sizing:border-box;min-height:44px;padding:9px 11px;
+ background:#36201d!important;color:#fae8d3!important;border:1px solid #a47455!important;
+ border-radius:10px!important;font:14px Arial,sans-serif!important;
+}
+.a2k-settings-field input:focus-visible{outline:2px solid #f0c797;outline-offset:2px}
+.a2k-settings-helper{font:13px/1.5 Arial,sans-serif;color:#d9bca8;margin:1px 0}
+.a2k-settings-tile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.a2k-settings-tile{
+ width:100%;min-height:74px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+ gap:7px;padding:12px;border:1px solid #936452;border-radius:11px;
+ background:#2e1b1b;color:#f5ddc4;font:700 14px Arial,sans-serif;cursor:pointer;
+}
+.a2k-settings-tile[aria-pressed="true"]{
+ border:2px solid #e1bc86;background:linear-gradient(145deg,#752c27,#4d201e);
+ padding:11px;
+}
+.a2k-settings-tile:focus-visible{outline:2px solid #f9e0b4;outline-offset:2px}
+.a2k-settings-tile-symbol{font:22px/1 Arial,sans-serif;color:#efc59e}
+#a2k-contact-settings-actions[hidden]{display:none!important}
+.a2k-settings-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.a2k-settings-actions button{
+ min-height:43px;padding:9px;border:1px solid #c38f68;border-radius:9px;
+ background:linear-gradient(#7a2924,#4c1b1b);color:#fae2cb;font:700 14px Georgia,serif;cursor:pointer;
+}
+#a2k-contact-settings-status{font:13px/1.5 Arial,sans-serif;color:#e9c5aa}
+#a2k-contact-settings-status:empty{display:none}
+@media(max-width:520px){
+ .a2k-settings-tile{font-size:12px;min-height:70px}
+ .a2k-settings-tile-symbol{font-size:19px}
+}
