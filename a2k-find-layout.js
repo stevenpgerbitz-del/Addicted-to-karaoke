@@ -39,6 +39,9 @@
     }
     count.before(row);
     row.append(count,choices);
+    // Keep submission available without using an oversized full-width banner.
+    const submit=document.getElementById('a2k-community-submit-entry');
+    if(submit)row.append(submit);
     const userKey=()=>{
       try{
         return (typeof authUser!=='undefined'&&authUser?.id)?authUser.id:'guest';
