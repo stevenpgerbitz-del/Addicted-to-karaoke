@@ -150,7 +150,7 @@
         const count=option.value?cityCounts.get(option.value.trim().toLowerCase())||0:venueTotal;
         button.append(
           node('span','a2k-vintage-picker-place',option.textContent),
-          node('span','a2k-vintage-picker-count',count+' '+(count===1?'venue':'venues'))
+          node('span','a2k-vintage-picker-count','('+count.toLocaleString('en-US')+')')
         );
         button.dataset.search=option.textContent.toLowerCase();
         button.setAttribute('aria-label',option.textContent+', '+count+' '+(count===1?'venue':'venues'));
