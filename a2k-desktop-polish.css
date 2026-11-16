@@ -2,11 +2,7 @@
 #auth-profile .song-title,#auth-profile .song-title strong,#auth-profile .song-title span{
  background:transparent!important;box-shadow:none!important;
 }
-#auth-profile .song-title{
- display:block;max-width:100%;width:fit-content;box-sizing:border-box;
- padding:6px 10px!important;border:1px solid #8b5144!important;border-radius:8px;
- background:linear-gradient(105deg,#482024,#261417)!important;color:#f7e5d1!important;
-}
+/* desktop song titles intentionally display without individual boxes. */
 #auth-profile .song-title strong{color:#fff1d7!important}
 #auth-profile .song-title span{color:#e5bda8!important}
 @media(min-width:1024px){
@@ -95,13 +91,7 @@
  padding:5px 0!important;background:transparent!important;color:#f7e7d4!important;
  border:0!important;box-shadow:none!important;text-align:left!important;
 }
-#profile-section-dialog .song-title,
-.profile-section-dialog .song-title{
- background:linear-gradient(105deg,#482024,#261417)!important;
- border:1px solid #8b5144!important;border-radius:8px!important;
- display:block;width:fit-content;max-width:100%;padding:6px 10px!important;
- box-shadow:none!important;
-}
+/* popup song titles intentionally display without individual boxes. */
 #profile-section-dialog .song-title strong,#profile-section-dialog .song-title span,
 .profile-section-dialog .song-title strong,.profile-section-dialog .song-title span{
  background:transparent!important;color:#f7e7d4!important;box-shadow:none!important;
@@ -166,5 +156,46 @@
  }
  html.a2k-desktop-live #a2k-desktop-sidebar .a2k-d-sidebar-account:not([hidden]){
   display:flex!important;
+ }
+}
+
+/* Build 236: plain song rows. Keep hearts, song buttons, key/tempo, row dividers and menus. */
+#auth-profile .profile-song-panel .song-title,
+#auth-profile .profile-song-panel .profile-song-open,
+#profile-section-dialog .profile-song-panel .song-title,
+#profile-section-dialog .profile-song-panel .profile-song-open,
+.profile-section-dialog .profile-song-panel .song-title,
+.profile-section-dialog .profile-song-panel .profile-song-open{
+ display:block!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ box-sizing:border-box!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ padding:0!important;margin:0!important;box-shadow:none!important;
+ color:#f7e7d4!important;text-align:left!important;
+}
+#auth-profile .profile-song-panel .song-title strong,
+#profile-section-dialog .profile-song-panel .song-title strong,
+.profile-section-dialog .profile-song-panel .song-title strong{color:#fff0de!important}
+#auth-profile .profile-song-panel .song-title span,
+#profile-section-dialog .profile-song-panel .song-title span,
+.profile-section-dialog .profile-song-panel .song-title span{color:#ddbda8!important}
+#auth-profile .profile-song-panel .profile-song-open:focus-visible,
+#profile-section-dialog .profile-song-panel .profile-song-open:focus-visible{
+ outline:2px solid #edc7a6!important;outline-offset:2px!important;
+}
+/* Settings: keep the outer details card, remove the inner decorative border and background. */
+#auth-profile details#a2k-profile-settings > .a2k-profile-settings-panel{
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;margin:0!important;padding:12px 19px 18px!important;
+ min-height:0!important;
+}
+#auth-profile details#a2k-profile-settings .a2k-settings-privacy,
+#auth-profile details#a2k-profile-settings .a2k-contact-settings,
+#auth-profile details#a2k-profile-settings .a2k-notification-settings{
+ background:transparent!important;box-shadow:none!important;
+}
+@media(max-width:520px){
+ #auth-profile details#a2k-profile-settings > .a2k-profile-settings-panel{
+  padding:10px 14px 16px!important;
  }
 }
