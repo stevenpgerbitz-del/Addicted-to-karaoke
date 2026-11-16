@@ -439,5 +439,7 @@ window.a2kKjDemoRating=()=>{
 };
 window.a2kDecorateKjVenueLink=decorateKjVenueLink;
 window.a2kOpenKjHostProfile=openKjHostProfile;
+// Reuse the same approved KJ review widget inside the unified member profile.
+window.a2kMountKjRatings=mountRatings;
 window.a2kMountKjHostPreview=founderPreview;
 })();
