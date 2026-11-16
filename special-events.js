@@ -223,7 +223,7 @@
   function createFilter(){
     if(!byId('find-results')||byId('a2k-event-filter'))return;
     const search=byId('venue-search');
-    if(search)search.placeholder='Search venues, cities, events or KJs';
+    if(search)search.placeholder='Search venues, cities, ZIP codes, events or KJs';
     const searchLabel=document.querySelector('label[for="venue-search"]');
     if(searchLabel)searchLabel.textContent='Search karaoke venues and events';
     const filter=node('div','a2k-event-filter');
@@ -373,7 +373,7 @@
       }
       // Search applies to dates and weekdays as well as venue details.
       // All existing region, genre and review filters are preserved.
-      const text=[place?.name,place?.city,place?.state,place?.address,place?.region,
+      const text=[place?.name,place?.city,place?.state,place?.postal_code,place?.address,place?.region,
         ...(place?.genres||[]),
         ...(place?.karaokeSchedule||[]).map(slot=>slot.day),
         next?dayDate(next.startAt):''].filter(Boolean).join(' ').toLowerCase();
@@ -399,7 +399,7 @@
       const place=event&&venue(event);
       if(!event){card.hidden=true;return}
       const corpus=[event.title,event.description,event.host_name,dayDate(event.start_at),
-        place?.name,place?.city,place?.state,place?.address]
+        place?.name,place?.city,place?.state,place?.postal_code,place?.address]
         .filter(Boolean).join(' ').toLowerCase();
       const matches=!q||corpus.includes(q);
       const matchesState=!state||String(place?.state||'').toUpperCase()===state;
