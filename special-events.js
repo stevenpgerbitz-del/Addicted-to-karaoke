@@ -105,25 +105,56 @@
   }
   function openVintagePicker(select,title){
     const dialog=node('dialog','a2k-vintage-picker');
+    const isCity=select.id==='city-filter';
+    if(isCity)dialog.classList.add('a2k-vintage-picker-city');
     const shell=node('div','a2k-vintage-picker-shell');
     const heading=node('h2','', 'Choose '+title);
     shell.append(heading);
     const options=[...select.options].filter(opt=>!opt.disabled);
     const list=node('div','a2k-vintage-picker-list');
+
+    // Match the counts to the currently loaded, publicly visible venues.
+    // The state filter determines which venues count toward each city.
+    const cityCounts=new Map();
+    let venueTotal=0;
+    if(isCity){
+      const chosenState=byId('region-filter')?.value||'';
+      const places=typeof sampleVenues!=='undefined'&&Array.isArray(sampleVenues)?sampleVenues:[];
+      for(const venue of places){
+        if(chosenState&&String(venue.state||'').trim().toUpperCase()!==chosenState)continue;
+        const name=String(venue.city||'').trim().toLowerCase();
+        if(!name)continue;
+        cityCounts.set(name,(cityCounts.get(name)||0)+1);
+        venueTotal++;
+      }
+    }
+
     if(options.length>8){
       const search=node('input','a2k-vintage-picker-search');
       search.type='search';search.placeholder='Search '+title.toLowerCase();
       search.setAttribute('aria-label','Search '+title.toLowerCase());
       search.oninput=()=>{
         const q=search.value.trim().toLowerCase();
-        for(const button of list.children)button.hidden=!button.textContent.toLowerCase().includes(q);
+        for(const button of list.children){
+          const label=button.dataset.search||button.textContent.toLowerCase();
+          button.hidden=!label.includes(q);
+        }
       };
       shell.append(search);
     }
     for(const option of options){
-      const button=node('button','a2k-vintage-picker-option',option.textContent);
+      const button=node('button','a2k-vintage-picker-option',isCity?undefined:option.textContent);
       button.type='button';button.dataset.selected=String(option.value===select.value);
       button.setAttribute('aria-pressed',String(option.value===select.value));
+      if(isCity){
+        const count=option.value?cityCounts.get(option.value.trim().toLowerCase())||0:venueTotal;
+        button.append(
+          node('span','a2k-vintage-picker-place',option.textContent),
+          node('span','a2k-vintage-picker-count',count+' '+(count===1?'venue':'venues'))
+        );
+        button.dataset.search=option.textContent.toLowerCase();
+        button.setAttribute('aria-label',option.textContent+', '+count+' '+(count===1?'venue':'venues'));
+      }
       button.onclick=()=>{
         select.value=option.value;
         select.dispatchEvent(new Event('change',{bubbles:true}));
