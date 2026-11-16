@@ -22,3 +22,10 @@
 #atk-welcome-dialog .a2k-setup-venue-list{max-height:210px;overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 #atk-welcome-dialog .a2k-setup-summary{background:#402124;border:1px solid #a27158;border-radius:10px;padding:13px;color:#f9e7d0;font-weight:700}
 @media(max-width:480px){#atk-welcome-dialog{padding:16px 13px}#atk-welcome-dialog .a2k-setup-choice-grid{gap:7px}#atk-welcome-dialog .a2k-setup-venue-list{grid-template-columns:1fr}#atk-welcome-dialog .atk-welcome-actions{gap:5px}#atk-welcome-dialog .atk-welcome-actions button{font-size:12px;padding:8px 5px}}
+
+#auth-profile .a2k-setup-reopen,#profile-section-dialog .a2k-setup-reopen{
+ display:block;min-height:39px;margin:12px 0 1px;padding:8px 13px;
+ border:1px solid #c89669;border-radius:9px;
+ background:linear-gradient(#722a26,#491b1d);color:#fbe6cc;
+ font:700 13px Georgia,serif;
+}
