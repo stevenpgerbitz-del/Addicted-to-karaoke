@@ -15,11 +15,41 @@
  const signed=()=>typeof authUser!=='undefined'&&!!authUser?.id;
  let directoryState={role:'all',search:'',order:'name'};
  const directoryRoles=[
-   {id:'all',label:'All Members',icon:'♟'},
-   {id:'singer',label:'Singers',role:'Singer',icon:'♪'},
-   {id:'kj',label:'KJ / Hosts',role:'KJ / Host',icon:'♫'},
-   {id:'venue_owner',label:'Venue Owners',role:'Venue Owner',icon:'⌂'}
+   {id:'all',label:'All Members',icon:'users'},
+   {id:'singer',label:'Singers',role:'Singer',icon:'mic'},
+   {id:'kj',label:'KJ / Hosts',role:'KJ / Host',icon:'headphones'},
+   {id:'venue_owner',label:'Venue Owners',role:'Venue Owner',icon:'building'}
  ];
+ function directoryIcon(name){
+   const paths={
+     users:['M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2','M22 21v-2a4 4 0 0 0-3-3.87','M16 3.13a4 4 0 0 1 0 7.75'],
+     mic:['M12 19v3','M8 22h8','M5 10a7 7 0 0 0 14 0'],
+     headphones:['M3 14v-3a9 9 0 0 1 18 0v3','M3 14h4v7H5a2 2 0 0 1-2-2v-5z','M21 14h-4v7h2a2 2 0 0 0 2-2v-5z'],
+     building:['M3 21h18','M5 21V7l7-4 7 4v14','M9 21v-5h6v5','M9 9h.01M15 9h.01M9 12h.01M15 12h.01']
+   };
+   const ns='http://www.w3.org/2000/svg';
+   const svg=document.createElementNS(ns,'svg');
+   svg.setAttribute('viewBox','0 0 24 24');
+   svg.setAttribute('width','20');svg.setAttribute('height','20');
+   svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
+   svg.setAttribute('stroke-width','1.8');
+   svg.setAttribute('stroke-linecap','round');
+   svg.setAttribute('stroke-linejoin','round');
+   svg.setAttribute('aria-hidden','true');
+   for(const d of paths[name]||paths.mic){
+     const path=document.createElementNS(ns,'path');path.setAttribute('d',d);svg.append(path);
+   }
+   if(name==='users'){
+     const circle=document.createElementNS(ns,'circle');
+     circle.setAttribute('cx','9');circle.setAttribute('cy','7');circle.setAttribute('r','4');svg.append(circle);
+   }else if(name==='mic'){
+     const rect=document.createElementNS(ns,'rect');
+     rect.setAttribute('x','9');rect.setAttribute('y','2');
+     rect.setAttribute('width','6');rect.setAttribute('height','13');
+     rect.setAttribute('rx','3');svg.append(rect);
+   }
+   return svg;
+ }
  async function fetchRows(table,columns,configure){
    const connection=client();
    if(!connection)throw Error('Member directory is unavailable.');
@@ -61,8 +91,8 @@
  function makeDirectorySidebar(members,{role='all',search='',onRole=()=>{},onSearch=()=>{}}={}){
    const sidebar=elem('aside','a2k-d-members-filters a2k-d-shared-members-sidebar');
    sidebar.setAttribute('aria-label','Find members and browse the directory');
-   const mark=elem('div','a2k-d-member-directory-emblem','♬');
-   mark.setAttribute('aria-hidden','true');
+   const mark=elem('div','a2k-d-member-directory-emblem');
+   mark.setAttribute('aria-hidden','true');mark.append(directoryIcon('mic'));
    sidebar.append(mark,elem('h2','','Find Members'));
    const input=elem('input','a2k-d-directory-search');
    input.type='search';input.placeholder='Search members…';
@@ -79,7 +109,9 @@
      }));
      for(const item of tally){
        const line=elem('div','a2k-d-directory-stat-row');
-       line.append(elem('span','a2k-d-directory-stat-icon',item.icon),
+       const symbol=elem('span','a2k-d-directory-stat-icon');
+       symbol.append(directoryIcon(item.icon));
+       line.append(symbol,
          elem('span','a2k-d-directory-stat-label',item.id==='all'?'Total Members':item.label),
          elem('strong','a2k-d-directory-stat-value',item.count));
        stats.append(line);
@@ -97,8 +129,9 @@
      const button=elem('button','a2k-d-member-role-option');
      button.type='button';button.dataset.role=item.id;
      button.setAttribute('aria-pressed',String(item.id===role));
-     button.append(elem('span','a2k-d-member-role-icon',item.icon),
-       elem('span','',item.label+total));
+     const symbol=elem('span','a2k-d-member-role-icon');
+     symbol.append(directoryIcon(item.icon));
+     button.append(symbol,elem('span','',item.label+total));
      button.onclick=()=>onRole(item.id);
      options.append(button);roleButtons.set(item.id,button);
    }
