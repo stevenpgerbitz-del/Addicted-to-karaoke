@@ -3,6 +3,13 @@ Status: **APPROVED DESIGN. DO NOT REDESIGN OR REBRAND WITHOUT EXPLICIT REQUEST.*
 
 User-selected visual reference (November 16, 2026): compact, two-column member profile image shared in ChatGPT, showing MrSteve. This is the canonical target for **all member profiles**, including KJs and venue owners. Match its appearance, not merely its colors. Build 246 introduces `a2k-profile-reference.css` as the final CSS layer.
 
+## Browsing layout (approved November 16, Build 247)
+- When a member profile is opened from the directory, **keep the Find Members / Directory Stats / Browse by Role rail on the LEFT** and render the selected member's compact two-column profile to the RIGHT.
+- The rail is shared with the directory view, not a decorative separate copy. Its search and role buttons must continue working, and its counts come only from visible opted-in members.
+- Within the right profile, preserve the existing portrait-and-badges card to the left of the About Me / Karaoke Interests / role-specific cards. Thus desktop has the site's global sidebar, the directory stats rail, and the selected member's own two-column profile.
+- On narrower screens, the directory rail can stack above the profile without horizontal scrolling.
+- Changing members or switching their KJ Profile/Schedule tab must not erase or rebuild the global branding/navigation.
+
 ## Geometry
 - Content centered and narrower than the full desktop width. Left identity card occupies approximately one-third of the profile; the right column occupies two-thirds. Both columns align at the top; ~14–16px gap.
 - Deep wine/burgundy gradient panels, thin antique gold borders, ~12px radii, shadowed edges, near-black vintage lounge background. The palette stays **red / black / cream / muted gold**, absolutely no neon.
