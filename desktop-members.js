@@ -92,7 +92,11 @@
    const sidebar=elem('aside','a2k-d-members-filters a2k-d-shared-members-sidebar');
    sidebar.setAttribute('aria-label','Find members and browse the directory');
    const mark=elem('div','a2k-d-member-directory-emblem');
-   mark.setAttribute('aria-hidden','true');mark.append(directoryIcon('mic'));
+   mark.setAttribute('aria-hidden','true');
+   const artwork=elem('img','a2k-d-directory-microphone');
+   artwork.src='assets/a2k-directory-vintage-mic.svg';
+   artwork.alt='';artwork.decoding='async';
+   mark.append(artwork);
    sidebar.append(mark,elem('h2','','Find Members'));
    const input=elem('input','a2k-d-directory-search');
    input.type='search';input.placeholder='Search members…';
