@@ -197,3 +197,31 @@
 @media(max-width:430px){
  #member-privacy-summary .a2k-privacy-tile[aria-current="true"]{padding:6px 1px}
 }
+
+/* Build 234: compact tiles. The prior aspect-ratio was making each tile huge on desktop. */
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
+ aspect-ratio:auto!important;
+ width:100%!important;height:82px!important;min-height:82px!important;
+ max-height:82px!important;padding:7px 4px!important;gap:5px!important;
+ flex:none;align-self:stretch;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"],
+#member-privacy-summary .a2k-privacy-tile[aria-current="true"]{
+ padding:6px 3px!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{
+ width:22px!important;height:22px!important
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{
+ font-size:12px!important;line-height:1.14!important
+}
+@media(max-width:520px){
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
+   height:72px!important;min-height:72px!important;max-height:72px!important;
+   padding:5px 2px!important;gap:4px!important
+ }
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{
+   width:19px!important;height:19px!important
+ }
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{font-size:11px!important}
+}
