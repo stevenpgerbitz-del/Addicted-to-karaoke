@@ -50,7 +50,9 @@
    label.append(elem('h3','',member.stage_name||'Karaoke Member'),
      elem('p','a2k-d-directory-meta',rolesOf(member).join(' · ')||'Member'));
    head.append(avatar,label);box.append(head);
-   if(member.bio)box.append(elem('p','a2k-d-member-summary',member.bio));
+   const summary=elem('p','a2k-d-member-summary',member.bio||'');
+    if(!member.bio)summary.setAttribute('aria-hidden','true');
+    box.append(summary);
    const view=elem('button','a2k-d-directory-action','View Member Profile');
    view.type='button';view.onclick=()=>window.a2kOpenMemberProfile(member.user_id,'members');
    box.append(view);
