@@ -27,10 +27,10 @@ function setup(){
  settingsPanel.append(privacy);
  const contact=el('section','a2k-contact-settings');
  contact.id='a2k-contact-settings';
- contact.innerHTML='<div class="profile-section-top"><strong>Contact Visibility</strong></div><p class="a2k-settings-explain">Choose which KJ or Venue Owner contact details may be shown after verification. Your private details stay protected until public display is approved.</p><div id="a2k-contact-settings-fields"></div><p id="a2k-contact-settings-status" role="status" aria-live="polite"></p><div class="a2k-settings-actions" id="a2k-contact-settings-actions" hidden><button type="button" id="a2k-contact-settings-cancel">Cancel</button><button type="button" id="a2k-contact-settings-save">Save Changes</button></div>';
+ contact.innerHTML='<div class="profile-section-top"><strong>Contact Visibility</strong></div><div id="a2k-contact-settings-fields"></div><p id="a2k-contact-settings-status" role="status" aria-live="polite"></p><div class="a2k-settings-actions" id="a2k-contact-settings-actions" hidden><button type="button" id="a2k-contact-settings-cancel">Cancel</button><button type="button" id="a2k-contact-settings-save">Save Changes</button></div>';
  settingsPanel.append(contact);
  const notices=el('section','a2k-notification-settings');
- notices.innerHTML='<div class="profile-section-top"><strong>Notifications</strong></div><p class="a2k-settings-explain">Notification preferences are planned for upcoming karaoke events, favorite venues, hosting requests and account updates.</p><p class="a2k-settings-not-active">Push notifications are not yet enabled. Notification switches will appear here when delivery is supported and tested.</p>';
+ notices.innerHTML='<div class="profile-section-top"><strong>Notifications</strong></div><p class="a2k-settings-not-active">Push notifications coming soon.</p>';
  settingsPanel.append(notices);
  settingsCard.details.append(settingsPanel);
  settingsCard.summary.onclick=event=>{
@@ -91,7 +91,7 @@ function contactGroup(container,title,prefix){
   input.oninput=()=>{let val=input.value;if(type==='tel'){val=phoneFormat(val);input.value=val;}editing[key]=val};
   field.append(input);block.append(field);
  }
- block.append(el('p','a2k-settings-helper','Allow public display after your profile/contact information is approved:'));
+ block.append(el('p','a2k-settings-helper','Visible after verification'));
  const tiles=el('div','a2k-settings-tile-grid');
  for(const [key,label,symbol] of [[showEmail,'Show my email','✉'],[showPhone,'Show my phone','☎']]){
   const button=el('button','a2k-settings-tile');button.type='button';button.setAttribute('aria-pressed',String(!!editing[key]));
@@ -109,7 +109,7 @@ function renderContacts(){
  actions.hidden=!any;
  if(selected.has('kj'))contactGroup(dest,'KJ / Host Contact','kj');
  if(selected.has('venue_owner'))contactGroup(dest,'Venue Owner Contact','venue');
- if(!any)dest.append(el('p','a2k-settings-explain','Contact visibility is available when you select KJ / Host or Venue Owner in My Karaoke Interests. Your sign-in email is never automatically published.'));
+ if(!any)dest.append(el('p','a2k-settings-explain','Available to KJs and venue owners.'));
 }
 async function saveContacts(){
  if(!contactLoaded||!signedIn()||contactBusy)return;
