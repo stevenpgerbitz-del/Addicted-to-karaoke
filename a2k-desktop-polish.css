@@ -100,3 +100,23 @@
  background:transparent!important;color:#f7e7d4!important;box-shadow:none!important;
 }
 #profile-section-dialog .song-title span,.profile-section-dialog .song-title span{color:#ddbea8!important}
+
+
+/* Build 220: Firefox/Waterfox fix. The legacy two-button layout made
+   My Profile consume 100% of the row when Management was hidden.
+   Log Out is now the other visible action, so both must share space. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member.a2k-d-member-signed:not(.a2k-d-member-manager) button:first-child,
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member.a2k-d-member-signed:not(.a2k-d-member-manager) .a2k-d-logout{
+  flex:1 1 0!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  position:relative!important;
+  inset:auto!important;
+ }
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member{
+  flex-wrap:nowrap!important;
+  overflow:hidden!important;
+ }
+}
