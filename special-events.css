@@ -645,3 +645,36 @@ border:1px solid #ac8b61;border-radius:10px;background:#492119;color:#e8d5b3;fon
 #venue-screen #content .a2k-venue-events .a2k-event-card-copy span:last-child{
   font:13px/1.4 Arial,sans-serif;color:#dec5a6;
 }
+
+/* A2K City picker: compact rows and live counts, without changing the other filters. */
+.a2k-vintage-picker-city .a2k-vintage-picker-list{gap:5px;}
+.a2k-vintage-picker-city .a2k-vintage-picker-option{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  min-height:43px!important;
+  padding:8px 11px!important;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-place{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-count{
+  flex:none;
+  padding:5px 9px;
+  border-radius:7px;
+  border:1px solid #b58d63;
+  background:#2b1713;
+  color:#f8e4c3;
+  font:700 12px/1.2 Arial,sans-serif;
+  white-space:nowrap;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-option[aria-pressed="true"] .a2k-vintage-picker-count{
+  background:#69362a;
+  border-color:#a66f50;
+  color:#fff0d5;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-option[aria-pressed="true"]::before{
+  content:none!important;
+}
