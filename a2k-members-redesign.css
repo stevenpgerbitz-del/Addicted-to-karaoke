@@ -1,0 +1,320 @@
+/* A2K Build 240 — MEMBER CONTENT ONLY.
+   Keeps the site's approved vintage banner, sidebar, fonts and brand palette.
+   No changes to account settings, permissions, mobile navigation or venue cards. */
+
+/* The KJ / Events / Members content belongs only to its directory mode.
+   Never let the shared directory shell appear underneath Find Karaoke. */
+#find-screen:not(.a2k-d-directory-active) > #a2k-d-directory{
+ display:none!important;
+}
+html.a2k-desktop-live #find-screen:not(.a2k-d-directory-active) > #a2k-d-directory{
+ display:none!important;
+}
+
+/* Member directory: filter rail + compact, consistent member cards. */
+html.a2k-desktop-live #a2k-d-directory:has(.a2k-d-members-layout),
+html.a2k-desktop-live #a2k-d-directory:has(.a2k-d-public-profile-main){
+ max-width:1220px!important;
+ margin:0 auto!important;
+ padding:7px 8px 28px!important;
+ min-width:0!important;
+ box-sizing:border-box!important;
+}
+#a2k-d-directory .a2k-d-members-layout{
+ display:grid;grid-template-columns:minmax(210px,245px) minmax(0,1fr);
+ gap:17px;align-items:start;min-width:0;
+}
+#a2k-d-directory .a2k-d-members-layout > *{min-width:0}
+#a2k-d-directory .a2k-d-members-filters{
+ display:flex;flex-direction:column;gap:12px;min-width:0;
+ padding:18px 15px;
+ border:1.5px solid #aa8156;border-radius:13px;
+ background:linear-gradient(145deg,#361611,#20100e);
+ box-shadow:inset 0 0 0 1px #75462d66;
+}
+#a2k-d-directory .a2k-d-members-filters h2{
+ margin:0!important;font:700 23px/1.2 Georgia,serif!important;color:#f4dab7!important;
+}
+#a2k-d-directory .a2k-d-members-filters h3{
+ margin:8px 0 0!important;padding-top:12px;
+ border-top:1px solid #75513d;
+ font:700 17px/1.25 Georgia,serif!important;color:#ecd1ad!important;
+}
+#a2k-d-directory .a2k-d-members-filters .a2k-d-directory-search{
+ display:block!important;box-sizing:border-box!important;
+ width:100%!important;max-width:none!important;min-width:0;
+ height:43px!important;min-height:43px!important;
+ padding:9px 10px!important;margin:0!important;
+ background:#231310!important;
+ color:#f2ddc6!important;
+ border:1px solid #a47753!important;border-radius:9px!important;
+ font:14px Arial,sans-serif!important;
+}
+#a2k-d-directory .a2k-d-member-sidebar-caption{
+ font:12px/1.35 Georgia,serif!important;color:#cbaa8c!important;
+ margin:0!important;
+}
+#a2k-d-directory .a2k-d-member-role-options{
+ display:grid;grid-template-columns:1fr;gap:7px;min-width:0;
+}
+#a2k-d-directory .a2k-d-member-role-option{
+ width:100%;min-height:39px;
+ padding:8px 11px;
+ border:1px solid #956447;border-radius:8px;
+ background:#2c1714;color:#f3d6b7;
+ font:700 13px/1.2 Georgia,serif;
+ text-align:left;cursor:pointer;
+}
+#a2k-d-directory .a2k-d-member-role-option[aria-pressed="true"]{
+ background:linear-gradient(135deg,#752923,#5a211e);
+ border:2px solid #e0b17e;padding:7px 10px;
+ box-shadow:inset 0 0 0 1px #a36343;
+}
+#a2k-d-directory .a2k-d-member-role-option:hover:not([aria-pressed="true"]){background:#41221d}
+#a2k-d-directory :is(.a2k-d-member-role-option,.a2k-d-member-sort,.a2k-d-directory-action):focus-visible{
+ outline:2px solid #f3d4a4!important;outline-offset:2px!important;
+}
+#a2k-d-directory .a2k-d-members-main{min-width:0}
+#a2k-d-directory .a2k-d-members-toolbar{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ flex-wrap:wrap;margin:0 0 12px;
+}
+#a2k-d-directory .a2k-d-members-count{
+ margin:0!important;color:#e4c6a2!important;
+ font:14px/1.3 Georgia,serif!important;
+}
+#a2k-d-directory .a2k-d-member-sort-label{
+ display:inline-flex;align-items:center;gap:8px;
+ color:#e4c6a2;font:700 12px/1.2 Georgia,serif;
+}
+#a2k-d-directory .a2k-d-member-sort{
+ min-height:34px;max-width:130px;
+ background:#2a1713;color:#f4d9b4;
+ border:1px solid #ae8358;border-radius:8px;
+ padding:5px 8px;font:700 12px Georgia,serif;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:12px!important;align-items:stretch!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ grid-template-columns:none!important;grid-template-rows:none!important;
+ align-items:stretch!important;
+ height:auto!important;min-height:188px!important;max-height:none!important;
+ padding:14px!important;gap:8px!important;overflow:hidden!important;
+ border:1.5px solid #aa8255!important;border-radius:11px!important;
+ background:linear-gradient(145deg,#391712,#21100d)!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile-head{
+ min-height:46px!important;height:auto!important;gap:11px!important;
+ align-items:center!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile .a2k-d-member-avatar{
+ width:50px!important;height:50px!important;min-width:50px!important;
+ font-size:21px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile h3{
+ font:700 20px/1.16 Georgia,serif!important;margin:0 0 3px!important;
+ color:#f7dcba!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-summary{
+ display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;
+ height:auto!important;min-height:0!important;max-height:2.7em!important;
+ white-space:normal!important;text-overflow:clip!important;
+ overflow:hidden!important;line-height:1.35!important;font-size:13px!important;
+ color:#ddc4a9!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-since{
+ font:12px/1.25 Georgia,serif!important;color:#cfac88!important;margin:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile .a2k-d-directory-action{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;max-width:none!important;
+ min-height:38px!important;height:auto!important;
+ padding:8px 12px!important;margin:auto 0 0!important;
+ align-self:stretch!important;
+ background:linear-gradient(125deg,#752720,#511b17)!important;
+ border:1px solid #bf9160!important;border-radius:8px!important;
+ font:700 13px/1.1 Georgia,serif!important;
+}
+
+/* Member profile: a stable left identity/badges panel + main content cards. */
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-overview{
+ display:grid!important;
+ grid-template-columns:minmax(228px,280px) minmax(0,1fr)!important;
+ align-items:start!important;gap:15px!important;min-width:0!important;
+}
+#a2k-d-directory .a2k-d-public-profile-overview > *{min-width:0!important}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar{
+ display:flex!important;flex-direction:column;align-items:center;
+ min-width:0!important;box-sizing:border-box;
+ padding:20px 15px!important;margin:0!important;
+ border:1.5px solid #bc9664!important;border-radius:12px!important;
+ background:linear-gradient(145deg,#421b14,#1c0e0b)!important;
+ box-shadow:inset 0 0 0 1px #7a4b2c55;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-member-avatar-large{
+ width:116px!important;height:116px!important;font-size:48px!important;
+ margin:0 0 8px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar h1{
+ display:block!important;text-align:center!important;
+ font:italic 700 clamp(25px,2.3vw,33px)/1.12 Georgia,serif!important;
+ color:#ffe0b6!important;overflow-wrap:anywhere!important;
+ margin:0 0 5px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar h1::after{
+ content:none!important;display:none!important;
+}
+#a2k-d-directory .a2k-d-profile-role{
+ font:700 14px/1.3 Georgia,serif!important;color:#f2d9b6!important;
+ text-align:center!important;margin:0 0 12px!important;
+}
+#a2k-d-directory .a2k-d-profile-joined{
+ border-top:1px solid #8f6143;
+ width:100%;padding:14px 0 0;margin:0 0 13px!important;
+ font:13px/1.35 Georgia,serif!important;
+ color:#e0c5a6!important;text-align:center;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-public-profile-awards{
+ display:block!important;
+ box-sizing:border-box;width:100%;
+ padding:12px 0 0!important;margin:0!important;
+ border:0!important;border-top:1px solid #8f6143!important;
+ border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-public-profile-awards h2{
+ font:700 19px/1.2 Georgia,serif!important;margin:0 0 10px!important;
+ color:#f5debf!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-public-badges{
+ display:flex!important;flex-wrap:wrap!important;
+ align-items:flex-start!important;justify-content:flex-start!important;
+ gap:7px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-illustrated-badge{
+ width:70px!important;min-width:70px!important;height:70px!important;min-height:70px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main{
+ display:flex;flex-direction:column;gap:12px!important;min-width:0;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-public-profile-section{
+ margin:0!important;padding:17px 18px!important;min-width:0;
+ border:1.5px solid #a9895f!important;border-radius:12px!important;
+ background:linear-gradient(145deg,#331611,#1b0e0c)!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-public-profile-section h2{
+ margin:0 0 10px!important;font:italic 700 22px/1.2 Georgia,serif!important;
+ border-bottom:1px solid #8b5840;padding-bottom:8px;
+ color:#f6d9b4!important;
+}
+#a2k-d-directory .a2k-d-profile-story{
+ margin:0!important;max-width:70ch;
+ font:15px/1.45 Georgia,serif!important;color:#ead4b9!important;
+}
+#a2k-d-directory .a2k-d-profile-interest-tiles{
+ display:flex;flex-wrap:wrap;gap:7px;
+}
+#a2k-d-directory .a2k-d-profile-interest-tile{
+ padding:7px 11px;border:1px solid #bd9162;border-radius:8px;
+ background:#301813;color:#f1d6b5;
+ font:700 12px/1.2 Georgia,serif;
+}
+#a2k-d-directory .a2k-d-profile-section-heading{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ flex-wrap:wrap;border-bottom:1px solid #8b5840;margin-bottom:8px;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-section-heading h2{
+ border:0!important;padding:0!important;margin:0 0 8px!important;
+}
+#a2k-d-directory .a2k-d-songbook-more{
+ min-height:34px;margin:0 0 8px;padding:6px 10px;
+ background:transparent;border:1px solid #9f6f4a;border-radius:7px;
+ color:#f4d5a7;font:700 12px Georgia,serif;cursor:pointer;
+}
+#a2k-d-directory .a2k-d-songbook-more:focus-visible{
+ outline:2px solid #f3d4a4;outline-offset:2px;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-public-songs{
+ display:flex!important;flex-direction:column;gap:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-songbook-item{
+ display:flex!important;align-items:center!important;min-width:0!important;
+ width:100%!important;box-sizing:border-box!important;
+ border:0!important;border-bottom:1px solid #5b352a!important;border-radius:0!important;
+ background:transparent!important;
+ padding:9px 6px!important;gap:10px!important;
+}
+#a2k-d-directory .a2k-d-public-profile-main .a2k-d-songbook-item:last-child{
+ border-bottom:0!important;
+}
+#a2k-d-directory .a2k-d-public-profile-main .a2k-d-songbook-copy{
+ min-width:0;display:flex;flex:1;justify-content:space-between;gap:10px;flex-wrap:wrap;
+}
+#a2k-d-directory .a2k-d-public-profile-main .a2k-d-songbook-copy strong{
+ font-size:13px!important;color:#f4dabe!important;
+}
+#a2k-d-directory .a2k-d-public-profile-main .a2k-d-songbook-copy small{
+ font-size:12px!important;color:#d4b293!important;
+}
+#a2k-d-directory .a2k-d-profile-muted{
+ margin:0!important;color:#c5aa8d!important;
+ font:12px/1.35 Georgia,serif!important;
+}
+#a2k-d-directory .a2k-d-profile-venue-list{
+ display:grid;grid-template-columns:1fr;gap:6px;
+ margin-top:9px;
+}
+#a2k-d-directory .a2k-d-profile-venue-item{
+ display:flex;flex-direction:column;align-items:flex-start;gap:3px;
+ padding:9px 12px;min-width:0;
+ border:1px solid #75503b;border-radius:8px;
+ background:#321b17;color:#f5d7b2;
+ font:700 13px Georgia,serif;text-align:left;cursor:pointer;
+}
+#a2k-d-directory .a2k-d-profile-venue-item small{
+ color:#d1ad8c;font:12px Georgia,serif;
+}
+#a2k-d-directory .a2k-d-profile-kj-link{
+ align-self:flex-start;min-height:38px;
+}
+@media(min-width:1024px) and (max-width:1230px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid{
+  grid-template-columns:1fr!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-layout{
+  grid-template-columns:minmax(195px,225px) minmax(0,1fr);
+  gap:13px;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-overview{
+  grid-template-columns:minmax(200px,240px) minmax(0,1fr)!important;
+ }
+}
+@media(max-width:1023px){
+ #a2k-d-directory .a2k-d-members-layout{grid-template-columns:1fr!important}
+ #a2k-d-directory .a2k-d-member-role-options{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+ }
+ #a2k-d-directory .a2k-d-members-grid{grid-template-columns:1fr!important}
+ #a2k-d-directory .a2k-d-public-profile-overview{
+  display:flex!important;flex-direction:column!important;gap:12px!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar{
+  display:flex!important;flex-direction:column;align-items:center;
+  width:100%;padding:16px;border:1px solid #a9895f;border-radius:12px;
+  background:linear-gradient(145deg,#391913,#1e100d);
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-public-badges{
+  display:flex;flex-wrap:wrap;gap:8px;
+ }
+ #a2k-d-directory .a2k-d-public-profile-main{
+  display:flex;flex-direction:column;gap:12px;width:100%;
+ }
+ #a2k-d-directory .a2k-d-public-profile-main .a2k-d-public-profile-section{
+  border:1px solid #a9895f;border-radius:12px;
+  background:linear-gradient(145deg,#331611,#1b0e0c);padding:15px;
+ }
+}
