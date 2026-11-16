@@ -1,0 +1,81 @@
+/* A2K Build 218: restrained desktop refinement, keeps existing mobile structure. */
+#auth-profile .song-title,#auth-profile .song-title strong,#auth-profile .song-title span{
+ background:transparent!important;box-shadow:none!important;
+}
+#auth-profile .song-title{
+ display:block;max-width:100%;width:fit-content;box-sizing:border-box;
+ padding:6px 10px!important;border:1px solid #8b5144!important;border-radius:8px;
+ background:linear-gradient(105deg,#482024,#261417)!important;color:#f7e5d1!important;
+}
+#auth-profile .song-title strong{color:#fff1d7!important}
+#auth-profile .song-title span{color:#e5bda8!important}
+@media(min-width:1024px){
+ html.a2k-desktop-live #auth-profile .profile-action-grid{display:none!important}
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member{
+  width:33.5%!important;right:1.2%!important;gap:7px!important;
+ }
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member button{
+  padding:5px 7px!important;font-size:clamp(11px,.97vw,14px)!important;
+  border-radius:11px!important;white-space:nowrap!important;
+ }
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member .a2k-d-logout{
+  background:linear-gradient(180deg,#652722,#3b1715)!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-badges{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-illustrated-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:75px;height:75px;min-width:75px;min-height:75px;
+  border:1px solid #c99b61;border-radius:12px;
+  background:linear-gradient(145deg,#411d19,#22110f);
+  box-shadow:0 2px 8px #0005;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-illustrated-badge img{
+  display:block;width:70px;height:70px;object-fit:contain;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-badge-fallback{font:700 33px Georgia,serif;color:#e9c989}
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-controls{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 12px;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-search{
+  width:min(410px,75%);min-height:41px;box-sizing:border-box;padding:9px 12px;
+  border:1px solid #a47a54;border-radius:10px;background:#291816;color:#f9e8d1;
+  font:15px Georgia,serif;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-count{font:13px Georgia,serif;color:#e6c4a2}
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-songs{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-item{
+  display:flex;align-items:center;gap:12px;min-width:0;padding:12px;
+  background:linear-gradient(105deg,#39201c,#21120f);border:1px solid #856045;border-radius:10px;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-heart{font-size:23px;color:#dc786b;flex-shrink:0}
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-copy{display:grid;gap:3px;flex:1;min-width:0}
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-copy strong{
+  color:#f7e3c4;font:700 16px/1.25 Georgia,serif;overflow-wrap:anywhere;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-copy small{
+  color:#d9bda9;font:13px/1.25 Georgia,serif;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-type{
+  border:1px solid #ad8559;border-radius:20px;padding:4px 7px;
+  font:11px Georgia,serif;color:#e3c397;white-space:nowrap;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-more{
+  margin:15px auto 0;min-width:200px;
+ }
+ #a2k-kj-host-profile-dialog{
+  width:min(680px,calc(100vw - 80px))!important;
+  max-width:680px!important;
+  font-size:15px!important;line-height:1.45!important;
+ }
+ #a2k-kj-host-profile-dialog #a2k-kj-host-profile-body{font-size:15px;line-height:1.5}
+}
+@media(min-width:1024px) and (max-width:1220px){
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member{width:36.5%!important;right:.7%!important}
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-songs{grid-template-columns:1fr!important}
+}
+@media(max-width:1023px){
+ #a2k-d-directory .a2k-d-illustrated-badge{display:inline-flex;align-items:center;justify-content:center;width:57px;height:57px}
+ #a2k-d-directory .a2k-d-illustrated-badge img{width:55px;height:55px}
+}
