@@ -203,7 +203,7 @@
  async function drawDirectory(kind){
    const shell=directoryView();if(!shell)return;
    const headline=kind==='hosts'?'KJ Hosts':'Upcoming Karaoke Events';
-   const intro=kind==='hosts'?'Meet the karaoke hosts in our community. Only published hosts are listed.':
+   const intro=kind==='hosts'?'Meet the KJs in our community who have chosen to appear in the directory.':
       'Special karaoke nights and one-time events coming up soon.';
    shell.replaceChildren(el('h1','',headline),el('p','a2k-d-directory-intro',intro));
    const search=el('input','a2k-d-directory-search');
@@ -227,82 +227,75 @@
    });
    try{
      if(kind==='hosts'){
-       const data=await Promise.all([
-         getPublishedRows('kj_review_hosts?select=user_id,stage_name,enabled&enabled=eq.true&order=stage_name.asc'),
-         getPublishedRows('kjs?select=id,display_name,bio,published&published=eq.true&order=display_name.asc')
-       ]);
+       // Use the same visible member profiles as the Members directory.
+       // KJ is a member-selected interest; listing is controlled by directory
+       // opt-in and profile visibility, not a separate demo/KJ persona.
+       let profiles=[];
+       if(typeof authClient!=='undefined'&&authClient){
+         const result=await authClient.from('member_profiles')
+           .select('user_id,stage_name,bio,avatar_path,created_at,profile_visibility,directory_visible,karaoke_interests')
+           .eq('directory_visible',true).contains('karaoke_interests',['kj'])
+           .order('stage_name',{ascending:true}).limit(200);
+         if(result.error)throw result.error;
+         profiles=Array.isArray(result.data)?result.data:[];
+       }else{
+         profiles=await getPublishedRows(
+           'member_profiles?select=user_id,stage_name,bio,avatar_path,created_at,profile_visibility,directory_visible,karaoke_interests'
+           +'&directory_visible=eq.true&karaoke_interests=cs.%7Bkj%7D&order=stage_name.asc&limit=200');
+       }
        if(!shell.isConnected||selectedDesktopTab!==kind)return;
-       const reviewHosts=Array.isArray(data[0])?data[0]:[];
-       const published=Array.isArray(data[1])?data[1]:[];
-       const seen=new Set();
-       const profiles=[];
-       for(const host of reviewHosts){
-         if(!host?.stage_name)continue;
-         const name=String(host.stage_name);
-         seen.add(name.toLocaleLowerCase().trim());
-         profiles.push({name,userId:host.user_id});
-       }
-       for(const host of published){
-         if(!host?.display_name)continue;
-         const name=String(host.display_name);
-         if(seen.has(name.toLocaleLowerCase().trim()))continue;
-         profiles.push({name,bio:host.bio||''});
-       }
-       profiles.sort((x,y)=>x.name.localeCompare(y.name));
+       const loggedIn=typeof authUser!=='undefined'&&!!authUser?.id;
+       profiles=profiles.filter(p=>p?.directory_visible===true&&
+         Array.isArray(p.karaoke_interests)&&p.karaoke_interests.includes('kj')&&
+         (p.profile_visibility==='public'||(loggedIn&&p.profile_visibility==='members')));
        const ratings=new Map();
-       // Only public, approved KJ ratings count. Do not count pending
-       // moderation items or display sample reviews as real ratings.
        try{
-         const publishedScores=await getPublishedRows(
-           'kj_review_scores?select=host_user_id,review_count,average_score');
-         for(const item of Array.isArray(publishedScores)?publishedScores:[]){
-           ratings.set(item.host_user_id,item);
+         const [verified,publicScores]=await Promise.all([
+           getPublishedRows('kj_review_hosts?select=user_id,enabled&enabled=eq.true'),
+           getPublishedRows('kj_review_scores?select=host_user_id,review_count,average_score')
+         ]);
+         const eligible=new Set((Array.isArray(verified)?verified:[]).map(h=>h.user_id));
+         for(const row of Array.isArray(publicScores)?publicScores:[]){
+           if(eligible.has(row.host_user_id))ratings.set(row.host_user_id,row);
          }
-       }catch(err){
-         console.warn('KJ public rating summaries unavailable',err);
-       }
+       }catch(error){console.warn('Approved KJ rating summaries unavailable',error)}
+       if(!shell.isConnected||selectedDesktopTab!==kind)return;
        for(const host of profiles){
-         const card=directoryCard(host.name,'Karaoke host',host.bio||'');
-         const rating=el('div','a2k-d-kj-list-rating');
-         const score=el('strong');
-         const context=el('small');
-         if(host.name==='DJ Copper Mic (Demo)'){
-           const sample=window.a2kKjDemoRating?.();
-           if(sample?.count){
-             score.textContent='🎤 '+sample.average.toFixed(1)+' / 5';
-             context.textContent=sample.count+' sample reviews · DEMO ONLY';
-           }else{
-             score.textContent='🎤 Demo rating unavailable';
-             context.textContent='Demo profile — not a verified rating';
-           }
-           rating.classList.add('a2k-d-kj-list-rating-demo');
-         }else{
-           const publishedRating=host.userId?ratings.get(host.userId):null;
-           const count=Number(publishedRating?.review_count)||0;
-           const average=Number(publishedRating?.average_score);
-           if(count>0&&Number.isFinite(average)){
-             score.textContent='🎤 '+average.toFixed(1)+' / 5';
-             context.textContent=count+' approved review'+(count===1?'':'s');
-           }else{
-             score.textContent='🎤 Not rated yet';
-             context.textContent='No approved KJ reviews';
-           }
+         const card=directoryCard(host.stage_name||'Karaoke Host','KJ / Host',host.bio||'');
+         card.classList.add('a2k-d-kj-member-card');
+         const portrait=el('span','a2k-d-member-avatar',String(host.stage_name||'K').charAt(0).toUpperCase());
+         portrait.setAttribute('aria-hidden','true');
+         if(host.avatar_path&&typeof authClient!=='undefined'&&authClient){
+           try{
+             const url=authClient.storage.from('member-avatars').getPublicUrl(host.avatar_path)?.data?.publicUrl;
+             if(url){
+               const image=el('img','a2k-d-member-avatar-image');
+               image.alt='';image.loading='lazy';image.src=url;
+               image.onerror=()=>image.remove();portrait.append(image);
+             }
+           }catch(error){console.warn('KJ member image unavailable',error)}
          }
-         rating.append(score,context);
-         card.append(rating);
-         if(host.userId&&typeof window.a2kOpenKjHostProfile==='function'){
-           const action=el('button','a2k-d-directory-action','View KJ Profile');
-           action.type='button';action.onclick=()=>window.a2kOpenKjHostProfile(host.userId,'','');
-           card.append(action);
-           const memberProfile=el('button','a2k-d-directory-action a2k-d-profile-action','View Member Profile');
-           memberProfile.type='button';
-           memberProfile.onclick=()=>void window.a2kOpenMemberProfile?.(host.userId,'hosts');
-           card.append(memberProfile);
+         const heading=card.querySelector('h3');
+         if(heading){
+           const identity=el('div','a2k-d-kj-member-identity');
+           heading.insertAdjacentElement('beforebegin',identity);
+           identity.append(portrait,heading);
          }
-         cards.push(card);
+         const rating=ratings.get(host.user_id);
+         if(rating&&Number(rating.review_count)>0&&Number.isFinite(Number(rating.average_score))){
+           const box=el('div','a2k-d-kj-list-rating');
+           box.append(el('strong','','🎤 '+Number(rating.average_score).toFixed(1)+' / 5'),
+             el('small','',Number(rating.review_count)+' approved KJ review'+(Number(rating.review_count)===1?'':'s')));
+           card.append(box);
+         }
+         const action=el('button','a2k-d-directory-action','View Profile');
+         action.type='button';
+         action.onclick=()=>void window.a2kOpenMemberProfile?.(host.user_id,'hosts');
+         card.append(action);cards.push(card);
        }
        list.replaceChildren(...cards);
-       if(!cards.length)list.append(el('p','a2k-d-directory-info','No published KJ host profiles yet. Hosts will appear here when their listings are approved.'));
+       if(!cards.length)list.append(el('p','a2k-d-directory-info',
+         'No KJ members have chosen to share their profiles here yet.'));
      }else{
        const now=encodeURIComponent(new Date().toISOString());
        const events=await getPublishedRows('karaoke_special_events?select=id,venue_id,title,start_at,end_at,host_name,description,status&status=eq.published&end_at=gt.'+now+'&order=start_at.asc&limit=150');
