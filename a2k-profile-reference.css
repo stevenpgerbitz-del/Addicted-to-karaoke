@@ -384,3 +384,168 @@
     margin:4px 10px 10px;
   }
 }
+
+/* Build 247 — approved directory-stats rail + selected profile side by side.
+   Shared with the member directory, not a second custom profile design. */
+@media (min-width:1024px) {
+ html.a2k-desktop-live #find-screen.a2k-d-directory-active > #a2k-d-directory:has(> .a2k-d-members-profile-layout) {
+   box-sizing:border-box!important;
+   width:min(100%,1250px)!important;
+   max-width:1250px!important;
+   min-width:0!important;
+   margin:0 auto!important;
+   padding:8px 12px 30px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory > .a2k-d-members-profile-layout,
+ html.a2k-desktop-live #a2k-d-directory > .a2k-d-members-layout {
+   display:grid!important;
+   grid-template-columns:minmax(205px,225px) minmax(0,1fr)!important;
+   gap:15px!important;align-items:start!important;
+   width:100%!important;min-width:0!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-profile-layout > .a2k-d-selected-member {
+   display:block!important;
+   min-width:0!important;width:100%!important;
+   padding:0!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member > .a2k-d-public-profile-overview {
+   display:grid!important;
+   grid-template-columns:minmax(232px,280px) minmax(0,1fr)!important;
+   gap:13px!important;
+   align-items:start!important;
+   min-width:0!important;width:100%!important;
+ }
+}
+#a2k-d-directory .a2k-d-shared-members-sidebar {
+ display:flex;flex-direction:column;gap:10px;
+ min-width:0!important;
+ box-sizing:border-box;
+ padding:13px 12px 16px!important;
+ border:1.5px solid #bf8b53!important;
+ border-radius:12px!important;
+ background:linear-gradient(150deg,#551b14 0%,#36120d 58%,#20100c 100%)!important;
+ box-shadow:inset 0 1px 0 #c68b5233,0 5px 14px #0005!important;
+ color:#f6dcba!important;
+}
+#a2k-d-directory .a2k-d-member-directory-emblem {
+ display:flex;align-items:center;justify-content:center;
+ width:100%;min-height:43px;
+ margin:0!important;padding:0!important;
+ text-align:center;
+ color:#e4ae63;
+ font:700 37px/1 Georgia,serif!important;
+ text-shadow:0 2px 5px #000b,0 0 13px #af6e2a44;
+}
+#a2k-d-directory .a2k-d-shared-members-sidebar > h2 {
+ font:700 18px/1.2 Georgia,serif!important;
+ color:#ffdfb9!important;
+ margin:0!important;padding:0!important;
+}
+#a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-directory-search {
+ width:100%!important;max-width:100%!important;
+ height:37px!important;min-height:37px!important;
+ box-sizing:border-box!important;
+ padding:7px 9px!important;
+ margin:0!important;
+ border:1.5px solid #b68755!important;
+ border-radius:7px!important;
+ background:#31140f!important;
+ color:#ffe2bd!important;
+ font:13px/1.2 Georgia,serif!important;
+}
+#a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-directory-search::placeholder {
+ color:#ddad7f!important;opacity:1;
+}
+#a2k-d-directory .a2k-d-directory-stats {
+ display:flex;flex-direction:column;gap:7px;
+ padding:11px 0 8px;
+ margin:0!important;
+ border-top:1px solid #86503a;
+ border-bottom:1px solid #86503a;
+}
+#a2k-d-directory .a2k-d-directory-stats h3,
+#a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-directory-browse-title {
+ margin:0 0 3px!important;
+ padding:0!important;
+ border:0!important;
+ color:#f9dfba!important;
+ font:700 15px/1.22 Georgia,serif!important;
+}
+#a2k-d-directory .a2k-d-directory-stat-row {
+ display:grid;grid-template-columns:21px minmax(0,1fr) auto;
+ align-items:center;gap:5px;
+ min-width:0;
+ font:12px/1.3 Georgia,serif;
+ color:#f1d5b1;
+}
+#a2k-d-directory .a2k-d-directory-stat-icon,
+#a2k-d-directory .a2k-d-member-role-icon {
+ display:inline-flex;align-items:center;justify-content:center;
+ width:20px;height:20px;flex:0 0 20px;
+ color:#e3b46c;
+ font:700 19px/1 Georgia,serif;
+}
+#a2k-d-directory .a2k-d-directory-stat-label {
+ min-width:0;overflow-wrap:anywhere;
+}
+#a2k-d-directory .a2k-d-directory-stat-value {
+ font:700 13px/1.3 Georgia,serif;
+ text-align:right;color:#ffe6c2;
+}
+#a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-member-role-options {
+ display:grid!important;grid-template-columns:1fr!important;
+ gap:6px!important;
+}
+#a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-member-role-option {
+ display:flex!important;align-items:center!important;
+ gap:9px!important;
+ width:100%!important;min-height:33px!important;
+ padding:6px 9px!important;
+ margin:0!important;
+ border:1px solid #a67a4d!important;
+ border-radius:7px!important;
+ background:linear-gradient(120deg,#42201a,#28120f)!important;
+ color:#f7dfbc!important;
+ font:700 12px/1.25 Georgia,serif!important;
+ text-align:left!important;
+ cursor:pointer;
+}
+#a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-member-role-option[aria-pressed="true"] {
+ background:linear-gradient(135deg,#86271d,#5b1a15)!important;
+ border-color:#d9ac72!important;
+ box-shadow:inset 0 0 0 1px #a7664855!important;
+}
+#a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-member-role-option:hover {
+ border-color:#e5b77a!important;
+}
+#a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-member-role-option:focus-visible,
+#a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-directory-search:focus-visible {
+ outline:2px solid #f4d4a2!important;outline-offset:2px!important;
+}
+@media (min-width:1024px) and (max-width:1260px) {
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member > .a2k-d-public-profile-overview {
+   grid-template-columns:minmax(210px,240px) minmax(0,1fr)!important;
+ }
+}
+@media (max-width:1023px) {
+ #a2k-d-directory > .a2k-d-members-profile-layout {
+   display:flex!important;
+   flex-direction:column!important;
+   gap:14px!important;
+   min-width:0!important;
+ }
+ #a2k-d-directory .a2k-d-members-profile-layout > * {
+   width:100%!important;min-width:0!important;
+ }
+ #a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-member-role-options {
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ #a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-member-directory-emblem {
+   min-height:30px;font-size:28px!important;
+ }
+}
+@media (max-width:500px) {
+ #a2k-d-directory .a2k-d-shared-members-sidebar .a2k-d-member-role-options {
+   grid-template-columns:1fr!important;
+ }
+}
