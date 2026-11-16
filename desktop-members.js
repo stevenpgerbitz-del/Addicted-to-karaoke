@@ -13,7 +13,7 @@
  let request=0,lastSource='members';
  const client=()=>typeof authClient!=='undefined'?authClient:null;
  const signed=()=>typeof authUser!=='undefined'&&!!authUser?.id;
- let directoryState={role:'all',search:'',order:'name'};
+ let directoryState={role:'all',search:'',order:'newest'};
  const directoryRoles=[
    {id:'all',label:'All Members',icon:'users'},
    {id:'singer',label:'Singers',role:'Singer',icon:'mic'},
@@ -188,7 +188,7 @@
      const layout=elem('div','a2k-d-members-layout');
      const initial=opts.restore?directoryState:opts;
      let selected=directoryRoles.some(item=>item.id===initial.role)?initial.role:'all';
-     let order=['name','newest','oldest'].includes(initial.order)?initial.order:'name';
+     let order=['name','newest','oldest'].includes(initial.order)?initial.order:'newest';
      const {sidebar:filters,input,roleButtons}=makeDirectorySidebar(members,{
        role:selected,search:String(initial.search||'').slice(0,100),
        onRole:id=>{selected=id;draw();},
@@ -285,7 +285,7 @@
      const name=elem('h1','',member.stage_name||'Karaoke Member');
      const role=elem('p','a2k-d-profile-role',roles.join(' · ')||'Member');
      side.append(avatar,name,role);
-     const flourish=elem('div','a2k-d-profile-flourish','❦');
+     const flourish=elem('div','a2k-d-profile-flourish','❦︎');
      flourish.setAttribute('aria-hidden','true');
      side.append(flourish);
      const facts=elem('div','a2k-d-profile-facts');
