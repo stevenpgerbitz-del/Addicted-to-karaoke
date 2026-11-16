@@ -1019,18 +1019,12 @@ padding:13px 3px!important;min-height:66px
  <div id="member-achievement-list" class="profile-award-list"></div>
  </section>
  <section class="profile-about-privacy" aria-label="Privacy and Visibility">
-  <div class="profile-section-top"><strong class="profile-privacy-title"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>Privacy &amp; Visibility</strong><button type="button" class="profile-section-edit" id="member-privacy-edit" onclick="memberPrivacyEdit()" aria-label="Edit Privacy and Visibility">Edit</button></div>
-  <div id="member-privacy-summary" class="profile-privacy-summary a2k-privacy-saved" aria-label="Saved privacy and directory settings">
+  <div class="profile-section-top"><strong class="profile-privacy-title"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>Privacy &amp; Visibility</strong></div>
+  <div id="member-privacy-summary" class="profile-privacy-summary a2k-privacy-saved" aria-label="Privacy settings. Tap any option to save it.">
    <div class="a2k-privacy-legacy-values" aria-hidden="true" hidden><div><span>Profile Visibility</span><strong id="member-profile-visibility-summary">Public</strong></div><div><span>Song List Visibility</span><strong id="member-song-visibility-summary">Private</strong></div><div><span>Member Directory</span><strong id="member-directory-visibility-summary">Listed</strong></div></div>
-   <fieldset class="profile-privacy-fieldset"><legend>Profile Visibility</legend><div class="a2k-privacy-tile-grid"><div class="a2k-privacy-tile" data-privacy-type="profile" data-privacy-value="public" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2.5 20v-2a5.5 5.5 0 0 1 11 0v2M15 14a4.5 4.5 0 0 1 6.5 4v2"/></svg><strong>Public</strong></div><div class="a2k-privacy-tile" data-privacy-type="profile" data-privacy-value="members" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M2 20v-2a7 7 0 0 1 12-5M17 16v-2a3 3 0 0 1 6 0v2M16 16h8v7h-8z"/></svg><strong>Members Only</strong></div><div class="a2k-privacy-tile" data-privacy-type="profile" data-privacy-value="private" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><strong>Private</strong></div></div></fieldset>
-<fieldset class="profile-privacy-fieldset"><legend>My Karaoke Songs</legend><div class="a2k-privacy-tile-grid"><div class="a2k-privacy-tile" data-privacy-type="song" data-privacy-value="public" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2.5 20v-2a5.5 5.5 0 0 1 11 0v2M15 14a4.5 4.5 0 0 1 6.5 4v2"/></svg><strong>Public</strong></div><div class="a2k-privacy-tile" data-privacy-type="song" data-privacy-value="members" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M2 20v-2a7 7 0 0 1 12-5M17 16v-2a3 3 0 0 1 6 0v2M16 16h8v7h-8z"/></svg><strong>Members Only</strong></div><div class="a2k-privacy-tile" data-privacy-type="song" data-privacy-value="private" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><strong>Private</strong></div></div></fieldset>
-<fieldset class="profile-privacy-fieldset a2k-directory-privacy"><legend>Member Directory</legend><div class="a2k-privacy-tile-grid directory"><div class="a2k-privacy-tile" data-privacy-type="directory" data-privacy-value="listed" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2.5 20v-2a5.5 5.5 0 0 1 11 0v2M15 14a4.5 4.5 0 0 1 6.5 4v2"/></svg><strong>Listed</strong></div><div class="a2k-privacy-tile" data-privacy-type="directory" data-privacy-value="hidden" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M11.2 5.1a10.5 10.5 0 0 1 10.8 6.9c-.6 1.3-1.8 2.6-3.1 3.6M6 6.8C4.3 8 3 9.6 2 12c2 4.7 6 7 10 7 1.2 0 2.3-.2 3.3-.6M10 10a3 3 0 0 0 4 4"/></svg><strong>Hidden</strong></div></div></fieldset>
-  </div>
-  <div id="member-privacy-editor" hidden>
-   <fieldset class="profile-privacy-fieldset"><legend>Profile Visibility</legend><div class="a2k-privacy-tile-grid"><button type="button" class="a2k-privacy-tile" data-privacy-type="profile" data-privacy-value="public" aria-pressed="false" onclick="memberPrivacySelect('profile','public')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2.5 20v-2a5.5 5.5 0 0 1 11 0v2M15 14a4.5 4.5 0 0 1 6.5 4v2"/></svg><strong>Public</strong></button><button type="button" class="a2k-privacy-tile" data-privacy-type="profile" data-privacy-value="members" aria-pressed="false" onclick="memberPrivacySelect('profile','members')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M2 20v-2a7 7 0 0 1 12-5M17 16v-2a3 3 0 0 1 6 0v2M16 16h8v7h-8z"/></svg><strong>Members Only</strong></button><button type="button" class="a2k-privacy-tile" data-privacy-type="profile" data-privacy-value="private" aria-pressed="false" onclick="memberPrivacySelect('profile','private')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><strong>Private</strong></button></div></fieldset>
-   <fieldset class="profile-privacy-fieldset"><legend>My Karaoke Songs</legend><div class="a2k-privacy-tile-grid"><button type="button" class="a2k-privacy-tile" data-privacy-type="song" data-privacy-value="public" aria-pressed="false" onclick="memberPrivacySelect('song','public')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2.5 20v-2a5.5 5.5 0 0 1 11 0v2M15 14a4.5 4.5 0 0 1 6.5 4v2"/></svg><strong>Public</strong></button><button type="button" class="a2k-privacy-tile" data-privacy-type="song" data-privacy-value="members" aria-pressed="false" onclick="memberPrivacySelect('song','members')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M2 20v-2a7 7 0 0 1 12-5M17 16v-2a3 3 0 0 1 6 0v2M16 16h8v7h-8z"/></svg><strong>Members Only</strong></button><button type="button" class="a2k-privacy-tile" data-privacy-type="song" data-privacy-value="private" aria-pressed="false" onclick="memberPrivacySelect('song','private')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><strong>Private</strong></button></div></fieldset>
-   <fieldset class="profile-privacy-fieldset a2k-directory-privacy"><legend>Member Directory</legend><div class="a2k-privacy-tile-grid directory"><button type="button" class="a2k-privacy-tile" data-privacy-type="directory" data-privacy-value="listed" aria-pressed="true" onclick="memberDirectorySelect(true)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2.5 20v-2a5.5 5.5 0 0 1 11 0v2M15 14a4.5 4.5 0 0 1 6.5 4v2"/></svg><strong>Listed</strong></button><button type="button" class="a2k-privacy-tile" data-privacy-type="directory" data-privacy-value="hidden" aria-pressed="false" onclick="memberDirectorySelect(false)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M11.2 5.1a10.5 10.5 0 0 1 10.8 6.9c-.6 1.3-1.8 2.6-3.1 3.6M6 6.8C4.3 8 3 9.6 2 12c2 4.7 6 7 10 7 1.2 0 2.3-.2 3.3-.6M10 10a3 3 0 0 0 4 4"/></svg><strong>Hidden</strong></button></div></fieldset>
-   <div class="profile-interests-buttons"><button type="button" id="member-privacy-cancel" onclick="memberPrivacyCancel()">Cancel</button><button type="button" id="member-privacy-save" onclick="memberPrivacySave()">Save Changes</button></div>
+   <fieldset class="profile-privacy-fieldset"><legend>Profile Visibility</legend><div class="a2k-privacy-tile-grid"><button type="button" class="a2k-privacy-tile" data-privacy-type="profile" data-privacy-value="public" aria-pressed="false" onclick="memberPrivacyQuickSave('profile','public')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2.5 20v-2a5.5 5.5 0 0 1 11 0v2M15 14a4.5 4.5 0 0 1 6.5 4v2"/></svg><strong>Public</strong></button><button type="button" class="a2k-privacy-tile" data-privacy-type="profile" data-privacy-value="members" aria-pressed="false" onclick="memberPrivacyQuickSave('profile','members')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M2 20v-2a7 7 0 0 1 12-5M17 16v-2a3 3 0 0 1 6 0v2M16 16h8v7h-8z"/></svg><strong>Members Only</strong></button><button type="button" class="a2k-privacy-tile" data-privacy-type="profile" data-privacy-value="private" aria-pressed="false" onclick="memberPrivacyQuickSave('profile','private')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><strong>Private</strong></button></div></fieldset>
+<fieldset class="profile-privacy-fieldset"><legend>My Karaoke Songs</legend><div class="a2k-privacy-tile-grid"><button type="button" class="a2k-privacy-tile" data-privacy-type="song" data-privacy-value="public" aria-pressed="false" onclick="memberPrivacyQuickSave('song','public')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2.5 20v-2a5.5 5.5 0 0 1 11 0v2M15 14a4.5 4.5 0 0 1 6.5 4v2"/></svg><strong>Public</strong></button><button type="button" class="a2k-privacy-tile" data-privacy-type="song" data-privacy-value="members" aria-pressed="false" onclick="memberPrivacyQuickSave('song','members')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M2 20v-2a7 7 0 0 1 12-5M17 16v-2a3 3 0 0 1 6 0v2M16 16h8v7h-8z"/></svg><strong>Members Only</strong></button><button type="button" class="a2k-privacy-tile" data-privacy-type="song" data-privacy-value="private" aria-pressed="false" onclick="memberPrivacyQuickSave('song','private')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><strong>Private</strong></button></div></fieldset>
+<fieldset class="profile-privacy-fieldset a2k-directory-privacy"><legend>Member Directory</legend><div class="a2k-privacy-tile-grid directory"><button type="button" class="a2k-privacy-tile" data-privacy-type="directory" data-privacy-value="listed" aria-pressed="false" onclick="memberPrivacyQuickSave('directory','listed')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2.5 20v-2a5.5 5.5 0 0 1 11 0v2M15 14a4.5 4.5 0 0 1 6.5 4v2"/></svg><strong>Listed</strong></button><button type="button" class="a2k-privacy-tile" data-privacy-type="directory" data-privacy-value="hidden" aria-pressed="false" onclick="memberPrivacyQuickSave('directory','hidden')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M11.2 5.1a10.5 10.5 0 0 1 10.8 6.9c-.6 1.3-1.8 2.6-3.1 3.6M6 6.8C4.3 8 3 9.6 2 12c2 4.7 6 7 10 7 1.2 0 2.3-.2 3.3-.6M10 10a3 3 0 0 0 4 4"/></svg><strong>Hidden</strong></button></div></fieldset>
   </div>
   <p id="member-privacy-feedback" role="status" aria-live="polite"></p>
  </section>
@@ -2509,93 +2503,77 @@ async function memberSubmit(e){e.preventDefault();const data=new FormData(e.targ
  memberProfile.bio=bio;
  document.getElementById('member-bio').textContent=bio||'Tell the karaoke community about yourself!';
  }else{const payload={user_id:authUser.id,title:String(data.get('title')).trim(),artist:String(data.get('artist')).trim(),key_change:Number(data.get('key_change')),tempo_change:Number(data.get('tempo_change')),list_type:String(data.get('list_type')),favorite:data.has('favorite'),notes:String(data.get('notes')).trim()};if(!payload.title||!payload.artist)throw Error('Title and artist are required.');if(memberEditing.type==='song'&&memberSongStep===1)throw Error('Please continue to Step 2.');if(songLookupAlreadySaved(payload.title,payload.artist))throw Error('Already in My Songs. Edit the existing song instead.');let q=memberEditing.id?authClient.from('karaoke_songs').update(payload).eq('id',memberEditing.id).eq('user_id',authUser.id):authClient.from('karaoke_songs').insert(payload);const r=await q;if(r.error)throw r.error;const reload=await authClient.from('karaoke_songs').select('*').eq('user_id',authUser.id).order('created_at',{ascending:false});if(reload.error)throw reload.error;memberSongs=reload.data||[];memberRender();await memberLoadBadges(authUser.id)}document.getElementById('member-dialog').close()}catch(x){err.textContent=x.message||'Could not save changes.'}}
-/* Changes stay local until Save Changes is pressed. */
+/* The visible Privacy tiles save immediately; no separate Edit or Save step. */
 let memberPrivacySaving=false;
-let memberDirectoryDraft=true;
-function memberPrivacySelect(kind,value){
- if(memberPrivacySaving||!['profile','song'].includes(kind)||!memberVisibilityLabels[value])return;
- document.querySelectorAll('#member-privacy-editor [data-privacy-type="'+kind+'"]').forEach(button=>{
-  button.setAttribute('aria-pressed',String(button.dataset.privacyValue===value));
- });
-}
-function memberDirectorySelect(visible){
- if(memberPrivacySaving)return;
- memberDirectoryDraft=!!visible;
- memberDirectoryRenderDraft();
-}
-function memberDirectoryToggle(){memberDirectorySelect(!memberDirectoryDraft);}
-function memberDirectoryRenderDraft(){
- document.querySelectorAll('#member-privacy-editor [data-privacy-type="directory"]').forEach(button=>{
-  button.setAttribute('aria-pressed',String((button.dataset.privacyValue==='listed')===memberDirectoryDraft));
- });
-}
 const memberVisibilityLabels={public:'Public',members:'Members Only',private:'Private'};
 function memberPrivacyRender(){
  if(!memberProfile)return;
  const profile=memberVisibilityLabels[memberProfile.profile_visibility]?memberProfile.profile_visibility:'public';
  const songs=memberVisibilityLabels[memberProfile.song_visibility]?memberProfile.song_visibility:'private';
- const a=document.getElementById('member-profile-visibility-summary');
- const b=document.getElementById('member-song-visibility-summary');
- if(a)a.textContent=memberVisibilityLabels[profile];
- if(b)b.textContent=memberVisibilityLabels[songs];
- memberDirectoryDraft=memberProfile.directory_visible!==false;
- const directorySummary=document.getElementById('member-directory-visibility-summary');
- if(directorySummary)directorySummary.textContent=memberDirectoryDraft?'Listed':'Hidden';
- memberDirectoryRenderDraft();
- memberPrivacySelect('profile',profile);
- memberPrivacySelect('song',songs);
- // Show actual saved choices on the normal Settings card, not only in Edit mode.
- for(const [kind,value] of [['profile',profile],['song',songs],['directory',memberDirectoryDraft?'listed':'hidden']]){
+ const directory=memberProfile.directory_visible===false?'hidden':'listed';
+ const values=[
+  ['profile',profile,'member-profile-visibility-summary',memberVisibilityLabels[profile]],
+  ['song',songs,'member-song-visibility-summary',memberVisibilityLabels[songs]],
+  ['directory',directory,'member-directory-visibility-summary',directory==='listed'?'Listed':'Hidden']
+ ];
+ for(const [kind,value,legacyId,text] of values){
+  const legacy=document.getElementById(legacyId);
+  if(legacy)legacy.textContent=text;
   document.querySelectorAll('#member-privacy-summary [data-privacy-type="'+kind+'"]').forEach(tile=>{
-   tile.setAttribute('aria-current',String(tile.dataset.privacyValue===value));
+   tile.setAttribute('aria-pressed',String(tile.dataset.privacyValue===value));
   });
  }
 }
 function memberPrivacyCancel(){
  if(memberPrivacySaving)return;
- const editor=document.getElementById('member-privacy-editor');
- const summary=document.getElementById('member-privacy-summary');
- const edit=document.getElementById('member-privacy-edit');
- if(editor)editor.hidden=true;
- if(summary)summary.hidden=false;
- if(edit)edit.hidden=false;
- profileAboutEditFocus();
  const feedback=document.getElementById('member-privacy-feedback');
  if(feedback)feedback.textContent='';
  memberPrivacyRender();
 }
-function memberPrivacyEdit(){
- if(memberPrivacySaving||!authClient||!authUser||!memberProfile||memberProfile.user_id!==authUser.id)return;
- memberInterestsCancel();
- memberPrivacyRender();
- document.getElementById('member-privacy-editor').hidden=false;
- document.getElementById('member-privacy-summary').hidden=true;
- document.getElementById('member-privacy-edit').hidden=true;
- document.getElementById('member-privacy-feedback').textContent='';
- profileAboutEditFocus('privacy');
- document.querySelector('#member-privacy-editor [data-privacy-type="profile"][aria-pressed="true"]')?.focus();
-}
-async function memberPrivacySave(){
- if(memberPrivacySaving||!authClient||!authUser||!memberProfile||memberProfile.user_id!==authUser.id)return;
- const profile=document.querySelector('#member-privacy-editor [data-privacy-type="profile"][aria-pressed="true"]')?.dataset.privacyValue;
- const song=document.querySelector('#member-privacy-editor [data-privacy-type="song"][aria-pressed="true"]')?.dataset.privacyValue;
- if(!memberVisibilityLabels[profile]||!memberVisibilityLabels[song])return;
- const ownerId=authUser.id,save=document.getElementById('member-privacy-save'),cancel=document.getElementById('member-privacy-cancel'),feedback=document.getElementById('member-privacy-feedback');
- memberPrivacySaving=true;save.disabled=true;cancel.disabled=true;feedback.textContent='Saving privacy settings…';
+async function memberPrivacyQuickSave(kind,value){
+ const columns={profile:'profile_visibility',song:'song_visibility',directory:'directory_visible'};
+ if(memberPrivacySaving||!Object.prototype.hasOwnProperty.call(columns,kind))return;
+ if((kind==='directory'&&!['listed','hidden'].includes(value))||
+    (kind!=='directory'&&!Object.prototype.hasOwnProperty.call(memberVisibilityLabels,value)))return;
+ const feedback=document.getElementById('member-privacy-feedback');
+ if(!authClient||!authUser||!memberProfile||memberProfile.user_id!==authUser.id){
+  if(feedback)feedback.textContent='Sign in to change privacy settings.';
+  return;
+ }
+ const ownerId=authUser.id;
+ const column=columns[kind];
+ const nextValue=kind==='directory'?value==='listed':value;
+ const previous=memberProfile[column];
+ if(previous===nextValue||(kind==='directory'&&previous==null&&nextValue===true)){
+  if(feedback)feedback.textContent='Already selected.';
+  return;
+ }
+ const buttons=[...document.querySelectorAll('#member-privacy-summary .a2k-privacy-tile')];
+ memberPrivacySaving=true;
+ for(const tile of buttons)tile.disabled=true;
+ if(feedback)feedback.textContent='Saving your privacy preference…';
  try{
-  const {data,error}=await authClient.from('member_profiles').update({profile_visibility:profile,song_visibility:song,directory_visible:memberDirectoryDraft})
-   .eq('user_id',ownerId).select('profile_visibility,song_visibility,directory_visible').single();
+  const {data,error}=await authClient.from('member_profiles')
+   .update({[column]:nextValue}).eq('user_id',ownerId)
+   .select(column).single();
   if(error)throw error;
-  if(authUser?.id!==ownerId)return;
-  Object.assign(memberProfile,data);
+  if(!data||data[column]!==nextValue)throw new Error('The saved setting could not be verified.');
+  if(authUser?.id!==ownerId||memberProfile?.user_id!==ownerId)return;
+  memberProfile[column]=data[column];
   memberPrivacyRender();
-  document.getElementById('member-privacy-editor').hidden=true;
-  document.getElementById('member-privacy-summary').hidden=false;
-  document.getElementById('member-privacy-edit').hidden=false;
-  profileAboutEditFocus();
-  feedback.textContent='Privacy settings saved.';
- }catch(error){feedback.textContent='Could not save privacy settings: '+(error.message||'Please try again.')}
- finally{memberPrivacySaving=false;save.disabled=false;cancel.disabled=false}
+  if(feedback)feedback.textContent=
+   kind==='directory'?'Member Directory: '+(nextValue?'Listed':'Hidden')+' — saved.':
+   (kind==='profile'?'Profile Visibility':'My Karaoke Songs')+': '+memberVisibilityLabels[nextValue]+' — saved.';
+ }catch(error){
+  // Leave the last confirmed tile selected if the database rejects the change.
+  if(authUser?.id===ownerId){
+   memberPrivacyRender();
+   if(feedback)feedback.textContent='Could not save this setting: '+(error.message||'Please try again.');
+  }
+ }finally{
+  memberPrivacySaving=false;
+  for(const tile of buttons)tile.disabled=false;
+ }
 }
 </script>
 <script>
