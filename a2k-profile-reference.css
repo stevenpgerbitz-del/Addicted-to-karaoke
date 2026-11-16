@@ -106,7 +106,7 @@
 #a2k-d-directory .a2k-d-directory-stat-icon svg,
 #a2k-d-directory .a2k-d-member-role-icon svg{
   display:block;width:19px!important;height:19px!important;
-  stroke:#e9b678!important;
+  stroke:#e9b678!important;stroke-width:2.1!important;
 }
 #a2k-d-directory .a2k-d-directory-stat-value{
   color:#ffe6c1!important;text-align:right;
@@ -247,7 +247,7 @@
   html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile .a2k-d-directory-action{
     display:flex!important;justify-content:center!important;align-items:center!important;
     box-sizing:border-box!important;width:100%!important;
-    min-height:37px!important;height:auto!important;max-width:none!important;
+    min-height:40px!important;height:auto!important;max-width:none!important;
     margin:auto 0 0!important;padding:7px 10px!important;
     border:1px solid #d0a064!important;border-radius:8px!important;
     background:linear-gradient(180deg,#973126 0%,#752019 54%,#4e130f 100%)!important;box-shadow:inset 0 1px 0 #f2be8e52,0 2px 5px #0006!important;
@@ -314,7 +314,7 @@
   html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-profile-fact{
     display:flex!important;align-items:center!important;gap:10px!important;
     min-width:0!important;color:#f5d9b9!important;
-    font:14px/1.35 Georgia,serif!important;text-align:left!important;
+    font:15px/1.35 Georgia,serif!important;text-align:left!important;
   }
   #a2k-d-directory .a2k-d-profile-fact[hidden]{display:none!important}
   html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-profile-fact-icon{
@@ -347,7 +347,7 @@
   }
   html.a2k-desktop-live #a2k-d-directory .a2k-d-illustrated-badge img{
     width:100%!important;height:100%!important;max-width:100%!important;
-    object-fit:contain!important;
+    object-fit:contain!important;transform:scale(1.08);transform-origin:center;
   }
   html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-content-rail{
     display:flex!important;flex-direction:column!important;
@@ -418,7 +418,7 @@
   }
   html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-songbook-item{
     display:flex!important;align-items:center!important;
-    gap:8px!important;width:100%!important;min-height:42px!important;
+    gap:8px!important;width:100%!important;min-height:45px!important;
     padding:7px 9px!important;border:0!important;
     border-bottom:1px solid #714033!important;border-radius:0!important;
     background:transparent!important;
