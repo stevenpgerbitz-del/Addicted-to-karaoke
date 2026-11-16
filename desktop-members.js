@@ -250,7 +250,11 @@
          :'No favorite music genres shared yet.'));
        main.append(interests);
      }
-     overview.append(side,main);
+     // One shared profile structure for singers, KJs and venue owners:
+     // the identity sidebar is fixed; tabs swap only the right-hand panel.
+     const contentRail=elem('div','a2k-d-profile-content-rail');
+     contentRail.append(main);
+     overview.append(side,contentRail);
      overview.classList.add('a2k-d-member-profile-pane');
      if(roles.includes('KJ / Host')){
        const tabs=elem('div','a2k-d-profile-tabs');
@@ -265,19 +269,26 @@
        profileTab.type=scheduleTab.type='button';
        profileTab.setAttribute('role','tab');scheduleTab.setAttribute('role','tab');
        profileTab.id='a2k-d-profile-tab-main';scheduleTab.id='a2k-d-profile-tab-schedule';
-       overview.id='a2k-d-profile-main-pane';schedulePanel.id='a2k-d-profile-schedule-pane';
-       profileTab.setAttribute('aria-controls',overview.id);
+       main.id='a2k-d-profile-main-pane';schedulePanel.id='a2k-d-profile-schedule-pane';
+       profileTab.setAttribute('aria-controls',main.id);
        scheduleTab.setAttribute('aria-controls',schedulePanel.id);
+       main.setAttribute('role','tabpanel');schedulePanel.setAttribute('role','tabpanel');
        function activate(which){
          const showSchedule=which==='schedule';
          profileTab.setAttribute('aria-selected',String(!showSchedule));
          scheduleTab.setAttribute('aria-selected',String(showSchedule));
-         overview.hidden=showSchedule;schedulePanel.hidden=!showSchedule;
+         profileTab.tabIndex=showSchedule?-1:0;
+         scheduleTab.tabIndex=showSchedule?0:-1;
+         // Do not hide the grid: it holds the member's identity in both views.
+         main.hidden=showSchedule;
+         schedulePanel.hidden=!showSchedule;
        }
        profileTab.onclick=()=>activate('profile');
        scheduleTab.onclick=()=>activate('schedule');
        tabs.append(profileTab,scheduleTab);
-       target.replaceChildren(backButton(source),tabs,overview,schedulePanel);
+       contentRail.prepend(tabs);
+       contentRail.append(schedulePanel);
+       target.replaceChildren(backButton(source),overview);
        activate('profile');
        void (async()=>{
          try{
