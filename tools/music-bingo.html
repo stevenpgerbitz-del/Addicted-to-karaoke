@@ -17,7 +17,7 @@ input,select,textarea{width:100%;display:block;margin-top:6px;background:#150f10
 textarea{resize:vertical;min-height:160px;line-height:1.45}input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid #ffe0c2;outline-offset:2px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0 4px}.btn{border:1px solid #e79084;background:linear-gradient(#b43b34,#7d1717);color:#fff6e8;border-radius:10px;padding:12px 16px;font-weight:700;min-height:44px}.btn.secondary{background:#332222;border-color:#9b655d}.hint{font-size:12px;color:#d1b6a5;margin:7px 0}.status{padding:14px;border:1px solid var(--border);border-radius:12px;background:#2b191a;color:var(--cream)}.status.error{border-color:#f28f7c}
-#tool[hidden],#result[hidden],#printArea{display:none!important}.bingo{background:#f8eedf;color:#2b1717;border:2px solid #922923;border-radius:10px;padding:10px;break-inside:avoid}.bingo-head{text-align:center;font:700 23px Georgia,serif;color:#792321;margin:0 0 7px;overflow-wrap:anywhere}.bingo-sub{text-align:center;font-size:10px;font-weight:700;letter-spacing:.07em;margin:0 0 8px}.board{display:grid;gap:2px;background:#5b2523;border:2px solid #5b2523;grid-template-columns:repeat(var(--count),1fr)}.cell{aspect-ratio:1.23;min-width:0;background:#fffaf1;display:flex;align-items:center;justify-content:center;text-align:center;overflow-wrap:anywhere;padding:4px;font-size:clamp(9px,1.5vw,13px);font-weight:700;line-height:1.17}.cell.free{background:#edcdbb;font-family:Georgia,serif;color:#732220}.bingo-footer{font-size:10px;color:#604442;display:flex;justify-content:space-between;margin-top:8px}.card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+#tool[hidden],#result[hidden],#printArea{display:none!important}.bingo{background:#f8eedf;color:#2b1717;border:2px solid #922923;border-radius:10px;padding:10px;break-inside:avoid}.bingo-head{text-align:center;font:700 23px Georgia,serif;color:#792321;margin:0 0 7px;overflow-wrap:anywhere}.bingo-sub{text-align:center;font-size:10px;font-weight:700;letter-spacing:.07em;margin:0 0 8px}.board{display:grid;gap:2px;background:#5b2523;border:2px solid #5b2523;grid-template-columns:repeat(var(--count),1fr)}.cell{aspect-ratio:1.23;min-width:0;background:#fffaf1;display:flex;align-items:center;justify-content:center;text-align:center;overflow-wrap:anywhere;padding:4px;font-size:clamp(9px,1.5vw,13px);font-weight:700;line-height:1.17}.cell.free{background:#edcdbb;font-family:Georgia,serif;color:#732220}.cell.play{border:0;cursor:pointer}.cell.play.marked{background:#c38d7a;color:#231311;box-shadow:inset 0 0 0 2px #862623}.cell.play:active{transform:scale(.98)}.bingo-footer{font-size:10px;color:#604442;display:flex;justify-content:space-between;margin-top:8px}.card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
 .calls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.call{display:flex;align-items:center;text-align:left;gap:8px;border:1px solid #81514d;border-radius:9px;background:#27191a;padding:9px;color:var(--cream);min-height:44px;font-size:13px}.call .tick{font-size:16px;flex:none}.call.done{background:#5b2625;text-decoration:line-through}.section-note{font-size:13px;color:var(--muted)}
 #authGate{margin-top:14vh;text-align:center}#authGate p{color:var(--muted)}.small{font-size:12px;color:var(--muted)}
 @media(max-width:680px){.grid,.grid.three,.card-grid,.calls{grid-template-columns:1fr}.cell{font-size:clamp(10px,2.6vw,15px)}.top{margin-bottom:15px}.panel{padding:15px}.bingo{max-width:470px;margin:0 auto}}
@@ -74,7 +74,7 @@ textarea{resize:vertical;min-height:160px;line-height:1.45}input:focus,select:fo
   <h2>3. Ready for karaoke!</h2>
   <p id="summary" class="section-note"></p>
   <div class="actions"><button type="button" class="btn" id="print">Print / Save as PDF</button><button type="button" class="btn secondary" id="resetCalls">Reset called songs</button></div>
-  <h3>Card preview</h3>
+  <h3>Play on your phone — tap a square to mark it</h3>
   <div id="preview" class="card-grid"></div>
   <h3>Host song checklist <span id="calledCount" class="small"></span></h3>
   <p class="section-note">Tap a song after it plays. These checkmarks stay on your screen; the printable call sheet starts unchecked.</p>
@@ -123,7 +123,20 @@ function cardElement(card,title,number,seed,print=false){
  section.style.setProperty('--count',String(card.length));
  section.append(make('div','bingo-head',title),make('div','bingo-sub','M U S I C   B I N G O'));
  const board=make('div','board');
- for(const song of card.flat()){const square=make('div','cell'+(song==='FREE'?' free':''),song);board.append(square)}
+ for(const song of card.flat()){
+  const playable=!print&&song!=='FREE';
+  const marked=playable&&current&&current.marks[number-1].has(song);
+  const square=make(playable?'button':'div','cell'+(song==='FREE'?' free':'')+(playable?' play':'')+(marked?' marked':''),(marked?'✓ ':'')+song);
+  if(playable){
+   square.type='button';square.setAttribute('aria-pressed',String(!!marked));
+   square.addEventListener('click',()=>{
+    const marks=current.marks[number-1];marks.has(song)?marks.delete(song):marks.add(song);
+    const active=marks.has(song);square.classList.toggle('marked',active);
+    square.setAttribute('aria-pressed',String(active));square.textContent=(active?'✓ ':'')+song;
+   });
+  }
+  board.append(square);
+ }
  section.append(board);const footer=make('div','bingo-footer');footer.append(make('span','', 'Card #'+String(number).padStart(3,'0')),make('span','','A2K · '+seed));section.append(footer);
  return section;
 }
@@ -138,14 +151,14 @@ function generate(){
  const seed=$('seed').value.trim()||'test';const rng=randomFrom([seed,songs.join('|'),size,count].join('~'));
  const usage=songs.map(()=>0),cards=[];
  for(let i=0;i<count;i++){
-  const picked=songs.map((_,j)=>j).sort((a,b)=>(usage[a]+rng()*.7)-(usage[b]+rng()*.7)).slice(0,needed);
+  const picked=songs.map((_,j)=>({j,score:usage[j]+rng()*.7})).sort((a,b)=>a.score-b.score).slice(0,needed).map(item=>item.j);
   picked.forEach(n=>usage[n]++);
   const chosen=shuffle(picked.map(n=>songs[n]),rng);let cursor=0,card=[];
   for(let row=0;row<size;row++){const cells=[];for(let col=0;col<size;col++)cells.push(size===5&&row===2&&col===2?'FREE':chosen[cursor++]);card.push(cells)}
   cards.push(card);
  }
  const used=new Set(cards.flat(2).filter(s=>s!=='FREE'));const callOrder=shuffle([...used],rng);
- current={cards,callOrder,called:new Set(),title,seed,paper:$('paper').value};
+ current={cards,callOrder,called:new Set(),marks:cards.map(()=>new Set()),title,seed,paper:$('paper').value};
  $('result').hidden=false;
  $('summary').textContent=count+' unique numbered card'+(count===1?'':'s')+' · '+size+'×'+size+' · '+songs.length+' songs in your list · '+used.size+' on the call sheet · Seed '+seed;
  const preview=$('preview');preview.replaceChildren();
