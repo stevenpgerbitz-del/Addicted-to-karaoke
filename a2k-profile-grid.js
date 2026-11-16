@@ -48,7 +48,7 @@
   // Rebalance without moving them out of their profile or duplicating anything.
   const observer=new MutationObserver(records=>{
    if(records.some(r=>r.type==='attributes'&&r.attributeName==='hidden'))schedule();
-   if(layout&&records.some(r=>r.type==='childList'&&Array.from(r.addedNodes).some(isCard))){
+   if(layout&&records.some(r=>r.type==='childList'&&r.target===profile&&Array.from(r.addedNodes).some(isCard))){
     // New section added later; return to original positions and recapture all.
     unmount();schedule();
    }
