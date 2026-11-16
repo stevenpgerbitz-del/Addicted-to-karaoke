@@ -549,3 +549,16 @@
    grid-template-columns:1fr!important;
  }
 }
+
+/* Build 247 sidebar icon finishing touches. */
+#a2k-d-directory .a2k-d-member-directory-emblem svg {
+ width:43px!important;height:43px!important;
+ stroke:#e8b678!important;
+ filter:drop-shadow(0 1px 3px #0009);
+}
+#a2k-d-directory .a2k-d-directory-stat-icon svg,
+#a2k-d-directory .a2k-d-member-role-icon svg {
+ display:block!important;
+ width:18px!important;height:18px!important;
+ stroke:#e9b678!important;
+}
