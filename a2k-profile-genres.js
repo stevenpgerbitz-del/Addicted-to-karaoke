@@ -1,4 +1,4 @@
-/* A2K Build 244 — expanded karaoke genres, country eras and musical styles.
+/* A2K Build 252 — edit favorite genres inside About Me, not Profile Settings.
    Separate from the Singer / KJ / Venue Owner interests used for navigation.
    Stored in member_profiles.favorite_genres, subject to existing owner-only RLS. */
 (function(){
@@ -27,15 +27,22 @@
  const client=()=>typeof authClient==='undefined'?null:authClient;
  const user=()=>typeof authUser==='undefined'?null:authUser;
  function ensure(){
-  const settingsPanel=document.querySelector('#a2k-profile-settings .a2k-profile-settings-panel');
   const roleChips=document.getElementById('member-about-interests');
-  if(!settingsPanel&&!roleChips)return null;
+  const interestsSection=roleChips?.closest('section.profile-about-interests');
+  if(!interestsSection)return null;
   let block=document.getElementById('a2k-member-favorite-genres');
-  if(block)return block;
-  block=el('div','a2k-member-genres-block');
+  // About Me may move into the mobile profile dialog. Move the actual
+  // existing node if necessary; never clone its editor or event handlers.
+  if(block){
+   if(block.previousElementSibling!==interestsSection||
+      block.parentElement!==interestsSection.parentElement)
+    interestsSection.insertAdjacentElement('afterend',block);
+   return block;
+  }
+  block=el('section','a2k-member-genres-block');
   block.id='a2k-member-favorite-genres';
   const heading=el('div','a2k-member-genres-heading');
-  heading.append(el('strong','','Favorite Music & Eras'));
+  heading.append(el('strong','','Favorite Music Genres & Eras'));
   const edit=el('button','profile-section-edit','Edit');
   edit.type='button';edit.id='a2k-member-genres-edit';
   edit.setAttribute('aria-label','Edit favorite music genres and eras');
@@ -59,12 +66,10 @@
   status.id='a2k-member-genres-status';
   status.setAttribute('role','status');status.setAttribute('aria-live','polite');
   block.append(heading,saved,editor,status);
-  // Keep the editable controls in Settings, not in the About Me role picker.
-  // On mobile Settings moves into the normal modal without cloning this editor.
-  if(settingsPanel){
-    const contact=settingsPanel.querySelector('#a2k-contact-settings');
-    settingsPanel.insertBefore(block,contact||null);
-  }else roleChips.insertAdjacentElement('afterend',block);
+  // Keep this independent picker directly under My Karaoke Interests
+  // within About Me, with its own Edit/Save/Cancel controls.
+  // The section moves intact into the regular mobile About Me dialog.
+  interestsSection.insertAdjacentElement('afterend',block);
   edit.addEventListener('click',()=>{
    if(saving||!profile()||!user()||profile().user_id!==user().id)return;
    const selected=new Set(Array.isArray(profile().favorite_genres)?profile().favorite_genres:[]);
