@@ -172,13 +172,17 @@
    const result=await supabaseRead('rpc/atk_home_community_counts');
    const counts=Array.isArray(result)?result[0]:result;
    if(!counts)throw Error('Missing community totals');
-   for(const key of ['users','reviews','members','venues']){
+   for(const key of ['reviews','members','venues']){
     const field=document.querySelector('[data-a2k-b-stat="'+key+'"]');
     const value=Number(counts[key]);
-    if(field&&Number.isSafeInteger(value)&&value>=0)
-     field.textContent=value.toLocaleString('en-US');
+    if(field&&Number.isSafeInteger(value)&&value>=0)field.textContent=value.toLocaleString('en-US');
    }
   }catch(e){console.warn('A2K Home: community counts unavailable',e);}
+  try{
+   const upcoming=await supabaseRead('karaoke_special_events?select=id&status=eq.published&end_at=gt.'+encodeURIComponent(new Date().toISOString()));
+   const field=document.querySelector('[data-a2k-b-stat="events"]');
+   if(field&&Array.isArray(upcoming))field.textContent=upcoming.length.toLocaleString('en-US');
+  }catch(e){console.warn('A2K Home: event count unavailable',e);}
  }
  /* v182 — measure visible Home content and choose the gentlest fit tier.
     Never clip or hide Community Spotlight; allow scrolling for short windows
