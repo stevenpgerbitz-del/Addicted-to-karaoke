@@ -15,8 +15,9 @@
  const client=()=>typeof authClient==='undefined'?null:authClient;
  const user=()=>typeof authUser==='undefined'?null:authUser;
  function ensure(){
+  const settingsPanel=document.querySelector('#a2k-profile-settings .a2k-profile-settings-panel');
   const roleChips=document.getElementById('member-about-interests');
-  if(!roleChips)return null;
+  if(!settingsPanel&&!roleChips)return null;
   let block=document.getElementById('a2k-member-favorite-genres');
   if(block)return block;
   block=el('div','a2k-member-genres-block');
@@ -46,7 +47,12 @@
   status.id='a2k-member-genres-status';
   status.setAttribute('role','status');status.setAttribute('aria-live','polite');
   block.append(heading,saved,editor,status);
-  roleChips.insertAdjacentElement('afterend',block);
+  // Keep the editable controls in Settings, not in the About Me role picker.
+  // On mobile Settings moves into the normal modal without cloning this editor.
+  if(settingsPanel){
+    const contact=settingsPanel.querySelector('#a2k-contact-settings');
+    settingsPanel.insertBefore(block,contact||null);
+  }else roleChips.insertAdjacentElement('afterend',block);
   edit.addEventListener('click',()=>{
    if(saving||!profile()||!user()||profile().user_id!==user().id)return;
    if(typeof memberInterestsCancel==='function')memberInterestsCancel();
