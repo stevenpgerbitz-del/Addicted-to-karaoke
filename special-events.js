@@ -382,10 +382,12 @@
       const matchesCity=!city||place?.city===city;
       const matchesGenre=!genre||(place?.genres||[]).includes(genre);
       const matchesRating=rating===0||(Number.isFinite(place?.rating)&&place.rating>=rating);
+      const matchesNearby=typeof window.a2kNearbyVenueMatches==='function'?
+        window.a2kNearbyVenueMatches(place):true;
       // Venues added solely for one-time events are represented by their event
       // cards and can still be opened from those cards.
       card.hidden=mode==='events'||!place||place.specialEventsOnly||
-        !matchesText||!matchesState||!matchesCity||!matchesGenre||!matchesRating;
+        !matchesText||!matchesState||!matchesCity||!matchesGenre||!matchesRating||!matchesNearby;
       if(!card.hidden){
         shownVenues++;
         if(!next)unscheduled++;
@@ -404,10 +406,12 @@
       const matchesCity=!city||place?.city===city;
       const matchesGenre=!genre||(place?.genres||[]).includes(genre);
       const matchesRating=rating===0||(Number.isFinite(place?.rating)&&place.rating>=rating);
+      const matchesNearby=typeof window.a2kNearbyVenueMatches==='function'?
+        window.a2kNearbyVenueMatches(place):true;
       // Already-ended events are excluded both by the database query and here,
       // in case the user leaves this page open until the event passes.
       card.hidden=mode==='venues'||new Date(event.end_at)<=now||
-        !matches||!matchesState||!matchesCity||!matchesGenre||!matchesRating;
+        !matches||!matchesState||!matchesCity||!matchesGenre||!matchesRating||!matchesNearby;
       if(!card.hidden)shownEvents++;
       byCard.set(card,new Date(event.start_at).getTime());
     });
