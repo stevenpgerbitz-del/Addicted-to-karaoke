@@ -178,7 +178,7 @@
    const isCurrent=()=>serial===request&&target.isConnected;
    try{
      const members=await fetchRows('member_profiles',
-       'user_id,stage_name,bio,created_at,karaoke_interests,profile_visibility,song_visibility,avatar_path',
+       'user_id,stage_name,bio,created_at,karaoke_interests,favorite_genres,profile_visibility,song_visibility,avatar_path',
        q=>q.eq('user_id',userId).limit(1));
      if(!isCurrent())return;
      const member=members[0];
@@ -213,12 +213,19 @@
      about.append(elem('h2','','About Me'),
        elem('p','a2k-d-profile-story',member.bio?.trim()||'This member has not shared an About Me story yet.'));
      main.append(about);
-     if(roles.length){
+     // Favorite music genres are separate from member roles. Never invent example
+     // genres for a member who has not selected any.
+     const genres=Array.isArray(member.favorite_genres)
+       ?member.favorite_genres.filter(x=>typeof x==='string'&&x.trim()&&x.length<=40).slice(0,16):[];
+     if(roles.length||genres.length){
        const interests=elem('section','a2k-d-public-profile-section a2k-d-profile-interests');
        interests.append(elem('h2','','Karaoke Interests'));
-       const tiles=elem('div','a2k-d-profile-interest-tiles');
-       for(const roleName of roles)tiles.append(elem('span','a2k-d-profile-interest-tile',roleName));
-       interests.append(tiles);main.append(interests);
+       if(genres.length){
+         const tiles=elem('div','a2k-d-profile-interest-tiles');
+         for(const genre of genres)tiles.append(elem('span','a2k-d-profile-interest-tile',genre));
+         interests.append(tiles);
+       }else interests.append(elem('p','a2k-d-profile-muted','No favorite music genres shared yet.'));
+       main.append(interests);
      }
      overview.append(side,main);
      target.replaceChildren(backButton(source),overview);
