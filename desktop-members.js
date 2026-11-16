@@ -66,7 +66,7 @@
    try{
      const members=await fetchRows('member_profiles',
        'user_id,stage_name,bio,karaoke_interests,created_at,profile_visibility',
-       q=>q.order('stage_name',{ascending:true}).limit(200));
+       q=>q.eq('directory_visible',true).order('stage_name',{ascending:true}).limit(200));
      if(serial!==request||!target.isConnected)return;
      const input=elem('input','a2k-d-directory-search');
      input.type='search';input.placeholder='Search members';
