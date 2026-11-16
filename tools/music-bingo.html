@@ -53,6 +53,23 @@ textarea{resize:vertical;min-height:160px;line-height:1.45}input:focus,select:fo
  <p class="intro">Make cards for a real karaoke night. Print them or save them as a PDF using your browser. This preview is independent of the live A2K venue and member databases.</p>
  <section class="panel">
   <h2>1. Your songs</h2>
+  <div class="grid" style="margin-bottom:12px">
+   <label for="preset">Ready-to-use A2K playlists
+    <select id="preset">
+     <option value="favorites100">Karaoke Favorites · 100 songs</option>
+     <option value="favorites250">Karaoke Favorites · 250 songs</option>
+     <option value="country">Country Night</option>
+     <option value="rock">Rock Classics</option>
+     <option value="retro">80s &amp; 90s Favorites</option>
+     <option value="pop">Pop &amp; Party Hits</option>
+    </select>
+   </label>
+   <label for="importMode">How to import
+    <select id="importMode"><option value="replace">Replace current list</option><option value="append">Add to current list</option></select>
+   </label>
+  </div>
+  <div class="actions" style="margin:0 0 14px"><button type="button" class="btn" id="loadPreset">Load Selected List</button><button type="button" class="btn secondary" id="chooseFile">Import TXT / CSV</button><input id="songFile" type="file" accept=".txt,.csv,.tsv,text/plain,text/csv,text/tab-separated-values" hidden></div>
+  <p class="hint" style="margin-bottom:14px">A2K-curated song selections for Music Bingo, not an official popularity ranking. Text and CSV imports use song title and artist.</p>
   <label for="songs">Songs (one per line, ideally Title — Artist)</label>
   <textarea id="songs" spellcheck="false" placeholder="Sweet Caroline — Neil Diamond&#10;Don't Stop Believin' — Journey"></textarea>
   <p class="hint">Duplicates and blank lines are removed. Use at least 24 songs for 5×5, or 16 songs for 4×4.</p>
@@ -84,6 +101,7 @@ textarea{resize:vertical;min-height:160px;line-height:1.45}input:focus,select:fo
 </main>
 <div id="printArea" aria-hidden="true"></div>
 <style id="pageSize"></style>
+<script src="music-bingo-presets.js?v=1"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 (function(){
@@ -206,6 +224,76 @@ async function init(){
   newSeed();
  }catch(e){$('gateMessage').textContent=e.message||'Unable to verify access.'}
 }
+
+function importIntoSongs(items,origin){
+ const cleaned=cleanSongs((Array.isArray(items)?items:[]).join('\n'));
+ if(!cleaned.length){showError('No valid song titles were found in '+origin+'.');return;}
+ const existing=$('importMode').value==='append'?cleanSongs($('songs').value):[];
+ const merged=cleanSongs([...existing,...cleaned].join('\n'));
+ $('songs').value=merged.join('\n');
+ message('Imported '+cleaned.length+' songs from '+origin+'. Current list: '+merged.length+' unique songs.');
+}
+function parseDelimited(text,delimiter){
+ const rows=[];let row=[],cell='',quoted=false;
+ for(let i=0;i<text.length;i++){
+  const c=text[i];
+  if(c==='"'){
+   if(quoted&&text[i+1]==='"'){cell+='"';i++}
+   else quoted=!quoted;
+  }else if(!quoted&&c===delimiter){row.push(cell);cell='';}
+  else if(!quoted&&(c==='\n'||c==='\r')){
+   row.push(cell);if(row.some(v=>v.trim()))rows.push(row);row=[];cell='';
+   if(c==='\r'&&text[i+1]==='\n')i++;
+  }else cell+=c;
+ }
+ row.push(cell);if(row.some(v=>v.trim()))rows.push(row);
+ return rows;
+}
+function importRows(text,filename){
+ const normalized=String(text||'').replace(/^\uFEFF/,'').trim();
+ if(!normalized)return [];
+ const lines=normalized.split(/\r?\n/);
+ const first=lines[0]||'';
+ const csv=/\.(csv|tsv)$/i.test(filename||'');
+ const delimiter=/\.tsv$/i.test(filename||'')?'\t':
+  first.includes('\t')?'\t':first.includes(';')&&!first.includes(',')?';':',';
+ if(csv){
+  const rows=parseDelimited(normalized,delimiter);
+  if(!rows.length)return [];
+  const header=rows[0].map(x=>x.toLowerCase().replace(/[^a-z0-9]/g,''));
+  const titleIndex=header.findIndex(h=>['song','songtitle','title','track','tracktitle','name'].includes(h));
+  const artistIndex=header.findIndex(h=>['artist','artistname','performer','band','singer'].includes(h));
+  const hasHeader=titleIndex>=0||artistIndex>=0;
+  const firstData=hasHeader?1:0;
+  const titleColumn=titleIndex>=0?titleIndex:0;
+  const artistColumn=artistIndex>=0?artistIndex:(hasHeader?null:1);
+  return rows.slice(firstData).map(cells=>{
+   const title=String(cells[titleColumn]||'').trim();
+   const artist=artistColumn===null?'':String(cells[artistColumn]||'').trim();
+   return artist&&title?title+' — '+artist:title;
+  }).filter(Boolean);
+ }
+ return lines.map(line=>line.trim().replace(/^\s*\d+[.)]\s*/,'')).filter(Boolean);
+}
+$('loadPreset').addEventListener('click',()=>{
+ const entry=window.A2KBingoPresets?.[$('preset').value];
+ if(!entry?.songs?.length){showError('That playlist could not be loaded. Please refresh and try again.');return;}
+ importIntoSongs(entry.songs,entry.label);
+});
+$('chooseFile').addEventListener('click',()=>$('songFile').click());
+$('songFile').addEventListener('change',async event=>{
+ const file=event.target.files?.[0];if(!file)return;
+ if(file.size>1024*1024){showError('Please choose a text or CSV file under 1 MB.');event.target.value='';return;}
+ try{
+  if(!/\.(txt|csv|tsv)$/i.test(file.name)){showError('Please select a TXT, CSV or TSV song list.');return;}
+  const content=await file.text();
+  const list=importRows(content,file.name);
+  if(list.length>10000){showError('Please import at most 10,000 songs per file.');return;}
+  importIntoSongs(list,file.name);
+ }catch(error){showError('Could not import the file: '+(error.message||'Please check its format.'))}
+ finally{event.target.value=''}
+});
+
 $('sample').addEventListener('click',()=>{$('songs').value=sample.join('\n');message('Sample songs loaded. You can edit the list before generating.')});
 $('save').addEventListener('click',()=>{try{localStorage.setItem('a2k_bingo_songs_v1',$('songs').value);message('Song list saved on this device.')}catch(e){showError('Could not save on this device.')}})
 $('clear').addEventListener('click',()=>{try{localStorage.removeItem('a2k_bingo_songs_v1');message('Saved list cleared from this device.')}catch(e){showError('Could not clear saved list.')}})
