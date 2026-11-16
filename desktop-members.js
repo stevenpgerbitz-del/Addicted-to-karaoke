@@ -41,18 +41,37 @@
    const mapping={singer:'Singer',kj:'KJ / Host',venue_owner:'Venue Owner'};
    return roles.map(x=>mapping[x]).filter(Boolean);
  }
+ function publicAvatar(member,large=false){
+   const avatar=elem('span','a2k-d-member-avatar'+(large?' a2k-d-member-avatar-large':''),(member.stage_name||'M').trim().charAt(0).toUpperCase());
+   avatar.setAttribute('aria-hidden','true');
+   const path=member.avatar_path;
+   if(typeof path==='string'&&path&&client()){
+     try{
+       const url=client().storage.from('member-avatars').getPublicUrl(path)?.data?.publicUrl;
+       if(url){
+         const photo=elem('img','a2k-d-member-avatar-image');
+         photo.alt='';photo.loading='lazy';photo.decoding='async';photo.src=url;
+         photo.onerror=()=>photo.remove();
+         avatar.append(photo);
+       }
+     }catch(error){console.warn('Could not display member photo',error)}
+   }
+   return avatar;
+ }
  function card(member){
    const box=elem('article','a2k-d-directory-card a2k-d-member-tile');
    const head=elem('div','a2k-d-member-tile-head');
-   const avatar=elem('span','a2k-d-member-avatar',(member.stage_name||'M').trim().charAt(0).toUpperCase());
-   avatar.setAttribute('aria-hidden','true');
+   const avatar=publicAvatar(member);
    const label=elem('div');
    label.append(elem('h3','',member.stage_name||'Karaoke Member'),
      elem('p','a2k-d-directory-meta',rolesOf(member).join(' · ')||'Member'));
    head.append(avatar,label);box.append(head);
    const summary=elem('p','a2k-d-member-summary',member.bio||'');
-    if(!member.bio)summary.setAttribute('aria-hidden','true');
-    box.append(summary);
+   if(member.bio)box.append(summary);
+   const since=member.created_at&&Number.isFinite(new Date(member.created_at).getTime())
+     ? new Intl.DateTimeFormat('en-US',{month:'short',year:'numeric'}).format(new Date(member.created_at))
+     : null;
+   if(since)box.append(elem('p','a2k-d-member-since','Member since '+since));
    const view=elem('button','a2k-d-directory-action','View Member Profile');
    view.type='button';view.onclick=()=>window.a2kOpenMemberProfile(member.user_id,'members');
    box.append(view);
@@ -67,7 +86,7 @@
      elem('p','a2k-d-directory-info','Loading members…'));
    try{
      const members=await fetchRows('member_profiles',
-       'user_id,stage_name,bio,karaoke_interests,created_at,profile_visibility',
+       'user_id,stage_name,bio,karaoke_interests,created_at,profile_visibility,avatar_path',
        q=>q.eq('directory_visible',true).order('stage_name',{ascending:true}).limit(200));
      if(serial!==request||!target.isConnected)return;
      const input=elem('input','a2k-d-directory-search');
@@ -75,10 +94,16 @@
      input.setAttribute('aria-label','Search members');
      const list=elem('div','a2k-d-directory-grid a2k-d-members-grid');
      const cards=members.map(card);list.replaceChildren(...cards);
+     const count=elem('p','a2k-d-members-count');
+     const updateCount=shown=>{
+       count.textContent=shown+' member'+(shown===1?'':'s')+(input.value.trim()?' matching':' in the directory');
+     };
+     updateCount(cards.length);
      input.oninput=()=>{
        const term=input.value.toLocaleLowerCase().trim();
        let shown=0;
        cards.forEach(item=>{item.hidden=!item.textContent.toLocaleLowerCase().includes(term);if(!item.hidden)shown++});
+       updateCount(shown);
        const noMatches=$('a2k-d-members-empty');
        if(noMatches)noMatches.hidden=shown>0;
      };
@@ -86,7 +111,7 @@
      empty.id='a2k-d-members-empty';empty.hidden=members.length>0;
      target.replaceChildren(elem('h1','','Members'),
        elem('p','a2k-d-directory-intro','Browse member profiles shared with the karaoke community.'),
-       input,list,empty);
+       input,count,list,empty);
    }catch(error){
      if(serial!==request)return;
      console.warn('Public members directory unavailable',error);
@@ -102,7 +127,7 @@
    target.replaceChildren(elem('p','a2k-d-directory-info','Loading member profile…'));
    try{
      const members=await fetchRows('member_profiles',
-       'user_id,stage_name,bio,created_at,karaoke_interests,profile_visibility,song_visibility',
+       'user_id,stage_name,bio,created_at,karaoke_interests,profile_visibility,song_visibility,avatar_path',
        q=>q.eq('user_id',userId).limit(1));
      if(serial!==request)return;
      const member=members[0];
@@ -112,9 +137,7 @@
        return;
      }
      const hero=elem('section','a2k-d-public-profile-hero');
-     const avatar=elem('span','a2k-d-member-avatar a2k-d-member-avatar-large',
-       (member.stage_name||'M').trim().charAt(0).toUpperCase());
-     avatar.setAttribute('aria-hidden','true');
+     const avatar=publicAvatar(member,true);
      const details=elem('div');
      details.append(elem('h1','',member.stage_name||'Karaoke Member'),
        elem('p','a2k-d-directory-meta',
@@ -122,11 +145,13 @@
          new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(new Date(member.created_at))),
        elem('p','',member.bio||'This member has not shared an About Me story yet.'));
      hero.append(avatar,details);
-     target.replaceChildren(hero);
-     const badges=elem('section','a2k-d-public-profile-section');
+     const overview=elem('div','a2k-d-public-profile-overview');
+     overview.append(hero);
+     target.replaceChildren(backButton(source),overview);
+     const badges=elem('section','a2k-d-public-profile-section a2k-d-public-profile-awards');
      badges.append(elem('h2','','Badges'));
      const badgeRow=elem('div','a2k-d-public-badges');badges.append(badgeRow);
-     target.append(badges);
+     overview.append(badges);
      try{
        const awards=await fetchRows('profile_badge_awards','badge_code',
          q=>q.eq('user_id',userId).limit(100));
