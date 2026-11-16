@@ -245,4 +245,18 @@
  window.atkWelcomeNext=advance;
  window.atkWelcomeSkip=skip;
  window.atkWelcomeRender=render;
+ // An existing member can revisit onboarding without creating another account.
+ function installReopen(){
+  const host=$('member-about-interests')?.parentElement;
+  if(!host||$('a2k-setup-reopen'))return;
+  const button=make('button','a2k-setup-reopen','Run Setup Wizard');
+  button.id='a2k-setup-reopen';button.type='button';
+  button.onclick=()=>{
+   if($('profile-section-dialog')?.open&&typeof profileCloseSection==='function')profileCloseSection();
+   queueMicrotask(()=>start(true));
+  };
+  host.append(button);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installReopen,{once:true});
+ else installReopen();
 })();
