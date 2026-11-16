@@ -461,8 +461,17 @@
          }
        }catch(error){/* Own favorites are optional and remain private. */}
      }
-     // KJs use this same member profile; their schedule is a tab above.
-     // Do not add a second "View KJ Host Profile" popup link.
+     // KJs use this same member profile: ratings live here and their
+     // approved weekly hosting schedule lives in the tab above.
+     if(roles.includes('KJ / Host')){
+       const section=elem('section','a2k-d-public-profile-section a2k-d-profile-kj-reviews');
+       section.append(elem('h2','','KJ Reviews'));
+       const mount=elem('div','a2k-d-profile-kj-ratings');
+       section.append(mount);main.append(section);
+       if(typeof window.a2kMountKjRatings==='function'){
+         void window.a2kMountKjRatings(userId,null,false,mount);
+       }else mount.append(elem('p','a2k-d-profile-muted','KJ ratings are unavailable right now.'));
+     }
    }catch(error){
      if(serial!==request)return;
      console.warn('Could not load member profile',error);
