@@ -157,3 +157,14 @@
   outline:2px solid #f2d7a6;outline-offset:2px
  }
 }
+
+/* Build 234: account actions belong to the left navigation in every auth state. */
+@media (min-width:1024px){
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member,
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member:not([hidden]){
+  display:none!important;visibility:hidden!important;pointer-events:none!important;
+ }
+ html.a2k-desktop-live #a2k-desktop-sidebar .a2k-d-sidebar-account:not([hidden]){
+  display:flex!important;
+ }
+}
