@@ -16,7 +16,8 @@
    members:'M9 10a3 3 0 1 0 0-6a3 3 0 0 0 0 6ZM3 20v-3a6 6 0 0 1 12 0v3H3ZM18 5a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5v1h-4',
    about:'M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20ZM12 10v7M12 7h.01',
    profile:'M4 21c0-5 3.5-8 8-8s8 3 8 8',
-   logout:'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9'
+   logout:'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9',
+   join:'M12 3a4 4 0 1 0 0 8a4 4 0 0 0 0-8M4 21v-2a8 8 0 0 1 13-6M19 15v8M15 19h8'
  };
  let mounted=false;
  let tonightObserver=null;
@@ -58,7 +59,7 @@
    const siblings={
      home:['home','about'],
      find:['find','events','hosts','members'],
-     signin:['signin']
+     signin:['signin','join']
    };
    if(!(siblings[current]||[]).includes(selectedDesktopTab))selectedDesktopTab=current;
    const which=selectedDesktopTab;
@@ -135,8 +136,8 @@
      join.hidden=signed; // Management stays in the Profile card, not the top header.
      logout.hidden=!signed;
      buttonLabel(logout,'Log Out','logout');
-     // Signed-in account actions live in the sidebar; guests retain header entry points.
-     member.hidden=signed;
+     // All account actions are in the desktop sidebar, for guests and members.
+     member.hidden=true;
      member.classList.toggle('a2k-d-member-signed',signed);
      member.classList.toggle('a2k-d-member-manager',manager);
    };
@@ -339,6 +340,16 @@
  }
  function sidebarGo(key){
    if(key==='about'){showAbout();return}
+   if(key==='join'){
+     selectedDesktopTab='join';go('signin');
+     if(typeof window.authMode==='function')window.authMode('register');
+     return;
+   }
+   if(key==='signin'&&document.getElementById('auth-profile')?.hidden){
+     selectedDesktopTab='signin';go('signin');
+     if(typeof window.authMode==='function')window.authMode('login');
+     return;
+   }
    if(key==='logout'){
      if(typeof authLogout==='function'){
        void Promise.resolve(authLogout()).then(()=>{
@@ -366,12 +377,12 @@
    const items=[
      ['home','Home'],['find','Find Karaoke'],
      ['hosts','KJ Hosts'],['events','Events'],['members','Members'],
-     ['signin','Profile'],['logout','Log Out'],['about','About']
+     ['signin','Profile'],['join','Join A2K'],['logout','Log Out'],['about','About']
    ];
    for(const [key,label] of items){
      const button=el('button','a2k-d-nav-btn');
      button.type='button';button.dataset.page=key;
-     if(key==='signin'||key==='logout'){
+     if(key==='signin'||key==='join'||key==='logout'){
        button.classList.add('a2k-d-sidebar-account');
        if(key==='signin')button.classList.add('a2k-d-sidebar-profile');
        button.hidden=key==='logout';
@@ -387,6 +398,7 @@
      const signed=!!profile&&!profile.hidden;
      const account=sidebar.querySelector('.a2k-d-sidebar-profile');
      const logout=sidebar.querySelector('[data-page="logout"]');
+     const join=sidebar.querySelector('[data-page="join"]');
      if(account){
        account.hidden=false;
        const label=signed?'Profile':'Sign In';
@@ -396,6 +408,7 @@
        account.setAttribute('aria-label',label);
      }
      if(logout)logout.hidden=!signed;
+     if(join)join.hidden=signed;
    };
    syncSidebarAccount();
    if(profile)new MutationObserver(syncSidebarAccount).observe(profile,{attributes:true,attributeFilter:['hidden']});
