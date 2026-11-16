@@ -55,7 +55,6 @@
   }else roleChips.insertAdjacentElement('afterend',block);
   edit.addEventListener('click',()=>{
    if(saving||!profile()||!user()||profile().user_id!==user().id)return;
-   if(typeof memberInterestsCancel==='function')memberInterestsCancel();
    const selected=new Set(Array.isArray(profile().favorite_genres)?profile().favorite_genres:[]);
    choices.replaceChildren();
    for(const value of options){
@@ -74,10 +73,12 @@
    editor.hidden=false;edit.hidden=true;saved.hidden=true;status.textContent='';
    choices.querySelector('button')?.focus();
   });
-  cancel.addEventListener('click',()=>{
+  function closeEditor(){
    if(saving)return;
    editor.hidden=true;edit.hidden=false;saved.hidden=false;status.textContent='';
-  });
+  }
+  window.a2kGenresCancel=closeEditor;
+  cancel.addEventListener('click',closeEditor);
   save.addEventListener('click',async()=>{
    if(saving||!client()||!user()||!profile()||profile().user_id!==user().id)return;
    const ownerId=user().id;
