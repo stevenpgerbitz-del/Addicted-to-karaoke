@@ -270,6 +270,7 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-songbook-item{
  padding:8px 12px;cursor:pointer;
 }
 /* The KJ directory now displays member cards rather than a second KJ persona. */
+#a2k-d-directory .a2k-d-kj-member-card[hidden]{display:none!important}
 #a2k-d-directory .a2k-d-kj-member-card{
  padding:16px!important;display:flex!important;
  flex-direction:column!important;gap:9px!important;
