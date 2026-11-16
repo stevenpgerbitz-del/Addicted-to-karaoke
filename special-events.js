@@ -3,6 +3,8 @@
   'use strict';
   const TIME_ZONE='America/Chicago';
   let rows=[], mode='all', loaded=false, detailsDialog=null, submitDialog=null, busy=false;
+  // A fresh visit begins in discovery mode. Filtering starts only on deliberate visitor action.
+  let discoveryStarted=false;
   const byId=id=>document.getElementById(id);
   const node=(tag,className,text)=>{
     const item=document.createElement(tag);
@@ -106,7 +108,9 @@
   function openVintagePicker(select,title){
     const dialog=node('dialog','a2k-vintage-picker');
     const isCity=select.id==='city-filter';
+    const isState=select.id==='region-filter';
     if(isCity)dialog.classList.add('a2k-vintage-picker-city');
+    if(isState)dialog.classList.add('a2k-vintage-picker-state');
     const shell=node('div','a2k-vintage-picker-shell');
     const heading=node('h2','', 'Choose '+title);
     shell.append(heading);
@@ -115,16 +119,20 @@
 
     // Match the counts to the currently loaded, publicly visible venues.
     // The state filter determines which venues count toward each city.
-    const cityCounts=new Map();
+    const cityCounts=new Map(),stateCounts=new Map();
     let venueTotal=0;
-    if(isCity){
-      const chosenState=byId('region-filter')?.value||'';
+    if(isCity||isState){
+      const chosenState=isCity?(byId('region-filter')?.value||''):'';
       const places=typeof sampleVenues!=='undefined'&&Array.isArray(sampleVenues)?sampleVenues:[];
       for(const venue of places){
-        if(chosenState&&String(venue.state||'').trim().toUpperCase()!==chosenState)continue;
-        const name=String(venue.city||'').trim().toLowerCase();
-        if(!name)continue;
-        cityCounts.set(name,(cityCounts.get(name)||0)+1);
+        const code=String(venue.state||'').trim().toUpperCase();
+        if(chosenState&&code!==chosenState)continue;
+        if(isCity){
+          const name=String(venue.city||'').trim().toLowerCase();
+          if(!name)continue;
+          cityCounts.set(name,(cityCounts.get(name)||0)+1);
+        }
+        if(isState&&code)stateCounts.set(code,(stateCounts.get(code)||0)+1);
         venueTotal++;
       }
     }
@@ -143,11 +151,13 @@
       shell.append(search);
     }
     for(const option of options){
-      const button=node('button','a2k-vintage-picker-option',isCity?undefined:option.textContent);
+      const button=node('button','a2k-vintage-picker-option',(isCity||isState)?undefined:option.textContent);
       button.type='button';button.dataset.selected=String(option.value===select.value);
       button.setAttribute('aria-pressed',String(option.value===select.value));
-      if(isCity){
-        const count=option.value?cityCounts.get(option.value.trim().toLowerCase())||0:venueTotal;
+      if(isCity||isState){
+        const count=isCity?
+          (option.value?cityCounts.get(option.value.trim().toLowerCase())||0:venueTotal):
+          (option.value?stateCounts.get(option.value.trim().toUpperCase())||0:venueTotal);
         button.append(
           node('span','a2k-vintage-picker-place',option.textContent),
           node('span','a2k-vintage-picker-count','('+count.toLocaleString('en-US')+')')
@@ -417,7 +427,7 @@
         window.a2kNearbyVenueMatches(place):true;
       // Venues added solely for one-time events are represented by their event
       // cards and can still be opened from those cards.
-      card.hidden=mode==='events'||!place||place.specialEventsOnly||
+      card.hidden=!discoveryStarted||mode==='events'||!place||place.specialEventsOnly||
         !matchesText||!matchesState||!matchesCity||!matchesGenre||!matchesRating||!matchesNearby;
       if(!card.hidden){
         shownVenues++;
@@ -441,7 +451,7 @@
         window.a2kNearbyVenueMatches(place):true;
       // Already-ended events are excluded both by the database query and here,
       // in case the user leaves this page open until the event passes.
-      card.hidden=mode==='venues'||new Date(event.end_at)<=now||
+      card.hidden=!discoveryStarted||mode==='venues'||new Date(event.end_at)<=now||
         !matches||!matchesState||!matchesCity||!matchesGenre||!matchesRating||!matchesNearby;
       if(!card.hidden)shownEvents++;
       byCard.set(card,new Date(event.start_at).getTime());
@@ -456,9 +466,13 @@
       return a.textContent.localeCompare(b.textContent);
     });
     parent.append(...cards);
-    byId('no-results').hidden=shownVenues+shownEvents>0;
+    byId('no-results').hidden=!discoveryStarted||shownVenues+shownEvents>0;
     const count=byId('results-count');
     if(count){
+      if(!discoveryStarted){
+        count.textContent='Search, choose a state or city, or use your location to find karaoke.';
+        return;
+      }
       count.textContent=
         (mode==='events'?'Upcoming special events: '+shownEvents:
          mode==='venues'?'Showing '+shownVenues+' venues':
@@ -662,6 +676,24 @@
         renderVenueEvents();return result;
       };
     }
+    // Only a visitor action opens discovery. Programmatically filled default
+    // states and fresh database loads must not automatically reveal listings.
+    const startDiscovery=()=>{
+      if(!discoveryStarted){
+        discoveryStarted=true;
+        window.filterVenues?.();
+      }
+    };
+    byId('venue-search')?.addEventListener('input',()=>{
+      if(byId('venue-search')?.value.trim())startDiscovery();
+    });
+    for(const id of ['region-filter','city-filter','genre-filter','review-filter']){
+      byId(id)?.addEventListener('change',startDiscovery);
+    }
+    byId('a2k-event-filter')?.addEventListener('click',event=>{
+      if(event.target.closest('button[data-mode]'))startDiscovery();
+    });
+    document.addEventListener('a2k-nearby-activated',startDiscovery);
     // Returning to Find Karaoke updates the list after time passes.
     const oldNavigate=window.navigate;
     if(typeof oldNavigate==='function'){
