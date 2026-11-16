@@ -10,7 +10,14 @@
 #auth-profile .song-title strong{color:#fff1d7!important}
 #auth-profile .song-title span{color:#e5bda8!important}
 @media(min-width:1024px){
- html.a2k-desktop-live #auth-profile .profile-action-grid{display:none!important}
+ html.a2k-desktop-live #auth-profile .profile-action-grid{
+  display:grid!important;grid-template-columns:1fr!important;
+  align-items:center!important;justify-items:stretch!important;gap:7px!important;
+ }
+ html.a2k-desktop-live #auth-profile .profile-action-grid #management-open:not([hidden]){
+  display:flex!important;justify-content:center!important;align-items:center!important;
+  width:100%!important;min-height:44px!important;
+ }
  html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member{
   width:33.5%!important;right:1.2%!important;gap:7px!important;
  }
