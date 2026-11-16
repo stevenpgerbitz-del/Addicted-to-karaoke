@@ -38,7 +38,7 @@
  }
  function rolesOf(member){
    const roles=Array.isArray(member.karaoke_interests)?member.karaoke_interests:[];
-   const mapping={singer:'Singer',kj:'KJ / Host',owner:'Venue Owner'};
+   const mapping={singer:'Singer',kj:'KJ / Host',venue_owner:'Venue Owner'};
    return roles.map(x=>mapping[x]).filter(Boolean);
  }
  function card(member){
@@ -96,8 +96,8 @@
    if(!/^[a-f0-9-]{36}$/i.test(String(userId||'')))return;
    const target=shell();if(!target)return;
    const serial=++request;lastSource=source;
-   const back=backButton(source);
-   target.replaceChildren(back,elem('p','a2k-d-directory-info','Loading member profile…'));
+   // Desktop sidebar handles navigation.
+   target.replaceChildren(elem('p','a2k-d-directory-info','Loading member profile…'));
    try{
      const members=await fetchRows('member_profiles',
        'user_id,stage_name,bio,created_at,karaoke_interests,profile_visibility,song_visibility',
@@ -105,7 +105,7 @@
      if(serial!==request)return;
      const member=members[0];
      if(!member){
-       target.replaceChildren(back,elem('p','a2k-d-directory-info',
+       target.replaceChildren(elem('p','a2k-d-directory-info',
          'This member has not shared a profile with you.'));
        return;
      }
@@ -120,7 +120,7 @@
          new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(new Date(member.created_at))),
        elem('p','',member.bio||'This member has not shared an About Me story yet.'));
      hero.append(avatar,details);
-     target.replaceChildren(back,hero);
+     target.replaceChildren(hero);
      const badges=elem('section','a2k-d-public-profile-section');
      badges.append(elem('h2','','Badges'));
      const badgeRow=elem('div','a2k-d-public-badges');badges.append(badgeRow);
@@ -133,8 +133,17 @@
          q=>q.limit(200));
        if(serial!==request)return;
        const labels=new Map(types.map(item=>[item.code,item.label]));
-       for(const award of awards)badgeRow.append(elem('span','a2k-d-public-badge',
-         labels.get(award.badge_code)||award.badge_code.replace(/_/g,' ')));
+       const badgeArt=new Set(['founder','super_admin','admin','moderator','founding_kj','member_10','member_100','member_1000','review_1','review_25','review_75','review_100','song_1','song_25','song_75','song_100','venue_1','venue_10','venue_25','venue_100']);
+       for(const item of awards){
+        const code=String(item.badge_code||'');
+        const label=labels.get(code)||code.replace(/_/g,' ');
+        const emblem=elem('span','a2k-d-illustrated-badge');
+        emblem.setAttribute('role','img');emblem.setAttribute('aria-label',label);emblem.title=label;
+        if(badgeArt.has(code)){
+         const img=elem('img');img.src='assets/badges/'+code+'.svg';img.alt='';img.loading='lazy';emblem.append(img);
+        }else emblem.append(elem('span','a2k-d-badge-fallback','★'));
+        badgeRow.append(emblem);
+       }
        if(!awards.length)badgeRow.append(elem('p','a2k-d-directory-intro','No public badges to display yet.'));
      }catch(error){
        badgeRow.append(elem('p','a2k-d-directory-intro',
@@ -151,9 +160,33 @@
            q=>q.eq('user_id',userId).order('created_at',{ascending:false}).limit(150));
          if(serial!==request)return;
          if(songs.length){
-           for(const song of songs)list.append(elem('p','a2k-d-public-song',
-             song.title+' — '+song.artist+(song.favorite?' ★ Favorite':'')+
-             (song.list_type?' · '+song.list_type:'')));
+          let showAll=false;
+          const tools=elem('div','a2k-d-songbook-controls');
+          const search=elem('input','a2k-d-songbook-search');search.type='search';search.placeholder='Search songs or artists';
+          search.setAttribute('aria-label','Search shared karaoke songs');
+          const count=elem('small','a2k-d-songbook-count');
+          const more=elem('button','a2k-d-directory-action a2k-d-songbook-more','View All Songs');more.type='button';
+          tools.append(search,count);section.insertBefore(tools,list);
+          const draw=()=>{
+           const term=search.value.trim().toLocaleLowerCase();
+           const found=songs.filter(x=>(x.title+' '+x.artist).toLocaleLowerCase().includes(term));
+           list.replaceChildren();
+           for(const song of showAll||term?found:found.slice(0,6)){
+            const item=elem('article','a2k-d-songbook-item');
+            item.append(elem('span','a2k-d-songbook-heart',song.favorite?'♥':'♫'));
+            const detail=elem('div','a2k-d-songbook-copy');
+            detail.append(elem('strong','',song.title),elem('small','',song.artist));item.append(detail);
+            if(song.list_type==='want_to_sing'||song.list_type==='duets')
+             item.append(elem('span','a2k-d-songbook-type',song.list_type==='duets'?'Duet':'Want to Sing'));
+            list.append(item);
+           }
+           if(!found.length)list.append(elem('p','a2k-d-directory-intro','No matching songs.'));
+           count.textContent=found.length+' shared song'+(found.length===1?'':'s');
+           more.hidden=!!term||found.length<=6;
+           more.textContent=showAll?'Show Fewer Songs':'View All Songs';
+           if(!more.isConnected)section.append(more);
+          };
+          search.oninput=draw;more.onclick=()=>{showAll=!showAll;draw();};draw();
          }else list.append(elem('p','a2k-d-directory-intro','No songs have been shared with you.'));
        }catch(error){
          list.replaceChildren(elem('p','a2k-d-directory-intro','Shared songs unavailable.'));
@@ -173,7 +206,7 @@
    }catch(error){
      if(serial!==request)return;
      console.warn('Could not load member profile',error);
-     target.replaceChildren(back,elem('p','a2k-d-directory-info',
+     target.replaceChildren(elem('p','a2k-d-directory-info',
        'This profile is not available to you or could not be loaded.'));
    }
  };
