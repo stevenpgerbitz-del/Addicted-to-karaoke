@@ -71,7 +71,7 @@
      const input=elem('input','a2k-d-directory-search');
      input.type='search';input.placeholder='Search members';
      input.setAttribute('aria-label','Search members');
-     const list=elem('div','a2k-d-directory-grid');
+     const list=elem('div','a2k-d-directory-grid a2k-d-members-grid');
      const cards=members.map(card);list.replaceChildren(...cards);
      input.oninput=()=>{
        const term=input.value.toLocaleLowerCase().trim();
