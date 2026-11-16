@@ -337,3 +337,166 @@ html.a2k-desktop-live #a2k-d-directory:has(.a2k-d-kj-member-card){
  #a2k-d-directory .a2k-d-profile-tab{flex:1;min-width:0;padding:9px 10px}
  #a2k-d-directory .a2k-d-profile-section-heading{flex-wrap:wrap}
 }
+
+/* Build 245 — reference-accurate shared member profile.
+   All KJ tabs live IN the right rail; never below the identity sidebar.
+   This also wins over the old desktop !important rules that ignored [hidden]. */
+html.a2k-desktop-live #find-screen.a2k-d-directory-active > #a2k-d-directory:has(.a2k-d-member-profile-pane){
+ box-sizing:border-box!important;
+ width:min(100%,1020px)!important;
+ max-width:1020px!important;
+ margin:0 auto!important;
+ padding:2px 12px 35px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-overview.a2k-d-member-profile-pane{
+ display:grid!important;
+ grid-template-columns:minmax(242px,255px) minmax(0,1fr)!important;
+ align-items:start!important;
+ gap:14px!important;
+ width:100%!important;
+ min-width:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-content-rail{
+ display:flex!important;
+ flex-direction:column!important;
+ gap:0!important;
+ width:100%!important;
+ min-width:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-content-rail > .a2k-d-public-profile-main{
+ width:100%!important;min-width:0!important;
+ display:flex!important;
+ flex-direction:column!important;
+ gap:11px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-content-rail > .a2k-d-public-profile-main[hidden],
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-content-rail > .a2k-d-profile-schedule-pane[hidden]{
+ display:none!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-content-rail > .a2k-d-profile-schedule-pane{
+ display:flex!important;
+ width:100%!important;
+ min-width:0!important;
+ padding:16px 18px!important;
+ border:1.5px solid #c19762!important;
+ border-radius:12px!important;
+ background:linear-gradient(115deg,#581b15 0%,#34120e 60%,#24100e 100%)!important;
+ box-shadow:inset 0 1px 0 #b9774d25,0 3px 10px #0005!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar{
+ padding:17px 15px 20px!important;
+ background:linear-gradient(147deg,#5e1914 0%,#38120f 65%,#1d0c0c 100%)!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-member-avatar-large{
+ width:108px!important;min-width:108px!important;
+ height:108px!important;min-height:108px!important;
+ margin:0 auto 8px!important;font-size:43px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar h1{
+ font:italic 700 33px/1.08 Georgia,serif!important;
+ margin:0 0 4px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-profile-role{
+ font:700 14px/1.26 Georgia,serif!important;
+ margin:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-flourish{
+ margin:13px 0 11px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-facts{
+ gap:9px!important;
+ padding:0 0 12px!important;margin:0 0 12px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-fact{
+ font:12px/1.3 Georgia,serif!important;
+ gap:9px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-fact-icon{
+ flex-basis:27px!important;width:27px!important;height:27px!important;
+ font-size:17px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-awards h2{
+ font:700 17px/1.2 Georgia,serif!important;
+ margin:0 0 10px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-public-badges{
+ display:grid!important;grid-template-columns:repeat(3,60px)!important;
+ justify-content:center!important;align-items:start!important;
+ gap:7px!important;max-width:200px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-illustrated-badge{
+ width:60px!important;min-width:60px!important;
+ height:60px!important;min-height:60px!important;
+ padding:2px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-public-profile-section{
+ padding:15px 16px!important;
+ margin:0!important;
+ border-radius:12px!important;
+ border:1.5px solid #c39765!important;
+ background:linear-gradient(115deg,#531a13 0%,#32120f 72%,#24100d 100%)!important;
+ box-shadow:inset 0 1px 0 #a8653730,0 4px 10px #0004!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-profile-interests{
+ background:linear-gradient(110deg,#5e1b15 0%,#32120f 75%,#28100e 100%)!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-public-profile-section h2{
+ font:italic 700 22px/1.16 Georgia,serif!important;
+ padding:0 0 8px!important;margin:0 0 9px!important;
+ border-bottom:1px solid #9d573d!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-story{
+ font:13px/1.48 Georgia,serif!important;
+ max-width:68ch!important;
+ color:#f2dac0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-interest-tile{
+ min-height:30px!important;padding:5px 13px!important;
+ font:700 12px/1.2 Georgia,serif!important;
+ border-radius:999px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-profile-section-heading h2{
+ border:0!important;margin:0 0 6px!important;padding:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-section-heading{
+ margin:0 0 10px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-venue-item{
+ min-height:54px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-venue-item .a2k-d-venue-icon{
+ flex-basis:36px!important;width:36px!important;height:36px!important;
+ font-size:25px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-tabs{
+ width:100%!important;
+ padding:0!important;margin:0 0 11px!important;
+ gap:7px!important;
+ justify-content:flex-start!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-tab{
+ min-height:34px!important;
+ padding:7px 14px!important;
+ font:700 12px/1.2 Georgia,serif!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-back{
+ font:700 14px/1.2 Georgia,serif!important;
+ min-height:38px!important;
+ padding:8px 15px!important;margin:0 0 15px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-schedule-title{
+ font:italic 700 22px/1.15 Georgia,serif!important;
+ padding:0 0 9px!important;
+}
+@media (max-width:1023px){
+ #a2k-d-directory .a2k-d-profile-content-rail{width:100%;min-width:0}
+ #a2k-d-directory .a2k-d-profile-content-rail > .a2k-d-public-profile-main[hidden],
+ #a2k-d-directory .a2k-d-profile-content-rail > .a2k-d-profile-schedule-pane[hidden]{
+   display:none!important;
+ }
+}
+@media (max-width:620px){
+ #a2k-d-directory .a2k-d-profile-content-rail .a2k-d-profile-tabs{
+   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ }
+}
