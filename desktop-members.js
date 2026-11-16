@@ -13,6 +13,13 @@
  let request=0,lastSource='members';
  const client=()=>typeof authClient!=='undefined'?authClient:null;
  const signed=()=>typeof authUser!=='undefined'&&!!authUser?.id;
+ let directoryState={role:'all',search:'',order:'name'};
+ const directoryRoles=[
+   {id:'all',label:'All Members',icon:'♟'},
+   {id:'singer',label:'Singers',role:'Singer',icon:'♪'},
+   {id:'kj',label:'KJ / Hosts',role:'KJ / Host',icon:'♫'},
+   {id:'venue_owner',label:'Venue Owners',role:'Venue Owner',icon:'⌂'}
+ ];
  async function fetchRows(table,columns,configure){
    const connection=client();
    if(!connection)throw Error('Member directory is unavailable.');
@@ -32,7 +39,7 @@
    b.onclick=()=>{
      if(source==='hosts'){
        $('a2k-desktop-sidebar')?.querySelector('[data-page="hosts"]')?.click();
-     }else window.a2kOpenMembersDirectory?.(shell());
+     }else window.a2kOpenMembersDirectory?.(shell(),{restore:true});
    };
    return b;
  }
@@ -40,6 +47,63 @@
    const roles=Array.isArray(member.karaoke_interests)?member.karaoke_interests:[];
    const mapping={singer:'Singer',kj:'KJ / Host',venue_owner:'Venue Owner'};
    return roles.map(x=>mapping[x]).filter(Boolean);
+ }
+ // The directory sidebar is the same component in the directory and
+ // alongside each member profile. Only members visible under RLS and
+ // their own directory/privacy settings are counted.
+ async function visibleDirectoryMembers(){
+   const rows=await fetchRows('member_profiles',
+     'user_id,stage_name,bio,karaoke_interests,created_at,profile_visibility,avatar_path',
+     q=>q.eq('directory_visible',true).order('stage_name',{ascending:true}).limit(200));
+   return rows.filter(m=>m.profile_visibility!=='private'&&
+     (m.profile_visibility!=='members'||signed()));
+ }
+ function makeDirectorySidebar(members,{role='all',search='',onRole=()=>{},onSearch=()=>{}}={}){
+   const sidebar=elem('aside','a2k-d-members-filters a2k-d-shared-members-sidebar');
+   sidebar.setAttribute('aria-label','Find members and browse the directory');
+   const mark=elem('div','a2k-d-member-directory-emblem','♬');
+   mark.setAttribute('aria-hidden','true');
+   sidebar.append(mark,elem('h2','','Find Members'));
+   const input=elem('input','a2k-d-directory-search');
+   input.type='search';input.placeholder='Search members…';
+   input.setAttribute('aria-label','Search members');input.value=search;
+   input.addEventListener('input',()=>onSearch(input.value));
+   sidebar.append(input);
+   const stats=elem('div','a2k-d-directory-stats');
+   stats.append(elem('h3','','Directory Stats'));
+   if(Array.isArray(members)){
+     const tally=directoryRoles.map(item=>({
+       ...item,
+       count:item.id==='all'?members.length:
+         members.filter(m=>rolesOf(m).includes(item.role)).length
+     }));
+     for(const item of tally){
+       const line=elem('div','a2k-d-directory-stat-row');
+       line.append(elem('span','a2k-d-directory-stat-icon',item.icon),
+         elem('span','a2k-d-directory-stat-label',item.id==='all'?'Total Members':item.label),
+         elem('strong','a2k-d-directory-stat-value',item.count));
+       stats.append(line);
+     }
+   }else stats.append(elem('p','a2k-d-member-sidebar-caption','Directory statistics unavailable.'));
+   sidebar.append(stats);
+   const browseTitle=elem('h3','a2k-d-directory-browse-title','Browse by Role');
+   sidebar.append(browseTitle);
+   const options=elem('div','a2k-d-member-role-options');
+   options.setAttribute('role','group');options.setAttribute('aria-label','Browse by role');
+   const roleButtons=new Map();
+   for(const item of directoryRoles){
+     const total=Array.isArray(members)?' ('+
+       (item.id==='all'?members.length:members.filter(m=>rolesOf(m).includes(item.role)).length)+')':'';
+     const button=elem('button','a2k-d-member-role-option');
+     button.type='button';button.dataset.role=item.id;
+     button.setAttribute('aria-pressed',String(item.id===role));
+     button.append(elem('span','a2k-d-member-role-icon',item.icon),
+       elem('span','',item.label+total));
+     button.onclick=()=>onRole(item.id);
+     options.append(button);roleButtons.set(item.id,button);
+   }
+   sidebar.append(options);
+   return {sidebar,input,roleButtons};
  }
  function publicAvatar(member,large=false){
    const avatar=elem('span','a2k-d-member-avatar'+(large?' a2k-d-member-avatar-large':''),(member.stage_name||'M').trim().charAt(0).toUpperCase());
@@ -77,44 +141,27 @@
    box.append(view);
    return box;
  }
- window.a2kOpenMembersDirectory=async function(root){
+ window.a2kOpenMembersDirectory=async function(root,opts={}){
    const target=root||shell();
    if(!target)return;
    const serial=++request;lastSource='members';
    target.replaceChildren(elem('h1','','Members'),
      elem('p','a2k-d-directory-info','Loading member directory…'));
    try{
-     const rows=await fetchRows('member_profiles',
-       'user_id,stage_name,bio,karaoke_interests,created_at,profile_visibility,avatar_path',
-       q=>q.eq('directory_visible',true).order('stage_name',{ascending:true}).limit(200));
+     const members=await visibleDirectoryMembers();
      if(serial!==request||!target.isConnected)return;
-     // In addition to database RLS, respect the member's stated visibility.
-     const members=rows.filter(m=>m.profile_visibility!=='private'&&
-       (m.profile_visibility!=='members'||signed()));
      const heading=elem('h1','','Members');
      const intro=elem('p','a2k-d-directory-intro','Browse member profiles shared with the karaoke community.');
      const layout=elem('div','a2k-d-members-layout');
-     const filters=elem('aside','a2k-d-members-filters');
-     filters.setAttribute('aria-label','Find members');
-     filters.append(elem('h2','','Find Members'));
-     const input=elem('input','a2k-d-directory-search');
-     input.type='search';input.placeholder='Search members…';input.setAttribute('aria-label','Search members');
-     filters.append(input);
-     const roles=[
-       {id:'all',label:'All Members'},
-       {id:'singer',label:'Singers',role:'Singer'},
-       {id:'kj',label:'KJ / Hosts',role:'KJ / Host'},
-       {id:'venue_owner',label:'Venue Owners',role:'Venue Owner'}
-     ];
-     const options=elem('div','a2k-d-member-role-options');
-     options.setAttribute('role','group');options.setAttribute('aria-label','Browse by role');
-     const sidebarTitle=elem('h3','','Browse by Role');
-     const totalLabel=elem('p','a2k-d-member-sidebar-caption','Members visible to you');
-     const roleCounts=Object.fromEntries(roles.map(opt=>[opt.id,
-       opt.id==='all'?members.length:members.filter(m=>rolesOf(m).includes(opt.role)).length]));
-     const roleButtons=new Map();
-     let selected='all',order='name';
-     const results=elem('div','a2k-d-members-main');
+     const initial=opts.restore?directoryState:opts;
+     let selected=directoryRoles.some(item=>item.id===initial.role)?initial.role:'all';
+     let order=['name','newest','oldest'].includes(initial.order)?initial.order:'name';
+     const {sidebar:filters,input,roleButtons}=makeDirectorySidebar(members,{
+       role:selected,search:String(initial.search||'').slice(0,100),
+       onRole:id=>{selected=id;draw();},
+       onSearch:()=>draw()
+     });
+   const results=elem('div','a2k-d-members-main');
      const toolbar=elem('div','a2k-d-members-toolbar');
      const count=elem('p','a2k-d-members-count');
      const sorter=elem('label','a2k-d-member-sort-label','Sort by');
@@ -123,6 +170,7 @@
      for(const [value,name] of [['name','Name A–Z'],['newest','Newest'],['oldest','Oldest']]){
        const option=elem('option','',name);option.value=value;select.append(option);
      }
+     select.value=order;
      sorter.append(select);toolbar.append(count,sorter);
      const list=elem('div','a2k-d-directory-grid a2k-d-members-grid');
      const empty=elem('p','a2k-d-directory-info','No members match that search.');
@@ -136,7 +184,7 @@
        if(serial!==request||!list.isConnected)return;
        const term=input.value.toLocaleLowerCase().trim();
        const shown=cards.filter(({member})=>{
-         const matchRole=selected==='all'||rolesOf(member).includes(roles.find(r=>r.id===selected)?.role);
+         const matchRole=selected==='all'||rolesOf(member).includes(directoryRoles.find(r=>r.id===selected)?.role);
          const searchText=[member.stage_name,member.bio,...rolesOf(member)].filter(Boolean).join(' ').toLocaleLowerCase();
          return matchRole&&(!term||searchText.includes(term));
        }).sort((a,b)=>order==='newest'?joined(b.member)-joined(a.member):
@@ -148,19 +196,11 @@
        empty.hidden=shown.length!==0;
        empty.textContent=members.length?'No members match your search and filters.':'No member profiles are visible in the directory yet.';
        for(const [id,button] of roleButtons)button.setAttribute('aria-pressed',String(selected===id));
+       directoryState={role:selected,search:input.value,order};
      }
-     for(const role of roles){
-       const button=elem('button','a2k-d-member-role-option',role.label+' ('+roleCounts[role.id]+')');
-       button.type='button';button.dataset.role=role.id;
-       button.setAttribute('aria-pressed',String(role.id==='all'));
-       button.onclick=()=>{selected=role.id;draw();};
-       roleButtons.set(role.id,button);options.append(button);
-     }
-     filters.append(totalLabel,sidebarTitle,options);
      results.append(toolbar,list,empty);
      layout.append(filters,results);
      target.replaceChildren(heading,intro,layout);
-     input.addEventListener('input',draw);
      select.addEventListener('change',()=>{order=select.value;draw()});
      draw();
    }catch(error){
@@ -190,6 +230,21 @@
        return;
      }
      const roles=rolesOf(member);
+     // Keep the directory tools and live directory statistics visible
+     // while displaying one selected member to their right.
+     const visibleMembers=await visibleDirectoryMembers().catch(error=>{
+       console.warn('Directory statistics unavailable on profile',error);
+       return null;
+     });
+     if(!isCurrent())return;
+     const profileLayout=elem('div','a2k-d-members-layout a2k-d-members-profile-layout');
+     const profileResult=elem('div','a2k-d-members-main a2k-d-selected-member');
+     const {sidebar:directorySidebar}=makeDirectorySidebar(visibleMembers,{
+       onRole:id=>window.a2kOpenMembersDirectory?.(target,{role:id}),
+       onSearch:value=>window.a2kOpenMembersDirectory?.(target,{role:'all',search:value})
+     });
+     profileLayout.append(directorySidebar,profileResult);
+     const showProfile=()=>target.replaceChildren(profileLayout);
      const overview=elem('div','a2k-d-public-profile-overview');
      const side=elem('aside','a2k-d-public-profile-sidebar');
      side.setAttribute('aria-label','Member information and badges');
@@ -288,7 +343,8 @@
        tabs.append(profileTab,scheduleTab);
        contentRail.prepend(tabs);
        contentRail.append(schedulePanel);
-       target.replaceChildren(backButton(source),overview);
+       profileResult.replaceChildren(backButton(source),overview);
+       showProfile();
        activate('profile');
        void (async()=>{
          try{
@@ -347,7 +403,10 @@
            console.warn('Published KJ schedule unavailable',error);
          }
        })();
-     }else target.replaceChildren(backButton(source),overview);
+     }else{
+       profileResult.replaceChildren(backButton(source),overview);
+       showProfile();
+     }
      const badgeArt=new Set(['founder','super_admin','admin','moderator','founding_kj','member_10','member_100','member_1000','review_1','review_25','review_75','review_100','song_1','song_25','song_75','song_100','venue_1','venue_10','venue_25','venue_100']);
      try{
        const [awarded,types]=await Promise.all([
