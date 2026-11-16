@@ -1,9 +1,21 @@
-/* A2K Build 242 — member-selected favorite music genres / eras.
+/* A2K Build 244 — expanded karaoke genres, country eras and musical styles.
    Separate from the Singer / KJ / Venue Owner interests used for navigation.
    Stored in member_profiles.favorite_genres, subject to existing owner-only RLS. */
 (function(){
  'use strict';
- const options=['Classic Rock','80s','90s','Rock','Pop','Singalongs','Country','R&B','Hip-Hop','Oldies','Alternative','Metal','Jazz','Blues','Gospel','Indie','Duets','Show Tunes'];
+ // Genre categories are curated for karaoke discovery, not a claimed streaming rank.
+ // Preserve the original values so existing member selections continue to display.
+ const groups=[
+  {label:'Popular Music Genres',values:[
+    'Pop','Rock','Country','Hip-Hop','R&B','Latin','Dance/EDM','Classic Rock',
+    'Alternative','Indie','Metal','Punk','Jazz','Blues','Gospel','Soul',
+    'Funk','Reggae','Folk','Show Tunes'
+  ]},
+  {label:'Country Styles',values:['Country/Western','80s Country','90s Country','2000s Country']},
+  {label:'Decades & Oldies',values:['Oldies','60s','70s','80s','90s','2000s','2010s','2020s']},
+  {label:'Karaoke Favorites',values:['Duets','Singalongs']}
+ ];
+ const options=groups.flatMap(group=>group.values);
  let saving=false;
  const el=(tag,cls,label)=>{
   const node=document.createElement(tag);
@@ -36,7 +48,7 @@
   const choices=el('div','a2k-member-genres-choices');
   choices.id='a2k-member-genres-choices';choices.setAttribute('role','group');
   choices.setAttribute('aria-label','Choose favorite genres and eras');
-  const help=el('p','a2k-member-genres-help','Select the music you enjoy singing. Choose up to 16.');
+  const help=el('p','a2k-member-genres-help','Choose your favorite genres, country styles, decades and singalong types. Select up to 16.');
   const actions=el('div','profile-interests-buttons');
   const cancel=el('button','','Cancel');cancel.type='button';
   const save=el('button','','Save Changes');save.type='button';
@@ -57,18 +69,27 @@
    if(saving||!profile()||!user()||profile().user_id!==user().id)return;
    const selected=new Set(Array.isArray(profile().favorite_genres)?profile().favorite_genres:[]);
    choices.replaceChildren();
-   for(const value of options){
-    const tile=el('button','a2k-member-genre-choice',value);
-    tile.type='button';tile.dataset.genre=value;
-    tile.setAttribute('aria-pressed',String(selected.has(value)));
-    tile.addEventListener('click',()=>{
-     const on=tile.getAttribute('aria-pressed')==='true';
-     if(!on&&choices.querySelectorAll('[aria-pressed="true"]').length>=16){
-      status.textContent='Choose up to 16 favorite genres.';return;
-     }
-     tile.setAttribute('aria-pressed',String(!on));status.textContent='';
-    });
-    choices.append(tile);
+   for(const group of groups){
+    const section=el('section','a2k-member-genre-group');
+    const title=el('h4','a2k-member-genre-group-title',group.label);
+    const grid=el('div','a2k-member-genre-group-choices');
+    grid.setAttribute('role','group');
+    grid.setAttribute('aria-label',group.label);
+    for(const value of group.values){
+     const tile=el('button','a2k-member-genre-choice',value);
+     tile.type='button';tile.dataset.genre=value;
+     tile.setAttribute('aria-pressed',String(selected.has(value)));
+     tile.addEventListener('click',()=>{
+      const on=tile.getAttribute('aria-pressed')==='true';
+      if(!on&&choices.querySelectorAll('[aria-pressed="true"]').length>=16){
+       status.textContent='Choose up to 16 favorite genres and styles.';return;
+      }
+      tile.setAttribute('aria-pressed',String(!on));status.textContent='';
+     });
+     grid.append(tile);
+    }
+    section.append(title,grid);
+    choices.append(section);
    }
    editor.hidden=false;edit.hidden=true;saved.hidden=true;status.textContent='';
    choices.querySelector('button')?.focus();
