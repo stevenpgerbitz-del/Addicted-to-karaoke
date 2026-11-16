@@ -101,5 +101,18 @@ Existing member permissions as inspected 2026-11-11: Mr Steve = Founder, Steven 
 - Toggle must not erase existing schedules; controls future submissions and edits. Enforce in backend authorization, not merely hidden buttons.
 - Ownership must be approved through the existing venue claim process before these controls are granted.
 
+## Future update — Venue Verification Center, KJ engagement, and optional AI calling (backlog, November 16, 2026)
+
+**Status: future concept only. Do not implement, activate, or start making calls yet.**
+
+- **Venue Verification Center:** Add an internal Founder/Admin management screen with verification status: Not Contacted, Contacted, Awaiting Callback, Verified, Needs Updating; include last contact, contact method, verifier, notes, and next follow-up.
+- **Schedule verification:** Record karaoke nights, start/end times, host/KJ, frequency (weekly, monthly, occasional, one-time, seasonal), evidence/source, last confirmed date and review due date. Keep publication status, venue ownership verification, and schedule verification distinct. Only authorized people can approve public changes.
+- **KJ-first participation:** Invite KJs to create or claim their host profile, add multiple hosts if needed, link the venues they actually host, submit their recurring or special-event schedules, report changes, and request a verified-host status through the established approval process. Show their credited KJ profile on confirmed nights (only if a profile exists). Give KJs a practical benefit: an accurate public schedule they can share with singers.
+- **Respect venue owners:** Honor existing venue-owner permissions that restrict who may publish or change schedules. KJ-submitted updates should enter review where authorization is absent.
+- **AI-assisted calling: strictly optional future phase.** Evaluate providers, costs and legal/compliance obligations before build; identify AI clearly, avoid deceptive or high-frequency outreach, and do not initiate automated calls without an approved compliant workflow.
+- **Do-not-AI-call/opt-out:** Venues and KJs must be able to opt out of AI-initiated calls easily (including during a call), use a preferred contact method, and have the choice preserved permanently unless they explicitly change it. Store an auditable suppression flag, immediately enforce it across future attempts and all providers, and never treat public phone listings as consent to automated calls. An opt-out must not unpublish the listing or prevent manual website updates.
+- **Privacy and safety:** Keep contact notes and phone preferences restricted to authorized administrators, allow correcting/removing inaccurate data, and make repeat verification reminders non-intrusive.
+- **Rollout order:** Design and review a mockup first, then build manual verification and KJ self-service, test with a few local hosts, and only then separately consider compliant AI calling. Preserve the existing vintage A2K look, mobile-first workflow, and bottom-action conventions.
+
 ## Execution principle
 Implement one milestone at a time, preview/test, then proceed. Prioritize verified recoverability over adding features. Keep build/version visible and maintain consistent ATK UI.
