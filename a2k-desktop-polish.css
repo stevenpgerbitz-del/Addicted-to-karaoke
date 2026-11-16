@@ -127,3 +127,33 @@
   overflow:hidden!important;
  }
 }
+
+/* A2K 231 — signed-in desktop account actions belong above About in the sidebar. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member[hidden],
+ html.a2k-desktop-live #a2k-desktop-header .a2k-desktop-member.a2k-d-member-signed{
+  display:none!important;visibility:hidden!important;pointer-events:none!important
+ }
+ html.a2k-desktop-live #a2k-desktop-sidebar .a2k-d-nav-btn[hidden]{
+  display:none!important
+ }
+ html.a2k-desktop-live #a2k-desktop-sidebar .a2k-d-sidebar-profile:not([hidden]){
+  margin-top:15px!important;position:relative
+ }
+ html.a2k-desktop-live #a2k-desktop-sidebar .a2k-d-sidebar-profile:not([hidden])::before{
+  content:"";position:absolute;top:-10px;left:10px;right:10px;
+  height:1px;background:#8b6243
+ }
+ html.a2k-desktop-live #a2k-desktop-sidebar .a2k-d-sidebar-account{
+  text-align:left;color:#efd5b2
+ }
+ html.a2k-desktop-live #a2k-desktop-sidebar .a2k-d-sidebar-account svg{
+  stroke:#e4c29a
+ }
+ html.a2k-desktop-live #a2k-desktop-sidebar .a2k-d-sidebar-profile[aria-current="page"] svg{
+  stroke:#57231c
+ }
+ html.a2k-desktop-live #a2k-desktop-sidebar .a2k-d-sidebar-account:focus-visible{
+  outline:2px solid #f2d7a6;outline-offset:2px
+ }
+}
