@@ -363,6 +363,10 @@
     background:linear-gradient(#6b241c,#481713)!important;
     font:700 12px/1.15 Georgia,serif!important;
   }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-kj-reviews .a2k-kj-rate-action[hidden],
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-kj-reviews .a2k-kj-host-review-compose[hidden] {
+    display:none!important;
+  }
   html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-kj-reviews .a2k-kj-host-review-compose {
     padding:10px!important;
   }
