@@ -39,7 +39,7 @@
      ring.setAttribute('cx','12');ring.setAttribute('cy','10');ring.setAttribute('r','2.5');
      svg.append(ring);
    }
-   if(kind==='profile'){
+   if(kind==='profile'||kind==='signin'){
      const head=document.createElementNS('http://www.w3.org/2000/svg','circle');
      head.setAttribute('cx','12');head.setAttribute('cy','8');head.setAttribute('r','4');
      svg.append(head);
@@ -374,9 +374,9 @@
      if(key==='signin'||key==='logout'){
        button.classList.add('a2k-d-sidebar-account');
        if(key==='signin')button.classList.add('a2k-d-sidebar-profile');
-       button.hidden=true;
+       button.hidden=key==='logout';
      }
-     button.append(icon(key),document.createTextNode(label));
+     button.append(icon(key==='signin'?'profile':key),document.createTextNode(label));
      button.addEventListener('click',()=>sidebarGo(key));
      sidebar.append(button);
    }
@@ -385,9 +385,17 @@
    const profile=document.getElementById('auth-profile');
    const syncSidebarAccount=()=>{
      const signed=!!profile&&!profile.hidden;
-     sidebar.querySelectorAll('.a2k-d-sidebar-account').forEach(button=>{
-       button.hidden=!signed;
-     });
+     const account=sidebar.querySelector('.a2k-d-sidebar-profile');
+     const logout=sidebar.querySelector('[data-page="logout"]');
+     if(account){
+       account.hidden=false;
+       const label=signed?'Profile':'Sign In';
+       // Keep the same real profile icon for either auth state.
+       if(account.lastChild?.nodeType===Node.TEXT_NODE)account.lastChild.textContent=label;
+       else account.append(document.createTextNode(label));
+       account.setAttribute('aria-label',label);
+     }
+     if(logout)logout.hidden=!signed;
    };
    syncSidebarAccount();
    if(profile)new MutationObserver(syncSidebarAccount).observe(profile,{attributes:true,attributeFilter:['hidden']});
