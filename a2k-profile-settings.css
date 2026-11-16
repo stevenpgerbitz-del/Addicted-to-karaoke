@@ -225,3 +225,80 @@
  }
  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{font-size:11px!important}
 }
+
+/* Build 235 — compact, left-aligned amenities-sized Privacy tiles.
+   Never stretch them into the full-width, oversized cards seen in Build 234. */
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid{
+  width:100%!important;
+  max-width:520px!important;
+  grid-template-columns:repeat(3,minmax(0,164px))!important;
+  gap:7px!important;
+  justify-content:start!important;
+  align-items:stretch!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid.directory{
+  max-width:348px!important;
+  grid-template-columns:repeat(2,minmax(0,164px))!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  width:100%!important;
+  height:46px!important;
+  min-height:46px!important;
+  max-height:46px!important;
+  padding:4px 8px!important;
+  aspect-ratio:auto!important;
+  border-radius:8px!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"],
+#member-privacy-summary .a2k-privacy-tile[aria-current="true"]{
+  padding:3px 7px!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{
+  display:block!important;
+  flex:0 0 17px!important;
+  width:17px!important;
+  height:17px!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{
+  display:block!important;
+  font:700 12px/1.12 Georgia,serif!important;
+  text-align:center!important;
+  white-space:normal!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .profile-privacy-fieldset{
+  margin:0 0 12px!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .profile-privacy-fieldset legend{
+  font-size:14px!important;
+  padding:0 0 5px!important;
+}
+@media(max-width:540px){
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid{
+    max-width:100%!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid.directory{
+    max-width:75%!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
+    height:52px!important;min-height:52px!important;max-height:52px!important;
+    flex-direction:column!important;gap:2px!important;padding:4px 2px!important;
+  }
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"],
+  #member-privacy-summary .a2k-privacy-tile[aria-current="true"]{
+    padding:3px 1px!important;
+  }
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{
+    width:16px!important;height:16px!important;flex:0 0 16px!important;
+  }
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{
+    font-size:10.5px!important;line-height:1.14!important;
+  }
+}
