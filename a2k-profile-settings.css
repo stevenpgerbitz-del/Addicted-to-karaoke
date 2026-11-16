@@ -156,3 +156,24 @@
  #member-privacy-editor .a2k-privacy-tile strong{font-size:11px}
  #member-privacy-editor .a2k-privacy-tile[aria-pressed="true"]{padding:6px 1px}
 }
+
+/* A2K 232: section cards already have titled headers (desktop summary or mobile dialog).
+   Keep headings for subsections, but remove repeated card titles within their panels. */
+#auth-profile #atk-about-profile-entry .member-about>.member-about-heading,
+#profile-section-dialog .member-about>.member-about-heading,
+#auth-profile #a2k-profile-awards .profile-about-awards>.profile-section-top,
+#profile-section-dialog .profile-about-awards>.profile-section-top{
+ display:none!important
+}
+#auth-profile #atk-singer-songs-entry>.member-panel>.member-heading>h3,
+#profile-section-dialog .profile-song-panel>.member-heading>h3{
+ display:none!important
+}
+#auth-profile #atk-singer-songs-entry>.member-panel>.member-heading,
+#profile-section-dialog .profile-song-panel>.member-heading{
+ justify-content:flex-end!important
+}
+#auth-profile #atk-about-profile-entry>.member-panel,
+#profile-section-dialog .member-about{
+ min-width:0
+}
