@@ -1,4 +1,4 @@
-/* A2K Build 242 — vintage genre pills from the approved member mockup. */
+/* A2K Build 244 — vintage grouped genre pills from the approved member mockup. */
 #a2k-d-directory .a2k-d-profile-interests .a2k-d-profile-interest-tiles{
  display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin:3px 0 0!important;
 }
@@ -27,9 +27,25 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-interests{
 .member-about .a2k-member-genres-heading .profile-section-edit{
  flex:none;min-height:36px;padding:7px 13px;
 }
-.member-about .a2k-member-genres-chips,
-.member-about .a2k-member-genres-choices{
+.member-about .a2k-member-genres-chips{
  display:flex;flex-wrap:wrap;gap:8px;
+}
+.member-about .a2k-member-genres-choices{
+ display:grid;gap:15px;min-width:0;
+}
+.member-about .a2k-member-genre-group{
+ display:block;min-width:0;padding:11px 0 0;
+ border-top:1px solid #75503a;
+}
+.member-about .a2k-member-genre-group:first-child{
+ padding-top:0;border-top:0;
+}
+.member-about .a2k-member-genre-group-title{
+ display:block;margin:0 0 10px;color:#f3d5aa;
+ font:700 14px/1.25 Georgia,serif;
+}
+.member-about .a2k-member-genre-group-choices{
+ display:flex;flex-wrap:wrap;align-items:center;gap:8px;
 }
 .member-about .a2k-member-genre-chip,
 .member-about .a2k-member-genre-choice{
