@@ -71,6 +71,10 @@
  function clearDirectory(){
    const find=document.getElementById('find-screen');
    if(find)find.classList.remove('a2k-d-directory-active');
+   // KJ / Events / Members reuse the Find screen. In ordinary Find mode
+   // the old directory content must not remain visible below venue results.
+   const shell=document.getElementById('a2k-d-directory');
+   if(shell)shell.hidden=true;
  }
  function go(pageName){
    clearDirectory();
@@ -174,6 +178,7 @@
      shell.setAttribute('aria-live','polite');
      find.append(shell);
    }
+   shell.hidden=false;
    return shell;
  }
  async function getPublishedRows(url){
