@@ -98,7 +98,7 @@
      svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');
      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
      path.setAttribute('d',type==='person'?'M4 21v-2a8 8 0 0 1 16 0v2 M12 12a4 4 0 1 0 0-8a4 4 0 0 0 0 8':
-       type==='manage'?'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z':
+       type==='manage'?'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z':type==='logout'?'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9':
        'M16 20v-2a5 5 0 0 0-5-5H7a5 5 0 0 0-5 5v2 M9 10a4 4 0 1 0 0-8a4 4 0 0 0 0 8 M18 8v8 M14 12h8');
      svg.append(path);
      button.append(svg,document.createTextNode(label));
@@ -117,7 +117,10 @@
      selectedDesktopTab='signin';go('signin');
      if(typeof window.authMode==='function')window.authMode('register');
    });
-   member.append(signin,join);
+   const logout=el('button','a2k-d-logout');
+    logout.type='button';
+    logout.addEventListener('click',()=>{if(typeof authLogout==='function')void authLogout();});
+    member.append(signin,join,logout);
    hero.append(member);
    app.insertAdjacentElement('afterbegin',hero);
    const profile=document.getElementById('auth-profile');
@@ -129,6 +132,8 @@
      buttonLabel(join,signed?'Management':'Join','manage');
      if(!signed)buttonLabel(join,'Join','group');
      join.hidden=signed&&!manager;
+      logout.hidden=!signed;
+      buttonLabel(logout,'Log Out','logout');
      member.classList.toggle('a2k-d-member-signed',signed);
      member.classList.toggle('a2k-d-member-manager',manager);
    };
