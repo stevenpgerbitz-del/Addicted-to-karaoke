@@ -1,4 +1,4 @@
-/* A2K Build 252 — edit favorite genres inside About Me, not Profile Settings.
+/* A2K Build 253 — favorite genres inside About Me, ABOVE Run Setup Wizard.
    Separate from the Singer / KJ / Venue Owner interests used for navigation.
    Stored in member_profiles.favorite_genres, subject to existing owner-only RLS. */
 (function(){
@@ -31,12 +31,15 @@
   const interestsSection=roleChips?.closest('section.profile-about-interests');
   if(!interestsSection)return null;
   let block=document.getElementById('a2k-member-favorite-genres');
-  // About Me may move into the mobile profile dialog. Move the actual
-  // existing node if necessary; never clone its editor or event handlers.
+  // The full-page setup module appends its Run Setup Wizard button inside
+  // the same interests section. Keep the saved genre editor BEFORE that
+  // button, including when About Me moves into the mobile dialog.
+  const wizard=interestsSection.querySelector('#a2k-setup-reopen');
   if(block){
-   if(block.previousElementSibling!==interestsSection||
-      block.parentElement!==interestsSection.parentElement)
-    interestsSection.insertAdjacentElement('afterend',block);
+   if(block.parentElement!==interestsSection||
+      (wizard&&block.nextElementSibling!==wizard)||
+      (!wizard&&block!==interestsSection.lastElementChild))
+    interestsSection.insertBefore(block,wizard||null);
    return block;
   }
   block=el('section','a2k-member-genres-block');
@@ -66,10 +69,9 @@
   status.id='a2k-member-genres-status';
   status.setAttribute('role','status');status.setAttribute('aria-live','polite');
   block.append(heading,saved,editor,status);
-  // Keep this independent picker directly under My Karaoke Interests
-  // within About Me, with its own Edit/Save/Cancel controls.
-  // The section moves intact into the regular mobile About Me dialog.
-  interestsSection.insertAdjacentElement('afterend',block);
+  // Place favorite music ABOVE the manual setup-wizard entry, without
+  // moving or duplicating the signup wizard itself.
+  interestsSection.insertBefore(block,wizard||null);
   edit.addEventListener('click',()=>{
    if(saving||!profile()||!user()||profile().user_id!==user().id)return;
    const selected=new Set(Array.isArray(profile().favorite_genres)?profile().favorite_genres:[]);
