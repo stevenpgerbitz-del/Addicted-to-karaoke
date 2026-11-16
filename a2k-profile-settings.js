@@ -13,6 +13,21 @@ function detailsCard(id,label,description){
  s.querySelector('small').textContent=description;
  d.append(s);return {details:d,summary:s};
 }
+function dedupeProfileCardHeadings(){
+ const profile=$('auth-profile');if(!profile)return;
+ const normalized=value=>String(value||'').toLocaleLowerCase().normalize('NFKD').replace(/[^a-z0-9]/g,'');
+ for(const card of profile.querySelectorAll('details.profile-nav-card')){
+  const heading=card.querySelector(':scope > summary .profile-nav-title');
+  const panel=card.querySelector(':scope > .member-panel');
+  if(!heading||!panel)continue;
+  const title=normalized(heading.textContent);
+  if(!title)continue;
+  const candidates=panel.querySelectorAll('h2,h3,.member-about-heading>h3,.profile-section-top>strong');
+  for(const child of candidates){
+   if(normalized(child.textContent)===title)child.classList.add('a2k-duplicate-heading');
+  }
+ }
+}
 function setup(){
  const about=$('atk-about-profile-entry'),profile=$('auth-profile');
  const badges=profile?.querySelector('.profile-about-awards'),privacy=profile?.querySelector('.profile-about-privacy');
@@ -42,6 +57,7 @@ function setup(){
  awardCard.details.insertAdjacentElement('afterend',settingsCard.details);
  $('a2k-contact-settings-cancel').onclick=()=>{editing={...original};renderContacts();};
  $('a2k-contact-settings-save').onclick=()=>void saveContacts();
+ dedupeProfileCardHeadings();
 }
 function phoneFormat(text){
  let digits=String(text||'').replace(/\D/g,'');
