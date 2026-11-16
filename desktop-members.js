@@ -98,7 +98,7 @@
    input.type='search';input.placeholder='Search members…';
    input.setAttribute('aria-label','Search members');input.value=search;
    input.addEventListener('input',()=>onSearch(input.value));
-   sidebar.append(input);
+   sidebar.append(input,elem('div','a2k-d-sidebar-flourish','❦︎'));
    const stats=elem('div','a2k-d-directory-stats');
    stats.append(elem('h3','','Directory Stats'));
    if(Array.isArray(members)){
@@ -117,7 +117,7 @@
        stats.append(line);
      }
    }else stats.append(elem('p','a2k-d-member-sidebar-caption','Directory statistics unavailable.'));
-   sidebar.append(stats);
+   sidebar.append(stats,elem('div','a2k-d-sidebar-flourish','❦︎'));
    const browseTitle=elem('h3','a2k-d-directory-browse-title','Browse by Role');
    sidebar.append(browseTitle);
    const options=elem('div','a2k-d-member-role-options');
@@ -231,9 +231,11 @@
        for(const [id,button] of roleButtons)button.setAttribute('aria-pressed',String(selected===id));
        directoryState={role:selected,search:input.value,order};
      }
-     results.append(toolbar,list,empty);
+     // Match the approved layout: directory controls and Members heading start
+     // side by side. The heading belongs to the results column, not above both.
+     results.append(heading,intro,toolbar,list,empty);
      layout.append(filters,results);
-     target.replaceChildren(heading,intro,layout);
+     target.replaceChildren(layout);
      select.addEventListener('change',()=>{order=select.value;draw()});
      draw();
    }catch(error){
