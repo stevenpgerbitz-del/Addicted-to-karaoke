@@ -245,7 +245,9 @@
          const tiles=elem('div','a2k-d-profile-interest-tiles');
          for(const genre of genres)tiles.append(elem('span','a2k-d-profile-interest-tile',genre));
          interests.append(tiles);
-       }else interests.append(elem('p','a2k-d-profile-muted','No favorite music genres shared yet.'));
+       }else interests.append(elem('p','a2k-d-profile-muted',isSelf
+         ?'Choose favorite music genres under Profile → Settings.'
+         :'No favorite music genres shared yet.'));
        main.append(interests);
      }
      overview.append(side,main);
@@ -420,28 +422,42 @@
      if(isSelf){
        try{
          const saved=await fetchRows('venue_favorites','venue_id,venues(id,name,city,state,published)',
-           q=>q.eq('user_id',userId).order('created_at',{ascending:false}).limit(5));
+           q=>q.eq('user_id',userId).order('created_at',{ascending:false}).limit(100));
          if(!isCurrent())return;
          const places=saved.map(x=>x.venues).filter(x=>x?.published);
          if(places.length){
            const section=elem('section','a2k-d-public-profile-section a2k-d-profile-favorite-venues');
-           section.append(elem('h2','','Favorite Venues'),
-             elem('p','a2k-d-profile-muted','Only visible to you.'));
+           const header=elem('div','a2k-d-profile-section-heading');
+           header.append(elem('h2','','Favorite Venues'));
+           const action=elem('button','a2k-d-songbook-more a2k-d-favorites-more','View All Venues →');
+           action.type='button';header.append(action);
+           section.append(header,elem('p','a2k-d-profile-muted','Only visible to you.'));
            const list=elem('div','a2k-d-profile-venue-list');
-           for(const v of places){
-             const entry=elem('button','a2k-d-profile-venue-item');
-             entry.type='button';
-             const icon=elem('span','a2k-d-venue-icon','⌂');
-             icon.setAttribute('aria-hidden','true');
-             const copy=elem('span','a2k-d-venue-copy');
-             copy.append(elem('strong','',v.name),elem('small','',[v.city,v.state].filter(Boolean).join(', ')));
-             entry.append(icon,copy);
-             entry.onclick=()=>{
-               if(typeof window.atkFavoriteOpenVenue==='function')window.atkFavoriteOpenVenue(v.id,v.name);
-             };
-             list.append(entry);
+           const details=elem('p','a2k-d-profile-muted a2k-d-favorites-count');
+           details.hidden=true;
+           let expanded=false;
+           function drawFavorites(){
+             list.replaceChildren();
+             for(const v of (expanded?places:places.slice(0,1))){
+               const entry=elem('button','a2k-d-profile-venue-item');
+               entry.type='button';
+               const icon=elem('span','a2k-d-venue-icon','⌂');
+               icon.setAttribute('aria-hidden','true');
+               const copy=elem('span','a2k-d-venue-copy');
+               copy.append(elem('strong','',v.name),elem('small','',[v.city,v.state].filter(Boolean).join(', ')));
+               entry.append(icon,copy);
+               entry.onclick=()=>{
+                 if(typeof window.atkFavoriteOpenVenue==='function')window.atkFavoriteOpenVenue(v.id,v.name);
+               };
+               list.append(entry);
+             }
+             action.textContent=expanded?'Show Fewer Venues':'View All Venues →';
+             details.hidden=!expanded;
+             details.textContent=expanded?'Showing all '+places.length+' saved venue'+(places.length===1?'':'s')+'.':'';
            }
-           section.append(list);main.append(section);
+           action.onclick=()=>{expanded=!expanded;drawFavorites();};
+           drawFavorites();
+           section.append(list,details);main.append(section);
          }
        }catch(error){/* Own favorites are optional and remain private. */}
      }
