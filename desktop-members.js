@@ -197,11 +197,32 @@
      const name=elem('h1','',member.stage_name||'Karaoke Member');
      const role=elem('p','a2k-d-profile-role',roles.join(' · ')||'Member');
      side.append(avatar,name,role);
+     const flourish=elem('div','a2k-d-profile-flourish','❦');
+     flourish.setAttribute('aria-hidden','true');
+     side.append(flourish);
+     const facts=elem('div','a2k-d-profile-facts');
+     const membership=elem('div','a2k-d-profile-fact a2k-d-profile-number');
+     membership.hidden=true;
+     membership.append(elem('span','a2k-d-profile-fact-icon','#'),elem('span','a2k-d-profile-fact-value',''));
+     facts.append(membership);
      const date=member.created_at?new Date(member.created_at):null;
      if(date&&Number.isFinite(date.getTime())){
-       side.append(elem('p','a2k-d-profile-joined','Member since '+
+       const joined=elem('div','a2k-d-profile-fact a2k-d-profile-joined');
+       joined.append(elem('span','a2k-d-profile-fact-icon','▦'),
+         elem('span','a2k-d-profile-fact-value','Member since '+
          new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(date)));
+       facts.append(joined);
      }
+     side.append(facts);
+     // The database controls member numbers. Never derive them from directory order.
+     void (async()=>{
+       try{
+         const response=await client().rpc('a2k_public_member_number',{p_user_id:userId});
+         if(!isCurrent()||response.error||!response.data)return;
+         membership.querySelector('.a2k-d-profile-fact-value').textContent='Member #'+response.data;
+         membership.hidden=false;
+       }catch(error){console.warn('Member number unavailable',error)}
+     })();
      const awards=elem('section','a2k-d-public-profile-awards');
      awards.append(elem('h2','','Badges'));
      const badges=elem('div','a2k-d-public-badges');
@@ -228,7 +249,92 @@
        main.append(interests);
      }
      overview.append(side,main);
-     target.replaceChildren(backButton(source),overview);
+     overview.classList.add('a2k-d-member-profile-pane');
+     if(roles.includes('KJ / Host')){
+       const tabs=elem('div','a2k-d-profile-tabs');
+       tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Member profile sections');
+       const profileTab=elem('button','a2k-d-profile-tab','Profile');
+       const scheduleTab=elem('button','a2k-d-profile-tab','Karaoke Schedule');
+       const schedulePanel=elem('section','a2k-d-profile-schedule-pane');
+       schedulePanel.hidden=true;
+       schedulePanel.append(elem('h2','a2k-d-schedule-title','Karaoke Schedule'),
+         elem('p','a2k-d-schedule-intro','Approved public karaoke nights hosted by this member.'),
+         elem('p','a2k-d-profile-muted','Loading published schedule…'));
+       profileTab.type=scheduleTab.type='button';
+       profileTab.setAttribute('role','tab');scheduleTab.setAttribute('role','tab');
+       profileTab.id='a2k-d-profile-tab-main';scheduleTab.id='a2k-d-profile-tab-schedule';
+       overview.id='a2k-d-profile-main-pane';schedulePanel.id='a2k-d-profile-schedule-pane';
+       profileTab.setAttribute('aria-controls',overview.id);
+       scheduleTab.setAttribute('aria-controls',schedulePanel.id);
+       function activate(which){
+         const showSchedule=which==='schedule';
+         profileTab.setAttribute('aria-selected',String(!showSchedule));
+         scheduleTab.setAttribute('aria-selected',String(showSchedule));
+         overview.hidden=showSchedule;schedulePanel.hidden=!showSchedule;
+       }
+       profileTab.onclick=()=>activate('profile');
+       scheduleTab.onclick=()=>activate('schedule');
+       tabs.append(profileTab,scheduleTab);
+       target.replaceChildren(backButton(source),tabs,overview,schedulePanel);
+       activate('profile');
+       void (async()=>{
+         try{
+           const response=await client().rpc('a2k_public_kj_schedule',{p_user_id:userId});
+           if(!isCurrent())return;
+           if(response.error)throw response.error;
+           const rows=Array.isArray(response.data)?response.data:[];
+           const body=elem('div','a2k-d-published-kj-sessions');
+           if(!rows.length){
+             body.append(elem('p','a2k-d-profile-muted',
+               'No approved karaoke schedule has been published for this host yet.'));
+           }
+           const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+           const localClock=(time)=>{
+             const match=/^([0-2][0-9]):([0-5][0-9])/.exec(String(time||''));
+             if(!match)return 'Time not provided';
+             const hour=Number(match[1]);
+             return (hour%12||12)+':'+match[2]+' '+(hour<12?'AM':'PM');
+           };
+           const nextDate=(day,start)=>{
+             const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{
+               timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit',
+               hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+             }).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
+             const today=new Date(Date.UTC(+parts.year,+parts.month-1,+parts.day));
+             let delta=(days.indexOf(day)-today.getUTCDay()+7)%7;
+             const startParts=String(start||'').split(':').map(Number);
+             const nowMinutes=+parts.hour*60+(+parts.minute);
+             if(delta===0&&(startParts[0]*60+startParts[1])<nowMinutes)delta=7;
+             today.setUTCDate(today.getUTCDate()+delta);
+             return new Intl.DateTimeFormat('en-US',{timeZone:'UTC',month:'short',day:'numeric'}).format(today);
+           };
+           for(const session of rows){
+             if(!days.includes(session.day))continue;
+             const card=elem('article','a2k-d-profile-schedule-card');
+             const icon=elem('span','a2k-d-profile-schedule-icon','♫');icon.setAttribute('aria-hidden','true');
+             const copy=elem('div','a2k-d-profile-schedule-copy');
+             copy.append(elem('strong','',session.venue_name||'Karaoke Venue'),
+               elem('span','',[session.city,session.state].filter(Boolean).join(', ')),
+               elem('small','','Every '+session.day+' · Next: '+nextDate(session.day,session.start_time)+' · '+
+                 localClock(session.start_time)+' – '+localClock(session.end_time)));
+             card.append(icon,copy);
+             if(session.venue_id&&typeof window.atkFavoriteOpenVenue==='function'){
+               const open=elem('button','a2k-d-profile-schedule-link','View Venue');
+               open.type='button';open.onclick=()=>window.atkFavoriteOpenVenue(session.venue_id,session.venue_name);
+               card.append(open);
+             }
+             body.append(card);
+           }
+           schedulePanel.replaceChildren(elem('h2','a2k-d-schedule-title','Karaoke Schedule'),
+             elem('p','a2k-d-schedule-intro','Published weekly hosting nights and next dates.'),body);
+         }catch(error){
+           if(isCurrent())schedulePanel.replaceChildren(
+             elem('h2','a2k-d-schedule-title','Karaoke Schedule'),
+             elem('p','a2k-d-profile-muted','The published schedule could not be loaded right now.'));
+           console.warn('Published KJ schedule unavailable',error);
+         }
+       })();
+     }else target.replaceChildren(backButton(source),overview);
      const badgeArt=new Set(['founder','super_admin','admin','moderator','founding_kj','member_10','member_100','member_1000','review_1','review_25','review_75','review_100','song_1','song_25','song_75','song_100','venue_1','venue_10','venue_25','venue_100']);
      try{
        const [awarded,types]=await Promise.all([
@@ -295,8 +401,8 @@
              }
              if(!found.length)list.append(elem('p','a2k-d-profile-muted','No songs match your search.'));
              count.textContent=found.length+' shared song'+(found.length===1?'':'s');
-             action.hidden=!!term||found.length<=3;
-             action.textContent=expanded?'Show Fewer Songs':'View All Songs';
+             action.hidden=!!term;
+             action.textContent=expanded?'Show Fewer Songs':'View All Songs →';
              if(expanded||term){
                if(!tools.isConnected)header.after(tools);
              }else tools.remove();
@@ -319,13 +425,17 @@
          const places=saved.map(x=>x.venues).filter(x=>x?.published);
          if(places.length){
            const section=elem('section','a2k-d-public-profile-section a2k-d-profile-favorite-venues');
-           section.append(elem('h2','','My Favorite Venues'),
+           section.append(elem('h2','','Favorite Venues'),
              elem('p','a2k-d-profile-muted','Only visible to you.'));
            const list=elem('div','a2k-d-profile-venue-list');
            for(const v of places){
              const entry=elem('button','a2k-d-profile-venue-item');
              entry.type='button';
-             entry.append(elem('strong','',v.name),elem('small','',[v.city,v.state].filter(Boolean).join(', ')));
+             const icon=elem('span','a2k-d-venue-icon','⌂');
+             icon.setAttribute('aria-hidden','true');
+             const copy=elem('span','a2k-d-venue-copy');
+             copy.append(elem('strong','',v.name),elem('small','',[v.city,v.state].filter(Boolean).join(', ')));
+             entry.append(icon,copy);
              entry.onclick=()=>{
                if(typeof window.atkFavoriteOpenVenue==='function')window.atkFavoriteOpenVenue(v.id,v.name);
              };
@@ -335,18 +445,8 @@
          }
        }catch(error){/* Own favorites are optional and remain private. */}
      }
-     if(roles.includes('KJ / Host')){
-       try{
-         const hosts=await fetchRows('kj_review_hosts','user_id,stage_name,enabled',
-           q=>q.eq('user_id',userId).eq('enabled',true).limit(1));
-         if(!isCurrent())return;
-         if(hosts.length&&typeof window.a2kOpenKjHostProfile==='function'){
-           const action=elem('button','a2k-d-directory-action a2k-d-profile-kj-link','View KJ Host Profile');
-           action.type='button';action.onclick=()=>window.a2kOpenKjHostProfile(userId,'','');
-           main.append(action);
-         }
-       }catch(error){console.warn('KJ host profile unavailable',error)}
-     }
+     // KJs use this same member profile; their schedule is a tab above.
+     // Do not add a second "View KJ Host Profile" popup link.
    }catch(error){
      if(serial!==request)return;
      console.warn('Could not load member profile',error);
