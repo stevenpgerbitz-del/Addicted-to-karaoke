@@ -100,23 +100,23 @@
 
 /* A2K 231: compact amenities-style Privacy tiles inside the existing Settings card.
    Real buttons, single selected choice per group; no radio/check visuals. */
-#member-privacy-editor{min-width:0;width:100%;box-sizing:border-box;margin-top:12px}
-#member-privacy-editor .profile-privacy-fieldset{
+:is(#member-privacy-editor,#member-privacy-summary){min-width:0;width:100%;box-sizing:border-box;margin-top:12px}
+:is(#member-privacy-editor,#member-privacy-summary) .profile-privacy-fieldset{
  display:block!important;min-width:0;width:100%;margin:0 0 14px!important;
  padding:0!important;border:0!important;box-sizing:border-box
 }
-#member-privacy-editor .profile-privacy-fieldset legend{
+:is(#member-privacy-editor,#member-privacy-summary) .profile-privacy-fieldset legend{
  padding:0 0 7px!important;margin:0;color:#f2dbc5;
  font:700 14px/1.25 Georgia,serif
 }
-#member-privacy-editor .a2k-privacy-tile-grid{
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid{
  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
  gap:7px!important;width:100%;min-width:0
 }
-#member-privacy-editor .a2k-privacy-tile-grid.directory{
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid.directory{
  grid-template-columns:repeat(2,minmax(0,1fr))!important
 }
-#member-privacy-editor .a2k-privacy-tile{
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
  appearance:none;box-sizing:border-box;display:flex;flex-direction:column;
  align-items:center;justify-content:center;gap:5px;min-width:0;width:100%;
  min-height:74px;aspect-ratio:1.18;padding:9px 3px;
@@ -124,37 +124,37 @@
  text-align:center;font:700 12px/1.16 Georgia,serif;
  overflow-wrap:break-word;cursor:pointer;
 }
-#member-privacy-editor .a2k-privacy-tile svg{
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{
  display:block;flex:none;width:21px;height:21px;max-width:100%;
  stroke:#e6c49f;fill:none
 }
-#member-privacy-editor .a2k-privacy-tile strong{
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{
  display:block;max-width:100%;font:700 clamp(11px,1.1vw,13px)/1.12 Georgia,serif;
  white-space:normal;overflow-wrap:normal;word-break:normal
 }
-#member-privacy-editor .a2k-privacy-tile[aria-pressed="true"]{
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"]{
  background:linear-gradient(145deg,#762a27,#531c1b);
  border:2px solid #e0b17e;padding:8px 2px;
  box-shadow:inset 0 0 0 1px #a85f46
 }
-#member-privacy-editor .a2k-privacy-tile[aria-pressed="true"] svg{stroke:#f6deb8}
-#member-privacy-editor .a2k-privacy-tile:hover:not([aria-pressed="true"]){background:#3d2421}
-#member-privacy-editor .a2k-privacy-tile:focus-visible{
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"] svg{stroke:#f6deb8}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile:hover:not([aria-pressed="true"]){background:#3d2421}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile:focus-visible{
  outline:2px solid #f8e4b8;outline-offset:2px
 }
-#member-privacy-editor .profile-interests-buttons{
+:is(#member-privacy-editor,#member-privacy-summary) .profile-interests-buttons{
  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
  margin-top:11px
 }
-#member-privacy-editor .profile-interests-buttons button{min-width:0}
+:is(#member-privacy-editor,#member-privacy-summary) .profile-interests-buttons button{min-width:0}
 @media(max-width:430px){
- #member-privacy-editor .a2k-privacy-tile-grid{gap:5px!important}
- #member-privacy-editor .a2k-privacy-tile{
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid{gap:5px!important}
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
   min-height:70px;aspect-ratio:1.07;padding:7px 2px;gap:4px
  }
- #member-privacy-editor .a2k-privacy-tile svg{width:19px;height:19px}
- #member-privacy-editor .a2k-privacy-tile strong{font-size:11px}
- #member-privacy-editor .a2k-privacy-tile[aria-pressed="true"]{padding:6px 1px}
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{width:19px;height:19px}
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{font-size:11px}
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"]{padding:6px 1px}
 }
 
 /* A2K 232: section cards already have titled headers (desktop summary or mobile dialog).
@@ -180,3 +180,20 @@
 
 /* Exact title duplicates are identified by the Settings module. */
 #auth-profile .a2k-duplicate-heading,#profile-section-dialog .a2k-duplicate-heading{display:none!important}
+
+/* Read-only settings overview: same amenities tiles as Edit, without clickable controls. */
+#member-privacy-summary.a2k-privacy-saved{min-width:0;width:100%;margin-top:13px;display:grid;gap:0}
+#member-privacy-summary .a2k-privacy-legacy-values[hidden]{display:none!important}
+#member-privacy-summary .a2k-privacy-tile{cursor:default;pointer-events:none}
+#member-privacy-summary .a2k-privacy-tile[aria-current="true"]{
+ background:linear-gradient(145deg,#762a27,#531c1b);
+ border:2px solid #e0b17e;
+ padding:8px 2px;
+ box-shadow:inset 0 0 0 1px #a85f46;
+}
+#member-privacy-summary .a2k-privacy-tile[aria-current="true"] svg{stroke:#f6deb8}
+#member-privacy-summary .a2k-privacy-tile:hover{background:#2a1b1a}
+#member-privacy-summary .a2k-privacy-tile[aria-current="true"]:hover{background:linear-gradient(145deg,#762a27,#531c1b)}
+@media(max-width:430px){
+ #member-privacy-summary .a2k-privacy-tile[aria-current="true"]{padding:6px 1px}
+}
