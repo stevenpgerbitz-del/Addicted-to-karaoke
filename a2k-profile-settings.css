@@ -177,3 +177,6 @@
 #profile-section-dialog .member-about{
  min-width:0
 }
+
+/* Exact title duplicates are identified by the Settings module. */
+#auth-profile .a2k-duplicate-heading,#profile-section-dialog .a2k-duplicate-heading{display:none!important}
