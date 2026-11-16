@@ -103,6 +103,8 @@
      const lat=Number(position?.coords?.latitude),lon=Number(position?.coords?.longitude);
      if(!Number.isFinite(lat)||!Number.isFinite(lon)){setStatus('Could not read your location. Try a city or ZIP code search.');update();return;}
      location={lat,lon};active=true;update();
+     document.dispatchEvent(new Event('a2k-nearby-activated'));
+
      // Nearby mode is a new discovery request, not a filter on an old search term.
      search.value='';
      const state=$('region-filter'),city=$('city-filter');
