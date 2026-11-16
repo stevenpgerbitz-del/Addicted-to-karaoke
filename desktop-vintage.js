@@ -131,7 +131,7 @@
      buttonLabel(signin,signed?'My Profile':'Sign In','person');
      buttonLabel(join,signed?'Management':'Join','manage');
      if(!signed)buttonLabel(join,'Join','group');
-     join.hidden=signed&&!manager;
+     join.hidden=signed; // Management stays in the Profile card, not the top header.
       logout.hidden=!signed;
       buttonLabel(logout,'Log Out','logout');
      member.classList.toggle('a2k-d-member-signed',signed);
