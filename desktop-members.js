@@ -25,7 +25,8 @@
      users:['M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2','M22 21v-2a4 4 0 0 0-3-3.87','M16 3.13a4 4 0 0 1 0 7.75'],
      mic:['M12 19v3','M8 22h8','M5 10a7 7 0 0 0 14 0'],
      headphones:['M3 14v-3a9 9 0 0 1 18 0v3','M3 14h4v7H5a2 2 0 0 1-2-2v-5z','M21 14h-4v7h2a2 2 0 0 0 2-2v-5z'],
-     building:['M3 21h18','M5 21V7l7-4 7 4v14','M9 21v-5h6v5','M9 9h.01M15 9h.01M9 12h.01M15 12h.01']
+     building:['M3 21h18','M5 21V7l7-4 7 4v14','M9 21v-5h6v5','M9 9h.01M15 9h.01M9 12h.01M15 12h.01'],
+     calendar:['M8 2v4','M16 2v4','M3 10h18','M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z','M8 14h.01M12 14h.01M16 14h.01']
    };
    const ns='http://www.w3.org/2000/svg';
    const svg=document.createElementNS(ns,'svg');
@@ -102,7 +103,9 @@
    input.type='search';input.placeholder='Search members…';
    input.setAttribute('aria-label','Search members');input.value=search;
    input.addEventListener('input',()=>onSearch(input.value));
-   sidebar.append(input,elem('div','a2k-d-sidebar-flourish','❦︎'));
+   const searchOrnament=elem('div','a2k-d-sidebar-flourish');
+   searchOrnament.append(ornamentSvg());
+   sidebar.append(input,searchOrnament);
    const stats=elem('div','a2k-d-directory-stats');
    stats.append(elem('h3','','Directory Stats'));
    if(Array.isArray(members)){
@@ -121,7 +124,9 @@
        stats.append(line);
      }
    }else stats.append(elem('p','a2k-d-member-sidebar-caption','Directory statistics unavailable.'));
-   sidebar.append(stats,elem('div','a2k-d-sidebar-flourish','❦︎'));
+   const statsOrnament=elem('div','a2k-d-sidebar-flourish');
+   statsOrnament.append(ornamentSvg());
+   sidebar.append(stats,statsOrnament);
    const browseTitle=elem('h3','a2k-d-directory-browse-title','Browse by Role');
    sidebar.append(browseTitle);
    const options=elem('div','a2k-d-member-role-options');
@@ -141,6 +146,27 @@
    }
    sidebar.append(options);
    return {sidebar,input,roleButtons};
+ }
+ function ornamentSvg(){
+   const ns='http://www.w3.org/2000/svg';
+   const svg=document.createElementNS(ns,'svg');
+   svg.setAttribute('viewBox','0 0 64 20');
+   svg.setAttribute('width','42');svg.setAttribute('height','17');
+   svg.setAttribute('aria-hidden','true');
+   svg.setAttribute('fill','none');svg.setAttribute('stroke','#eac083');
+   svg.setAttribute('stroke-width','1.6');svg.setAttribute('stroke-linecap','round');
+   const curves=[
+     'M32 11 C21 1 13 5 16 12 C19 18 27 13 23 10 C21 8 18 10 20 12',
+     'M32 11 C43 1 51 5 48 12 C45 18 37 13 41 10 C43 8 46 10 44 12',
+     'M32 3 C28 7 28 10 32 14 C36 10 36 7 32 3 Z'
+   ];
+   for(const d of curves){
+     const p=document.createElementNS(ns,'path');p.setAttribute('d',d);svg.append(p);
+   }
+   const jewel=document.createElementNS(ns,'circle');
+   jewel.setAttribute('cx','32');jewel.setAttribute('cy','10');
+   jewel.setAttribute('r','1.4');jewel.setAttribute('fill','#f3d29a');svg.append(jewel);
+   return svg;
  }
  function publicAvatar(member,large=false){
    const avatar=elem('span','a2k-d-member-avatar'+(large?' a2k-d-member-avatar-large':''),(member.stage_name||'M').trim().charAt(0).toUpperCase());
@@ -291,7 +317,8 @@
      const name=elem('h1','',member.stage_name||'Karaoke Member');
      const role=elem('p','a2k-d-profile-role',roles.join(' · ')||'Member');
      side.append(avatar,name,role);
-     const flourish=elem('div','a2k-d-profile-flourish','❦︎');
+     const flourish=elem('div','a2k-d-profile-flourish');
+     flourish.append(ornamentSvg());
      flourish.setAttribute('aria-hidden','true');
      side.append(flourish);
      const facts=elem('div','a2k-d-profile-facts');
@@ -302,7 +329,9 @@
      const date=member.created_at?new Date(member.created_at):null;
      if(date&&Number.isFinite(date.getTime())){
        const joined=elem('div','a2k-d-profile-fact a2k-d-profile-joined');
-       joined.append(elem('span','a2k-d-profile-fact-icon','▦'),
+       const calendarIcon=elem('span','a2k-d-profile-fact-icon');
+       calendarIcon.append(directoryIcon('calendar'));
+       joined.append(calendarIcon,
          elem('span','a2k-d-profile-fact-value','Member since '+
          new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(date)));
        facts.append(joined);
