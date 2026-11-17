@@ -1,51 +1,202 @@
-/* A2K Build 258 — deletion actions; existing vintage cream/burgundy/brass theme. */
-.a2k-management-delete,.a2k-delete-self{
-  margin:14px 0;padding:14px 16px;border:1px solid #97704e;
-  border-radius:12px;background:linear-gradient(160deg,#2d1716,#1b1010);
-  color:#f4dfc3;
+/* A2K 259 — refined account removal surfaces. Existing vintage palette preserved.
+   Small, legible account controls; deliberate danger confirmation. */
+#management-member-details .a2k-management-delete,
+.a2k-profile-settings-panel .a2k-delete-self {
+  position:relative;
+  margin:14px 0 0;
+  padding:15px 16px 16px;
+  border:1px solid #81534b;
+  border-left:3px solid #c49b66;
+  border-radius:10px;
+  background:#2b1a1b;
+  color:#f5e5d4;
+  box-shadow:inset 0 1px 0 #f2c7900d;
 }
-.a2k-delete-self .profile-section-top{margin-bottom:7px}
-.a2k-delete-note{color:#dec5a5;font:14px/1.55 Georgia,serif;margin:8px 0 13px}
-.a2k-delete-management-button,.a2k-delete-self-button{
-  display:block;min-height:44px;width:100%;padding:9px 13px;border-radius:9px;
-  border:1px solid #c3955f;color:#f8e4c8;background:linear-gradient(#7b2a25,#521b1a);
-  font:700 15px/1.2 Georgia,serif;cursor:pointer;
+#management-member-details .a2k-management-delete .mg2-section-top {
+  margin:0 0 3px;
 }
-.a2k-delete-management-button:disabled,.a2k-delete-self-button:disabled{
-  opacity:.50;cursor:not-allowed;
+#management-member-details .a2k-management-delete h3,
+.a2k-profile-settings-panel .a2k-delete-self .profile-section-top strong {
+  margin:0;
+  font:700 16px/1.3 Georgia,serif;
+  letter-spacing:.015em;
+  color:#f5d6b4;
 }
-.a2k-delete-dialog{
-  box-sizing:border-box;width:min(96vw,540px);max-height:min(90dvh,850px);
-  overflow:auto;padding:24px 22px 20px;color:#f6e6ce;
-  background:linear-gradient(150deg,#341c1a,#1c1010);
-  border:2px solid #bf965f;border-radius:15px;box-shadow:0 20px 65px #000b;
+.a2k-profile-settings-panel .a2k-delete-self .profile-section-top {
+  margin:0 0 5px;
 }
-.a2k-delete-dialog::backdrop{background:#080304c9}
-.a2k-delete-dialog h2{margin:0 0 8px;color:#f8d9a4;font:700 clamp(22px,5vw,27px)/1.2 Georgia,serif;text-align:center}
-.a2k-delete-lede{font:15px/1.6 Georgia,serif;color:#f4ddc3;margin:8px 0 14px}
-.a2k-delete-impact{display:grid;gap:0;margin:10px 0;border:1px solid #735043;border-radius:9px;overflow:hidden}
-.a2k-delete-impact-row{display:flex;gap:10px;justify-content:space-between;align-items:center;
-  padding:7px 10px;border-bottom:1px solid #5b3935;color:#ead4b7;font:14px/1.35 Georgia,serif}
+.a2k-delete-note {
+  margin:7px 0 13px;
+  max-width:56ch;
+  color:#d6bfb4;
+  font:400 13px/1.55 Arial,sans-serif;
+}
+#management-member-details .a2k-delete-management-button,
+.a2k-profile-settings-panel .a2k-delete-self-button {
+  display:block;
+  box-sizing:border-box;
+  min-height:42px;
+  width:auto;
+  max-width:100%;
+  padding:10px 17px;
+  border:1px solid #d18c79;
+  border-radius:8px;
+  background:linear-gradient(180deg,#a2352e 0%,#79221e 100%);
+  color:#fff3e6;
+  box-shadow:inset 0 1px 0 #ffffff20;
+  font:700 13px/1.3 Arial,sans-serif;
+  letter-spacing:.015em;
+  text-align:center;
+  cursor:pointer;
+  transition:background-color .15s ease,border-color .15s ease,transform .15s ease;
+}
+#management-member-details .a2k-delete-management-button:hover:not(:disabled),
+.a2k-profile-settings-panel .a2k-delete-self-button:hover:not(:disabled) {
+  border-color:#edb79d;
+  background:linear-gradient(180deg,#b5443a 0%,#8d2b26 100%);
+}
+#management-member-details .a2k-delete-management-button:disabled,
+.a2k-profile-settings-panel .a2k-delete-self-button:disabled {
+  opacity:.55;
+  cursor:not-allowed;
+}
+.a2k-delete-dialog {
+  box-sizing:border-box;
+  width:min(94vw,520px);
+  max-height:min(91dvh,820px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:0;
+  border:1px solid #c8a176;
+  border-radius:13px;
+  background:#231314;
+  color:#f6e5d6;
+  box-shadow:0 25px 65px #000a, inset 0 1px 0 #ffffff13;
+}
+.a2k-delete-dialog::backdrop{background:#090306c9}
+.a2k-delete-dialog h2 {
+  margin:0;
+  padding:20px 22px 13px;
+  border-top:3px solid #b18b58;
+  border-bottom:1px solid #6e4142;
+  background:#301b1e;
+  color:#f4ddbb;
+  text-align:left;
+  font:700 clamp(20px,4vw,24px)/1.2 Georgia,serif;
+}
+.a2k-delete-dialog .a2k-delete-lede {
+  margin:0;
+  padding:16px 22px 11px;
+  color:#eedbd0;
+  font:14px/1.55 Arial,sans-serif;
+}
+.a2k-delete-impact {
+  display:grid;
+  gap:0;
+  margin:0 22px 13px;
+  border:1px solid #72504b;
+  border-radius:8px;
+  overflow:hidden;
+  background:#2e1b1e;
+}
+.a2k-delete-impact-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:35px;
+  padding:7px 12px;
+  border-bottom:1px solid #634040;
+  color:#dbc6bc;
+  font:13px/1.3 Arial,sans-serif;
+}
 .a2k-delete-impact-row:last-child{border-bottom:0}
-.a2k-delete-impact-row:nth-child(odd){background:#271612}
-.a2k-delete-impact-row strong{font:700 16px Georgia,serif;color:#f4d39e;font-variant-numeric:tabular-nums}
-.a2k-delete-warning{font:700 13px/1.5 Georgia,serif;color:#ffcfbb;border-left:3px solid #c76d5b;padding:8px 11px;background:#59231d57}
-.a2k-delete-field{display:grid;gap:7px;margin:13px 0;color:#f3ddbf;font:14px Georgia,serif}
-.a2k-delete-field input,.a2k-delete-field textarea{
-  box-sizing:border-box;width:100%;border:1px solid #b38a59;border-radius:9px;
-  padding:11px 12px;background:#f6e8d2;color:#44211b;font:16px/1.4 Georgia,serif;
+.a2k-delete-impact-row:nth-child(odd){background:#372123}
+.a2k-delete-impact-row strong {
+  flex:none;
+  color:#f6d69e;
+  font:700 14px/1.3 Arial,sans-serif;
+  font-variant-numeric:tabular-nums;
 }
-.a2k-delete-error{min-height:15px;color:#ffb6a9;font:13px/1.5 Georgia,serif}
-.a2k-delete-actions{display:flex;gap:10px;margin-top:13px}
-.a2k-delete-actions button{flex:1;min-height:46px;padding:9px 12px;border-radius:9px;
-  font:700 15px Georgia,serif;border:1px solid #c69a6b;color:#f6e4ce;cursor:pointer}
-.a2k-delete-cancel{background:linear-gradient(#6a342b,#48241f)}
-.a2k-delete-erase{background:linear-gradient(#9b332a,#671f1a)}
+.a2k-delete-warning {
+  margin:0 22px 13px;
+  padding:11px 12px;
+  border:1px solid #98594b;
+  border-left:3px solid #b96854;
+  border-radius:6px;
+  background:#4b2925;
+  color:#ffe1cd;
+  font:13px/1.5 Arial,sans-serif;
+}
+.a2k-delete-field{
+  display:grid;
+  gap:7px;
+  margin:14px 22px;
+  color:#efdac9;
+  font:13px/1.45 Arial,sans-serif;
+}
+.a2k-delete-field strong{font-weight:700}
+.a2k-delete-field input,.a2k-delete-field textarea {
+  box-sizing:border-box;
+  width:100%;
+  min-height:44px;
+  padding:10px 12px;
+  border:1px solid #b58b70;
+  border-radius:7px;
+  background:#f2e5d1;
+  color:#3a1e1b;
+  font:16px/1.4 Arial,sans-serif;
+  resize:vertical;
+}
+.a2k-delete-error {
+  min-height:0;
+  margin:0 22px 13px;
+  color:#ffd0c4;
+  font:13px/1.5 Arial,sans-serif;
+}
+.a2k-delete-error:empty{display:none}
+.a2k-delete-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:0;
+  padding:14px 22px 18px;
+  border-top:1px solid #634141;
+  background:#2c181a;
+}
+.a2k-delete-actions button{
+  flex:1 1 180px;
+  min-height:44px;
+  padding:10px 13px;
+  border:1px solid #c48477;
+  border-radius:8px;
+  color:#fff3e7;
+  font:700 14px/1.3 Arial,sans-serif;
+  box-shadow:inset 0 1px 0 #ffffff14;
+  cursor:pointer;
+}
+.a2k-delete-cancel {background:linear-gradient(#72312c,#51201e)}
+.a2k-delete-erase {background:linear-gradient(#b63f35,#81231f)}
 .a2k-delete-actions button:disabled{opacity:.5;cursor:default}
-.a2k-delete-actions button:focus-visible,.a2k-delete-self-button:focus-visible,
-.a2k-delete-management-button:focus-visible{outline:2px solid #f2d7a6;outline-offset:3px}
-@media(max-width:480px){
-  .a2k-delete-dialog{padding:18px 14px}
-  .a2k-delete-impact-row{font-size:13px}
-  .a2k-delete-actions{flex-direction:column-reverse}
+.a2k-delete-actions button:focus-visible,
+.a2k-delete-self-button:focus-visible,
+.a2k-delete-management-button:focus-visible,
+.a2k-delete-field input:focus-visible,
+.a2k-delete-field textarea:focus-visible {
+  outline:2px solid #f6dcae;
+  outline-offset:3px;
+}
+@media(max-width:520px){
+  #management-member-details .a2k-delete-management-button,
+  .a2k-profile-settings-panel .a2k-delete-self-button{width:100%}
+  .a2k-delete-dialog h2{padding:17px 16px 12px}
+  .a2k-delete-dialog .a2k-delete-lede{padding:14px 16px 10px}
+  .a2k-delete-impact{margin:0 16px 12px}
+  .a2k-delete-warning{margin:0 16px 12px}
+  .a2k-delete-field{margin:12px 16px}
+  .a2k-delete-error{margin:0 16px 12px}
+  .a2k-delete-actions{padding:12px 16px 16px}
+}
+@media(prefers-reduced-motion:reduce){
+  .a2k-delete-management-button,.a2k-delete-self-button{transition:none}
 }
