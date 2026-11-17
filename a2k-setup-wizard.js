@@ -498,6 +498,16 @@
    section.append(el('p','a2k-setup-settings-description','Review your karaoke interests and profile setup.'));
   }
   section.append(b);
+  let demo=$('a2k-wizard-size-demo-link');
+  if(!demo){
+   demo=el('a','a2k-wizard-size-demo-link','Wizard Size Demo');
+   demo.id='a2k-wizard-size-demo-link';
+   demo.href='/wizard-size-demo.html';
+   demo.target='_blank';
+   demo.rel='noopener noreferrer';
+   demo.title='Open the saved grid-and-arrow wizard sizing reference in a new tab';
+  }
+  section.append(demo);
   settings.insertBefore(section,settings.firstElementChild);
  }
  // Settings can be mounted after this script's initial DOM readiness callback.
