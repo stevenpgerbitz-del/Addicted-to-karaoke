@@ -183,7 +183,8 @@ async function save(payload){
        var sessions=entry[1].weekly.slice(0,7);
        var existing=fail(await client().from('kj_host_submissions')
          .select('id,venue_name,sessions,status').eq('user_id',id).in('status',['pending','approved']).limit(200))||[];
-       var duplicate=existing.some(x=>x.venue_name===v.name&&JSON.stringify(x.sessions)===JSON.stringify(sessions));
+       var sameSessions=(rows)=>JSON.stringify((rows||[]).map(item=>[Number(item.day),String(item.start).slice(0,5),String(item.end).slice(0,5)]).sort((a,b)=>a[0]-b[0]));
+       var duplicate=existing.some(x=>x.venue_name===v.name&&sameSessions(x.sessions)===sameSessions(sessions));
        if(!duplicate)fail(await client().from('kj_host_submissions').insert({
          user_id:id,venue_id:v.id||null,venue_name:text(v.name,150),venue_address:text(v.address_line1,240)||null,
          venue_city:c.city,venue_state:c.state,venue_postal_code:text(v.postal_code,15)||null,
@@ -202,7 +203,7 @@ async function save(payload){
        fail(await client().from('karaoke_event_suggestions').insert({
          submitted_by:null,venue_name:text(v.name,150),city:text(c.city,100),state:c.state,
          address:text(v.address_line1,220)||null,title:title,start_at:start,end_at:end,
-         host_name:text(s.kjBusiness||name,100),notes:'Submitted by KJ during A2K member setup. Awaiting founder review.',status:'submitted'
+         host_name:text(s.kjBusiness||name,100),notes:'Submitted by KJ during A2K member setup. Member account: '+id+'. Awaiting founder review.',status:'submitted'
        }));
        localStorage.setItem(fingerprint,'submitted');
      }
