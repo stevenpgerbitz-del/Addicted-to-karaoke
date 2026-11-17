@@ -38,15 +38,17 @@ function open(isManual){
 async function initial(){
  if(!allowed())return;
  var id=ownerId;
- var data={profile:{stage_name:profile().stage_name||'',bio:profile().bio||'',karaoke_interests:profile().karaoke_interests||[],favorite_genres:profile().favorite_genres||[],directory_visible:profile().directory_visible!==false,song_visibility:profile().song_visibility||'private'},venues:[],details:{}};
+ var data={profile:{stage_name:profile().stage_name||'',bio:profile().bio||'',karaoke_interests:profile().karaoke_interests||[],favorite_genres:profile().favorite_genres||[],directory_visible:profile().directory_visible!==false,song_visibility:profile().song_visibility||'private',profile_visibility:profile().profile_visibility||'members'},venues:[],details:{},publicPrefs:{}};
  try{
    var results=await Promise.all([
      client().from('venues').select('id,name,city,state,postal_code,address_line1').eq('published',true).eq('publication_status','published').order('name').limit(300),
-     client().from('member_setup_details').select('*').eq('user_id',id).maybeSingle()
+     client().from('member_setup_details').select('*').eq('user_id',id).maybeSingle(),
+     client().from('member_public_preferences').select('*').eq('user_id',id).maybeSingle()
    ]);
    if(!allowed()||id!==ownerId)return;
    if(!results[0].error)venues=results[0].data||[];
    if(!results[1].error)data.details=results[1].data||{};
+   if(!results[2].error)data.publicPrefs=results[2].data||{};
    data.venues=venues;
  }catch(e){console.warn('A2K setup lookup incomplete:',e)}
  send('init',data);
@@ -72,7 +74,25 @@ function currentVenue(name,fromChild){
 }
 function parseCity(city,state){
  var parts=text(city,120).split(',').map(x=>x.trim());
- return {city:parts[0],state:(text(state,2)||parts[1]||'IA').toUpperCase().slice(0,2)};
+ var region=(text(state,2)||parts[1]||'IA').toUpperCase().slice(0,2);
+ if(!/^[A-Z]{2}$/.test(region))throw Error('Please enter a two-letter state abbreviation.');
+ return {city:parts[0],state:region};
+}
+function localIso(date,clock,nextDayIfEarlier,firstClock){
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(clock))
+   throw Error('Please enter a valid one-time event date and time.');
+ var dateParts=date.split('-').map(Number);
+ var day=new Date(Date.UTC(dateParts[0],dateParts[1]-1,dateParts[2],12));
+ if(day.getUTCFullYear()!==dateParts[0]||day.getUTCMonth()!==dateParts[1]-1||day.getUTCDate()!==dateParts[2])
+   throw Error('Please enter a valid calendar date.');
+ if(nextDayIfEarlier&&clock<=firstClock)day.setUTCDate(day.getUTCDate()+1);
+ var year=day.getUTCFullYear(),month=String(day.getUTCMonth()+1).padStart(2,'0'),number=String(day.getUTCDate()).padStart(2,'0');
+ var offsetName=new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',timeZoneName:'shortOffset'})
+   .formatToParts(day).find(x=>x.type==='timeZoneName')?.value||'GMT-6';
+ var raw=offsetName.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
+ if(!raw)throw Error('Could not determine the venue time zone.');
+ var offset=raw[1]+raw[2].padStart(2,'0')+':'+(raw[3]||'00');
+ return year+'-'+month+'-'+number+'T'+clock+':00'+offset;
 }
 async function save(payload){
  if(!allowed())throw Error('Your login changed. Please sign in and run setup again.');
@@ -107,14 +127,26 @@ async function save(payload){
    Object.assign(old,p);
  }
  if(roles.includes('kj')||roles.includes('owner')){
-   var d={user_id:id,kj_business_name:roles.includes('kj')?text(s.kjBusiness,150):'',kj_hosts:roles.includes('kj')?[name,...(s.hosts||[])].filter(Boolean).slice(0,30):[],
+   var d={user_id:id,kj_business_name:roles.includes('kj')?text(s.kjBusiness,120):'',kj_hosts:roles.includes('kj')?[name,...(s.hosts||[])].filter(Boolean).slice(0,12):[],
     kj_email:roles.includes('kj')?text(s.kjEmail,254):'',kj_phone:roles.includes('kj')?text(s.kjPhone,40):'',
     kj_show_email:roles.includes('kj')&&priv.email===true,kj_show_phone:roles.includes('kj')&&priv.phone===true,
-    venue_business_name:roles.includes('owner')?text(s.ownerBusiness,150):'',
+    venue_business_name:roles.includes('owner')?text(s.ownerBusiness,120):'',
     venue_email:roles.includes('owner')?text(s.ownerEmail||user().email,254):'',venue_phone:roles.includes('owner')?text(s.ownerPhone,40):'',
     venue_show_email:roles.includes('owner')&&priv.email===true,venue_show_phone:roles.includes('owner')&&priv.phone===true,updated_at:now};
    fail(await client().from('member_setup_details').upsert(d,{onConflict:'user_id'}));
  }
+ 
+ // Persist optional visibility controls; never store unselected contact data in a publicly readable row.
+ var publishEmail=priv.email===true?text(s.kjEmail||s.ownerEmail||user().email,254):null;
+ var publishPhone=priv.phone===true?text(s.kjPhone||s.ownerPhone,40):null;
+ fail(await client().from('member_public_preferences').upsert({
+   user_id:id,show_display_name:priv.displayName!==false,show_photo:priv.photo!==false,
+   show_location:priv.location!==false,show_member_since:priv.memberSince!==false,
+   show_genres:priv.genres!==false,show_reviews:priv.reviews!==false,
+   show_songs:priv.songs===true,show_kj_schedule:priv.kjSchedule!==false,
+   show_venues:priv.venues!==false,published_email:publishEmail||null,published_phone:publishPhone||null,
+   updated_at:now
+ },{onConflict:'user_id'}));
  if(roles.includes('singer')){
    var catalog=Array.isArray(payload.songCatalog)?payload.songCatalog:[],selected=Array.isArray(s.selectedSongs)?s.selectedSongs:[];
    var existing=fail(await client().from('karaoke_songs').select('title,artist').eq('user_id',id).limit(500))||[];
@@ -149,27 +181,54 @@ async function save(payload){
      var v=currentVenue(entry[0],payload.venueRecords),c=parseCity(v.city,v.state);
      if(entry[1].weekly.length){
        var sessions=entry[1].weekly.slice(0,7);
-       fail(await client().from('kj_host_submissions').insert({user_id:id,venue_id:v.id||null,venue_name:text(v.name,150),venue_address:text(v.address_line1,240)||null,
-         venue_city:c.city,venue_state:c.state,venue_postal_code:text(v.postal_code,15)||null,sessions:sessions,status:'pending',notes:'Submitted during member setup'}));
+       var existing=fail(await client().from('kj_host_submissions')
+         .select('id,venue_name,sessions,status').eq('user_id',id).in('status',['pending','approved']).limit(200))||[];
+       var duplicate=existing.some(x=>x.venue_name===v.name&&JSON.stringify(x.sessions)===JSON.stringify(sessions));
+       if(!duplicate)fail(await client().from('kj_host_submissions').insert({
+         user_id:id,venue_id:v.id||null,venue_name:text(v.name,150),venue_address:text(v.address_line1,240)||null,
+         venue_city:c.city,venue_state:c.state,venue_postal_code:text(v.postal_code,15)||null,
+         sessions:sessions,status:'pending',notes:'Submitted during member setup'}));
      }
-     // One-time events are retained in the setup request for moderation, never silently published.
-     if(entry[1].oneTime.length){
-       if(!entry[1].weekly.length)throw Error('One-time KJ events need a separate approval flow. Please remove them for now and submit the weekly schedule, or skip this schedule step.');
+     for(var event of entry[1].oneTime){
+       var title=text(event.title,180);
+       if(title.length<5)throw Error('Please enter an event name of at least five characters.');
+       if(!/^\d{4}-\d{2}-\d{2}$/.test(event.date||''))throw Error('Please choose a valid date for the one-time event.');
+       var start=localIso(event.date,event.start||'20:00'),end=localIso(event.date,event.end||'23:00',true,event.start||'20:00');
+       var startDate=new Date(start),endDate=new Date(end);
+       if(!(startDate>new Date(Date.now()-12*3600000))||endDate-startDate<=0||endDate-startDate>=24*3600000)
+         throw Error('One-time events must be in the future and shorter than 24 hours.');
+       var fingerprint='a2k-setup-event:'+id+':'+v.name+':'+event.date+':'+title+':'+start;
+       if(localStorage.getItem(fingerprint)==='submitted')continue;
+       fail(await client().from('karaoke_event_suggestions').insert({
+         submitted_by:null,venue_name:text(v.name,150),city:text(c.city,100),state:c.state,
+         address:text(v.address_line1,220)||null,title:title,start_at:start,end_at:end,
+         host_name:text(s.kjBusiness||name,100),notes:'Submitted by KJ during A2K member setup. Awaiting founder review.',status:'submitted'
+       }));
+       localStorage.setItem(fingerprint,'submitted');
      }
    }
  }
- if(roles.includes('owner')&&s.claimSubmitted&&s.ownerVenue){
+ if(roles.includes('owner')&&s.claimSubmitted&&s.ownerVenue&&!s.skipped.includes('owner_confirm')){
    var choice=s.ownerVenue;
    if(choice.mode==='claim'){
      var candidate=currentVenue(choice.name,payload.venueRecords);
      if(!candidate.id)throw Error('The claimed venue is not in A2K. Please propose a new venue instead.');
-     fail(await client().from('venue_claim_requests').insert({venue_id:candidate.id,claimant_user_id:id,contact_name:text(s.ownerBusiness,120)||name,
+     var oldClaims=fail(await client().from('venue_claim_requests').select('id').eq('claimant_user_id',id).eq('venue_id',candidate.id).eq('status','pending').limit(1))||[];
+     if(!oldClaims.length)fail(await client().from('venue_claim_requests').insert({
+       venue_id:candidate.id,claimant_user_id:id,contact_name:text(s.ownerBusiness,120)||name,
        contact_email:text(s.ownerEmail||user().email,254),contact_phone:text(s.ownerPhone,40)||null,relationship:'owner',
-       verification_details:'Claim requested through A2K member setup. Venue preferences (pending verification): '+text((s.ownerGenres||[]).join(', '),200),status:'pending'}));
+       verification_details:'Claim requested through A2K member setup. Venue preferences (pending verification): '+text((s.ownerGenres||[]).join(', '),200),status:'pending'
+     }));
    }else{
      var city=parseCity(choice.city,'');
-     fail(await client().from('venue_suggestions').insert({name:text(choice.name,150),city:city.city,state:city.state,status:'submitted',submitted_by:id,
-      karaoke_details:'Owner-proposed venue via member setup. Business: '+text(s.ownerBusiness,120)+'; amenities: '+text((s.ownerAmenities||[]).join(', '),150)+'; genres: '+text((s.ownerGenres||[]).join(', '),150)+'; schedule posting: '+text(s.postPolicy,15)}));
+     var newVenueKey='a2k-setup-venue:'+id+':'+text(choice.name,120)+':'+city.city;
+     if(localStorage.getItem(newVenueKey)!=='submitted'){
+       fail(await client().from('venue_suggestions').insert({
+         name:text(choice.name,120),city:city.city,state:city.state,status:'submitted',submitted_by:id,
+         karaoke_details:'Owner-proposed venue via member setup. Business: '+text(s.ownerBusiness,120)+'; amenities: '+text((s.ownerAmenities||[]).join(', '),150)+'; genres: '+text((s.ownerGenres||[]).join(', '),150)+'; schedule posting: '+text(s.postPolicy,15)
+       }));
+       localStorage.setItem(newVenueKey,'submitted');
+     }
    }
  }
  var complete=fail(await client().from('member_profiles').update({onboarding_completed_at:new Date().toISOString()}).eq('user_id',id).select('onboarding_completed_at').single());
