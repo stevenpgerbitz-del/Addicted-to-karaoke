@@ -167,6 +167,9 @@ begin
  );
  delete from public.karaoke_event_suggestions where submitted_by=p_target;
  delete from public.verified_venue_claims where owner_user_id=p_target;
+ -- Preserve unrelated users' venue suggestions while removing links to deleted venues.
+ update public.venue_suggestions set venue_id=null
+ where venue_id in (select id from public.venues where contributed_by=p_target);
  delete from public.venues where contributed_by=p_target;
 
  -- Clear previous admin references without deleting the activity history.
