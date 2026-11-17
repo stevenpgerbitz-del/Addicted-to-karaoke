@@ -1,4 +1,4 @@
-/* A2K setup wizard live bridge. Visual layout belongs to member-setup-preview.html. */
+/* Addicted to Karaoke setup wizard live bridge. Visual layout belongs to member-setup-preview.html. */
 (function(){
 'use strict';
 var ownerId=null,manual=false,overlay=null,frame=null,busy=false,venues=[],opening=false;
@@ -27,11 +27,11 @@ function open(isManual){
  overlay.id='a2k-member-setup-live-overlay';
  Object.assign(overlay.style,{position:'fixed',inset:'0',zIndex:'100001',background:'#210008',overflow:'hidden'});
  overlay.setAttribute('role','dialog');
- overlay.setAttribute('aria-label','A2K member setup');
+ overlay.setAttribute('aria-label','Addicted to Karaoke member setup');
  overlay.setAttribute('aria-modal','true');
  frame=document.createElement('iframe');
  frame.title='Addicted to Karaoke Member Setup Wizard';
- frame.src='member-setup-preview.html?live=1&v=279';
+ frame.src='member-setup-preview.html?live=1&v=280';
  frame.setAttribute('referrerpolicy','same-origin');
  frame.onerror=function(){
    var m=manual;close();
@@ -56,7 +56,7 @@ async function initial(){
    if(!results[1].error)data.details=results[1].data||{};
    if(!results[2].error)data.publicPrefs=results[2].data||{};
    data.venues=venues;
- }catch(e){console.warn('A2K setup lookup incomplete:',e)}
+ }catch(e){console.warn('Addicted to Karaoke setup lookup incomplete:',e)}
  send('init',data);
 }
 async function photoDataUrl(dataUrl){
@@ -209,7 +209,7 @@ async function save(payload){
        fail(await client().from('karaoke_event_suggestions').insert({
          submitted_by:null,venue_name:text(v.name,150),city:text(c.city,100),state:c.state,
          address:text(v.address_line1,220)||null,title:title,start_at:start,end_at:end,
-         host_name:text(s.kjBusiness||name,100),notes:'Submitted by KJ during A2K member setup. Member account: '+id+'. Awaiting founder review.',status:'submitted'
+         host_name:text(s.kjBusiness||name,100),notes:'Submitted by KJ during Addicted to Karaoke member setup. Member account: '+id+'. Awaiting founder review.',status:'submitted'
        }));
        localStorage.setItem(fingerprint,'submitted');
      }
@@ -219,12 +219,12 @@ async function save(payload){
    var choice=s.ownerVenue;
    if(choice.mode==='claim'){
      var candidate=currentVenue(choice.name,payload.venueRecords);
-     if(!candidate.id)throw Error('The claimed venue is not in A2K. Please propose a new venue instead.');
+     if(!candidate.id)throw Error('The claimed venue is not in Addicted to Karaoke. Please propose a new venue instead.');
      var oldClaims=fail(await client().from('venue_claim_requests').select('id').eq('claimant_user_id',id).eq('venue_id',candidate.id).eq('status','pending').limit(1))||[];
      if(!oldClaims.length)fail(await client().from('venue_claim_requests').insert({
        venue_id:candidate.id,claimant_user_id:id,contact_name:text(s.ownerBusiness,120)||name,
        contact_email:text(s.ownerEmail||user().email,254),contact_phone:text(s.ownerPhone,40)||null,relationship:'owner',
-       verification_details:'Claim requested through A2K member setup. Venue preferences (pending verification): '+text((s.ownerGenres||[]).join(', '),200),status:'pending'
+       verification_details:'Claim requested through Addicted to Karaoke member setup. Venue preferences (pending verification): '+text((s.ownerGenres||[]).join(', '),200),status:'pending'
      }));
    }else{
      var city=parseCity(choice.city,'');
@@ -242,7 +242,7 @@ async function save(payload){
  if(allowed())old.onboarding_completed_at=complete.onboarding_completed_at;
  if(typeof memberLoadedUser!=='undefined')memberLoadedUser=null;
  if(typeof memberLoad==='function')void memberLoad();
- if(typeof authStatus==='function')authStatus('Your A2K member setup was saved.');
+ if(typeof authStatus==='function')authStatus('Your Addicted to Karaoke member setup was saved.');
  send('saved',{});
 }
 window.addEventListener('message',function(event){
