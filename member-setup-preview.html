@@ -696,7 +696,22 @@ if(LIVE){
    const next=app.querySelector('[data-action="next"]');if(next&&current()==='privacy')next.textContent='Save & Finish';
    const close=app.querySelector('[data-action="winClose"]');if(close){close.title='Close setup';close.setAttribute('aria-label','Close setup')}
    if(current()==='done'){
-     app.querySelectorAll('[data-action="restart"]').forEach(btn=>{btn.dataset.action='winClose';btn.textContent='Continue to A2K'});
+     // The preview contains three separate restart controls. In the live
+     // completion screen, keep one clear Continue action in the footer only.
+     app.querySelector('#main .complete-cta')?.remove();
+     app.querySelector('.footer .foot-left [data-action="restart"]')?.remove();
+     const continueButton=app.querySelector('.footer .foot-right [data-action="restart"]');
+     if(continueButton){
+       continueButton.dataset.action='winClose';
+       continueButton.textContent='Continue to A2K';
+     }
+     // The preview warning has nested bold markup, so a plain text-node
+     // replacement cannot remove it. Set the actual live message directly.
+     const notice=app.querySelector('#main .main-inner > .info:last-child');
+     const noticeCopy=notice?.querySelector(':scope > span:last-child');
+     if(noticeCopy){
+       noticeCopy.textContent='Your A2K member setup has been saved. Venue and hosting submissions remain pending until reviewed.';
+     }
    }
    const replacements=[
      ['This is demo data.',''],
