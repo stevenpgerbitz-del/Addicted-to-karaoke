@@ -44,7 +44,7 @@ async function begin(target){
   modal.id='a2k-delete-account-dialog';
   modal.className='a2k-delete-dialog';
   modal.setAttribute('aria-labelledby','a2k-delete-heading');
-  const title=make('h2','', 'Permanent Account Deletion');title.id='a2k-delete-heading';
+  const title=make('h2','', 'Delete Account & Content');title.id='a2k-delete-heading';
   const notice=make('p','a2k-delete-lede','Checking which account records and community content would be deleted…');
   const summary=make('div','a2k-delete-impact');summary.id='a2k-delete-impact';
   const warning=make('p','a2k-delete-warning','This is permanent. Reviews and photos from other members attached to deleted venues may also be removed.');
@@ -73,18 +73,25 @@ async function begin(target){
     preview=response.preview;
     if(!preview||preview.target!==target)throw Error('Could not verify the account.');
     const self=preview.kind==='self',content=preview.content||{};
-    notice.textContent=(self?'Your account':'Member '+preview.name+
+    notice.textContent=(self?'Your A2K membership':'Member '+preview.name+
       (preview.member_number?' (#'+String(preview.member_number).padStart(6,'0')+')':''))+
-      ' and the following associated records will be permanently deleted:';
+      ' will be permanently removed, together with the content below.';
     summary.replaceChildren();
-    for(const [label,key] of [
-      ['Venues they created','venues'],['Venue reviews affected','venue_reviews'],
-      ['KJ/Host reviews affected','kj_reviews'],['Venue photos affected','photos'],
-      ['Songs','songs'],['Favorites','favorites'],['KJ hosting requests','host_requests'],['Approved schedules to review','approved_kj_schedule_requests'],
+    const categories=[
+      ['Venues','venues'],['Venue reviews','venue_reviews'],
+      ['KJ / Host reviews','kj_reviews'],['Venue photos','photos'],
+      ['Songs','songs'],['Favorites','favorites'],
+      ['KJ hosting requests','host_requests'],['Approved schedules to review','approved_kj_schedule_requests'],
       ['Venue suggestions','venue_suggestions'],['Ownership claims','venue_claims'],
-      ['Special karaoke events','special_events'],['Event submissions','special_event_suggestions'],
-      ['Venue reports','venue_reports']])appendLine(summary,label,content[key]);
-    appendLine(summary,'Uploaded files',preview.storage_count);
+      ['Special events','special_events'],['Event submissions','special_event_suggestions'],
+      ['Venue reports','venue_reports']
+    ];
+    // Keep primary counts visible; show additional categories only when relevant.
+    for(const [label,key] of categories){
+      if(['venues','venue_reviews','kj_reviews','photos','songs'].includes(key)||
+         Number(content[key]||0)>0)appendLine(summary,label,content[key]);
+    }
+    if(Number(preview.storage_count||0)>0)appendLine(summary,'Uploaded files',preview.storage_count);
     const outside=Number(content.account_reviews_by_others||0)+Number(content.kj_reviews_by_others||0);
     warning.hidden=outside===0&&Number(content.venues||0)===0&&Number(content.approved_kj_schedule_requests||0)===0;
     if(outside)warning.textContent=outside+' reviews by OTHER MEMBERS will also be removed because they are attached to this member’s venues or KJ profile.';
