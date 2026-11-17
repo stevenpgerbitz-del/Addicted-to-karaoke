@@ -247,6 +247,7 @@ function renderConfirm(main){
 function renderStage(){
  if(!modal||!elements.content)return;
  elements.content.replaceChildren();
+ elements.content.classList.toggle('a2k-deletion-review-stage',stage===0&&!!preview);
  status('');
  elements.timeline.querySelectorAll('[data-step]').forEach(el=>{
   const i=Number(el.dataset.step);
