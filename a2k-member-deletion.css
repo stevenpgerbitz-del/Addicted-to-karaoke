@@ -794,7 +794,7 @@
 
 
 
-/* Build 286 — tapered curtain transition with no horizontal image seam.
+/* Build 287 — tapered curtain and clear sidebar heading spacing.
    One photo belongs in the sidebar art frame; a focused velvet-curtain crop
    belongs in the header. Never scale the entire logo across both rows.
    Keeps the approved desktop geometry, accessible actions and phone layout. */
@@ -883,12 +883,12 @@
    background:linear-gradient(to bottom,transparent,#65000e);
  }
  #a2k-delete-account-dialog .a2k-deletion-side-title{
-   margin:4px 12px 0!important;padding:0 3px 8px!important;
+   margin:15px 12px 0!important;padding:0 3px 8px!important;
  }
 }
 @media(min-width:781px) and (max-height:670px){
  #a2k-delete-account-dialog .a2k-deletion-logo-frame{
    height:106px!important;min-height:106px!important;flex-basis:106px!important;
  }
- #a2k-delete-account-dialog .a2k-deletion-side-title{margin:1px 12px 0!important}
+ #a2k-delete-account-dialog .a2k-deletion-side-title{margin:8px 12px 0!important}
 }
