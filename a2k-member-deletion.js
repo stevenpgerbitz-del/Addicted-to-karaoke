@@ -64,7 +64,9 @@ function buildDialog(){
  bar.append(title);
  const middle=make('div','a2k-deletion-layout');
  const sidebar=make('aside','a2k-deletion-sidebar');
- sidebar.append(makePicture(ART_LOGO,'a2k-deletion-brand','Addicted to Karaoke vintage microphone artwork'));
+ const logoFrame=make('div','a2k-deletion-art-frame a2k-deletion-logo-frame');
+ logoFrame.append(makePicture(ART_LOGO,'a2k-deletion-brand','Addicted to Karaoke vintage microphone artwork'));
+ sidebar.append(logoFrame);
  sidebar.append(make('h2','a2k-deletion-side-title','Account Removal Wizard'));
  const timeline=make('div','a2k-deletion-timeline');
  for(let i=0;i<steps.length;i++){
@@ -73,8 +75,10 @@ function buildDialog(){
   line.append(make('span','a2k-deletion-timeline-dot'),make('strong','',steps[i]));
   timeline.append(line);
  }
- sidebar.append(timeline,makePicture(ART_CROWD,'a2k-deletion-crowd','Decorative karaoke crowd'));
- sidebar.append(make('span','a2k-deletion-side-foot','PRIVATE & SECURE'));
+ const crowdFrame=make('div','a2k-deletion-art-frame a2k-deletion-crowd-frame');
+ crowdFrame.append(makePicture(ART_CROWD,'a2k-deletion-crowd','Decorative karaoke crowd'));
+ crowdFrame.append(make('span','a2k-deletion-side-foot','PRIVATE & SECURE'));
+ sidebar.append(timeline,crowdFrame);
  const inner=make('section','a2k-deletion-right');
  const mobile=make('div','a2k-deletion-mobile-progress');
  for(let i=0;i<steps.length;i++){
