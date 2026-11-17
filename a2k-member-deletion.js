@@ -166,18 +166,29 @@ function mountSelf(){
   const btn=make('button','a2k-delete-self-button','Delete My Account');
   btn.type='button';btn.onclick=()=>{if(actor()?.id)void begin(actor().id)};
   section.append(heading,note,btn);settings.append(section);
+  let checkedId=null,founderCheck=0;
   function refresh(){
-    const valid=!!actor()?.id;
-    btn.disabled=!valid;
+    const uid=actor()?.id||null;
+    btn.disabled=!uid;
+    if(!uid){checkedId=null;return;}
+    if(checkedId===uid)return;
+    checkedId=uid;
+    const seq=++founderCheck;
+    if(!client())return;
+    client().rpc('is_platform_founder').then(({data,error})=>{
+      if(!section.isConnected||actor()?.id!==uid||seq!==founderCheck)return;
+      if(error){btn.disabled=true;note.textContent='Unable to verify account privileges. Please refresh.';return;}
+      btn.disabled=data===true;
+      note.textContent=data===true
+        ?'The Founder account is protected. Site ownership must be handled separately before it can be removed.'
+        :'Permanently remove your A2K account, reviews, photos, songs and venues you created. You can see the impact before confirming.';
+    }).catch(()=>{if(actor()?.id===uid)btn.disabled=true});
   }
+  const profile=$('auth-profile');
+  if(profile)new MutationObserver(refresh).observe(profile,{attributes:true,attributeFilter:['hidden','style']});
+  new MutationObserver(refresh).observe($('a2k-profile-settings'),{attributes:true,attributeFilter:['open']});
+  window.addEventListener('pageshow',refresh);
   refresh();
-  if(client())client().rpc('is_platform_founder').then(({data,error})=>{
-    if(!section.isConnected||error)return;
-    if(data===true){
-      btn.disabled=true;
-      note.textContent='The Founder account is protected. Site ownership must be handled separately before it can be removed.';
-    }
-  }).catch(()=>{});
 }
 function install(){mountManagement();mountSelf();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
