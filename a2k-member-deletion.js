@@ -1,4 +1,4 @@
-/* A2K Build 260 — Account Removal Wizard.
+/* Addicted to Karaoke Build 260 — Account Removal Wizard.
    Reuses the approved Member Setup Wizard artwork and vintage visual system.
    All deletion permission checks and password verification run on the server. */
 (function(){
@@ -62,7 +62,6 @@ function buildDialog(){
  title.append(make('strong','a2k-deletion-app-brand','Addicted to Karaoke'),
   make('span','a2k-deletion-app-subtitle','ACCOUNT REMOVAL WIZARD'));
  bar.append(title);
- bar.append(make('span','a2k-deletion-mode','ACCOUNT SECURITY'));
  const middle=make('div','a2k-deletion-layout');
  const sidebar=make('aside','a2k-deletion-sidebar');
  sidebar.append(makePicture(ART_LOGO,'a2k-deletion-brand','Addicted to Karaoke vintage microphone artwork'));
@@ -146,11 +145,11 @@ function impactCard(parent,label,value){
 function renderReview(main){
  const isSelf=preview.kind==='self';
  cardTitle(main,'Review What Will Be Removed',
-  'See exactly which A2K records would be removed before you continue.');
+  'See exactly which Addicted to Karaoke records would be removed before you continue.');
  const person=make('div','a2k-deletion-person');
  person.append(make('span','a2k-deletion-person-mark','♪'));
  const who=make('div','');
- who.append(make('strong','',isSelf?'Your A2K Membership':preview.name||'Karaoke Member'));
+ who.append(make('strong','',isSelf?'Your Addicted to Karaoke Membership':preview.name||'Karaoke Member'));
  who.append(make('small','',preview.member_number?
   'Member #'+String(preview.member_number).padStart(6,'0'):'Registered member'));
  person.append(who);main.append(person);
@@ -193,41 +192,41 @@ function renderReview(main){
    'Approved KJ schedules on surviving venues may require administrator review.','warning');
  }
  infoCard(main,'This action cannot be undone',
-  'Your A2K account and associated contributions cannot be restored by signing up again.','neutral');
+  'Your Addicted to Karaoke account and associated contributions cannot be restored by signing up again.','neutral');
 }
 function renderVerify(main){
  cardTitle(main,'Verify Your Identity',
-  'A2K requires an additional check before permanent account removal.');
+  'Addicted to Karaoke requires an additional check before permanent account removal.');
  const box=make('div','a2k-deletion-stage-box');
  const method=preview.verification_method||'confirmation';
  if(method==='password'){
   box.append(make('h3','','Confirm Your Password'));
   paragraph(box,'a2k-deletion-field-description',
-   'Please enter the password for YOUR signed-in A2K account'+
+   'Please enter the password for YOUR signed-in Addicted to Karaoke account'+
     (preview.kind==='management'?', not the member being removed.':'.'));
   const email=actor()?.email||'';
   if(email)paragraph(box,'a2k-deletion-account-email',email);
-  const pass=field(box,'Current A2K password','a2k-delete-password',
+  const pass=field(box,'Current Addicted to Karaoke password','a2k-delete-password',
    'password','Enter your password',password);
   pass.autocomplete='current-password';
   pass.oninput=()=>{password=pass.value;status('');};
  }else{
   box.append(make('h3','','Google Sign-In Account'));
   paragraph(box,'a2k-deletion-field-description',
-   'This account uses Google sign-in. A2K will NEVER ask for your Google password.');
+   'This account uses Google sign-in. Addicted to Karaoke will NEVER ask for your Google password.');
   infoCard(box,'Confirmation method',
    'Continue to the final step, then type the exact deletion phrase.','neutral');
  }
  main.append(box);
  infoCard(main,'Your information stays private',
-  'Passwords are verified by the server when you confirm deletion. A2K does not save your password.','neutral');
+  'Passwords are verified by the server when you confirm deletion. Addicted to Karaoke does not save your password.','neutral');
 }
 function renderConfirm(main){
  cardTitle(main,'Confirm Permanent Deletion',
   'This is the final step. Please review the account name before continuing.');
  const account=make('div','a2k-deletion-stage-box');
  account.append(make('h3','',preview.kind==='self'?
-  'Delete My A2K Account':'Delete '+(preview.name||'This Member')));
+  'Delete My Addicted to Karaoke Account':'Delete '+(preview.name||'This Member')));
  paragraph(account,'a2k-deletion-field-description',
   'This permanently removes the account and the content shown in Step 1.');
  const exact=preview.kind==='self'?'DELETE MY ACCOUNT':'DELETE MEMBER';
@@ -286,7 +285,7 @@ async function begin(target){
   const response=await request('preview',{target});
   if(!modal?.open||targetId!==target)return;
   if(!response?.preview||response.preview.target!==target)
-    throw Error('A2K could not verify this member account.');
+    throw Error('Addicted to Karaoke could not verify this member account.');
   preview=response.preview;
   renderStage();
  }catch(e){
@@ -297,7 +296,7 @@ async function begin(target){
 async function nextStage(){
  if(busy||!preview)return;
  if(stage===1&&preview.verification_method==='password'&&!password){
-  status('Enter your A2K account password to continue.');return;
+  status('Enter your Addicted to Karaoke account password to continue.');return;
  }
  if(stage<2){stage++;renderStage();return;}
  const exact=preview.kind==='self'?'DELETE MY ACCOUNT':'DELETE MEMBER';
@@ -326,7 +325,7 @@ async function execute(){
   busy=false;
   cleanup();
   if(self){
-   try{await client()?.auth.signOut()}catch(e){console.warn('A2K sign-out',e)}
+   try{await client()?.auth.signOut()}catch(e){console.warn('Addicted to Karaoke sign-out',e)}
    location.replace(location.origin+'/?account=deleted');
   }else{
    if(typeof managementMemberBack==='function')managementMemberBack();
@@ -372,7 +371,7 @@ function mountSelf(){
   if(!settings)return;
   const section=make('section','a2k-delete-self');section.id='a2k-self-delete-entry';
   const heading=make('div','profile-section-top');heading.append(make('strong','','Account & Data'));
-  const note=make('p','a2k-delete-note','Permanently remove your A2K account, reviews, photos, songs and venues you created. You can see the impact before confirming.');
+  const note=make('p','a2k-delete-note','Permanently remove your Addicted to Karaoke account, reviews, photos, songs and venues you created. You can see the impact before confirming.');
   const btn=make('button','a2k-delete-self-button','Delete My Account');
   btn.type='button';btn.onclick=()=>{if(actor()?.id)void begin(actor().id)};
   section.append(heading,note,btn);settings.append(section);
@@ -391,7 +390,7 @@ function mountSelf(){
       btn.disabled=data===true;
       note.textContent=data===true
         ?'The Founder account is protected. Site ownership must be handled separately before it can be removed.'
-        :'Permanently remove your A2K account, reviews, photos, songs and venues you created. You can see the impact before confirming.';
+        :'Permanently remove your Addicted to Karaoke account, reviews, photos, songs and venues you created. You can see the impact before confirming.';
     }).catch(()=>{if(actor()?.id===uid)btn.disabled=true});
   }
   const profile=$('auth-profile');
