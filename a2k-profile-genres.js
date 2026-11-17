@@ -31,15 +31,10 @@
   const interestsSection=roleChips?.closest('section.profile-about-interests');
   if(!interestsSection)return null;
   let block=document.getElementById('a2k-member-favorite-genres');
-  // The full-page setup module appends its Run Setup Wizard button inside
-  // the same interests section. Keep the saved genre editor BEFORE that
-  // button, including when About Me moves into the mobile dialog.
-  const wizard=interestsSection.querySelector('#a2k-setup-reopen');
+  // Favorite music belongs at the end of About Me; setup lives in Settings.
   if(block){
-   if(block.parentElement!==interestsSection||
-      (wizard&&block.nextElementSibling!==wizard)||
-      (!wizard&&block!==interestsSection.lastElementChild))
-    interestsSection.insertBefore(block,wizard||null);
+   if(block.parentElement!==interestsSection||block!==interestsSection.lastElementChild)
+    interestsSection.append(block);
    return block;
   }
   block=el('section','a2k-member-genres-block');
@@ -69,9 +64,7 @@
   status.id='a2k-member-genres-status';
   status.setAttribute('role','status');status.setAttribute('aria-live','polite');
   block.append(heading,saved,editor,status);
-  // Place favorite music ABOVE the manual setup-wizard entry, without
-  // moving or duplicating the signup wizard itself.
-  interestsSection.insertBefore(block,wizard||null);
+  interestsSection.append(block);
   edit.addEventListener('click',()=>{
    if(saving||!profile()||!user()||profile().user_id!==user().id)return;
    const selected=new Set(Array.isArray(profile().favorite_genres)?profile().favorite_genres:[]);
