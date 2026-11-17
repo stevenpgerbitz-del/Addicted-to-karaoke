@@ -794,7 +794,7 @@
 
 
 
-/* Build 287 — tapered curtain and clear sidebar heading spacing.
+/* Build 288 — soften stage artwork's top edge without moving approved sidebar lettering.
    One photo belongs in the sidebar art frame; a focused velvet-curtain crop
    belongs in the header. Never scale the entire logo across both rows.
    Keeps the approved desktop geometry, accessible actions and phone layout. */
@@ -868,9 +868,10 @@
    max-height:none!important;min-height:0!important;
    object-fit:contain;object-position:center center;
    border:0!important;border-radius:0!important;
-   /* Fade just the left curtain edge at the top; the mic and letters stay sharp. */
-   -webkit-mask-image:radial-gradient(ellipse 63% 38% at 0 0,transparent 0%,rgba(0,0,0,.65) 45%,#000 94%);
-   mask-image:radial-gradient(ellipse 63% 38% at 0 0,transparent 0%,rgba(0,0,0,.65) 45%,#000 94%);
+   /* Fade the entire photograph's exposed top edge into the curtain.
+      The previous left-only radial mask left a hard rectangular corner on the right. */
+   -webkit-mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,.46) 15px,#000 32px);
+   mask-image:linear-gradient(to bottom,transparent 0px,rgba(0,0,0,.46) 15px,#000 32px);
  }
  /* The decorative arc at this seam was what made the two pieces look stacked.
     An understated burgundy fade is less conspicuous than an outlined join. */
