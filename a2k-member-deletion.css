@@ -794,7 +794,7 @@
 
 
 
-/* Build 288 — soften stage artwork's top edge without moving approved sidebar lettering.
+/* Build 289 — soften curtain-to-header boundary and restore warm gold outer glow.
    One photo belongs in the sidebar art frame; a focused velvet-curtain crop
    belongs in the header. Never scale the entire logo across both rows.
    Keeps the approved desktop geometry, accessible actions and phone layout. */
@@ -803,6 +803,14 @@
    position:relative;isolation:isolate;
    /* Dark backing under the fade prevents pale gaps at the artwork join. */
    background:#5a000d!important;
+   border-color:#e3b86d!important;
+   box-shadow:
+     0 0 0 1px #6a270b,
+     0 0 0 3px #dcb363,
+     0 0 10px 3px rgba(255,195,82,.50),
+     0 0 24px 5px rgba(210,126,32,.28),
+     0 24px 70px rgba(16,0,5,.70),
+     inset 0 0 0 1px rgba(255,238,188,.40)!important;
  }
  #a2k-delete-account-dialog.a2k-deletion-wizard::before{
    /* Only the header curtain, not a vertically distorted duplicate logo. */
@@ -816,15 +824,16 @@
    background-position:0 0,0 0;
    background-repeat:no-repeat;
    background-size:100% 100%,290% auto;
-   -webkit-mask-image:radial-gradient(ellipse 100% 115% at 0 0,#000 0%,#000 30%,rgba(0,0,0,.78) 47%,transparent 85%);
-   mask-image:radial-gradient(ellipse 100% 115% at 0 0,#000 0%,#000 30%,rgba(0,0,0,.78) 47%,transparent 85%);
+   -webkit-mask-image:radial-gradient(ellipse 88% 115% at 0 0,#000 0%,#000 28%,rgba(0,0,0,.72) 45%,transparent 82%);
+   mask-image:radial-gradient(ellipse 88% 115% at 0 0,#000 0%,#000 28%,rgba(0,0,0,.72) 45%,transparent 82%);
  }
  #a2k-delete-account-dialog .a2k-deletion-titlebar{
    position:relative;z-index:4;
    isolation:isolate;overflow:hidden;
-   background:linear-gradient(90deg,transparent 0 25%,#760312 25.1%,#62000d 66%,#360006 100%)!important;
+   /* Gentle curtain fade into burgundy, not a vertical cut at 25%. */
+   background:linear-gradient(90deg,transparent 0%,transparent 17%,rgba(103,2,15,.12) 20%,rgba(109,3,18,.45) 23%,#760312 30%,#62000d 66%,#360006 100%)!important;
    border-bottom:0!important;
-   padding:7px 20px 9px calc(25% + 17px)!important;
+   padding:7px 20px 9px calc(25% + 24px)!important;
  }
  #a2k-delete-account-dialog .a2k-deletion-titlebar::before{
    content:none!important;display:none!important;
