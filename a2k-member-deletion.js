@@ -57,7 +57,11 @@ function buildDialog(){
  dialog.id='a2k-delete-account-dialog';
  dialog.setAttribute('aria-labelledby','a2k-deletion-title');
  const bar=make('header','a2k-deletion-titlebar');
- bar.append(make('strong','a2k-deletion-app-title','Addicted to Karaoke — Account Removal'));
+ const title=make('div','a2k-deletion-app-title');
+ title.id='a2k-deletion-title';
+ title.append(make('strong','a2k-deletion-app-brand','Addicted to Karaoke'),
+  make('span','a2k-deletion-app-subtitle','ACCOUNT REMOVAL WIZARD'));
+ bar.append(title);
  bar.append(make('span','a2k-deletion-mode','ACCOUNT SECURITY'));
  const middle=make('div','a2k-deletion-layout');
  const sidebar=make('aside','a2k-deletion-sidebar');
