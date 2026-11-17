@@ -1,0 +1,51 @@
+/* A2K Build 258 — deletion actions; existing vintage cream/burgundy/brass theme. */
+.a2k-management-delete,.a2k-delete-self{
+  margin:14px 0;padding:14px 16px;border:1px solid #97704e;
+  border-radius:12px;background:linear-gradient(160deg,#2d1716,#1b1010);
+  color:#f4dfc3;
+}
+.a2k-delete-self .profile-section-top{margin-bottom:7px}
+.a2k-delete-note{color:#dec5a5;font:14px/1.55 Georgia,serif;margin:8px 0 13px}
+.a2k-delete-management-button,.a2k-delete-self-button{
+  display:block;min-height:44px;width:100%;padding:9px 13px;border-radius:9px;
+  border:1px solid #c3955f;color:#f8e4c8;background:linear-gradient(#7b2a25,#521b1a);
+  font:700 15px/1.2 Georgia,serif;cursor:pointer;
+}
+.a2k-delete-management-button:disabled,.a2k-delete-self-button:disabled{
+  opacity:.50;cursor:not-allowed;
+}
+.a2k-delete-dialog{
+  box-sizing:border-box;width:min(96vw,540px);max-height:min(90dvh,850px);
+  overflow:auto;padding:24px 22px 20px;color:#f6e6ce;
+  background:linear-gradient(150deg,#341c1a,#1c1010);
+  border:2px solid #bf965f;border-radius:15px;box-shadow:0 20px 65px #000b;
+}
+.a2k-delete-dialog::backdrop{background:#080304c9}
+.a2k-delete-dialog h2{margin:0 0 8px;color:#f8d9a4;font:700 clamp(22px,5vw,27px)/1.2 Georgia,serif;text-align:center}
+.a2k-delete-lede{font:15px/1.6 Georgia,serif;color:#f4ddc3;margin:8px 0 14px}
+.a2k-delete-impact{display:grid;gap:0;margin:10px 0;border:1px solid #735043;border-radius:9px;overflow:hidden}
+.a2k-delete-impact-row{display:flex;gap:10px;justify-content:space-between;align-items:center;
+  padding:7px 10px;border-bottom:1px solid #5b3935;color:#ead4b7;font:14px/1.35 Georgia,serif}
+.a2k-delete-impact-row:last-child{border-bottom:0}
+.a2k-delete-impact-row:nth-child(odd){background:#271612}
+.a2k-delete-impact-row strong{font:700 16px Georgia,serif;color:#f4d39e;font-variant-numeric:tabular-nums}
+.a2k-delete-warning{font:700 13px/1.5 Georgia,serif;color:#ffcfbb;border-left:3px solid #c76d5b;padding:8px 11px;background:#59231d57}
+.a2k-delete-field{display:grid;gap:7px;margin:13px 0;color:#f3ddbf;font:14px Georgia,serif}
+.a2k-delete-field input,.a2k-delete-field textarea{
+  box-sizing:border-box;width:100%;border:1px solid #b38a59;border-radius:9px;
+  padding:11px 12px;background:#f6e8d2;color:#44211b;font:16px/1.4 Georgia,serif;
+}
+.a2k-delete-error{min-height:15px;color:#ffb6a9;font:13px/1.5 Georgia,serif}
+.a2k-delete-actions{display:flex;gap:10px;margin-top:13px}
+.a2k-delete-actions button{flex:1;min-height:46px;padding:9px 12px;border-radius:9px;
+  font:700 15px Georgia,serif;border:1px solid #c69a6b;color:#f6e4ce;cursor:pointer}
+.a2k-delete-cancel{background:linear-gradient(#6a342b,#48241f)}
+.a2k-delete-erase{background:linear-gradient(#9b332a,#671f1a)}
+.a2k-delete-actions button:disabled{opacity:.5;cursor:default}
+.a2k-delete-actions button:focus-visible,.a2k-delete-self-button:focus-visible,
+.a2k-delete-management-button:focus-visible{outline:2px solid #f2d7a6;outline-offset:3px}
+@media(max-width:480px){
+  .a2k-delete-dialog{padding:18px 14px}
+  .a2k-delete-impact-row{font-size:13px}
+  .a2k-delete-actions{flex-direction:column-reverse}
+}
