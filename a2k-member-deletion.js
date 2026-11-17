@@ -57,6 +57,9 @@ function buildDialog(){
  dialog.id='a2k-delete-account-dialog';
  dialog.setAttribute('aria-labelledby','a2k-deletion-title');
  const bar=make('header','a2k-deletion-titlebar');
+ // Reuse the original approved stage-curtain art to connect the header
+ // with the framed image immediately beneath it; no new branding assets.
+ bar.style.setProperty('--a2k-deletion-curtain-image','url("'+ART_LOGO+'")');
  const title=make('div','a2k-deletion-app-title');
  title.id='a2k-deletion-title';
  title.append(make('strong','a2k-deletion-app-brand','Addicted to Karaoke'),
