@@ -955,3 +955,53 @@
    flex-basis:127px!important;height:127px!important;min-height:127px!important;
  }
 }
+
+/* Build 292 — final-stage continuity polish. Desktop only.
+   Keep the 920x630 frame, all real HTML controls, and mobile untouched.
+   Gold sweep blends the photo into the title, and the lower crowd fades
+   into the same burgundy backdrop rather than beginning as a hard tile. */
+@media (min-width:781px){
+ #a2k-delete-account-dialog.a2k-deletion-wizard::before{
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 89%,rgba(0,0,0,.78) 94%,transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,#000 0%,#000 89%,rgba(0,0,0,.78) 94%,transparent 100%)!important;
+ }
+ #a2k-delete-account-dialog.a2k-deletion-wizard::after{
+  content:""!important;display:block!important;position:absolute!important;
+  z-index:7!important;left:0!important;top:188px!important;
+  width:25%!important;height:40px!important;pointer-events:none!important;
+  background:
+   radial-gradient(ellipse 55% 60% at 48% 12%,rgba(250,172,62,.23),transparent 100%),
+   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 230 40' preserveAspectRatio='none'%3E%3Cpath d='M0 11 C64 0 107 6 144 15 S207 32 230 27' fill='none' stroke='%23652312' stroke-width='5'/%3E%3Cpath d='M0 11 C64 0 107 6 144 15 S207 32 230 27' fill='none' stroke='%23f5bd61' stroke-width='1.9'/%3E%3C/svg%3E") center/100% 100% no-repeat!important;
+ }
+ #a2k-delete-account-dialog .a2k-deletion-sidebar{
+  background:radial-gradient(ellipse 110% 58% at 50% 15%,#7f0c1a 0%,#6d0614 49%,#59020e 80%,#46000a 100%)!important;
+ }
+ #a2k-delete-account-dialog .a2k-deletion-sidebar::before{
+  content:"";display:block;position:absolute;z-index:1;pointer-events:none;
+  left:0;top:122px;width:47px;height:255px;
+  background:linear-gradient(90deg,rgba(27,0,4,.6) 0%,rgba(110,6,20,.44) 22%,rgba(39,0,9,.58) 47%,rgba(130,7,20,.24) 75%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 20%,rgba(0,0,0,.9) 57%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,#000 20%,rgba(0,0,0,.9) 57%,transparent 100%);
+ }
+ #a2k-delete-account-dialog .a2k-deletion-sidebar::after{
+  content:"";display:block;position:absolute;z-index:0;pointer-events:none;
+  left:0;right:0;top:130px;height:115px;
+  background:radial-gradient(ellipse 80% 42% at 50% 0%,rgba(255,185,57,.18),transparent 100%);
+ }
+ #a2k-delete-account-dialog .a2k-deletion-side-title{
+  font-size:24px!important;
+ }
+ #a2k-delete-account-dialog .a2k-deletion-app-brand{
+  font-size:25px!important;
+ }
+ #a2k-delete-account-dialog .a2k-deletion-crowd-frame{
+  flex-basis:156px!important;height:156px!important;min-height:156px!important;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.32) 15%,#000 34%)!important;
+  mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.32) 15%,#000 34%)!important;
+ }
+}
+@media (min-width:781px) and (max-height:670px){
+ #a2k-delete-account-dialog .a2k-deletion-crowd-frame{
+  flex-basis:144px!important;height:144px!important;min-height:144px!important;
+ }
+}
