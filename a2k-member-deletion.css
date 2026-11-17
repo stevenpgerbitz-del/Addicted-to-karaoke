@@ -428,3 +428,16 @@
  #a2k-delete-account-dialog[data-size-guide="D"]{width:min(1600px,94vw)!important}
  #a2k-delete-account-dialog::backdrop{background-color:rgba(13,4,8,.84)!important}
 }
+
+/* Build 269: B/C/D dimensions are controlled from the measured open dialog.
+   Each choice adds exactly one or two 100px graph-paper squares. */
+@media(min-width:781px){
+ #a2k-delete-account-dialog::backdrop{
+  background-image:
+   linear-gradient(rgba(245,196,95,.48) 2px,transparent 2px),
+   linear-gradient(90deg,rgba(245,196,95,.48) 2px,transparent 2px),
+   linear-gradient(rgba(245,196,95,.20) 1px,transparent 1px),
+   linear-gradient(90deg,rgba(245,196,95,.20) 1px,transparent 1px)!important;
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px!important;
+ }
+}
