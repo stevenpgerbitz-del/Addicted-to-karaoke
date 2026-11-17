@@ -55,6 +55,8 @@ function makePicture(src,cls,description){
 function buildDialog(){
  const dialog=make('dialog','a2k-deletion-wizard');
  dialog.id='a2k-delete-account-dialog';
+ // Shared stage image is anchored to the whole wizard, not duplicated inside its titlebar.
+ dialog.style.setProperty('--a2k-deletion-curtain-image','url("'+ART_LOGO+'")');
  dialog.setAttribute('aria-labelledby','a2k-deletion-title');
  const bar=make('header','a2k-deletion-titlebar');
  // Reuse the original approved stage-curtain art to connect the header
