@@ -476,3 +476,10 @@
   flex-shrink:0;
  }
 }
+
+/* Build 274: align the brand heading higher; remove the redundant security badge. */
+@media(min-width:781px){
+ #a2k-delete-account-dialog .a2k-deletion-titlebar{align-items:center;padding:5px 18px 9px}
+ #a2k-delete-account-dialog .a2k-deletion-app-title{transform:translateY(-5px)}
+ #a2k-delete-account-dialog .a2k-deletion-mode{display:none!important}
+}
