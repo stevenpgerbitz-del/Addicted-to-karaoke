@@ -441,3 +441,37 @@
   background-size:100px 100px,100px 100px,20px 20px,20px 20px!important;
  }
 }
+
+/* Build 270 — temporary two-axis sizing ruler (20px graph-paper increments). */
+@media(min-width:781px){
+ #a2k-delete-account-dialog .a2k-deletion-size-guide{
+  display:flex;align-items:center;justify-content:center;
+  gap:10px;min-width:0;margin:0 auto;padding:0 6px;
+ }
+ #a2k-delete-account-dialog .a2k-deletion-size-pair{
+  display:flex;align-items:center;gap:4px;white-space:nowrap;
+ }
+ #a2k-delete-account-dialog .a2k-deletion-size-pair-label{
+  font:800 10px/1.2 Arial,sans-serif;letter-spacing:.04em;color:#7d4936;
+ }
+ #a2k-delete-account-dialog .a2k-deletion-size-arrow{
+  min-width:29px;width:29px;height:29px;min-height:29px;padding:0;
+  border:1.5px solid #b88735;border-radius:6px;
+  background:#fff0d6;color:#6b0d17;
+  font:700 19px/1 Georgia,serif;cursor:pointer;
+ }
+ #a2k-delete-account-dialog .a2k-deletion-size-arrow:hover{background:#f7dbab}
+ #a2k-delete-account-dialog .a2k-deletion-size-readout{
+  color:#65111a;font:700 12px/1.2 Arial,sans-serif;white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+ }
+}
+@media(min-width:781px) and (max-width:1150px){
+ #a2k-delete-account-dialog .a2k-deletion-size-guide{gap:6px}
+ #a2k-delete-account-dialog .a2k-deletion-size-pair-label{display:none}
+ #a2k-delete-account-dialog .a2k-deletion-footer{padding-inline:12px;gap:6px}
+ #a2k-delete-account-dialog .a2k-deletion-footer-actions{gap:6px}
+}
+@media(max-width:780px){
+ #a2k-delete-account-dialog .a2k-deletion-size-guide{display:none}
+}
