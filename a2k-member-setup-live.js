@@ -2,6 +2,7 @@
 (function(){
 'use strict';
 var ownerId=null,manual=false,overlay=null,frame=null,busy=false,venues=[],opening=false;
+const originalWizardStart=window.atkWelcomeStart;
 function client(){return typeof authClient!=='undefined'?authClient:null}
 function user(){return typeof authUser!=='undefined'?authUser:null}
 function profile(){return typeof memberProfile!=='undefined'?memberProfile:null}
@@ -32,6 +33,11 @@ function open(isManual){
  frame.title='Addicted to Karaoke Member Setup Wizard';
  frame.src='member-setup-preview.html?live=1&v=255';
  frame.setAttribute('referrerpolicy','same-origin');
+ frame.onerror=function(){
+   var m=manual;close();
+   if(typeof originalWizardStart==='function')originalWizardStart(m);
+   else if(typeof authStatus==='function')authStatus('Could not open setup. Please refresh the page and try again.');
+ };
  Object.assign(frame.style,{border:'0',width:'100%',height:'100%',display:'block'});
  overlay.appendChild(frame);document.body.appendChild(overlay);opening=false;
 }
