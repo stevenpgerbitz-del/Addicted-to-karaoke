@@ -378,25 +378,26 @@
    one shared A2K modal width. Mobile keeps its existing full-screen layout. */
 @media (min-width:781px){
  .a2k-deletion-wizard{
-  width:min(1550px,calc(100vw - 48px))!important;
+  width:min(1050px,65vw)!important;
   max-width:none!important;
   transition:width .16s ease;
  }
  .a2k-deletion-wizard[data-size-guide="C"]{
-  width:min(1750px,calc(100vw - 36px))!important;
+  width:min(1350px,80vw)!important;
  }
  .a2k-deletion-wizard[data-size-guide="D"]{
-  width:min(1950px,calc(100vw - 24px))!important;
+  width:min(1600px,94vw)!important;
  }
  .a2k-deletion-wizard::backdrop{
-  background-color:rgba(13,4,8,.86);
+  /* Overrides the site's generic dialog::backdrop background!important. */
+  background-color:rgba(13,4,8,.84)!important;
   background-image:
-   linear-gradient(rgba(222,173,94,.28) 1px,transparent 1px),
-   linear-gradient(90deg,rgba(222,173,94,.28) 1px,transparent 1px),
-   linear-gradient(rgba(241,218,164,.10) 1px,transparent 1px),
-   linear-gradient(90deg,rgba(241,218,164,.10) 1px,transparent 1px);
-  background-size:100px 100px,100px 100px,20px 20px,20px 20px;
-  background-position:center center;
+   linear-gradient(rgba(245,196,95,.48) 2px,transparent 2px),
+   linear-gradient(90deg,rgba(245,196,95,.48) 2px,transparent 2px),
+   linear-gradient(rgba(245,196,95,.20) 1px,transparent 1px),
+   linear-gradient(90deg,rgba(245,196,95,.20) 1px,transparent 1px)!important;
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px!important;
+  background-position:center center!important;
  }
  .a2k-deletion-size-guide{display:flex;align-items:center;gap:7px;margin-inline:auto;padding:0 8px}
  .a2k-deletion-size-guide-label{font:700 11px/1.3 Arial,sans-serif;letter-spacing:.04em;color:#774236;white-space:nowrap}
@@ -418,4 +419,12 @@
 }
 @media (max-width:780px){
  .a2k-deletion-size-guide{display:none}
+}
+
+/* Build 268: size test widths are genuinely distinct at a single viewport width. */
+@media(min-width:781px){
+ #a2k-delete-account-dialog[data-size-guide="B"]{width:min(1050px,65vw)!important}
+ #a2k-delete-account-dialog[data-size-guide="C"]{width:min(1350px,80vw)!important}
+ #a2k-delete-account-dialog[data-size-guide="D"]{width:min(1600px,94vw)!important}
+ #a2k-delete-account-dialog::backdrop{background-color:rgba(13,4,8,.84)!important}
 }
