@@ -80,15 +80,16 @@ async function begin(target){
     for(const [label,key] of [
       ['Venues they created','venues'],['Venue reviews affected','venue_reviews'],
       ['KJ/Host reviews affected','kj_reviews'],['Venue photos affected','photos'],
-      ['Songs','songs'],['Favorites','favorites'],['KJ hosting requests','host_requests'],
+      ['Songs','songs'],['Favorites','favorites'],['KJ hosting requests','host_requests'],['Approved schedules to review','approved_kj_schedule_requests'],
       ['Venue suggestions','venue_suggestions'],['Ownership claims','venue_claims'],
       ['Special karaoke events','special_events'],['Event submissions','special_event_suggestions'],
       ['Venue reports','venue_reports']])appendLine(summary,label,content[key]);
     appendLine(summary,'Uploaded files',preview.storage_count);
     const outside=Number(content.account_reviews_by_others||0)+Number(content.kj_reviews_by_others||0);
-    warning.hidden=outside===0&&Number(content.venues||0)===0;
+    warning.hidden=outside===0&&Number(content.venues||0)===0&&Number(content.approved_kj_schedule_requests||0)===0;
     if(outside)warning.textContent=outside+' reviews by OTHER MEMBERS will also be removed because they are attached to this member’s venues or KJ profile.';
     else if(Number(content.venues||0)>0)warning.textContent='Deleting these venues also deletes associated schedules, saved favorites, and photos that other members may have posted.';
+    else if(Number(content.approved_kj_schedule_requests||0)>0)warning.textContent='Approved KJ schedules on surviving venues may require administrative review after account removal.';
     reasonWrap.hidden=self;
     confirmWrap.hidden=false;
     const required=self?'DELETE MY ACCOUNT':'DELETE MEMBER';
