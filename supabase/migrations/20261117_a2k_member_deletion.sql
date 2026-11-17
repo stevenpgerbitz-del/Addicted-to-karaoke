@@ -70,6 +70,7 @@ begin
     'songs',(select count(*) from public.karaoke_songs where user_id=p_target),
     'favorites',(select count(*) from public.venue_favorites where user_id=p_target or venue_id=any(v_venues)),
     'host_requests',(select count(*) from public.kj_host_submissions where user_id=p_target or venue_id=any(v_venues)),
+    'approved_kj_schedule_requests',(select count(*) from public.kj_host_submissions where user_id=p_target and status='approved' and venue_id is not null and venue_id<>all(v_venues)),
     'venue_suggestions',(select count(*) from public.venue_suggestions where submitted_by=p_target),
     'venue_claims',(select count(*) from public.venue_claim_requests where claimant_user_id=p_target or venue_id=any(v_venues)),
     'owner_claims',(select count(*) from public.verified_venue_claims where owner_user_id=p_target or venue_id=any(v_venues)),
