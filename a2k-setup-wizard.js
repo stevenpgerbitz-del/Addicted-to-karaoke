@@ -478,19 +478,48 @@
   }catch(e){busy=false;render(true);report('Could not finish setup: '+(e.message||'Please retry.'));}
  }
  function installReopen(){
-  const home=$('member-about-interests')?.parentElement;
-  if(!home||$('a2k-setup-reopen'))return;
-  const b=makeButton('Run Setup Wizard',()=>{
-   if($('profile-section-dialog')?.open&&typeof profileCloseSection==='function')profileCloseSection();
-   queueMicrotask(()=>open(true));
-  },'a2k-setup-reopen');
-  b.id='a2k-setup-reopen';home.append(b);
+  // Keep the existing setup action in Settings, not About Me.
+  const settings=$('a2k-profile-settings')?.querySelector('.a2k-profile-settings-panel');
+  if(!settings)return;
+  let b=$('a2k-setup-reopen');
+  if(!b){
+   b=makeButton('Run Setup Wizard',()=>{
+    if($('profile-section-dialog')?.open&&typeof profileCloseSection==='function')profileCloseSection();
+    queueMicrotask(()=>open(true));
+   },'a2k-setup-reopen');
+   b.id='a2k-setup-reopen';
+  }
+  let section=$('a2k-setup-settings-entry');
+  if(!section){
+   section=el('section','a2k-setup-settings-entry');
+   section.id='a2k-setup-settings-entry';
+   section.append(el('div','profile-section-top'));
+   section.firstElementChild.append(el('strong','','Setup & Preferences'));
+   section.append(el('p','a2k-setup-settings-description','Review your karaoke interests and profile setup.'));
+  }
+  section.append(b);
+  settings.insertBefore(section,settings.firstElementChild);
+ }
+ // Settings can be mounted after this script's initial DOM readiness callback.
+ function syncReopen(){
+  installReopen();
+  if(!$('a2k-setup-reopen')||!$('a2k-setup-settings-entry')){
+   const root=$('auth-profile');
+   if(root){
+    const observer=new MutationObserver(()=>{
+     if($('a2k-profile-settings')?.querySelector('.a2k-profile-settings-panel')){
+      observer.disconnect();installReopen();
+     }
+    });
+    observer.observe(root,{childList:true,subtree:true});
+   }
+  }
  }
  window.atkWelcomeStart=open;
  window.atkWelcomeMaybeStart=maybeStart;
  window.atkWelcomeRender=render;
  window.atkWelcomeNext=advance;
  window.atkWelcomeSkip=skipStep;
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installReopen,{once:true});
- else installReopen();
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',syncReopen,{once:true});
+ else syncReopen();
 })();
