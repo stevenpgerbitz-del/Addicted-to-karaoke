@@ -80,3 +80,72 @@
  border-color:#956d61;background:#342729;color:#f3d6c3;
  font:700 12px/1.35 Arial,sans-serif;white-space:nowrap;
 }
+
+/* Build 263 — wider, shorter desktop review composer.
+   The rest of the review system and mobile form remain unchanged. */
+@media (min-width: 780px) {
+ #atk-write-review-dialog.atk-review-dialog {
+  width:min(970px,calc(100vw - 32px));
+  max-width:970px;
+  height:min(610px,calc(100dvh - 32px));
+  max-height:calc(100dvh - 32px);
+  border-radius:15px;
+ }
+ #atk-write-review-dialog .atk-review-header {
+  padding:15px 22px 10px;
+ }
+ #atk-write-review-dialog h2 {margin-bottom:4px}
+ #atk-write-review-dialog .atk-review-scroll {
+  padding:12px 20px 10px;
+ }
+ #atk-write-review-dialog .atk-review-rating-list {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px 10px;
+  border:0;
+  border-radius:0;
+  overflow:visible;
+  background:transparent;
+ }
+ #atk-write-review-dialog .atk-review-rating-row {
+  grid-template-columns:minmax(105px,1fr) auto;
+  gap:6px;
+  min-width:0;
+  min-height:47px;
+  border:1px solid #71413f;
+  border-radius:9px;
+  background:#291a1c;
+  padding:5px 8px;
+ }
+ #atk-write-review-dialog .atk-review-rating-row:first-child {
+  border-top:1px solid #71413f;
+ }
+ #atk-write-review-dialog .atk-review-rating-options {gap:3px}
+ #atk-write-review-dialog .atk-review-hint {margin:8px 0 10px}
+ #atk-write-review-dialog #atk-review-comment {
+  min-height:66px;
+  max-height:130px;
+ }
+ #atk-write-review-dialog .atk-review-footer {
+  padding:10px 20px 12px;
+  grid-template-columns:1fr 1fr;
+ }
+ #atk-write-review-dialog .atk-review-footer button {min-height:44px}
+}
+@media (min-width: 780px) and (max-width: 865px) {
+ #atk-write-review-dialog .atk-review-rating-row {
+  grid-template-columns:1fr;
+  min-height:72px;
+ }
+ #atk-write-review-dialog .atk-review-rating-options {
+  justify-content:flex-start;
+ }
+}
+@media (max-width:779px) {
+ #atk-write-review-dialog.atk-review-dialog {
+  width:min(530px,calc(100vw - 24px));
+  max-width:530px;
+  height:min(830px,87dvh);
+  max-height:87dvh;
+ }
+}
