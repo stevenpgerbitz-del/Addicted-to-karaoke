@@ -92,6 +92,23 @@ function buildDialog(){
  const build=make('small','a2k-deletion-footer-build');
  build.textContent='Website Build '+(typeof SITE_BUILD_VERSION!=='undefined'?SITE_BUILD_VERSION:(document.querySelector('[data-build-version]')?.textContent.trim()||'—'));
  progressWrap.append(progress,build);
+ const sizeGuide=make('div','a2k-deletion-size-guide');
+ sizeGuide.setAttribute('role','group');
+ sizeGuide.setAttribute('aria-label','Temporary wizard width comparison');
+ sizeGuide.append(make('span','a2k-deletion-size-guide-label','GRID WIDTH TEST'));
+ dialog.dataset.sizeGuide='B';
+ for(const [letter,description] of [['B','Current'],['C','Wider'],['D','Widest']]){
+  const choice=make('button','',letter);
+  choice.type='button';
+  choice.title=description+' wizard width';
+  choice.setAttribute('aria-label','Option '+letter+': '+description+' wizard width');
+  choice.setAttribute('aria-pressed',String(letter==='B'));
+  choice.onclick=()=>{
+   dialog.dataset.sizeGuide=letter;
+   sizeGuide.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===choice)));
+  };
+  sizeGuide.append(choice);
+ }
  const right=make('div','a2k-deletion-footer-actions');
  const cancel=make('button','a2k-deletion-btn a2k-deletion-btn-subtle','Cancel');
  const back=make('button','a2k-deletion-btn a2k-deletion-btn-subtle','Previous');
@@ -101,7 +118,7 @@ function buildDialog(){
  back.onclick=()=>{if(!busy&&stage>0){stage--;renderStage();}};
  next.onclick=()=>void nextStage();
  right.append(cancel,back,next);
- footer.append(progressWrap,right);
+ footer.append(progressWrap,sizeGuide,right);
  dialog.append(bar,middle,footer);
  dialog.addEventListener('cancel',e=>{if(busy)e.preventDefault();});
  dialog.addEventListener('close',()=>{if(dialog===modal&&!busy)cleanup();});
