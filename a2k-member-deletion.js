@@ -86,8 +86,9 @@ async function begin(target){
       ['Venue reports','venue_reports']])appendLine(summary,label,content[key]);
     appendLine(summary,'Uploaded files',preview.storage_count);
     const outside=Number(content.account_reviews_by_others||0)+Number(content.kj_reviews_by_others||0);
-    warning.hidden=outside===0;
+    warning.hidden=outside===0&&Number(content.venues||0)===0;
     if(outside)warning.textContent=outside+' reviews by OTHER MEMBERS will also be removed because they are attached to this member’s venues or KJ profile.';
+    else if(Number(content.venues||0)>0)warning.textContent='Deleting these venues also deletes associated schedules, saved favorites, and photos that other members may have posted.';
     reasonWrap.hidden=self;
     confirmWrap.hidden=false;
     const required=self?'DELETE MY ACCOUNT':'DELETE MEMBER';
@@ -166,11 +167,16 @@ function mountSelf(){
   section.append(heading,note,btn);settings.append(section);
   function refresh(){
     const valid=!!actor()?.id;
-    const founder=typeof memberProfile!=='undefined'&&memberProfile?.user_id===actor()?.id&&memberProfile?.member_number===1;
-    btn.disabled=!valid||founder;
-    if(founder)note.textContent='Founder accounts must transfer or protect site ownership before any account deletion.';
+    btn.disabled=!valid;
   }
   refresh();
+  if(client())client().rpc('is_platform_founder').then(({data,error})=>{
+    if(!section.isConnected||error)return;
+    if(data===true){
+      btn.disabled=true;
+      note.textContent='The Founder account is protected. Site ownership must be handled separately before it can be removed.';
+    }
+  }).catch(()=>{});
 }
 function install(){mountManagement();mountSelf();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
