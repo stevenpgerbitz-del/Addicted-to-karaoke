@@ -794,19 +794,21 @@
 
 
 
-/* Build 285 — continuous soft-edged curtain, unstretched microphone art.
+/* Build 286 — tapered curtain transition with no horizontal image seam.
    One photo belongs in the sidebar art frame; a focused velvet-curtain crop
    belongs in the header. Never scale the entire logo across both rows.
    Keeps the approved desktop geometry, accessible actions and phone layout. */
 @media(min-width:781px){
  #a2k-delete-account-dialog.a2k-deletion-wizard{
    position:relative;isolation:isolate;
+   /* Dark backing under the fade prevents pale gaps at the artwork join. */
+   background:#5a000d!important;
  }
  #a2k-delete-account-dialog.a2k-deletion-wizard::before{
    /* Only the header curtain, not a vertically distorted duplicate logo. */
    content:"";display:block;position:absolute;
    pointer-events:none;left:0;top:0;z-index:3;
-   width:25%;height:106px;
+   width:25%;height:168px;
    border-radius:11px 0 0 0;
    background-image:
      linear-gradient(90deg,rgba(36,0,8,.15),rgba(61,0,11,.02) 74%,#6e0514 100%),
@@ -814,8 +816,8 @@
    background-position:0 0,0 0;
    background-repeat:no-repeat;
    background-size:100% 100%,290% auto;
-   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 66%,transparent 100%);
-   mask-image:linear-gradient(to bottom,#000 0%,#000 66%,transparent 100%);
+   -webkit-mask-image:radial-gradient(ellipse 100% 115% at 0 0,#000 0%,#000 30%,rgba(0,0,0,.78) 47%,transparent 85%);
+   mask-image:radial-gradient(ellipse 100% 115% at 0 0,#000 0%,#000 30%,rgba(0,0,0,.78) 47%,transparent 85%);
  }
  #a2k-delete-account-dialog .a2k-deletion-titlebar{
    position:relative;z-index:4;
@@ -866,8 +868,9 @@
    max-height:none!important;min-height:0!important;
    object-fit:contain;object-position:center center;
    border:0!important;border-radius:0!important;
-   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 93%,transparent 100%);
-   mask-image:linear-gradient(to bottom,#000 0%,#000 93%,transparent 100%);
+   /* Fade just the left curtain edge at the top; the mic and letters stay sharp. */
+   -webkit-mask-image:radial-gradient(ellipse 63% 38% at 0 0,transparent 0%,rgba(0,0,0,.65) 45%,#000 94%);
+   mask-image:radial-gradient(ellipse 63% 38% at 0 0,transparent 0%,rgba(0,0,0,.65) 45%,#000 94%);
  }
  /* The decorative arc at this seam was what made the two pieces look stacked.
     An understated burgundy fade is less conspicuous than an outlined join. */
