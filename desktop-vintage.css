@@ -15,7 +15,7 @@
  html.a2k-desktop-live .app>header:not(#a2k-desktop-header){display:none!important}
  html.a2k-desktop-live #a2k-desktop-header{
    position:relative;isolation:isolate;grid-column:1/-1;grid-row:1;display:flex;
-   align-items:center;justify-content:center;width:100%;height:214px;
+   align-items:center;justify-content:center;width:100%;height:240px;
    border-bottom:2px solid #aa804c;
    background:#130a08 url('assets/a2k-lounge-desktop.svg') center center / cover no-repeat;
    overflow:hidden;
@@ -42,7 +42,7 @@
  html.a2k-desktop-live .a2k-desktop-member button:focus-visible{outline:2px solid #f4daae;outline-offset:2px}
  html.a2k-desktop-live #a2k-desktop-sidebar{
    position:sticky;top:0;grid-column:1;grid-row:2;display:flex;flex-direction:column;
-   gap:7px;min-height:calc(100vh - 214px);padding:25px 15px 28px;
+   gap:7px;min-height:calc(100vh - 240px);padding:25px 15px 28px;
    border-right:1px solid #604a37;
    background:linear-gradient(180deg,#23130f,#1c120f 60%,#110d0b);
  }
@@ -72,7 +72,7 @@
  html.a2k-desktop-live body:has(#home-screen:not([hidden])) #unified-pages{
    display:block!important;grid-column:2;grid-row:2;min-width:0;width:100%!important;
    padding:20px clamp(18px,2.2vw,30px) 32px!important;margin:0!important;
-   overflow:visible!important;min-height:calc(100vh - 214px)!important;
+   overflow:visible!important;min-height:calc(100vh - 240px)!important;
    height:auto!important;background:linear-gradient(135deg,#150f0d,#0e0b09)!important;
  }
  html.a2k-desktop-live body .unified-screen,
@@ -234,11 +234,11 @@
    border-color:#9a7049!important;
  }
  html.a2k-desktop-live #a2k-desktop-header {
-   height:clamp(140px,12.7vw,202px)!important;
+   height:240px!important;
    background-color:#180806!important;
    background-image:url("assets/a2k-reference-header-clarity.svg?v=251")!important;
    background-position:center center!important;
-   background-size:100% 100%!important;
+   background-size:cover!important;
    background-repeat:no-repeat!important;
    border-bottom:2px solid #d2aa78!important;
    box-shadow:inset 0 -3px 0 #35130c!important;
@@ -283,7 +283,7 @@
    outline:2px solid #f2d4a1!important;outline-offset:-4px!important;
  }
  html.a2k-desktop-live #a2k-desktop-sidebar {
-   min-height:calc(100vh - clamp(140px,12.7vw,202px))!important;
+   min-height:calc(100vh - 240px)!important;
    padding:12px 11px 24px!important;gap:0!important;
    border-right:1px solid #a47d51!important;
    background:
@@ -331,7 +331,7 @@
  }
  html.a2k-desktop-live body #unified-pages,
  html.a2k-desktop-live body:has(#home-screen:not([hidden])) #unified-pages{
-   min-height:calc(100vh - clamp(140px,12.7vw,202px))!important;
+   min-height:calc(100vh - 240px)!important;
    padding:14px 15px 26px 18px!important;
    background:
      radial-gradient(ellipse 80% 65% at 58% 15%,#2c0e0a3a,transparent 80%),
