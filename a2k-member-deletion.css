@@ -790,3 +790,88 @@
  #a2k-delete-account-dialog .a2k-deletion-timeline-item{min-height:34px;font-size:15px}
  #a2k-delete-account-dialog .a2k-deletion-crowd-frame{height:76px;flex-basis:76px}
 }
+
+
+/* Build 281 — unified stage-banner artwork, reference-matched desktop treatment.
+   The red curtain and logo now occupy ONE uninterrupted painted surface spanning
+   the header/sidebar seam. Layout, deletion actions, and phone styling unchanged. */
+@media (min-width:781px){
+  #a2k-delete-account-dialog.a2k-deletion-wizard{
+    position:relative;
+    isolation:isolate;
+  }
+  /* One artwork plane: no separate CSS photo crop in the header. */
+  #a2k-delete-account-dialog.a2k-deletion-wizard::before{
+    content:"";
+    pointer-events:none;
+    position:absolute;
+    left:0;top:0;
+    width:25%;
+    height:211px; /* 74px banner plus 137px sidebar artwork */
+    z-index:3;
+    background-image:
+      linear-gradient(180deg,#54000b 0%,transparent 20%,transparent 94%,#65000e 100%),
+      var(--a2k-deletion-curtain-image);
+    background-repeat:no-repeat;
+    background-position:0 0,0 35px;
+    background-size:100% 100%,100% 176px;
+    border-radius:11px 0 0 0;
+    overflow:hidden;
+  }
+  #a2k-delete-account-dialog .a2k-deletion-titlebar{
+    z-index:4;
+    position:relative;
+    /* Keep left quarter clear for the real stage artwork, not a simulated crop. */
+    background:linear-gradient(90deg,transparent 0 25%,#770411 25.1%,#62000e 64%,#350006 100%)!important;
+    border-bottom:0!important;
+    padding:7px 20px 9px!important;
+  }
+  #a2k-delete-account-dialog .a2k-deletion-titlebar::before{
+    content:none!important;
+    display:none!important;
+  }
+  #a2k-delete-account-dialog .a2k-deletion-app-title{
+    margin-left:16%;
+    transform:none!important;
+    position:relative;
+    z-index:2;
+  }
+  #a2k-delete-account-dialog .a2k-deletion-app-brand{
+    font-size:clamp(19px,2.2vw,24px);
+    text-shadow:0 2px 3px #2a0007,0 0 4px #2a0007;
+  }
+  #a2k-delete-account-dialog .a2k-deletion-app-subtitle{
+    font-size:10px;letter-spacing:.15em;
+    text-shadow:0 2px 3px #240006;
+  }
+  /* Reference's long, clean brass sweep on the upper-right side. */
+  #a2k-delete-account-dialog .a2k-deletion-titlebar::after{
+    content:"";
+    display:block;
+    position:absolute;
+    z-index:1;
+    right:-2px;bottom:0;
+    width:54%;height:100%;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 74' preserveAspectRatio='none'%3E%3Cpath d='M0 74 C144 34 315 19 540 18' fill='none' stroke='%23dfb461' stroke-width='2.8'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-size:100% 100%;
+    border:0!important;
+    opacity:.95;
+    transform:none!important;
+    pointer-events:none;
+  }
+  #a2k-delete-account-dialog .a2k-deletion-sidebar{
+    position:relative;
+    z-index:2;
+    /* The shared stage plane is above this background in the logo area. */
+    padding:0!important;
+    border-right:2px solid #c99b4e;
+  }
+  #a2k-delete-account-dialog .a2k-deletion-logo-frame{
+    height:137px!important;min-height:137px!important;flex:0 0 137px!important;
+    background:transparent!important;border:0!important;box-shadow:none!important;
+  }
+  #a2k-delete-account-dialog .a2k-deletion-brand{
+    visibility:hidden; /* Leave its size/semantics, paint art only once above. */
+  }
+}
