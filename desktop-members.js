@@ -86,8 +86,15 @@
    const rows=await fetchRows('member_profiles',
      'user_id,stage_name,bio,karaoke_interests,created_at,profile_visibility,avatar_path',
      q=>q.eq('directory_visible',true).order('stage_name',{ascending:true}).limit(200));
-   return rows.filter(m=>m.profile_visibility!=='private'&&
+   const visible=rows.filter(m=>m.profile_visibility!=='private'&&
      (m.profile_visibility!=='members'||signed()));
+   if(!visible.length)return visible;
+   let preferences=[];
+   try{preferences=await fetchRows('member_public_preferences',
+     'user_id,show_photo,show_member_since,show_display_name',q=>q.in('user_id',visible.map(m=>m.user_id)).limit(200));}
+   catch(error){console.warn('Member display settings unavailable; showing only basic profiles.',error);}
+   const byId=new Map(preferences.map(p=>[p.user_id,p]));
+   return visible.map(m=>({...m,_prefs:byId.get(m.user_id)||null}));
  }
  function makeDirectorySidebar(members,{role='all',search='',onRole=()=>{},onSearch=()=>{}}={}){
    const sidebar=elem('aside','a2k-d-members-filters a2k-d-shared-members-sidebar');
@@ -171,7 +178,7 @@
  function publicAvatar(member,large=false){
    const avatar=elem('span','a2k-d-member-avatar'+(large?' a2k-d-member-avatar-large':''),(member.stage_name||'M').trim().charAt(0).toUpperCase());
    avatar.setAttribute('aria-hidden','true');
-   const path=member.avatar_path;
+   const path=member._prefs?.show_photo===false?null:member.avatar_path;
    if(typeof path==='string'&&path&&client()){
      try{
        const url=client().storage.from('member-avatars').getPublicUrl(path)?.data?.publicUrl;
@@ -198,7 +205,7 @@
    const since=member.created_at&&Number.isFinite(new Date(member.created_at).getTime())
      ? new Intl.DateTimeFormat('en-US',{month:'short',year:'numeric'}).format(new Date(member.created_at))
      : null;
-   if(since)box.append(elem('p','a2k-d-member-since','Member since '+since));
+   if(since&&member._prefs?.show_member_since!==false)box.append(elem('p','a2k-d-member-since','Member since '+since));
    const view=elem('button','a2k-d-directory-action','View Profile');
    view.type='button';view.onclick=()=>window.a2kOpenMemberProfile(member.user_id,'members');
    box.append(view);
@@ -294,6 +301,11 @@
          'This member has not shared a profile with you.'));
        return;
      }
+     let preferenceRows=[];
+     try{preferenceRows=await fetchRows('member_public_preferences','*',q=>q.eq('user_id',userId).limit(1))}
+     catch(error){console.warn('Public member preferences unavailable',error)}
+     if(!isCurrent())return;
+     member._prefs=preferenceRows[0]||null;
      const roles=rolesOf(member);
      // Keep the directory tools and live directory statistics visible
      // while displaying one selected member to their right.
@@ -327,7 +339,7 @@
      membership.append(elem('span','a2k-d-profile-fact-icon','#'),elem('span','a2k-d-profile-fact-value',''));
      facts.append(membership);
      const date=member.created_at?new Date(member.created_at):null;
-     if(date&&Number.isFinite(date.getTime())){
+     if(date&&Number.isFinite(date.getTime())&&member._prefs?.show_member_since!==false){
        const joined=elem('div','a2k-d-profile-fact a2k-d-profile-joined');
        const calendarIcon=elem('span','a2k-d-profile-fact-icon');
        calendarIcon.append(directoryIcon('calendar'));
@@ -337,6 +349,19 @@
        facts.append(joined);
      }
      side.append(facts);
+     if(member._prefs?.published_email||member._prefs?.published_phone){
+       const contact=elem('div','a2k-d-profile-facts');
+       contact.append(elem('h2','','Public Contact'));
+       if(member._prefs.published_email){
+         const email=elem('a','',member._prefs.published_email);
+         email.href='mailto:'+member._prefs.published_email;contact.append(email);
+       }
+       if(member._prefs.published_phone){
+         const phone=elem('a','',member._prefs.published_phone);
+         phone.href='tel:'+member._prefs.published_phone.replace(/[^\d+]/g,'');contact.append(phone);
+       }
+       side.append(contact);
+     }
      // The database controls member numbers. Never derive them from directory order.
      void (async()=>{
        try{
@@ -361,7 +386,7 @@
      // genres for a member who has not selected any.
      const genres=Array.isArray(member.favorite_genres)
        ?member.favorite_genres.filter(x=>typeof x==='string'&&x.trim()&&x.length<=40).slice(0,16):[];
-     if(roles.length||genres.length){
+     if((roles.length||genres.length)&&member._prefs?.show_genres!==false){
        const interests=elem('section','a2k-d-public-profile-section a2k-d-profile-interests');
        interests.append(elem('h2','','Karaoke Interests'));
        if(genres.length){
@@ -379,7 +404,7 @@
      contentRail.append(main);
      overview.append(side,contentRail);
      overview.classList.add('a2k-d-member-profile-pane');
-     if(roles.includes('KJ / Host')){
+     if(roles.includes('KJ / Host')&&member._prefs?.show_kj_schedule!==false){
        const tabs=elem('div','a2k-d-profile-tabs');
        tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Member profile sections');
        const profileTab=elem('button','a2k-d-profile-tab','Profile');
@@ -501,7 +526,7 @@
      }
      // The saved visibility choices are public / members / private.
      // A member can always see their own songs; others must pass both this gate and RLS.
-     const songsAllowed=roles.includes('Singer')&&
+     const songsAllowed=roles.includes('Singer')&&(isSelf||member._prefs?.show_songs!==false)&&
        (isSelf||member.song_visibility==='public'||(member.song_visibility==='members'&&signed()));
      if(songsAllowed){
        const section=elem('section','a2k-d-public-profile-section a2k-d-profile-songs');
