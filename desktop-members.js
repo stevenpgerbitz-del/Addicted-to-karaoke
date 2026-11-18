@@ -243,6 +243,32 @@
      }
      select.value=order;
      sorter.append(select);toolbar.append(count,sorter);
+     // Phone/tablet: a small search + role selector replaces the large
+     // directory sidebar; keep the sidebar untouched on desktop.
+     const mobileTools=elem('div','a2k-d-mobile-member-tools');
+     mobileTools.setAttribute('aria-label','Find and filter members');
+     const mobileSearch=elem('input','a2k-d-mobile-member-search');
+     mobileSearch.type='search';
+     mobileSearch.placeholder='Search members…';
+     mobileSearch.setAttribute('aria-label','Search members');
+     mobileSearch.value=input.value;
+     const mobileRole=elem('select','a2k-d-mobile-member-role');
+     mobileRole.setAttribute('aria-label','Filter members by role');
+     for(const item of directoryRoles){
+       const option=elem('option','',item.label);
+       option.value=item.id;
+       mobileRole.append(option);
+     }
+     mobileRole.value=selected;
+     mobileSearch.addEventListener('input',()=>{
+       input.value=mobileSearch.value;
+       draw();
+     });
+     mobileRole.addEventListener('change',()=>{
+       const roleButton=roleButtons.get(mobileRole.value);
+       if(roleButton)roleButton.click();
+     });
+     mobileTools.append(mobileSearch,mobileRole);
      const list=elem('div','a2k-d-directory-grid a2k-d-members-grid');
      const empty=elem('p','a2k-d-directory-info','No members match that search.');
      empty.id='a2k-d-members-empty';empty.hidden=true;
@@ -267,11 +293,13 @@
        empty.hidden=shown.length!==0;
        empty.textContent=members.length?'No members match your search and filters.':'No member profiles are visible in the directory yet.';
        for(const [id,button] of roleButtons)button.setAttribute('aria-pressed',String(selected===id));
+       mobileRole.value=selected;
+       mobileSearch.value=input.value;
        directoryState={role:selected,search:input.value,order};
      }
      // Match the approved layout: directory controls and Members heading start
      // side by side. The heading belongs to the results column, not above both.
-     results.append(heading,intro,toolbar,list,empty);
+     results.append(heading,intro,mobileTools,toolbar,list,empty);
      layout.append(filters,results);
      target.replaceChildren(layout);
      select.addEventListener('change',()=>{order=select.value;draw()});
