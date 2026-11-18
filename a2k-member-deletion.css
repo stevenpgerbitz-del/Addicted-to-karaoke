@@ -1036,3 +1036,26 @@
 }
 
 /* Build 302: softened stage artwork alpha seam; layout and actions preserved. */
+
+/* Build 303 — approved active wizard-step dot.
+   Only the currently active sidebar step receives a small gold center
+   inside its glowing burgundy circle. Other steps, layout, functionality,
+   and mobile styling remain unchanged. */
+@media (min-width:781px) {
+ #a2k-delete-account-dialog .a2k-deletion-timeline-item.current .a2k-deletion-timeline-dot {
+  position:relative!important;
+  background:radial-gradient(circle at 35% 28%,#8c1930 0%,#58000d 76%)!important;
+ }
+ #a2k-delete-account-dialog .a2k-deletion-timeline-item.current .a2k-deletion-timeline-dot::after {
+  content:"";
+  display:block;
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:7px;height:7px;
+  border-radius:50%;
+  background:#ffe2a0;
+  box-shadow:0 0 5px 1px rgba(255,196,83,.85);
+  pointer-events:none;
+ }
+}
