@@ -22,7 +22,7 @@
  const form=make('form');
  form.noValidate=true;
  const title=make('h2','', 'Claim This Venue'); title.id='atk-claim-title';
- const intro=make('p','atk-community-context','Request to manage a venue listing. Ownership is granted only after verification and admin approval.');
+ const intro=make('p','atk-community-context','Request to manage a venue listing. Venue management access is granted only after verification and admin approval.');
  const venueName=make('p','atk-claim-venue-name');
  const roleLabel=make('p','atk-claim-label','What is your connection to this venue?');
  const roles=make('div','atk-claim-roles');
