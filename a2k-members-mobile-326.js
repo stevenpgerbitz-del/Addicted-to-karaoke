@@ -45,6 +45,14 @@
     const awards=side?.querySelector('.a2k-d-public-profile-awards');
     if(!selected||!side||!main||!awards)return;
 
+    // The existing public contact information is optional. Give it a
+    // mobile-only layout hook without changing its contents or privacy gates.
+    for(const panel of side.querySelectorAll(':scope > .a2k-d-profile-facts')){
+      if(panel.querySelector(':scope > h2')?.textContent?.trim()==='Public Contact'){
+        panel.classList.add('a2k-d-mobile-contact-card');
+      }
+    }
+
     if(!side.querySelector('.a2k-d-mobile-featured-badge')){
       const badge=el('span','a2k-d-mobile-featured-badge');
       badge.setAttribute('aria-label','Founder badge');
