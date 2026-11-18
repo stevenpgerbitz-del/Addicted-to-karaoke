@@ -37,7 +37,7 @@ function ensure(){
  const d=node('dialog');d.id='abm-dialog';d.setAttribute('aria-label','Badge Management');
  const h=node('div','abm-head');h.append(node('h2','','Badge Management'),node('p','','Addicted to Karaoke · Founder-only achievement requirements'));
  const body=node('div','abm-body');body.id='abm-body';
- body.append(node('p','abm-footnote','Preview each change before saving. Existing awards are protected when requirements rise. New artwork and renamed badge labels are still awaiting approval; Favorite Venue awards remain inactive.'));
+ body.append(node('p','abm-footnote','Preview each change before saving. Existing awards are protected when requirements rise. The approved 24-badge collection is now live; Favorite Venue achievements are active.'));
  const preview=node('section','abm-preview');preview.id='abm-preview';preview.hidden=true;
  const status=node('p','abm-status');status.id='abm-status';status.setAttribute('role','status');
  const foot=node('div','abm-bottom'),close=node('button','','Close');close.type='button';close.onclick=()=>d.close();foot.append(close);
