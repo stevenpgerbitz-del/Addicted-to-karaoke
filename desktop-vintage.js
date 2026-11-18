@@ -368,17 +368,25 @@
    selectedDesktopTab=key;go(key);
    activeMenu();
  }
- // Open a public member link through the existing Members page, not a new layout.
- window.a2kDesktopOpenMemberRoute=function(userId){
-   if(!/^[a-f0-9-]{36}$/i.test(String(userId||'')))return;
+ // Reuse the existing Members view on phones, tablets, and desktops.
+ function enterMembers(){
    go('find');
    selectedDesktopTab='members';
    const find=document.getElementById('find-screen');
    if(find)find.classList.add('a2k-d-directory-active');
-   const shell=document.getElementById('a2k-d-directory');
-   if(shell)shell.hidden=false;
+   const shell=directoryView(); // Create the mount even on a fresh mobile visit.
    activeMenu();
-   if(typeof window.a2kOpenMemberProfile==='function')
+   return shell;
+ }
+ window.a2kOpenMembersLanding=function(){
+   const shell=enterMembers();
+   if(shell&&typeof window.a2kOpenMembersDirectory==='function')
+     void window.a2kOpenMembersDirectory(shell);
+ };
+ window.a2kDesktopOpenMemberRoute=function(userId){
+   if(!/^[a-f0-9-]{36}$/i.test(String(userId||'')))return;
+   const shell=enterMembers();
+   if(shell&&typeof window.a2kOpenMemberProfile==='function')
      void window.a2kOpenMemberProfile(userId,'members');
  };
  function makeSidebar(app){
