@@ -25,21 +25,28 @@ function open(isManual){
  // Keep the user's current site section visible behind this modal; do not navigate.
  overlay=document.createElement('section');
  overlay.id='a2k-member-setup-live-overlay';
- Object.assign(overlay.style,{position:'fixed',inset:'0',zIndex:'100001',background:'rgba(22,0,7,.65)',backdropFilter:'blur(2px)',WebkitBackdropFilter:'blur(2px)',overflow:'hidden'});
+ Object.assign(overlay.style,{position:'fixed',inset:'0',zIndex:'100001',display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(22,0,7,.65)',backdropFilter:'blur(2px)',WebkitBackdropFilter:'blur(2px)',overflow:'hidden'});
  overlay.setAttribute('role','dialog');
  overlay.setAttribute('aria-label','Addicted to Karaoke member setup');
  overlay.setAttribute('aria-modal','true');
  frame=document.createElement('iframe');
  frame.title='Addicted to Karaoke Member Setup Wizard';
- frame.src='member-setup-preview.html?live=1&v=315';
+ frame.src='member-setup-preview.html?live=1&v=316';
  frame.setAttribute('referrerpolicy','same-origin');
  frame.onerror=function(){
    var m=manual;close();
    if(typeof originalWizardStart==='function')originalWizardStart(m);
    else if(typeof authStatus==='function')authStatus('Could not open setup. Please refresh the page and try again.');
  };
- Object.assign(frame.style,{border:'0',width:'100%',height:'100%',display:'block',background:'transparent'});
- overlay.appendChild(frame);document.body.appendChild(overlay);opening=false;
+ // Keep the iframe the size of the wizard, not the whole viewport:
+ // browsers may paint an opaque white iframe canvas even when its
+ // document background is transparent. The parent site is now visible
+ // all around the real modal. Mobile remains full-screen.
+ const sizing=document.createElement('style');
+ sizing.textContent='#a2k-member-setup-live-overlay iframe{width:min(920px,calc(100vw - 20px));height:min(630px,calc(100dvh - 20px));max-width:100%;max-height:100%;}' +
+  '@media(max-width:760px){#a2k-member-setup-live-overlay iframe{width:100%;height:100%;}}';
+ Object.assign(frame.style,{border:'0',display:'block',background:'transparent'});
+ overlay.append(sizing,frame);document.body.appendChild(overlay);opening=false;
 }
 async function initial(){
  if(!allowed())return;
