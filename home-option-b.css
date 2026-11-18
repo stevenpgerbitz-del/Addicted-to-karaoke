@@ -529,3 +529,18 @@ body:has(#home-screen:not([hidden])) #home-screen{
 #home-screen .a2k-b-home.a2k-b-tight .a2k-b-hero{
  margin-bottom:16px!important;
 }
+
+
+/* Build 324: Spotlight counters are tappable on mobile, informational on desktop. */
+@media(max-width:1023px){
+ #home-screen .a2k-b-stat[data-mobile-spotlight-link]{
+  cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  position:relative;border-radius:8px;
+ }
+ #home-screen .a2k-b-stat[data-mobile-spotlight-link]:active{
+  background:#b7874826;
+ }
+ #home-screen .a2k-b-stat[data-mobile-spotlight-link]:focus-visible{
+  outline:2px solid #f8dab3;outline-offset:-2px;
+ }
+}
