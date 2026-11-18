@@ -1080,3 +1080,14 @@
   text-align:center!important;
  }
 }
+
+/* Build 306 — give the review heading a little more breathing room
+   below the burgundy header. Move only the desktop review step's
+   scrollable content down 12px; preserve all spacing within the
+   content, other steps, mobile layout and the approved art. */
+@media (min-width:781px) {
+ #a2k-delete-account-dialog #a2k-deletion-stage.a2k-deletion-review-stage {
+  padding-top:30px!important;
+  scroll-padding-top:30px;
+ }
+}
