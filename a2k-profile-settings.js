@@ -124,8 +124,8 @@ function renderContacts(){
  const any=selected.has('kj')||selected.has('venue_owner');
  actions.hidden=!any;
  if(selected.has('kj'))contactGroup(dest,'KJ / Host Contact','kj');
- if(selected.has('venue_owner'))contactGroup(dest,'Venue Owner Contact','venue');
- if(!any)dest.append(el('p','a2k-settings-explain','Available to KJs and venue owners.'));
+ if(selected.has('venue_owner'))contactGroup(dest,'Venue Staff Contact','venue');
+ if(!any)dest.append(el('p','a2k-settings-explain','Available to KJs and venue staff.'));
 }
 async function saveContacts(){
  if(!contactLoaded||!signedIn()||contactBusy)return;
