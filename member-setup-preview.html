@@ -806,6 +806,45 @@ html.a2k-live-setup-frame #app {
 @media(max-width:760px){
  #app .shell .main-inner{padding-top:9px!important}
 }
+</style>
+<style>
+/* A2K Build 351 — optional help in the existing titlebar, no extra content height. */
+#app .shell .titlebar{position:relative;z-index:30;overflow:visible}
+#app .shell .a2k-step-help{position:relative;flex:0 0 auto;margin:0 3px}
+#app .shell .a2k-step-help summary{
+ display:grid;place-items:center;box-sizing:border-box;list-style:none;
+ width:31px;height:31px;min-width:31px;border:1.5px solid #f5d48f;
+ border-radius:50%;background:linear-gradient(#8a251b,#57100b);
+ color:#fff0cb;font:italic 700 20px/1 Georgia,serif;
+ cursor:pointer;box-shadow:inset 0 0 0 1px #a96730;
+}
+#app .shell .a2k-step-help summary::-webkit-details-marker{display:none}
+#app .shell .a2k-step-help summary::marker{content:""}
+#app .shell .a2k-step-help summary:hover,
+#app .shell .a2k-step-help[open] summary{background:linear-gradient(#ab442b,#712019)}
+#app .shell .a2k-step-help summary:focus-visible{outline:3px solid #ffe5ac;outline-offset:3px}
+#app .shell .a2k-step-help-panel{
+ position:absolute;z-index:100;top:calc(100% + 13px);right:0;
+ box-sizing:border-box;width:min(345px,calc(100vw - 36px));
+ max-height:min(360px,65dvh);overflow-y:auto;
+ padding:14px 17px;border:1.5px solid #bb8d49;border-radius:12px;
+ background:#fff2d9;color:#552217;box-shadow:0 10px 30px #15000688;
+ text-shadow:none;font:14px/1.45 Georgia,serif;letter-spacing:normal;white-space:normal;
+}
+#app .shell .a2k-step-help-panel strong{display:block;margin-bottom:7px;font:700 17px/1.25 Georgia,serif;color:#680d18}
+#app .shell .a2k-step-help-panel p{margin:0}
+#app .shell .main-inner .info.a2k-essential-note{
+ box-sizing:border-box;min-height:0!important;margin-top:9px!important;
+ padding:6px 10px!important;gap:7px!important;border-radius:8px!important;
+ box-shadow:inset 0 0 0 1px #fff7ea!important;font:normal 12px/1.35 Georgia,serif!important;
+}
+#app .shell .main-inner .a2k-essential-note .info-icon{
+ box-sizing:border-box;min-width:20px;width:20px;height:20px;font:700 12px/1 Georgia,serif
+}
+@media(max-width:760px){
+ #app .shell .a2k-step-help-panel{right:-2px;width:min(335px,calc(100vw - 20px));font-size:13px}
+ #app .shell .a2k-step-help summary{width:29px;height:29px;min-width:29px;font-size:18px}
+}
 </style></head>
 <body><div class="website-stage" aria-hidden="true"><div class="website-hero"></div><div class="website-cards"><div class="website-card"><span class="web-symbol">🎙</span><h2>Discover Karaoke Venues</h2><p>Find karaoke bars, clubs, and events near you.</p><span class="web-link">Browse Venues →</span></div><div class="website-card"><span class="web-symbol">★</span><h2>Built for the Karaoke Community</h2><p>Singers, KJs, and venues all in one place.</p></div><div class="website-card"><span class="web-symbol">♟</span><h2>Join the Addicted to Karaoke Community</h2><p>Connect with singers, KJs, and karaoke fans throughout the community.</p><span class="web-link">Get Involved →</span></div></div><div class="website-lower"></div><span class="website-stamp">DEMO WEBSITE BACKGROUND · NOT LIVE</span></div><div class="website-scrim" aria-hidden="true"></div><div id="app"></div><script>
 (()=>{
@@ -889,7 +928,43 @@ const EXPERIENCE_ART = {
 };
 function tile({title,desc='',icon='',pressed=false,action='noop',key='',value='',big=false}){return `<button type="button" class="tile${big?' big':''}" aria-pressed="${pressed?'true':'false'}" data-action="${attr(action)}" data-key="${attr(key)}" data-value="${attr(value)}">${big && action==='role' ? `<span class="role-visual"><img alt="" class="role-photo" src="${ROLE_ART[value]}"></span>` : action==='level'?`<img class="experience-badge-img" alt="" src="${EXPERIENCE_BADGE_ART[title]}">`:icon?`<span aria-hidden="true" class="tile-icon">${iconSvg(icon)}</span>`:''}<span class="tile-title">${esc(title)}</span>${desc?`<span class="tile-desc">${esc(desc)}</span>`:''}</button>`;}
 function head(title,subtitle,lede=''){return `<div class="page-head"><h1>${title}</h1><div class="flourish">♫</div>${subtitle?`<p class="subtitle">${subtitle}</p>`:''}${lede?`<p class="lede">${lede}</p>`:''}</div>`;}
-function info(text){return `<div class="info"><span class="info-icon">i</span><span>${text}</span></div>`;}
+function info(text){
+ const supplementary=new Set([
+   'Choose more than one if it applies. You can change your interests later in your profile. A highlighted burgundy tile means selected.',
+   'You can change your profile picture, location, and About Me at any time.',
+   'Your experience is optional, and you can change it later in your profile.',
+   'Your music interests will appear in your About Me section if you choose to show them publicly.',
+   'Your list is just a simulation in this preview. Your real song list will remain unchanged.',
+   'When Addicted to Karaoke goes live, tapping a favorite venue can open its real listing, schedule, reviews, and directions.',
+   'This step is optional. Add as many co-hosts as needed and manage them from your profile later.'
+ ]);
+ if(supplementary.has(text))return '';
+ // Leave privacy, consent, submissions, and review status messages visible.
+ return `<div class="info a2k-essential-note"><span class="info-icon" aria-hidden="true">i</span><span>${text}</span></div>`;
+}
+function stepHelp(key){
+ const copy={
+  welcome:['About setup','Choose the karaoke interests that apply to you, complete the relevant screens, and set profile visibility. You can skip optional steps.'],
+  interests:['Choosing your interests','You may choose Singer, KJ / Host, Venue Staff, or several roles together. A highlighted burgundy tile means selected. These choices can be changed later.'],
+  profile:['About your profile','The microphone is the neutral default picture. Choose a theatrical portrait or upload your own photo. You can change your picture, About Me, and location later.'],
+  experience:['Your karaoke experience','Choose the description that best fits your experience or skip the step. It is optional and can be changed later.'],
+  singer_music:['Favorite music and eras','Choose as many genres and eras as you enjoy. They can appear in your About Me section according to your visibility settings.'],
+  singer_songs:['Favorite songs',LIVE?'Songs chosen here are added to your A2K song list when you save and finish.':'This preview uses sample songs and does not change your real song list.'],
+  singer_venues:['Favorite venues',LIVE?'Search for published venues to add to your favorites.':'This preview uses sample venues. Live venue pages can include schedules, reviews, and directions.'],
+  kj_business:['KJ business information','Contact details start private; authorized A2K administrators can review submitted information.'],
+  kj_hosts:['Hosting team','Add co-hosts if you work with others. This is optional and can be edited later.'],
+  kj_venues:['Where you host',LIVE?'Search published venues or propose a new venue. New listings and schedules are reviewed before publication.':'This preview uses sample venues and does not submit them for approval.'],
+  kj_schedule:['KJ schedule',LIVE?'Weekly schedules are submitted for approval. One-time events have a separate approval flow.':'Example schedules in this preview are not published.'],
+  owner_business:['Venue contact details','Contact details start private and can be viewed by authorized administrators during review.'],
+  owner_venue:['Your venue request','A claim or new venue listing does not confer ownership automatically. Authorized administrators must review the request.'],
+  owner_settings:['Venue settings','Amenities, genres, and posting preferences remain draft choices until the venue request is approved.'],
+  owner_confirm:['Approval process','Venue control is not automatic. Requests remain pending until an authorized administrator approves them.'],
+  privacy:['Privacy and visibility','Highlighted tiles mean visible; cream tiles mean hidden. These settings determine what other members can see and can be changed later.'],
+  done:['Setup summary',LIVE?'Your setup has been saved. Venue and hosting submissions may remain pending for review.':'This is a preview: no real member account, venue request or schedule was created by testing it.']
+ };
+ const entry=copy[key];if(!entry)return '';
+ return `<details class="a2k-step-help"><summary title="More information about this step" aria-label="More information about ${esc(entry[0])}">i</summary><div class="a2k-step-help-panel" role="note"><strong>${esc(entry[0])}</strong><p>${esc(entry[1])}</p></div></details>`;
+}
 function field(label,key,opts={}){const val=s[key]??'';let input='';if(opts.textarea)input=`<textarea id="fld_${key}" data-field="${key}" placeholder="${attr(opts.placeholder||'')}" maxlength="${opts.maxlength||300}">${esc(val)}</textarea>`;else if(opts.select)input=`<select id="fld_${key}" data-field="${key}">${opts.select.map(op=>`<option value="${attr(op.value)}" ${val===op.value?'selected':''}>${esc(op.label)}</option>`).join('')}</select>`;else input=`<input id="fld_${key}" data-field="${key}" type="${opts.type||'text'}" value="${attr(val)}" placeholder="${attr(opts.placeholder||'')}" ${opts.maxlength?`maxlength="${opts.maxlength}"`:''} autocomplete="off" />`;return `<div class="field ${opts.wide?'wide':''}"><label for="fld_${key}">${label}${opts.required?' <span class="required">*</span>':''}</label>${input}${opts.help?`<span class="help">${opts.help}</span>`:''}</div>`;}
 function panelBar(text){return `<div class="panel-bar">${text}</div>`;}
 function tags(arr,key){return arr.length?`<div>${arr.map(v=>`<span class="tag">${esc(v)} <button type="button" aria-label="Remove ${attr(v)}" data-action="removeArr" data-key="${key}" data-value="${attr(v)}">×</button></span>`).join('')}</div>`:`<div class="empty">Nothing added yet. You can continue without adding anything.</div>`;}
@@ -923,7 +998,7 @@ function sidebar(key){const st=stageIndex(key);return `<aside class="sidebar"><i
 function mobile(key){let st=stageIndex(key);return `<div class="mobile-progress"><div class="mobile-brand"><img src="${LOGO}" alt="Addicted to Karaoke"><b>Member Setup Wizard</b></div><div class="mobile-title"><b>${stages[st]}</b><span>Stage ${st+1} of ${stages.length}</span></div><div class="dots">${stages.map((_,i)=>`<span class="${i===st?'curr':i<st?'past':''}"></span>`).join('')}</div></div>`;}
 function footer(key){if(key==='done')return `<footer class="footer"><div class="foot-left"><button type="button" class="btn" data-action="restart">Start Over</button></div><div class="foot-right"><button type="button" class="btn" data-action="back">&lt; Back</button><button type="button" class="btn primary" data-action="restart">Try Another Role ↻</button></div></footer>`;let nextText='Next >';return `<footer class="footer"><div class="foot-left"><button class="btn" data-action="skipStep">${key==='welcome'?'Skip Setup':'Skip This Step'}</button><button class="quiet" data-action="skipAll" type="button">Skip all</button></div><div class="foot-right"><button class="btn" data-action="back" ${s.route===0?'disabled':''}>&lt; Back</button><button class="btn primary" data-action="next">${nextText}</button><button class="btn mobile-hide" data-action="cancel">Cancel</button></div></footer>`;}
 function modal(){return `<div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="cancel-title"><div class="modal"><h2 id="cancel-title">Leave this preview run?</h2><p>No changes are saved to Addicted to Karaoke. You can restart with different role selections at any time.</p><div class="inline-row"><button class="btn" data-action="modalClose">Keep Testing</button><button class="btn primary" data-action="restart">Restart Preview</button></div></div></div>`;}
-function render(scroll=true){const prevScroll=scroll?0:(document.getElementById('main')?.scrollTop||0);if(uiMinimized||uiClosed){app.innerHTML=`<div class="preview-reopen"><span>${uiClosed?'Preview closed':'Wizard minimized'}</span><button type="button" data-action="winRestore">Open Setup Wizard</button></div>`;return;}const key=current(),st=stageIndex(key);app.innerHTML=`<section class="shell${uiMaximized?' maximized':''}${key==='welcome'?' welcome-screen':''}${key==='profile'?' profile-screen':''}${key==='experience'?' experience-screen':''}"><header class="titlebar"><span class="app-symbol" aria-hidden="true">📦</span><div class="title"><strong>Addicted to Karaoke</strong><small>MEMBER SETUP WIZARD</small></div><span class="mode">TEST MODE</span><div class="window-controls"><button type="button" aria-label="Minimize wizard" title="Minimize" data-action="winMin">−</button><button type="button" aria-label="${uiMaximized?'Restore window':'Maximize window'}" title="${uiMaximized?'Restore':'Maximize'}" data-action="winMax">${uiMaximized?'❐':'□'}</button><button type="button" class="win-close" aria-label="Close wizard preview" title="Close" data-action="winClose">×</button></div></header><div class="layout">${sidebar(key)}<div class="mobile-progress">${mobile(key).replace('<div class="mobile-progress">','').replace(/<\/div>\s*$/,'')}</div><main id="main" class="main" role="main"><div class="main-inner">${s.error?`<div class="error" role="alert">${esc(s.error)}</div>`:''}${content(key)}</div></main></div>${footer(key)}</section>${s.modal?modal():''}`;const titlebar=app.querySelector('.titlebar');if(titlebar&&window.innerWidth>760)titlebar.style.setProperty('--a2k-stage-art','url("'+LOGO+'")');
+function render(scroll=true){const prevScroll=scroll?0:(document.getElementById('main')?.scrollTop||0);if(uiMinimized||uiClosed){app.innerHTML=`<div class="preview-reopen"><span>${uiClosed?'Preview closed':'Wizard minimized'}</span><button type="button" data-action="winRestore">Open Setup Wizard</button></div>`;return;}const key=current(),st=stageIndex(key);app.innerHTML=`<section class="shell${uiMaximized?' maximized':''}${key==='welcome'?' welcome-screen':''}${key==='profile'?' profile-screen':''}${key==='experience'?' experience-screen':''}"><header class="titlebar"><span class="app-symbol" aria-hidden="true">📦</span><div class="title"><strong>Addicted to Karaoke</strong><small>MEMBER SETUP WIZARD</small></div><span class="mode">TEST MODE</span>${stepHelp(key)}<div class="window-controls"><button type="button" aria-label="Minimize wizard" title="Minimize" data-action="winMin">−</button><button type="button" aria-label="${uiMaximized?'Restore window':'Maximize window'}" title="${uiMaximized?'Restore':'Maximize'}" data-action="winMax">${uiMaximized?'❐':'□'}</button><button type="button" class="win-close" aria-label="Close wizard preview" title="Close" data-action="winClose">×</button></div></header><div class="layout">${sidebar(key)}<div class="mobile-progress">${mobile(key).replace('<div class="mobile-progress">','').replace(/<\/div>\s*$/,'')}</div><main id="main" class="main" role="main"><div class="main-inner">${s.error?`<div class="error" role="alert">${esc(s.error)}</div>`:''}${content(key)}</div></main></div>${footer(key)}</section>${s.modal?modal():''}`;const titlebar=app.querySelector('.titlebar');if(titlebar&&window.innerWidth>760)titlebar.style.setProperty('--a2k-stage-art','url("'+LOGO+'")');
 if(LIVE){
  const foot=app.querySelector('.footer .foot-left');
  try{
