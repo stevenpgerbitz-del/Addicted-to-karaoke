@@ -12,22 +12,22 @@
   ['DJ Scarlet',['kj'],['verified_kj','founding_tester'],true,true,'Hosts retro karaoke across town.','80s Classics','2024-04-12'],
   ['Mic Drop Mike',['singer'],['song_25'],false,true,'Classic rock and big finales.','Classic Rock','2025-06-21'],
   ['The Velvet Voice',['singer'],['song_100','review_75'],true,true,'Ballads are my specialty.','Soul & R&B','2024-07-10'],
-  ['Retro Rita',['singer'],['founding_tester'],false,false,'Always up for a duet.','80s Pop','2026-03-19'],
-  ['DJ Echo',['kj','singer'],['verified_kj','community_supporter'],true,true,'Your host for Friday nights.','Country & Rock','2025-01-09'],
+  ['Retro Rita',['singer'],['founding_tester','review_75','song_25'],false,false,'Always up for a duet.','80s Pop','2026-03-19'],
+  ['DJ Echo',['kj','singer'],['verified_kj','community_supporter','review_75','song_100'],true,true,'Your host for Friday nights.','Country & Rock','2025-01-09'],
   ['Spotlight Sue',['venue_owner'],['verified_venue_owner'],true,true,'Helping singers feel at home.','All Genres','2024-09-30'],
   ['Jukebox Jordan',['kj'],[],false,true,'Hosting weekly karaoke parties.','Rock','2026-05-11'],
   ['Singalong Sally',['singer'],['favorite_25'],false,false,'If you know the chorus, sing it!','Singalongs','2026-02-16'],
-  ['The Midnight Microphone',['singer','kj'],['review_100','song_75'],true,true,'Late nights and unforgettable songs.','90s Alternative','2024-12-01'],
+  ['The Midnight Microphone',['singer','kj'],['review_100','song_75','favorite_10','venue_10'],true,true,'Late nights and unforgettable songs.','90s Alternative','2024-12-01'],
   ['Piano Bar Pat',['singer'],['review_1'],false,true,'A little jazz makes everything better.','Jazz Standards','2026-08-21'],
   ['Karaoke Carrie',['singer'],['review_25','favorite_10'],true,true,'I love finding welcoming karaoke nights.','Pop','2025-05-15'],
   ['Soundcheck Sam',['kj'],['verified_kj'],true,false,'Making every mic sound its best.','Classic Rock','2025-11-03'],
   ['Golden Notes',['singer'],['song_75'],false,true,'Always discovering a new favorite.','Oldies','2025-08-17'],
-  ['Vinyl & Velvet Entertainment',['kj','venue_owner'],['community_supporter','venue_10'],true,true,'Music, memories, and a packed room.','Disco & Funk','2024-01-26'],
+  ['Vinyl & Velvet Entertainment',['kj','venue_owner'],['community_supporter','venue_10','review_25','favorite_25'],true,true,'Music, memories, and a packed room.','Disco & Funk','2024-01-26'],
   ['Encore Queen',['singer'],['favorite_5'],true,true,'One more song!','Pop & Dance','2026-06-23'],
   ['Stage Light Steve',['singer'],['founding_tester','song_1'],false,false,'Here for the great company.','Classic Country','2026-09-04'],
   ['Harmony Hall Manager',['venue_owner'],[],false,true,'Connecting the community with live music.','All Genres','2026-04-18'],
   ['DJ Northern Lights',['kj'],['verified_kj','venue_1'],true,true,'Songs for every generation.','Variety','2025-02-08'],
-  ['The Karaoke Collector',['singer'],['song_100','favorite_25'],false,true,'My song list is never finished.','Rock & Pop','2024-11-19'],
+  ['The Karaoke Collector',['singer'],['song_100','favorite_25','review_25','song_75'],false,true,'My song list is never finished.','Rock & Pop','2024-11-19'],
   ['Preview Founder',['singer'],['founder'],true,true,'Example of the founder display.','80s & 90s','2023-07-07']
  ].map((v,i)=>({id:i+1,name:v[0],roles:v[1],badges:v[2],verified:v[3],
   portrait:v[4],about:v[5],music:v[6],joined:v[7]}));
@@ -130,13 +130,33 @@
   }
   return frame;
  }
- function award(code){
-  const chip=create('span','a2k-d-member-featured-chip');
-  chip.title=LABELS[code]||code;
+
+ const rarityRank={
+  founder:5,founding_tester:5,review_100:5,song_100:5,venue_100:5,favorite_25:5,
+  verified_kj:4,verified_venue_owner:4,community_supporter:4,super_admin:4,
+  review_75:4,song_75:4,venue_25:4,favorite_10:4,
+  admin:3,moderator:3,review_25:3,song_25:3,venue_10:3,favorite_5:3,
+  review_1:2,song_1:2,venue_1:2,favorite_1:2
+ };
+ const rarityName={5:'Legendary',4:'Epic',3:'Rare',2:'Uncommon',1:'Common'};
+ function sortedAwards(m){
+  // The sample uses the same curated tiers as the real database, then
+  // the number of sample badge holders as a tie-breaker.
+  const holders=code=>DEMO.filter(x=>x.badges.includes(code)).length;
+  return m.badges.slice().sort((a,b)=>
+   (rarityRank[b]||1)-(rarityRank[a]||1) ||
+   holders(a)-holders(b) || String(a).localeCompare(String(b)));
+ }
+ function award(code,showLabel=false){
+  const label=LABELS[code]||code;
+  const chip=create('span','a2k-d-member-featured-chip'+(showLabel?'':' a2k-d-icon-only-badge'));
+  const hint=label+' · '+(rarityName[rarityRank[code]||1]||'Common')+' badge';
+  chip.title=hint;chip.setAttribute('role','img');chip.setAttribute('aria-label',hint);
   const img=create('img','a2k-d-member-featured-art');
   img.src='assets/badges/'+code+'.png?v=319';
-  img.alt='';img.loading='lazy';img.onerror=()=>img.remove();
-  chip.append(img,create('span','',LABELS[code]||code));
+  img.alt='';img.loading='lazy';img.onerror=()=>chip.remove();
+  chip.append(img);
+  if(showLabel)chip.append(create('span','',label));
   return chip;
  }
  function card(m){
@@ -148,16 +168,16 @@
   label.append(name);
   head.append(portrait(m),label);tile.append(head);
   const awards=create('div','a2k-d-directory-featured');
-  m.badges.slice(0,2).forEach(code=>awards.append(award(code)));
-  if(!m.badges.length&&m.roles.includes('kj')){
-   awards.append(create('span','a2k-d-member-role-chip','KJ / Host'));
-  }
+  sortedAwards(m).slice(0,4).forEach(code=>awards.append(award(code)));
+  // Role is shown on the portrait; award row contains only earned badges.
   if(awards.childElementCount)tile.append(awards);
   const number=create('p','a2k-d-member-number','Preview #'+String(m.id).padStart(2,'0'));
   tile.append(number);
   tile.append(create('p','a2k-d-member-since','Joined '+new Date(m.joined+'T12:00:00').toLocaleDateString('en-US',{month:'short',year:'numeric'})));
   const view=create('button','a2k-d-directory-action','View sample profile');
-  view.type='button';view.setAttribute('aria-label','View fictional sample profile of '+m.name);
+  view.type='button';view.setAttribute('aria-label','View fictional sample profile of '+m.name+
+   (m.badges.length?'. Sample badges: '+sortedAwards(m).map(x=>LABELS[x]||x).join(', '):''));
+  if(m.badges.length)view.title=sortedAwards(m).map(x=>LABELS[x]||x).join(' · ');
   view.onclick=()=>profile(m);
   tile.append(view);return tile;
  }
@@ -246,7 +266,7 @@
   side.append(create('p','',m.roles.map(r=>LABELS[r]).join(' · ')));
   side.append(create('p','', 'Preview #'+String(m.id).padStart(2,'0')));
   const awards=create('div','a2k-d-demo-profile-awards');
-  m.badges.forEach(code=>awards.append(award(code)));
+  sortedAwards(m).forEach(code=>awards.append(award(code,true)));
   side.append(awards);
   const main=create('div','a2k-d-demo-profile-main');
   const about=create('section','a2k-d-demo-profile-section');
