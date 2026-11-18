@@ -658,11 +658,20 @@
        if(!isCurrent())return;
        const labels=new Map(types.map(item=>[item.code,item.label]));
        badges.replaceChildren();
-       for(const item of awarded){
+       // All earned badges stay visible here, now ordered by rarity.
+       const tierPoints={Legendary:5,Epic:4,Rare:3,Uncommon:2,Common:1};
+       const rankedAwards=awarded.slice().sort((a,b)=>{
+         const score=code=>tierPoints[badgeRarity[String(code||'')]]||1;
+         return score(b.badge_code)-score(a.badge_code)||
+           String(a.badge_code||'').localeCompare(String(b.badge_code||''));
+       });
+       for(const item of rankedAwards){
          const code=String(item.badge_code||'');
          const label=labels.get(code)||code.replace(/_/g,' ');
+         const tier=badgeRarity[code]||'Common';
+         const hint=label+' · '+tier+' badge';
          const emblem=elem('span','a2k-d-illustrated-badge');
-         emblem.setAttribute('role','img');emblem.setAttribute('aria-label',label);emblem.title=label;
+         emblem.setAttribute('role','img');emblem.setAttribute('aria-label',hint);emblem.title=hint;
          if(badgeArt.has(code)){
            const img=elem('img');img.src='assets/badges/'+code+'.png?v=319';img.alt='';
            img.loading='lazy';emblem.append(img);
