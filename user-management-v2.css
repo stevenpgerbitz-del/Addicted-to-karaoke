@@ -833,3 +833,65 @@
  max-width:100%;
  margin-left:auto;
 }
+
+/* A2K 334 — existing Verified KJ award management. No new badge design. */
+#management-member-details .mg2-kj-verification{
+ padding:15px 16px!important;box-sizing:border-box!important;
+ border:1px solid #a77d51!important;border-radius:13px!important;
+ background:linear-gradient(135deg,#321610,#24100d)!important;
+}
+#management-member-details .mg2-kj-verification .mg2-section-top{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+#management-member-details .mg2-kj-verification-body{
+ display:flex;gap:13px;align-items:center;margin-top:12px;min-width:0;
+}
+#management-member-details .mg2-kj-verification-art{
+ display:block;width:70px;height:76px;min-width:70px;flex:none;object-fit:contain;
+}
+#management-member-details .mg2-kj-art-inactive{opacity:.53;filter:grayscale(.35)}
+#management-member-details .mg2-kj-verification-copy{min-width:0;flex:1}
+#management-member-details .mg2-kj-verification-status{
+ display:block;color:#f4d6aa;font:700 15px/1.3 Georgia,serif;
+}
+#management-member-details .mg2-kj-verification-copy .mg2-muted{
+ font-size:12px;line-height:1.45;margin:5px 0 0;
+}
+#management-member-details .mg2-kj-outcome{
+ font-size:12px;line-height:1.5;color:#f2d0a1;margin:7px 0 0;
+}
+#management-member-details .mg2-kj-overlay .mg2-kj-dialog{
+ width:min(100%,420px);max-height:86dvh;overflow-y:auto;
+ padding:22px!important;background:linear-gradient(150deg,#441a16,#21100e)!important;
+ border:1.5px solid #c69a66!important;
+}
+#management-member-details .mg2-kj-dialog label{
+ display:block;color:#f7ddba;font:700 13px/1.4 Georgia,serif;margin:13px 0;
+}
+#management-member-details .mg2-kj-dialog select,
+#management-member-details .mg2-kj-dialog input{
+ display:block;width:100%;box-sizing:border-box;min-height:44px;
+ margin:6px 0 0;padding:10px;
+ border-radius:9px;border:1px solid #ab7d56;
+ background:#26130f;color:#ffe7c6;font-size:15px;
+}
+#management-member-details .mg2-kj-dialog .mg2-kj-feedback{
+ min-height:1.2em;color:#ffc1a9;font:13px/1.4 Georgia,serif;
+}
+#management-member-details .mg2-kj-dialog .mg-confirm-actions{
+ display:flex;gap:9px;justify-content:stretch;margin-top:14px;
+}
+#management-member-details .mg2-kj-dialog .mg-confirm-actions button{
+ flex:1;min-height:45px;background:linear-gradient(#802b21,#571b17);
+ border:1px solid #d1a06c;border-radius:9px;color:#fff0d1;
+ font:700 14px Georgia,serif;
+}
+#management-member-details .mg2-kj-dialog .mg-confirm-actions button:disabled{opacity:.5}
+#management-member-details .mg2-kj-dialog .mg-confirm-actions button:focus-visible,
+#management-member-details .mg2-kj-verification button:focus-visible{
+ outline:2px solid #ffe4b8;outline-offset:2px;
+}
+@media(max-width:420px){
+ #management-member-details .mg2-kj-verification-body{gap:9px}
+ #management-member-details .mg2-kj-verification-art{width:53px;height:58px;min-width:53px}
+}
