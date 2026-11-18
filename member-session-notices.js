@@ -218,7 +218,7 @@
 /* A2K earned-badge notifications: non-modal, vintage, one notification per new server award. */
 (function(){
  'use strict';
- const KEY='atk-seen-badge-awards-v1:',MS=60000;
+ const KEY='atk-seen-badge-awards-v1:',MS=10000;
  let checking=false,activeUser='',toast=null,timeout=null,queue=[];
  function clear(){
   if(timeout)clearTimeout(timeout);
@@ -244,7 +244,7 @@
   const words=document.createElement('span');words.className='atk-earned-words';
   const kicker=document.createElement('small');kicker.textContent='NEW BADGE EARNED!';
   const title=document.createElement('strong');title.textContent=item.label;
-  const sub=document.createElement('span');sub.textContent=item.description||'View your badges';
+  const sub=document.createElement('span');sub.textContent=item.code==='founding_tester'?'Welcome to the Beta Team!':(item.description||'View your badges');
   words.append(kicker,title,sub);button.append(image,words);button.addEventListener('click',openBadges);
   const close=document.createElement('button');close.type='button';close.className='atk-earned-close';
   close.textContent='×';close.setAttribute('aria-label','Dismiss notification');close.addEventListener('click',clear);
