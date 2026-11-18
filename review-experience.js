@@ -6,7 +6,7 @@
   ['song_selection','Song Selection'],['wait_time','Wait Time'],
   ['sound_quality','Sound Quality'],['atmosphere','Atmosphere']
  ];
- const labels={singer:'Singer',kj:'KJ / Host',venue_owner:'Venue Owner'};
+ const labels={singer:'Singer',kj:'KJ / Host',venue_owner:'Venue Staff'};
  const mic='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M6 10a6 6 0 0 0 12 0M12 16v6m-4 0h8"/></svg>';
  let reviewDialog=null, authorDialog=null, ratings=new Map(), sending=false, activeVenue=null, authorLoadSerial=0;
  function element(tag,cls,value){
