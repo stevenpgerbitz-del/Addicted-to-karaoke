@@ -230,6 +230,7 @@
  function openBadges(){
   clear();
   if(typeof navigate==='function')navigate('signin');
+  if(typeof memberLoadBadges==='function'&&authUser?.id)void memberLoadBadges(authUser.id);
   const section=document.querySelector('#auth-profile .profile-about-awards');
   if(section){const details=section.closest('details');if(details)details.open=true;section.scrollIntoView({behavior:'smooth',block:'center'});}
  }
