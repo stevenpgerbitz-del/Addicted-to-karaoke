@@ -248,10 +248,15 @@
        if(url){
          const photo=elem('img','a2k-d-member-avatar-image');
          photo.alt='';photo.loading='lazy';photo.decoding='async';photo.src=url;
-         photo.onerror=()=>photo.remove();
+         photo.onerror=()=>{photo.src='assets/a2k-directory-vintage-mic.svg';photo.onerror=null};
          avatar.append(photo);
        }
      }catch(error){console.warn('Could not display member photo',error)}
+   }
+   if(!avatar.querySelector('.a2k-d-member-avatar-image')){
+     const fallback=elem('img','a2k-d-member-avatar-image');
+     fallback.alt='';fallback.loading='lazy';fallback.src='assets/a2k-directory-vintage-mic.svg';
+     avatar.replaceChildren(fallback);
    }
    return avatar;
  }
