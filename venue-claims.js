@@ -146,7 +146,7 @@
    .eq('claimant_user_id',uid).order('created_at',{ascending:false}).limit(30);
   if(!wrap.isConnected||authUser?.id!==uid)return;
   if(error){wrap.textContent='Unable to check claim requests.';return}
-  // Claimants can find their messages even if they did not choose Venue Owner during setup.
+  // Claimants can find their messages even if they did not choose Venue Staff during setup.
   if(data?.length)entry.hidden=false;
   wrap.replaceChildren();
   if(!data?.length){wrap.append(make('p','atk-community-context','No ownership requests yet. Find a venue to submit one.'));return}
