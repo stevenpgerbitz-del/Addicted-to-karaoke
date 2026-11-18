@@ -65,7 +65,7 @@
   if(member.role==='founder')badges.append(make('span','mg2-badge mg2-badge-founder','★ Founder'));
   else if(member.role&&member.role!=='member')badges.append(make('span','mg2-badge',roleName(member.role)));
   if(member.is_host)badges.append(make('span','mg2-badge','KJ / Host'));
-  if(member.is_owner)badges.append(make('span','mg2-badge','Venue Owner'));
+  if(member.is_owner)badges.append(make('span','mg2-badge','Venue Staff'));
   if(!badges.childElementCount)badges.append(make('span','mg2-badge','Member'));
   return badges;
  }
@@ -253,6 +253,7 @@
   holder.append(avatar(member,true),info);
  }
  function formatInterest(value){
+  if(value==='venue_owner')return 'Venue Staff';
   return String(value||'').replace(/_/g,' ').replace(/\b\w/g,ch=>ch.toUpperCase());
  }
  function paintProfile(data){
