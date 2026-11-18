@@ -1019,16 +1019,22 @@
 /* Build 294 — enhance only the flowing velvet tail in the desktop sidebar.
    Keep all stage artwork, gold sweep, buttons, sizing and mobile behavior. */
 
-/* Build 297 — temporarily retain last verified mask pending final replacement. */
-/* Build 296 — reshape upper curtain fade to remove burgundy header shadow.
-   Narrow the header curtain edge while keeping the logo,
-   stage gold trim, 920x630 desktop geometry, mobile, and controls untouched. */
+/* Build 297 — layered CSS curtain blend, no embedded mask asset.
+   Keeps the curtain folds visible in the header, restores full microphone
+   sharpness beneath the banner, and feathers the stage into the background.
+   Scoped to desktop: the 920x630 layout, mobile and deletion logic stay as-is. */
 @media (min-width:781px) {
  #a2k-delete-account-dialog.a2k-deletion-wizard::before {
-  -webkit-mask-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOYAAADOCAQAAACAnLZrAAAFqklEQVR42u3dyY7bSBBF0UdqMPr/P7KMroZhwygOEpnZCyZHiUD3zhFxXy1qTR5EzkpWOYtIo1r90g996rs+9KEPfdenfuiXWo1WHqLGUVLWqId6dWrUqNGXGrXq1GtQsvMYYE6Ygx7q1aotlI1a9XpqUAbTWiP71EPdjrJTr6elugRzbWS3lFNdPmw1smAe67LZ1eVo60HAzBr1tD/4AXMd/Mx1aXbwA+bcyM51aXjwA6aUlrpsN42swcEPmFLaDX6+LNdldMx80siarMvomGkz+Jkpp0Z2VAbT2uDnbEV2tPg4dei6HPVcBj+mJyVgptNJyWjzgeJizjslndrNiuw0+Mlg2h38TLXZ2m5kI2NOk5I9ZaeHzRlmbMy5LrvDiqzRSUlszNHb4Ccu5rrys1/GMzz4iYuZ3uxgtqUuwTQ3KXm+HN8yuyIL5vsVWdONbEzMUcNJf5lsP1gdtC77wzERMI3XZbtrZE1PSmJizj9EaHcrsr3tlZ+omO9XZDvrk5KomMfFgsb6imxUzPQy+GnV+Rj8RMRc63LtMZ3UZSzMvGx77c/I9j7qMhbm+/6y9zH4iYZ59ivMwf4MMxrmuzOynYcV2eiY+4OVo5dHjIJ59sM9R3UZB/O1kXU2+ImDeTwm0tj+tVd0zOOKrMO6jIL57viWs8FPFMzt1TBbyoeXlZ9ImK+LBY39M7IxMc+uhnFXlzEwt1dQrCuyrmaYUTDHl22vefCTvD2qd8x3iwXzD4TANIy5vxpm9PewvjGPlwI3fgc//jHf7ZR01n+FGRXz3eDHbV36xkzLgWf3M8wImK/Ht9wOfnxjrlfDbFdkO4+LBf4xQ2xHR8E8W5F128j6xUxvv1TSeZ2U+MYc395a0HuuS6+Y220vJ/fixcVMp8e3RjDt1mWIxQLfmOdXUGQwbQ5+mhgrsp4xt5cCh2pkPWKeXdnkelLiEzN7+hxUdMykQX3pMY9XNmUw7c0wHy87mCHq0hvmell3+/IrTDBN1mXI/tIbZt58QejL/1k835hTXfYvXyp5RBj8eMM8XtnUersaJg5minAFRURMl1c2xcHMu2Mibr5U8v9ydTfDbJZ1n/WYSAWmtUnJfPN6u2likwLdQuYFc932ajd34o3Kka569IE5LpjdC+UVTHuN7IzZl28hTJQXXcC0N/jpy99DTw1Kyqp00V0C01ZdDqUyez1KVSZVuugWqZH1gvnUozCuVVnrGmVK4gczadCzcD41lFtEal31LcZeiR/MqZEdCuRQ9kdqXXSPVpf2MVPpMYdCOQ98bsq6gWmrLlOpzGFpYCtddNW3iF8GtY65p8ySLrrqLsWrSx+VOS6Q0xj2rqRLnL0SH5gr5YxZ6xq3Lq1jjoe6nHrLrGu0SYl9zFT+8obyrqQqztkCL5hZecGcesuLbrpLMftL65hTTWZlVWVuOSirjtlfWsacKOeqnJrYm5LqqP2lj8rUhlK6RO0vbVdmLj3j1FtedZNUe7ys2zvmnnLCnM4VpKiDH9uVqQXzulmTDUxptzK1aWKTbqpUa1zqFUyTlLUu5VzBuGl8wTSWqkxJJC29ZWhK28t5VdmzrDbTFDDNQlaqVC+QYJrFlGplVcqqobSMWSmrKv9nRjBVZYsvIR/+g2kYUyB6G82uvScpMzQCJgGTgEnABJOAScAkYBIwwSRgEjAJmARMMAmYBEwCJpgETAImAZOACSYBk4BJwCRggknAJGASMMEkYBIwCZgETDAJmARMAiYBE0wCJgGTgAkmAZOAScAkYIJJwCRgEjAJmGASMAmYBEwwCZgETAImARNMAiYBk4BJwASTgEnAJGASMMEkf2SuSrwEP5g9L8EPZsNL8IP5m5fgB/MnL8EP5g9egh/Mf3gJYJI/EPOTl+AH829eAs0sAZMwNSH/CfMnL8EPJst5blLlv3gJfjDZnnaTfwFaCHLRrihecgAAAABJRU5ErkJggg==")!important;
-  mask-image:url("data:image/png;base64,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")!important;
-  -webkit-mask-size:100% 100%!important;
-  mask-size:100% 100%!important;
+  -webkit-mask-image:
+   radial-gradient(ellipse 100% 110% at 0% 0%,#000 0%,#000 41%,rgba(0,0,0,.7) 54%,transparent 72%),
+   linear-gradient(to bottom,transparent 0%,transparent 29%,#000 41%,#000 91%,transparent 100%)!important;
+  mask-image:
+   radial-gradient(ellipse 100% 110% at 0% 0%,#000 0%,#000 41%,rgba(0,0,0,.7) 54%,transparent 72%),
+   linear-gradient(to bottom,transparent 0%,transparent 29%,#000 41%,#000 91%,transparent 100%)!important;
+  -webkit-mask-composite:source-over!important;
+  mask-composite:add!important;
+  -webkit-mask-size:100% 100%,100% 100%!important;
+  mask-size:100% 100%,100% 100%!important;
   -webkit-mask-repeat:no-repeat!important;
   mask-repeat:no-repeat!important;
  }
