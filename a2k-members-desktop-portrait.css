@@ -260,3 +260,67 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile{transition:none!import
   display:none!important;
  }
 }
+
+
+/* A2K 333: fill the desktop page, close the large gap to the main navigation,
+   and surface truly awarded badges / verified checks on member portraits.
+   Mobile remains exactly as previously approved. */
+#a2k-d-directory .a2k-d-directory-featured,
+#a2k-d-directory .a2k-d-member-verified-mark{display:none!important}
+@media(min-width:1024px){
+ html.a2k-desktop-live body #unified-pages:has(#find-screen.a2k-d-directory-active .a2k-d-members-layout){
+  padding-left:13px!important;padding-right:18px!important;
+ }
+ html.a2k-desktop-live #find-screen.a2k-d-directory-active.unified-screen{
+  box-sizing:border-box!important;max-width:none!important;width:100%!important;
+  margin:0!important;padding:0!important;
+ }
+ html.a2k-desktop-live #find-screen.a2k-d-directory-active>#a2k-d-directory:has(.a2k-d-members-layout){
+  box-sizing:border-box!important;max-width:none!important;width:100%!important;
+  margin:0!important;padding:0!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory>.a2k-d-members-layout:not(.a2k-d-members-profile-layout){
+  box-sizing:border-box!important;width:100%!important;max-width:none!important;
+  margin:0!important;padding:0!important;min-width:0!important;
+  grid-template-columns:minmax(212px,238px) minmax(0,1fr)!important;
+  gap:17px!important;align-items:start!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-featured{
+  display:flex!important;justify-content:center!important;align-items:center!important;
+  gap:6px!important;flex-wrap:wrap!important;width:100%!important;
+  padding:4px 0 2px!important;margin:0!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-featured-chip,
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-role-chip{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 1 auto!important;max-width:100%!important;min-width:0!important;
+  gap:5px!important;padding:3px 7px!important;
+  border:1px solid #c99d68!important;border-radius:999px!important;
+  background:linear-gradient(160deg,#56231b,#371710)!important;
+  color:#f9dcb2!important;font:700 11px/1.2 Georgia,serif!important;
+  white-space:nowrap!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-featured-chip img{
+  display:block!important;flex:none!important;width:27px!important;height:27px!important;
+  object-fit:contain!important;border-radius:4px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-role-chip svg{
+  width:15px!important;height:15px!important;flex:none!important;color:#f3c38a!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-verified-mark{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  vertical-align:middle!important;flex:none!important;
+  width:19px!important;height:19px!important;
+  margin-left:7px!important;padding:0!important;
+  border:1px solid #c7e8ff!important;border-radius:50%!important;
+  background:#187abd!important;color:white!important;
+  font:900 12px/1 Arial,sans-serif!important;
+  text-shadow:none!important;box-shadow:0 1px 3px #0008!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile{
+  gap:8px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile>.a2k-d-member-number:not([hidden]){
+  margin-top:2px!important;
+ }
+}
