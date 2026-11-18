@@ -1,0 +1,269 @@
+
+/* A2K live Member Setup Wizard — approved Build 311 design.
+   Matches the accepted desktop preview, including the Favorite Songs
+   and KJ scheduling fixes. Visual-only desktop CSS: leaves mobile V9
+   styling and interactive signup/save/skip handling untouched. */
+@media screen and (min-width:761px) {
+ html,body{overflow:hidden;}
+ #app{padding:12px!important;min-height:100dvh!important;}
+ #app .shell,#app .shell.maximized{
+  box-sizing:border-box!important;
+  position:relative!important;
+  width:min(920px,calc(100vw - 24px))!important;
+  max-width:920px!important;
+  height:min(630px,calc(100dvh - 24px))!important;
+  min-height:0!important;max-height:630px!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:74px minmax(0,1fr) 60px!important;
+  transform:none!important;
+  border:2px solid #efc46d!important;border-radius:14px!important;
+  overflow:hidden!important;
+  background:#5c000c!important;
+  box-shadow:0 0 0 2px #420007,0 0 0 4px #c9943c,
+   0 0 12px 4px rgba(246,186,65,.45),0 0 28px 6px rgba(190,105,27,.2),
+   0 24px 65px rgba(12,0,3,.75)!important;
+ }
+ #app .shell:before{border:1px solid #ffe1a7!important;border-radius:11px!important;z-index:10!important;}
+ #app .shell:after{
+  content:"";display:block;position:absolute;pointer-events:none;
+  top:0;left:0;width:25%;height:206px;z-index:6;
+  border-radius:11px 0 0 0;
+  background:url("/assets/a2k-wizard-stage-refined-302.svg") left top / 100% 100% no-repeat;
+ }
+ #app .shell .titlebar{
+  grid-row:1;grid-column:1;z-index:3;
+  display:flex;align-items:center;position:relative;
+  min-height:0!important;height:74px!important;
+  padding:8px 14px 9px calc(25% + 14px)!important;
+  background:linear-gradient(108deg,#800815 0%,#75020f 44%,#350007 100%)!important;
+  border:0!important;box-shadow:none!important;
+  isolation:isolate;overflow:hidden!important;
+ }
+ #app .shell .titlebar::before{display:none!important;content:none!important}
+ #app .shell .titlebar .app-symbol,#app .shell .titlebar .mode,
+ #app .shell .titlebar .window-controls{display:none!important}
+ #app .shell .titlebar .title{
+  display:flex!important;flex:1 1 auto!important;flex-direction:column;
+  justify-content:center!important;align-items:center!important;
+  text-align:center;gap:0!important;
+  min-width:0;width:100%;margin:0!important;
+  white-space:nowrap!important;overflow:visible!important;
+  position:relative;z-index:2;line-height:1.08;
+ }
+ #app .shell .titlebar .title strong{
+  position:relative;display:inline-block;
+  font:700 31px/1.13 'Playfair Display',Georgia,'Times New Roman',serif!important;
+  color:#fff3d4!important;white-space:nowrap;letter-spacing:0;
+  text-shadow:0 2px 3px #250004,0 0 6px rgba(244,200,124,.18)!important;
+ }
+ #app .shell .titlebar .title small{display:none!important}
+ #app .shell .titlebar .title::after{
+  content:"";display:block;flex:none;width:172px;height:2px;
+  margin-top:7px;border:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent,#d4a454 16%,#f3cd81 50%,#d4a454 84%,transparent);
+ }
+ #app .shell .titlebar .title strong::before,
+ #app .shell .titlebar .title strong::after {
+  content:"";display:block;position:absolute;
+  width:68px;height:24px;top:50%;opacity:.92;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2078%2028%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M3%2014%20H31%20C41%2014%2042%206%2051%206%20C59%206%2060%2018%2051%2018%20C46%2018%2045%2013%2049%2012%22%20stroke%3D%22%23dfb565%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M27%2014%20C40%2014%2047%2022%2061%2014%20H74%22%20stroke%3D%22%23bd8739%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M70%2014%20L74%2010%20L77%2014%20L74%2018%20Z%22%20fill%3D%22%23f3cd82%22%2F%3E%3C%2Fsvg%3E") center/100% 100% no-repeat;
+ }
+ #app .shell .titlebar .title strong::before{right:calc(100% + 13px);transform:translateY(-50%)}
+ #app .shell .titlebar .title strong::after{left:calc(100% + 13px);transform:translateY(-50%) scaleX(-1)}
+ #app .shell .layout{
+  display:grid!important;grid-row:2;grid-column:1;
+  grid-template-columns:minmax(0,25%) minmax(0,75%)!important;
+  min-width:0;min-height:0;overflow:hidden;
+  position:relative;z-index:1;
+ }
+ #app .shell .sidebar{
+  min-height:0;min-width:0;z-index:2;position:relative;
+  padding:0!important;overflow:hidden!important;
+  border-right:2px solid #d9ad5f!important;
+  background:radial-gradient(ellipse at 57% 52%,#8e0b1a,#65000f 65%,#44000b 100%)!important;
+ }
+ #app .shell .sidebar .brand-art{
+  display:block!important;height:132px!important;flex:0 0 132px!important;
+  opacity:0!important;visibility:hidden!important;
+ }
+ #app .shell .sidebar .side-heading{
+  flex:none;align-self:center;
+  width:150px;max-width:150px;
+  position:relative;z-index:2;
+  margin:4px auto 3px!important;padding:0 0 21px!important;
+  border:0!important;background:none!important;
+  color:#fce0a1!important;text-align:center!important;
+  font:700 22px/1.02 Georgia,'Times New Roman',serif!important;
+  text-shadow:0 2px 2px rgba(17,0,0,.76);
+ }
+ #app .shell .sidebar .side-heading::after{
+  content:"★";display:flex;align-items:center;justify-content:center;
+  position:absolute;bottom:0;left:50%;width:180px;height:21px;
+  transform:translateX(-50%);margin:0!important;
+  font:18px Georgia,serif;color:#f9ca62;
+  text-shadow:0 0 9px #ffb239,0 2px 2px #350008;
+  background:
+    linear-gradient(90deg,transparent,#e9bc70 10%,#e9bc70 33%,transparent 33%,transparent 67%,#e9bc70 67%,#e9bc70 90%,transparent);
+ }
+ #app .shell .sidebar .timeline{
+  display:grid;flex:0 0 auto;
+  margin:3px 6px 0 14px!important;padding:0 0 0 7px!important;
+  background:none;min-height:0;gap:0;
+ }
+ #app .shell .sidebar .timeline::before{
+  content:"";position:absolute;left:12px;top:17px;bottom:16px;
+  width:3px;background:linear-gradient(#fce7a8,#d59b30)!important;
+ }
+ #app .shell .sidebar .step{
+  min-height:30px!important;display:flex;align-items:center;gap:8px;
+  padding:2px 0!important;margin:0!important;
+  border:0!important;border-radius:0!important;
+  background:none!important;color:#fff5df!important;
+  font:400 13px/1.12 Georgia,serif!important;
+  white-space:normal!important;
+ }
+ #app .shell .sidebar .step.active{font-weight:700!important}
+ #app .shell .sidebar .step .dot{
+  width:22px!important;height:22px!important;flex:0 0 22px!important;
+  border:2px solid #f9e2a1!important;border-radius:50%!important;
+  background:linear-gradient(#fce097,#c58c22)!important;
+  box-shadow:0 1px 3px #290005!important;position:relative;
+ }
+ #app .shell .sidebar .step.active .dot{
+  background:radial-gradient(circle at 35% 28%,#8c1930 0%,#58000d 76%)!important;
+  box-shadow:0 0 0 3px #730713,0 0 0 5px #f5c772,0 0 10px 5px rgba(255,181,51,.64)!important;
+ }
+ #app .shell .sidebar .step.active .dot::after{
+  content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:6px;height:6px;border-radius:50%;background:#ffe2a0;
+ }
+ #app .shell .sidebar .crowd-art{
+  display:block!important;width:100%!important;height:68px!important;
+  flex:0 0 68px!important;margin-top:auto!important;
+  opacity:0!important;pointer-events:none!important;
+ }
+ #app .shell .sidebar::after{
+  content:"";position:absolute;pointer-events:none;z-index:0;
+  bottom:0;left:0;right:0;height:95px;
+  background:url("/assets/a2k-wizard-crowd-art.svg") center bottom/100% 100% no-repeat;
+ }
+ #app .shell .sidebar .side-note{
+  flex:none;z-index:2;position:relative;margin:0!important;
+  padding:3px 5px 6px!important;text-align:center!important;
+  background:linear-gradient(transparent,#48000a)!important;
+  color:#f4cd84!important;font:800 9px/1.15 Arial,sans-serif!important;
+  letter-spacing:.07em!important;white-space:nowrap;
+ }
+ #app .shell .main{
+  min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto;
+  background:linear-gradient(145deg,#fff9ed,#f8e9cc)!important;
+ }
+ #app .shell .main-inner{
+  width:100%;max-width:100%;min-height:100%;
+  padding:18px 20px 20px!important;
+ }
+ #app .shell .page-head h1{font-size:clamp(25px,2.7vw,32px)!important;letter-spacing:-.01em}
+ #app .shell .flourish{font-size:18px;margin:1px 6% 5px}
+ #app .shell .subtitle{font-size:clamp(16px,1.9vw,20px)}
+ #app .shell .lede{font-size:14px;line-height:1.35;margin-bottom:9px}
+ #app .shell .footer{
+  position:relative;z-index:5;grid-column:1;grid-row:3;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:6px!important;width:100%;height:60px;min-height:60px;
+  padding:6px 12px 6px calc(25% + 10px)!important;
+  border-top:2px solid #cda56a!important;
+  background:linear-gradient(#fff7e5,#f8e8ca)!important;
+ }
+ #app .shell .footer::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:25%;
+  background:linear-gradient(100deg,#58000c,#65000f 60%,#44000b);
+  border-right:2px solid #d9ad5f;
+ }
+ #app .shell .footer .foot-left,#app .shell .footer .foot-right{
+  flex-wrap:nowrap!important;gap:5px!important;z-index:1;position:relative;
+ }
+ #app .shell .footer .btn{
+  min-width:0!important;padding:8px 10px!important;
+  font-size:13px!important;white-space:nowrap!important;
+  color:#fff6df!important;border:2px solid #d9a64d!important;
+  border-radius:8px!important;
+  background:linear-gradient(#9f1b25,#540009)!important;
+  box-shadow:inset 0 0 0 2px #670711,0 1px 3px #49161133!important;
+ }
+ #app .shell .footer .quiet{font-size:12px!important;padding:5px 1px!important}
+ #app .shell .footer .setup-build-number{font-size:10px!important}
+
+
+ /* Favorite Songs: keep form and song cards inside the cream panel.
+    Three readable suggestions per row instead of the cramped four.
+    Desktop visual-only; preserve input, buttons and all wizard logic. */
+ #app .shell .main .main-inner:has(#fld_songQuery){
+  box-sizing:border-box!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  padding-left:22px!important;padding-right:22px!important;
+  overflow-x:clip!important;
+ }
+ #app .shell .main .main-inner:has(#fld_songQuery) > .inline-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:end!important;justify-content:stretch!important;
+  gap:12px!important;width:100%!important;min-width:0!important;
+ }
+ #app .shell .main .main-inner:has(#fld_songQuery) > .inline-row > .field{
+  width:100%!important;min-width:0!important;
+ }
+ #app .shell .main .main-inner:has(#fld_songQuery) > .inline-row input{
+  width:100%!important;min-width:0!important;max-width:100%!important;
+ }
+ #app .shell .main .main-inner:has(#fld_songQuery) > .inline-row > .btn{
+  align-self:end!important;white-space:nowrap!important;
+  min-height:46px!important;
+ }
+ #app .shell .main .main-inner:has(#fld_songQuery) > .compact-tiles{
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px!important;
+ }
+ #app .shell .main .main-inner:has(#fld_songQuery) > .compact-tiles > .tile{
+  min-width:0!important;width:100%!important;
+  padding:10px 6px!important;
+ }
+ #app .shell .main .main-inner:has(#fld_songQuery) > .compact-tiles > .tile .tile-title{
+  font-size:16px!important;line-height:1.15!important;
+  overflow-wrap:anywhere!important;
+ }
+
+ /* KJ schedule: move 4 compressed fields to 2 clear rows inside the
+    75%-width content column. Preserve selectable days and time options. */
+ #app .shell .main .schedule-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,.88fr) minmax(0,1.4fr)!important;
+  gap:12px 14px!important;align-items:start!important;
+ }
+ #app .shell .main .schedule-grid > *{min-width:0!important}
+ #app .shell .main .schedule-grid .dayrow{
+  display:grid!important;
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+  gap:4px!important;min-width:0!important;
+ }
+ #app .shell .main .schedule-grid .dayrow .tile{
+  width:100%!important;min-width:0!important;
+  min-height:44px!important;padding:5px 2px!important;
+ }
+ #app .shell .main .schedule-grid .dayrow .tile .tile-title{
+  font-size:12px!important;white-space:nowrap!important;
+ }
+ #app .shell .main .schedule-grid .field select{
+  display:block!important;width:100%!important;
+  min-width:0!important;max-width:100%!important;
+  min-height:48px!important;padding:9px 11px!important;
+  font-size:16px!important;
+ }
+}
+@media screen and (min-width:761px) and (max-height:650px) {
+ #app .shell .sidebar .side-heading{font-size:20px!important;padding-bottom:18px!important}
+ #app .shell .sidebar .step{min-height:27px!important;font-size:12px!important}
+ #app .shell .sidebar .crowd-art{height:55px!important;flex-basis:55px!important}
+ #app .shell .sidebar::after{height:77px}
+}
