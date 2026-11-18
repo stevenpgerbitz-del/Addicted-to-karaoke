@@ -5,7 +5,7 @@
  let claims=[],claimCount=0,loadNumber=0;
  const filter=document.getElementById('atk-approval-filter');
  if(filter&&!filter.querySelector('option[value="claims"]')){
-  const opt=document.createElement('option');opt.value='claims';opt.textContent='Venue ownership claims';
+  const opt=document.createElement('option');opt.value='claims';opt.textContent='Venue access requests';
   const photos=filter.querySelector('option[value="photos"]');
   filter.insertBefore(opt,photos||null);
  }
@@ -52,7 +52,7 @@
    approvalCenterRender();
    if(atkApprovalData)approvalCenterSetBadge(atkApprovalData);
   }catch(error){
-   approvalCenterMessage('Unable to load venue ownership claims: '+(error.message||'Please try again.'));
+   approvalCenterMessage('Unable to load venue access requests: '+(error.message||'Please try again.'));
   }
  };
  function makeClaimCard(c){
@@ -105,7 +105,7 @@
     throw Error('The claim decision could not be confirmed.');
    atkApprovalSaving=false;
    await approvalCenterRefresh(action==='approve'
-    ?'Verified venue ownership approved. Access is limited to the approved venue.'
+    ?'Verified venue access approved. Access is limited to the approved venue.'
     :'Ownership request declined. The member can submit a new request later.');
   }catch(error){
    approvalCenterMessage('Could not review claim: '+(error.message||'Please try again.'));
@@ -123,9 +123,9 @@
    const firstMember=[...root.querySelectorAll('.atk-approval-group-label')]
     .find(h=>h.textContent.startsWith('New members'));
    const bucket=document.createDocumentFragment();
-   const header=approvalCenterEl('h3','Venue Ownership Claims · '+claims.length,'atk-approval-group-label');
+   const header=approvalCenterEl('h3','Venue Access Requests · '+claims.length,'atk-approval-group-label');
    bucket.append(header);
-   if(!claims.length)bucket.append(approvalCenterEl('p','No venue ownership requests waiting for review.','atk-approval-muted'));
+   if(!claims.length)bucket.append(approvalCenterEl('p','No venue access requests waiting for review.','atk-approval-muted'));
    for(const c of claims)bucket.append(makeClaimCard(c));
    // Member headings are wrapped by approval-center.js for the Hide all action.
    // Insert beside the wrapper (a direct child of root), not inside it.
