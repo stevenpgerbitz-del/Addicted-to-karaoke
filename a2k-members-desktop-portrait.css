@@ -221,3 +221,24 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile{transition:none!import
   min-height:2.8em!important;
  }
 }
+
+/* A2K 331: restore the approved vintage microphone default image whenever
+   a member has not uploaded (or has hidden) a profile picture.
+   Reuses an existing A2K asset; never writes fake photos into the database.
+   The uploaded image stays on top, and the mobile layout is not changed. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-avatar:not(:has(> .a2k-d-member-avatar-image))::before,
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-member-avatar-large:not(:has(> .a2k-d-member-avatar-image))::before{
+  content:"";display:block;position:absolute;inset:0;z-index:1;
+  background-color:#421812;
+  background-image:radial-gradient(ellipse at center,#803827 0%,#4e1e18 55%,#2b100e 100%),url('assets/a2k-directory-vintage-mic.svg');
+  background-image:url('assets/a2k-directory-vintage-mic.svg'),radial-gradient(ellipse at center,#803827 0%,#4e1e18 55%,#2b100e 100%);
+  background-position:center 44%,center;
+  background-size:95% auto,cover;
+  background-repeat:no-repeat;
+  pointer-events:none;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-member-avatar-large{
+  position:relative!important;overflow:hidden!important;
+ }
+}
