@@ -242,3 +242,21 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile{transition:none!import
   position:relative!important;overflow:hidden!important;
  }
 }
+
+/* A2K 332: a uniform directory identity line replaces biography snippets.
+   Biographies remain on the selected member profile. Phone tiles are unchanged. */
+#a2k-d-directory .a2k-d-member-number{display:none!important}
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile>.a2k-d-member-number:not([hidden]){
+  box-sizing:border-box!important;display:block!important;
+  width:100%!important;min-height:0!important;
+  margin:4px auto 0!important;padding:10px 4px 5px!important;
+  border-top:1px solid #805238!important;
+  color:#f0cc9c!important;
+  font:700 13px/1.25 Georgia,serif!important;
+  letter-spacing:.03em!important;text-align:center!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile>.a2k-d-member-number[hidden]{
+  display:none!important;
+ }
+}
