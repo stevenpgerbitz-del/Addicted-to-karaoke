@@ -1024,7 +1024,7 @@
    retaining live header/sidebar HTML, 920x630 dimensions, and mobile styling. */
 @media (min-width:781px) {
  #a2k-delete-account-dialog.a2k-deletion-wizard::before {
-   background-image:url("/assets/a2k-wizard-stage-refined.svg")!important;
+   background-image:url("/assets/a2k-wizard-stage-refined-302.svg")!important;
    background-position:left top!important;
    background-size:100% 100%!important;
    background-repeat:no-repeat!important;
@@ -1034,3 +1034,5 @@
    mask-size:auto!important;
  }
 }
+
+/* Build 302: softened stage artwork alpha seam; layout and actions preserved. */
