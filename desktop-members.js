@@ -18,7 +18,7 @@
    {id:'all',label:'All Members',icon:'users'},
    {id:'singer',label:'Singers',role:'Singer',icon:'mic'},
    {id:'kj',label:'KJ / Hosts',role:'KJ / Host',icon:'headphones'},
-   {id:'venue_owner',label:'Venue Owners',role:'Venue Owner',icon:'building'}
+   {id:'venue_owner',label:'Venue Staff',role:'Venue Staff',icon:'building'}
  ];
  function directoryIcon(name){
    const paths={
@@ -76,7 +76,7 @@
  }
  function rolesOf(member){
    const roles=Array.isArray(member.karaoke_interests)?member.karaoke_interests:[];
-   const mapping={singer:'Singer',kj:'KJ / Host',venue_owner:'Venue Owner'};
+   const mapping={singer:'Singer',kj:'KJ / Host',venue_owner:'Venue Staff'};
    return roles.map(x=>mapping[x]).filter(Boolean);
  }
  // The directory sidebar is the same component in the directory and
