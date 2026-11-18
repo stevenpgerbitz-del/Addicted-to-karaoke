@@ -1,4 +1,4 @@
-/* A2K member-directory density preview — 50 entirely fictional members.
+/* A2K member-directory density preview — 100 entirely fictional members.
    Founder-only visual simulation. No user accounts, member numbers, awards,
    auth records, or production statistics are created or modified. */
 (function(){
@@ -6,7 +6,7 @@
  const ROOT_ID='a2k-d-directory';
  // A special opt-in preview URL can show fictional records without creating
  // accounts or requiring access to the real Founder management privileges.
- const demoLink=['members50','members20'].includes(new URLSearchParams(location.search).get('a2k_demo'));
+ const demoLink=['members100','members50','members20'].includes(new URLSearchParams(location.search).get('a2k_demo'));
  let demoAutoOpened=false;
  const DEMO=[
   ['DJ Scarlet',['kj'],['verified_kj','founding_tester'],true,true,'Hosts retro karaoke across town.','80s Classics','2024-04-12'],
@@ -58,7 +58,57 @@
   ['Jazzy Jasmine',['singer'],['favorite_10','song_75'],true,true,'A little swing goes a long way.','Jazz','2025-06-07'],
   ['DJ Saturday Spotlight',['kj'],['verified_kj','founding_tester','review_75','venue_100'],true,true,'Saturday nights are for karaoke.','Party Anthems','2024-07-27'],
   ['Melody & Friends',['singer','kj'],['song_25','venue_1'],false,true,'Friends who sing together stay together.','Duets & Pop','2026-02-05'],
-  ['Acoustic Avenue',['singer'],[],false,true,'Taking my first step into karaoke.','Acoustic','2026-11-14']
+  ['Acoustic Avenue',['singer'],[],false,true,'Taking my first step into karaoke.','Acoustic','2026-11-14'],
+  ["Riverside Rosie",["singer"],["song_25","favorite_5"],false,true,"Always up for a crowd-pleaser.","70s & 80s","2025-04-11"],
+  ["DJ Prairie Thunder",["kj"],["verified_kj","review_75","venue_25"],true,true,"Hosting lively weekend karaoke.","Country Rock","2024-06-17"],
+  ["Vinyl Vicki",["singer"],["founding_tester","favorite_25"],true,true,"Collector of singalong favorites.","Oldies","2024-09-09"],
+  ["Corner Stage Crew",["venue_owner"],["verified_venue_owner","venue_10"],false,true,"Keeping the stage ready for everyone.","Variety","2025-10-02"],
+  ["High Note Hector",["singer"],["song_75","review_25"],true,true,"Chasing the high notes.","Pop","2026-01-13"],
+  ["DJ Spinning Gold",["kj","singer"],["verified_kj","song_100","community_supporter"],true,true,"Hosting with a little golden-era flair.","Disco","2024-02-22"],
+  ["Midnight Marisol",["singer"],[],false,false,"Finding my karaoke voice.","Soul","2026-09-28"],
+  ["The Copper Curtain",["venue_owner"],["venue_1"],false,true,"A neighborhood stage for karaoke fans.","All Genres","2026-03-06"],
+  ["Duet Dan",["singer"],["song_1","favorite_1"],false,true,"Looking for my next duet partner.","Duets","2026-06-14"],
+  ["DJ Vinyl Spin",["kj"],["verified_kj","venue_100","review_100","favorite_25"],true,true,"Experienced host and music lover.","Classic Hits","2023-11-05"],
+  ["Silver Lining Sarah",["singer"],["review_75","song_25"],true,true,"Turning ordinary nights into great memories.","Ballads","2025-07-23"],
+  ["Harmony House Staff",["venue_owner"],["verified_venue_owner","community_supporter"],true,false,"Helping make every karaoke night welcoming.","Pop & Rock","2024-05-30"],
+  ["Microphone Maverick",["singer","kj"],["verified_kj","song_75"],true,true,"Sometimes I sing; sometimes I host.","Rock","2025-05-08"],
+  ["Tina Two-Step",["singer"],["favorite_10"],false,true,"Country songs and dancing shoes.","Country","2025-12-02"],
+  ["DJ Night Owl",["kj"],["verified_kj","review_25"],false,false,"Keeping the party going past midnight.","Dance","2026-04-17"],
+  ["Willow Street Social",["venue_owner"],["venue_25","favorite_5"],true,true,"A meeting place for singers and friends.","Variety","2024-10-21"],
+  ["Encore Eli",["singer"],["song_100","favorite_25","review_75"],true,true,"Never quite ready for the last song.","Rock Anthems","2023-09-14"],
+  ["DJ Classic Cass",["kj"],["verified_kj","founding_tester"],true,true,"Sharing classic karaoke favorites.","80s","2024-12-16"],
+  ["Singing Sunflower",["singer"],[],false,true,"Just happy to be here.","Acoustic","2026-11-10"],
+  ["Sunset Tavern Staff",["venue_owner"],["verified_venue_owner","venue_10"],false,true,"Supporting local performers.","All Eras","2025-06-06"],
+  ["The Chorus Captain",["singer","kj"],["song_25","review_100"],true,true,"Helping everyone find their big moment.","Pop","2025-02-02"],
+  ["DJ Main Street",["kj"],["verified_kj","community_supporter","venue_10"],true,true,"From small-town stages to big singalongs.","Variety","2024-07-15"],
+  ["Melody Mountain",["singer"],["favorite_5","review_1"],false,true,"Here for the joyful noise.","Indie","2026-02-21"],
+  ["Gold Record Room",["venue_owner"],["venue_1"],false,false,"Testing our venue-team card layout.","All Genres","2026-07-12"],
+  ["Samantha Sings",["singer"],["song_75","review_25"],true,true,"Never met a chorus I didn't love.","90s Pop","2025-08-10"],
+  ["DJ Echo Valley",["kj"],["verified_kj","venue_25"],true,true,"A host with a passion for great sound.","Classic Country","2024-01-09"],
+  ["The Backstage Trio",["singer"],["song_100","favorite_10"],false,true,"Three friends and one shared mic.","Harmony","2025-03-24"],
+  ["Karaoke Corner Managers",["venue_owner"],["verified_venue_owner","venue_100","community_supporter"],true,true,"Building a welcoming local music scene.","All Genres","2023-08-19"],
+  ["Rockstar Rafael",["singer"],["song_25","review_75","favorite_5"],true,true,"Every song deserves a guitar solo.","Hard Rock","2025-09-18"],
+  ["DJ Red Curtain",["kj"],["verified_kj","review_100","venue_25"],true,true,"Showtime starts with the first note.","Show Tunes","2024-04-08"],
+  ["The Quiet Singer",["singer"],[],false,false,"Working up the courage for my first song.","Acoustic","2026-11-17"],
+  ["Main Stage Marcy",["venue_owner","singer"],["verified_venue_owner","song_1"],true,true,"Helping performers feel confident.","Pop","2025-01-29"],
+  ["DJ Moonbeam",["kj"],["verified_kj","song_75","favorite_10"],false,true,"Hosting relaxed nights with big energy.","80s","2025-06-19"],
+  ["Blue Sky Beth",["singer"],["founding_tester","review_1"],true,true,"Always cheering for the next singer.","Country","2025-10-30"],
+  ["Stage Managers United",["venue_owner"],["venue_10","community_supporter"],false,true,"Coordinating karaoke for the neighborhood.","Variety","2026-08-27"],
+  ["Ballad King Kevin",["singer"],["song_100","review_100","favorite_25","venue_25"],true,true,"A big fan of power ballads.","Ballads","2023-10-11"],
+  ["DJ Jukebox Jenny",["kj","singer"],["verified_kj","song_25","review_25"],true,true,"A fun set list for every crowd.","Party Favorites","2024-09-01"],
+  ["Country Harmony Club",["singer"],["favorite_25"],false,true,"Loving every heartfelt chorus.","Country","2025-11-25"],
+  ["Candlelight Lounge Team",["venue_owner"],["verified_venue_owner","venue_25"],true,false,"Making room for the karaoke community.","Jazz & Soul","2024-08-07"],
+  ["Mr. Mic Check",["kj"],["verified_kj","venue_1"],true,true,"Testing every microphone twice.","Rock","2026-03-13"],
+  ["First Verse Fiona",["singer"],["song_1"],false,true,"One song at a time.","Pop","2026-10-04"],
+  ["DJ Americana",["kj"],["verified_kj","review_75","venue_10"],true,true,"Keeping the music moving in every town.","Americana","2024-03-28"],
+  ["Rhythm Room Operators",["venue_owner"],["venue_100","verified_venue_owner"],true,true,"Hosting singers of every experience level.","Variety","2023-06-02"],
+  ["Sing It Loud Lucas",["singer"],["song_75","favorite_5"],false,true,"You can hear the chorus from outside.","Classic Rock","2025-12-14"],
+  ["DJ Morning Star",["kj"],[],false,false,"New host learning the ropes.","Top 40","2026-11-07"],
+  ["Twelve-Bar Blues Betty",["singer"],["review_25","song_25","favorite_10"],true,true,"Always ready for another blues song.","Blues","2025-05-27"],
+  ["The Local Songbook",["singer","venue_owner"],["favorite_25","venue_10"],true,true,"Sharing music and making connections.","Oldies & Pop","2024-11-03"],
+  ["DJ Big Chorus",["kj"],["verified_kj","community_supporter","review_100"],true,true,"Everyone joins the final chorus.","Singalongs","2024-02-12"],
+  ["Golden Microphone Guest",["singer"],[],false,false,"An example of a brand-new member.","All Genres","2026-11-18"],
+  ["The Final Encore Society",["singer","kj"],["verified_kj","song_100","review_75","favorite_25"],true,true,"Saving the best singalong for last.","Rock & Pop","2023-07-18"]
  ].map((v,i)=>({id:i+1,name:v[0],roles:v[1],badges:v[2],verified:v[3],
   portrait:v[4],about:v[5],music:v[6],joined:v[7]}));
  const LABELS={
@@ -214,7 +264,7 @@
  function banner(){
   const b=create('div','a2k-d-demo-notice');
   const tag=create('strong','','DEMO PREVIEW');
-  const note=create('span','','50 fictional profiles · No actual members or accounts were created');
+  const note=create('span','','100 fictional profiles · No actual members or accounts were created');
   b.append(tag,note);return b;
  }
  function back(){
@@ -236,7 +286,7 @@
   wrap.append(banner());
   const headline=create('div','a2k-d-demo-head');
   const title=create('div','');
-  title.append(create('h1','','Members'),create('p','','How our directory could look with 50 different members'));
+  title.append(create('h1','','Members'),create('p','','How our directory could look with 100 different members'));
   headline.append(title,back());
   wrap.append(headline);
   const filters=create('section','a2k-d-demo-toolbar');
@@ -250,7 +300,7 @@
   for(const [key,name] of [['name','Name A–Z'],['newest','Newest'],['oldest','Oldest']]){
    const option=create('option','',name);option.value=key;sort.append(option);
   }
-  const totals=create('span','a2k-d-demo-total','50 sample members');
+  const totals=create('span','a2k-d-demo-total','100 sample members');
   top.append(search,totals,sort);
   const chips=create('div','a2k-d-demo-filter-tabs');
   const roleButtons=new Map();let role='all';
@@ -287,7 +337,7 @@
   const root=byId(ROOT_ID);if(!root)return;
   const page=create('div','a2k-d-demo-preview a2k-d-demo-profile');
   page.append(banner());
-  const backBtn=create('button','a2k-d-demo-return','← Back to 50 Samples');
+  const backBtn=create('button','a2k-d-demo-return','← Back to 100 Samples');
   backBtn.type='button';backBtn.onclick=show;page.append(backBtn);
   const columns=create('div','a2k-d-demo-profile-columns');
   const side=create('section','a2k-d-demo-profile-side');
@@ -314,16 +364,16 @@
  async function ensureLaunch(){
   if(previewOn||!desktop())return;
   const root=byId(ROOT_ID),toolbar=root?.querySelector('.a2k-d-members-toolbar');
-  if(!root||!toolbar||byId('a2k-d-demo-50-launch'))return;
+  if(!root||!toolbar||byId('a2k-d-demo-100-launch'))return;
   if(!await mayPreview()||!root.contains(toolbar)||previewOn)return;
   if(demoLink&&!demoAutoOpened){
     demoAutoOpened=true;
     show();
     return;
   }
-  const btn=create('button','a2k-d-demo-launch','Preview 50 Members');
-  btn.id='a2k-d-demo-50-launch';btn.type='button';
-  btn.title='Founder-only, fictional 50-member layout preview';
+  const btn=create('button','a2k-d-demo-launch','Preview 100 Members');
+  btn.id='a2k-d-demo-100-launch';btn.type='button';
+  btn.title='Founder-only, fictional 100-member layout preview';
   btn.addEventListener('click',show);
   toolbar.insertBefore(btn,toolbar.querySelector('.a2k-d-member-sort-label'));
  }
