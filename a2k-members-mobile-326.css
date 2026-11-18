@@ -1,0 +1,396 @@
+/* A2K Build 326: approved Members mobile design.
+   All rules affecting existing pages are limited to screens <=1023px.
+   Desktop sidebar, profile cards, roles, images and theme stay unchanged. */
+
+/* These are mobile enhancements only; never add UI to the desktop layout. */
+#a2k-d-directory .a2k-d-mobile-member-total,
+#a2k-d-directory .a2k-d-mobile-profile-tabs,
+#a2k-d-directory .a2k-d-mobile-badge-heading,
+#a2k-d-directory .a2k-d-mobile-featured-badge{
+ display:none!important;
+}
+
+@media(max-width:1023px){
+
+ /* MEMBER DIRECTORY — actual member photos, fallback initials, compact cards. */
+ #a2k-d-directory .a2k-d-members-main > h1{
+  display:flex!important;align-items:baseline;justify-content:space-between;
+  flex-wrap:wrap;gap:7px;
+  margin:0 0 13px!important;padding:0 0 9px!important;
+  border-bottom:1px solid #9d6747;
+  font:italic 700 clamp(24px,6vw,30px)/1.15 Georgia,serif!important;
+  color:#ffe1b7!important;
+ }
+ #a2k-d-directory .a2k-d-mobile-member-total{
+  display:inline!important;align-self:center;
+  font:italic 700 13px/1.2 Georgia,serif!important;
+  white-space:nowrap;color:#e7c593!important;
+ }
+ #a2k-d-directory .a2k-d-members-main > .a2k-d-directory-intro{
+  font-size:13px!important;line-height:1.4!important;
+  margin:0 0 9px!important;
+ }
+ #a2k-d-directory .a2k-d-members-main .a2k-d-members-grid{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  gap:9px!important;margin:9px 0 20px!important;padding:0!important;
+ }
+ #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile{
+  box-sizing:border-box!important;position:relative!important;
+  display:grid!important;
+  grid-template-columns:68px minmax(0,1fr) 16px!important;
+  grid-template-rows:auto auto!important;
+  gap:2px 11px!important;align-items:center!important;
+  min-height:94px!important;max-height:none!important;height:auto!important;
+  width:100%!important;padding:11px 12px!important;margin:0!important;
+  border:1.5px solid #c09760!important;border-radius:12px!important;
+  background:linear-gradient(120deg,#591e19,#300e0e 88%)!important;
+  box-shadow:inset 0 1px 0 #dcb57820,0 2px 6px #0005!important;
+  text-align:left!important;
+ }
+ #a2k-d-directory .a2k-d-member-tile:focus-within{
+  outline:2px solid #ffdfaa!important;outline-offset:2px!important;
+ }
+ #a2k-d-directory .a2k-d-member-tile .a2k-d-member-tile-head{
+  display:contents!important;
+ }
+ #a2k-d-directory .a2k-d-member-tile .a2k-d-member-avatar{
+  box-sizing:border-box!important;display:flex!important;grid-column:1;grid-row:1/3;
+  align-items:center!important;justify-content:center!important;
+  width:68px!important;min-width:68px!important;height:68px!important;
+  border:2px solid #d8b17c!important;border-radius:50%!important;
+  margin:0!important;overflow:hidden!important;
+  background:linear-gradient(140deg,#773329,#351310)!important;
+  color:#ffddb2!important;font:italic 700 30px Georgia,serif!important;
+  box-shadow:0 2px 7px #0008!important;
+ }
+ #a2k-d-directory .a2k-d-member-tile .a2k-d-member-avatar-image{
+  display:block!important;width:100%!important;height:100%!important;
+  object-fit:cover!important;border-radius:50%!important;
+ }
+ #a2k-d-directory .a2k-d-member-tile .a2k-d-member-tile-head > div{
+  grid-column:2;grid-row:1;align-self:end;min-width:0!important;
+  display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:4px;
+ }
+ #a2k-d-directory .a2k-d-member-tile .a2k-d-member-tile-head h3{
+  margin:0!important;max-width:100%;overflow-wrap:anywhere;
+  color:#ffe2b9!important;
+  font:700 clamp(17px,4.9vw,21px)/1.12 Georgia,serif!important;
+ }
+ #a2k-d-directory .a2k-d-member-tile .a2k-d-directory-meta{
+  box-sizing:border-box!important;display:inline-block!important;
+  width:auto!important;max-width:100%;
+  margin:0!important;padding:3px 9px!important;
+  border:1px solid #bb8a57!important;border-radius:999px!important;
+  background:#63241b!important;color:#f6d8a9!important;
+  font:700 12px/1.2 Georgia,serif!important;
+ }
+ #a2k-d-directory .a2k-d-member-tile .a2k-d-member-since{
+  display:block!important;grid-column:2;grid-row:2;
+  align-self:start;margin:2px 0 0!important;
+  color:#dbbd9e!important;font:12px/1.3 Georgia,serif!important;
+ }
+ #a2k-d-directory .a2k-d-member-tile .a2k-d-member-summary{
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-member-tile::after{
+  content:"›";grid-column:3;grid-row:1/3;align-self:center;
+  justify-self:end;font:32px/1 Georgia,serif;color:#f6cd8b;
+ }
+ /* The existing View Profile button covers its own card; no duplicate buttons. */
+ #a2k-d-directory .a2k-d-member-tile > .a2k-d-directory-action{
+  display:block!important;position:absolute!important;z-index:2!important;
+  inset:0!important;width:100%!important;height:100%!important;
+  min-width:0!important;max-width:none!important;min-height:0!important;
+  margin:0!important;padding:0!important;border:0!important;
+  background:transparent!important;box-shadow:none!important;
+  color:transparent!important;opacity:0!important;cursor:pointer!important;
+ }
+ #a2k-d-directory .a2k-d-mobile-member-tools{
+  margin:9px 0!important;
+ }
+ #a2k-d-directory .a2k-d-members-toolbar{
+  margin:5px 0 12px!important;
+ }
+ #a2k-d-directory .a2k-d-members-count{
+  font:12px/1.3 Georgia,serif!important;
+  color:#d8b792!important;
+ }
+
+ /* MEMBER PROFILE — narrow identity panel with featured Founder shield. */
+ #a2k-d-directory .a2k-d-members-profile-layout > .a2k-d-members-filters{
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-selected-member > .a2k-d-directory-back{
+  min-height:40px!important;margin:0 0 10px!important;
+  padding:8px 11px!important;font:700 13px/1.2 Georgia,serif!important;
+  max-width:calc(55% - 5px)!important;
+ }
+ #a2k-d-directory .a2k-d-selected-member > .a2k-d-profile-share{
+  margin-left:7px!important;
+  max-width:calc(45% - 5px)!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar{
+  display:grid!important;
+  grid-template-columns:74px minmax(0,1fr)!important;
+  grid-template-rows:auto auto auto auto!important;
+  align-items:center!important;justify-items:stretch!important;
+  gap:3px 12px!important;
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  padding:14px 12px 13px!important;
+  border:1.5px solid #cd9d64!important;border-radius:13px!important;
+  background:linear-gradient(135deg,#671c17,#350f0f 88%)!important;
+  box-shadow:0 4px 11px #0005,inset 0 1px 0 #dcb77b33!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar.a2k-d-mobile-has-featured{
+  grid-template-columns:74px minmax(0,1fr) 69px!important;
+  column-gap:9px!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-member-avatar-large{
+  grid-column:1;grid-row:1/4;justify-self:center;align-self:center;
+  box-sizing:border-box!important;
+  width:74px!important;min-width:74px!important;
+  height:74px!important;min-height:74px!important;
+  margin:0!important;border:2px solid #d0a56c!important;
+  border-radius:50%!important;font-size:29px!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > h1{
+  grid-column:2;grid-row:1;align-self:end;
+  text-align:left!important;min-width:0!important;
+  font:italic 700 clamp(22px,5.6vw,30px)/1.07 Georgia,serif!important;
+  margin:0!important;color:#ffe0b5!important;overflow-wrap:anywhere!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-profile-role{
+  grid-column:2;grid-row:2;align-self:center;justify-self:start;
+  box-sizing:border-box;display:inline-block!important;
+  max-width:100%;margin:0!important;padding:3px 8px!important;
+  border:1px solid #cc975e;border-radius:999px;
+  background:#70281e!important;color:#ffe2b6!important;
+  font:700 12px/1.2 Georgia,serif!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-profile-flourish{
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-profile-flourish + .a2k-d-profile-facts{
+  grid-column:2;grid-row:3;
+  display:flex!important;flex-direction:column!important;
+  align-self:start;align-items:flex-start!important;gap:2px!important;
+  width:100%!important;min-width:0!important;
+  border:0!important;margin:0!important;padding:1px 0 0!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-profile-fact{
+  display:flex!important;min-width:0!important;gap:0!important;
+  font:11px/1.27 Georgia,serif!important;color:#ecd0ab!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-profile-fact-icon{
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-profile-fact-value{
+  font:inherit!important;overflow-wrap:anywhere!important;
+ }
+ #a2k-d-directory .a2k-d-mobile-featured-badge:not([hidden]){
+  display:flex!important;grid-column:3;grid-row:1/4;
+  align-self:center;justify-content:center;
+  height:83px;max-width:69px;min-width:0;
+ }
+ #a2k-d-directory .a2k-d-mobile-featured-badge img{
+  width:100%!important;height:100%!important;object-fit:contain!important;
+  filter:drop-shadow(0 2px 2px #0008);
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-profile-facts:not(.a2k-d-profile-flourish + .a2k-d-profile-facts){
+  grid-column:1/-1;min-width:0;max-width:100%;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-public-profile-awards{
+  grid-column:1/-1;width:100%!important;min-width:0!important;
+  padding:8px 0 0!important;margin:7px 0 0!important;
+  border:0!important;border-top:1px solid #a36e46!important;
+  background:transparent!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-awards > h2{
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-mobile-badge-heading{
+  display:flex!important;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;width:100%;margin:0 0 9px;
+ }
+ #a2k-d-directory .a2k-d-mobile-badge-heading h2{
+  margin:0!important;color:#ffe0b6!important;
+  font:italic 700 18px/1.2 Georgia,serif!important;
+ }
+ #a2k-d-directory .a2k-d-mobile-badge-expand:not([hidden]){
+  display:inline-flex!important;align-items:center;justify-content:center;
+  min-height:32px;min-width:75px;padding:4px 7px!important;
+  border:0!important;background:transparent!important;
+  color:#f9d5a0!important;font:700 13px Georgia,serif!important;
+  cursor:pointer;
+ }
+ #a2k-d-directory .a2k-d-mobile-badge-expand:focus-visible{
+  outline:2px solid #ffe1ba;outline-offset:1px;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-public-badges{
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  align-items:start!important;justify-content:stretch!important;
+  width:100%!important;max-width:none!important;
+  margin:0!important;padding:0!important;gap:6px!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-illustrated-badge{
+  box-sizing:border-box!important;display:flex!important;
+  justify-content:center!important;align-items:center!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  height:auto!important;min-height:0!important;aspect-ratio:1/1.16;
+  margin:0!important;padding:2px!important;
+  border:1px solid #b88a57!important;border-radius:8px!important;
+  background:#32110e!important;overflow:hidden!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-illustrated-badge img{
+  display:block!important;width:100%!important;height:100%!important;
+  max-width:100%!important;max-height:100%!important;
+  object-fit:contain!important;object-position:center!important;
+ }
+ #a2k-d-directory .a2k-d-public-badges:not(.a2k-d-mobile-badges-expanded)
+ .a2k-d-illustrated-badge:nth-child(n+6){
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar .a2k-d-public-badges > .a2k-d-profile-muted{
+  grid-column:1/-1;
+ }
+
+ /* SECTION TABS — reveal just the chosen profile content. */
+ #a2k-d-directory .a2k-d-profile-content-rail{
+  display:flex!important;flex-direction:column!important;width:100%!important;
+  min-width:0!important;gap:0!important;
+ }
+ #a2k-d-directory .a2k-d-profile-content-rail > .a2k-d-profile-tabs{
+  display:none!important; /* desktop KJ Profile/Schedule tabs */
+ }
+ #a2k-d-directory .a2k-d-mobile-profile-tabs{
+  box-sizing:border-box;display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr));gap:0!important;
+  width:100%;margin:0 0 11px!important;padding:4px!important;
+  border:1.5px solid #c49963;border-radius:12px;
+  background:linear-gradient(#641e18,#3b100f);
+  overflow:hidden;
+ }
+ #a2k-d-directory .a2k-d-mobile-profile-tabs.a2k-d-mobile-tabs-many{
+  display:flex!important;overflow-x:auto!important;overscroll-behavior-x:contain;
+  scrollbar-width:thin;scroll-snap-type:x proximity;
+ }
+ #a2k-d-directory .a2k-d-mobile-profile-tab{
+  box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+  min-width:0;min-height:43px;gap:6px;
+  margin:0;padding:7px 5px;
+  border:1px solid transparent;border-radius:9px;
+  background:transparent;color:#f7d7ac;
+  font:700 clamp(12px,3.3vw,14px)/1.15 Georgia,serif;
+  white-space:nowrap;cursor:pointer;
+ }
+ #a2k-d-directory .a2k-d-mobile-tabs-many .a2k-d-mobile-profile-tab{
+  flex:0 0 auto;min-width:92px;scroll-snap-align:start;
+ }
+ #a2k-d-directory .a2k-d-mobile-profile-tab[aria-pressed="true"]{
+  border:1px solid #ac8157;
+  color:#5c1d17;background:linear-gradient(#f5e2ba,#e3bd87);
+  box-shadow:inset 0 0 0 1px #fff5d4;
+ }
+ #a2k-d-directory .a2k-d-mobile-profile-tab:focus-visible{
+  outline:2px solid #ffdfaa;outline-offset:-1px;
+ }
+ #a2k-d-directory .a2k-d-mobile-tab-icon{
+  display:inline-block;font:20px/1 Georgia,serif;
+ }
+ #a2k-d-directory .a2k-d-public-profile-main{
+  width:100%!important;min-width:0!important;
+  display:flex!important;flex-direction:column!important;gap:10px!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-main[data-a2k-mobile-view="about"]
+  > :not(.a2k-d-profile-about):not(.a2k-d-profile-interests){
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-main[data-a2k-mobile-view="songs"]
+  > :not(.a2k-d-profile-songs){
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-main[data-a2k-mobile-view="venues"]
+  > :not(.a2k-d-profile-favorite-venues){
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-main[data-a2k-mobile-view="reviews"]
+  > :not(.a2k-d-profile-kj-reviews){
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-main[data-a2k-mobile-view="schedule"]{
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-main .a2k-d-public-profile-section,
+ #a2k-d-directory .a2k-d-profile-content-rail > .a2k-d-profile-schedule-pane:not([hidden]){
+  box-sizing:border-box;min-width:0;width:100%!important;
+  margin:0!important;padding:14px!important;
+  border:1.5px solid #ad8256!important;border-radius:11px!important;
+  background:linear-gradient(120deg,#461914,#27100f)!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-main .a2k-d-public-profile-section h2{
+  margin:0 0 9px!important;padding:0 0 8px!important;
+  border-bottom:1px solid #8d593d!important;
+  font:italic 700 21px/1.16 Georgia,serif!important;
+  color:#ffdfb7!important;
+ }
+ #a2k-d-directory .a2k-d-profile-interest-tiles{
+  display:flex!important;flex-wrap:wrap!important;
+  gap:7px!important;
+ }
+ #a2k-d-directory .a2k-d-profile-interest-tile{
+  max-width:100%;font-size:12px!important;
+ }
+ /* Song rows remain horizontal, not an icon/name/status vertical column. */
+ #a2k-d-directory .a2k-d-public-songs .a2k-d-songbook-item{
+  box-sizing:border-box;display:grid!important;
+  grid-template-columns:32px minmax(0,1fr) auto!important;
+  align-items:center!important;gap:8px!important;
+  width:100%;min-height:53px;
+  padding:8px 2px!important;
+ }
+ #a2k-d-directory .a2k-d-songbook-item .a2k-d-songbook-heart{
+  grid-column:1;grid-row:1;
+  width:30px!important;height:30px!important;
+ }
+ #a2k-d-directory .a2k-d-songbook-item .a2k-d-songbook-copy{
+  grid-column:2;grid-row:1;min-width:0!important;
+  flex-direction:column!important;gap:2px!important;
+ }
+ #a2k-d-directory .a2k-d-songbook-item .a2k-d-songbook-type{
+  grid-column:3;grid-row:1;align-self:center;
+  max-width:90px;padding:4px 7px!important;
+  white-space:normal!important;text-align:center;
+  font:11px/1.2 Georgia,serif!important;
+ }
+ #a2k-d-directory .a2k-d-profile-section-heading{
+  display:flex!important;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:6px;
+ }
+ #a2k-d-directory .a2k-d-profile-section-heading h2{
+  margin:0!important;
+ }
+ #a2k-d-directory .a2k-d-profile-section-heading .a2k-d-songbook-more{
+  min-height:36px!important;margin:0!important;
+  font-size:12px!important;
+ }
+}
+@media(max-width:370px){
+ #a2k-d-directory .a2k-d-public-profile-sidebar.a2k-d-mobile-has-featured{
+  grid-template-columns:60px minmax(0,1fr) 60px!important;
+  gap:3px 7px!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-member-avatar-large{
+  width:60px!important;min-width:60px!important;height:60px!important;
+  min-height:60px!important;
+ }
+ #a2k-d-directory .a2k-d-mobile-featured-badge:not([hidden]){
+  max-width:60px;height:72px;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > h1{
+  font-size:22px!important;
+ }
+ #a2k-d-directory .a2k-d-mobile-profile-tab{
+  gap:3px;padding:7px 3px;font-size:12px;
+ }
+}
