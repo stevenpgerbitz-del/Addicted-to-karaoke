@@ -1005,3 +1005,12 @@
   flex-basis:144px!important;height:144px!important;min-height:144px!important;
  }
 }
+
+/* Build 293 — soften only the right termination of the stage's gold sweep.
+   The approved geometry, typography, artwork and mobile styles stay intact. */
+@media (min-width:781px) {
+ #a2k-delete-account-dialog.a2k-deletion-wizard::after {
+  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 76%,rgba(0,0,0,.68) 88%,transparent 100%)!important;
+  mask-image:linear-gradient(to right,#000 0%,#000 76%,rgba(0,0,0,.68) 88%,transparent 100%)!important;
+ }
+}
