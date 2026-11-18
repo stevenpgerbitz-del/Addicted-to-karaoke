@@ -1070,3 +1070,13 @@
   background:none!important;
  }
 }
+
+/* Build 305 — center only the title and subtitle in the burgundy
+   header area to the RIGHT of the 25% stage artwork. Do not change the
+   curtains, dimensions, gold frame, mobile wizard, or deletion flow. */
+@media (min-width:781px) {
+ #a2k-delete-account-dialog .a2k-deletion-app-title {
+  align-items:center!important;
+  text-align:center!important;
+ }
+}
