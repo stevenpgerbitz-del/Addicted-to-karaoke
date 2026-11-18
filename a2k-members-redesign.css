@@ -423,3 +423,53 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-songboo
   width:100%;margin-top:5px;
  }
 }
+
+
+/* Build 325: Mobile member listings begin with results, not the desktop filter rail. */
+#a2k-d-directory .a2k-d-mobile-member-tools{display:none}
+@media(max-width:1023px){
+ #a2k-d-directory .a2k-d-members-layout:not(.a2k-d-members-profile-layout) > .a2k-d-members-filters{
+  display:none!important;
+ }
+ #a2k-d-directory .a2k-d-mobile-member-tools{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(108px,38%);
+  gap:8px;
+  align-items:center;
+  width:100%;
+  min-width:0;
+  margin:10px 0 12px;
+  padding:0;
+ }
+ #a2k-d-directory :is(.a2k-d-mobile-member-search,.a2k-d-mobile-member-role){
+  box-sizing:border-box;
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  min-height:44px;
+  margin:0;
+  padding:9px 10px;
+  border:1.5px solid #b48b60;
+  border-radius:9px;
+  background:#291310;
+  color:#f7dfbd;
+  font:14px/1.25 Georgia,serif;
+ }
+ #a2k-d-directory .a2k-d-mobile-member-search::placeholder{color:#ddc09e;opacity:1}
+ #a2k-d-directory :is(.a2k-d-mobile-member-search,.a2k-d-mobile-member-role):focus-visible{
+  outline:2px solid #ffe0ad;outline-offset:2px;
+ }
+ #a2k-d-directory .a2k-d-members-main > h1{
+  margin:0 0 5px!important;
+  color:#ffe0b6;font:italic 700 27px/1.2 Georgia,serif;
+ }
+ #a2k-d-directory .a2k-d-members-main > .a2k-d-directory-intro{
+  margin:0 0 8px!important;
+ }
+}
+@media(max-width:360px){
+ #a2k-d-directory .a2k-d-mobile-member-tools{
+  grid-template-columns:minmax(0,1fr);
+ }
+}
