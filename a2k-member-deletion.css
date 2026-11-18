@@ -1113,3 +1113,21 @@
   display:none!important;
  }
 }
+
+/* Build 309 — the standalone banner brand felt unanchored after removing
+   the duplicate subtitle. A restrained straight gold hairline below the
+   name gives it a deliberate vintage finish (not another gold curve).
+   Desktop only; preserve header, artwork, typography and wizard behavior. */
+@media (min-width:781px) {
+ #a2k-delete-account-dialog .a2k-deletion-app-title::after {
+  content:"";
+  display:block;
+  flex:none;
+  width:172px;
+  height:2px;
+  margin-top:7px;
+  border:0;
+  background:linear-gradient(90deg,transparent,#d4a454 16%,#f3cd81 50%,#d4a454 84%,transparent);
+  pointer-events:none;
+ }
+}
