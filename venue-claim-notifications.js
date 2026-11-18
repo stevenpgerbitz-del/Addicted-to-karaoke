@@ -21,7 +21,7 @@
   venueLabel=node('p','atk-claim-decision-venue');
   messageBody=node('p','atk-claim-decision-body');
   reasonBody=node('div','atk-claim-decision-reason');
-  const explanation=node('p','atk-community-context','This is a private message about your venue ownership request. Your decision history remains available under Profile → My Venues.');
+  const explanation=node('p','atk-community-context','This is a private message about your venue access request. Your decision history remains available under Profile → My Venues.');
   noticeFeedback=node('p','atk-claim-notice-feedback');
   noticeFeedback.setAttribute('role','status');noticeFeedback.setAttribute('aria-live','polite');
   const footer=node('div','atk-community-dialog-actions atk-claim-notice-footer');
@@ -43,7 +43,7 @@
   venueLabel.textContent=name;
   messageBody.textContent=declined
    ?'Your request to claim this venue was not approved.'
-   :'Your venue ownership request has been approved.';
+   :'Your venue access request has been approved.';
   reasonBody.replaceChildren();
   const heading=node('strong','',declined?'Reason from the review team':'Decision');
   const detail=node('p','',declined
