@@ -225,12 +225,13 @@ async function save(payload){
  if(roles.includes('owner')&&s.claimSubmitted&&s.ownerVenue&&!s.skipped.includes('owner_confirm')){
    var choice=s.ownerVenue;
    if(choice.mode==='claim'){
+     if(!['owner','manager','authorized_representative'].includes(s.ownerRelationship))throw Error('Select your position at the venue before requesting access.');
      var candidate=currentVenue(choice.name,payload.venueRecords);
      if(!candidate.id)throw Error('The claimed venue is not in Addicted to Karaoke. Please propose a new venue instead.');
      var oldClaims=fail(await client().from('venue_claim_requests').select('id').eq('claimant_user_id',id).eq('venue_id',candidate.id).eq('status','pending').limit(1))||[];
      if(!oldClaims.length)fail(await client().from('venue_claim_requests').insert({
        venue_id:candidate.id,claimant_user_id:id,contact_name:text(s.ownerBusiness,120)||name,
-       contact_email:text(s.ownerEmail||user().email,254),contact_phone:text(s.ownerPhone,40)||null,relationship:'owner',
+       contact_email:text(s.ownerEmail||user().email,254),contact_phone:text(s.ownerPhone,40)||null,relationship:s.ownerRelationship,
        verification_details:'Claim requested through Addicted to Karaoke member setup. Venue preferences (pending verification): '+text((s.ownerGenres||[]).join(', '),200),status:'pending'
      }));
    }else{
@@ -239,7 +240,7 @@ async function save(payload){
      if(localStorage.getItem(newVenueKey)!=='submitted'){
        fail(await client().from('venue_suggestions').insert({
          name:text(choice.name,120),city:city.city,state:city.state,status:'submitted',submitted_by:id,
-         karaoke_details:'Owner-proposed venue via member setup. Business: '+text(s.ownerBusiness,120)+'; amenities: '+text((s.ownerAmenities||[]).join(', '),150)+'; genres: '+text((s.ownerGenres||[]).join(', '),150)+'; schedule posting: '+text(s.postPolicy,15)
+         karaoke_details:'Venue Staff-proposed venue via member setup. Business: '+text(s.ownerBusiness,120)+'; amenities: '+text((s.ownerAmenities||[]).join(', '),150)+'; genres: '+text((s.ownerGenres||[]).join(', '),150)+'; schedule posting: '+text(s.postPolicy,15)
        }));
        localStorage.setItem(newVenueKey,'submitted');
      }
