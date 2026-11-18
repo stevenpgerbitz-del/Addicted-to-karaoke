@@ -1059,3 +1059,14 @@
   pointer-events:none;
  }
 }
+
+/* Build 304 — remove only the upper-right gold header arc.
+   Preserve the continuous left stage art, curtain, title, dimensions,
+   steps and mobile treatment. Override earlier :after decorations. */
+@media (min-width:781px) {
+ #a2k-delete-account-dialog .a2k-deletion-titlebar::after {
+  content:none!important;
+  display:none!important;
+  background:none!important;
+ }
+}
