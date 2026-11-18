@@ -2,9 +2,9 @@
 (function(){
  'use strict';
  const assets=[
-  ['mic','Microphone','assets/a2k-directory-vintage-mic.svg'],
-  ['male','Male figure','assets/a2k-avatar-male.svg'],
-  ['female','Female figure','assets/a2k-avatar-female.svg']
+  ['mic','Microphone','assets/a2k-avatar-microphone-theatrical.png'],
+  ['male','Male figure','assets/a2k-avatar-male-theatrical.png'],
+  ['female','Female figure','assets/a2k-avatar-female-theatrical.png']
  ];
  let dialog=null,busy=false;
  function build(){

@@ -165,7 +165,7 @@
    const mark=elem('div','a2k-d-member-directory-emblem');
    mark.setAttribute('aria-hidden','true');
    const artwork=elem('img','a2k-d-directory-microphone');
-   artwork.src='assets/a2k-directory-vintage-mic.svg';
+   artwork.src='assets/a2k-avatar-microphone-theatrical.png';
    artwork.alt='';artwork.decoding='async';
    mark.append(artwork);
    sidebar.append(mark,elem('h2','','Find Members'));
@@ -248,14 +248,14 @@
        if(url){
          const photo=elem('img','a2k-d-member-avatar-image');
          photo.alt='';photo.loading='lazy';photo.decoding='async';photo.src=url;
-         photo.onerror=()=>{photo.src='assets/a2k-directory-vintage-mic.svg';photo.onerror=null};
+         photo.onerror=()=>{photo.src='assets/a2k-avatar-microphone-theatrical.png';photo.onerror=null};
          avatar.append(photo);
        }
      }catch(error){console.warn('Could not display member photo',error)}
    }
    if(!avatar.querySelector('.a2k-d-member-avatar-image')){
      const fallback=elem('img','a2k-d-member-avatar-image');
-     fallback.alt='';fallback.loading='lazy';fallback.src='assets/a2k-directory-vintage-mic.svg';
+     fallback.alt='';fallback.loading='lazy';fallback.src='assets/a2k-avatar-microphone-theatrical.png';
      avatar.replaceChildren(fallback);
    }
    return avatar;

@@ -31,7 +31,7 @@ function open(isManual){
  overlay.setAttribute('aria-modal','true');
  frame=document.createElement('iframe');
  frame.title='Addicted to Karaoke Member Setup Wizard';
- frame.src='member-setup-preview.html?live=1&v=344';
+ frame.src='member-setup-preview.html?live=1&v=345';
  frame.setAttribute('referrerpolicy','same-origin');
  frame.onerror=function(){
    var m=manual;close();
@@ -67,7 +67,7 @@ async function initial(){
  send('init',data);
 }
 async function presetPhotoBlob(kind){
- var src=kind==='male'?'assets/a2k-avatar-male.svg':'assets/a2k-avatar-female.svg';
+ var src=kind==='male'?'assets/a2k-avatar-male-theatrical.png':'assets/a2k-avatar-female-theatrical.png';
  var image=new Image();image.src=src;await image.decode();
  var canvas=document.createElement('canvas');canvas.width=400;canvas.height=400;
  canvas.getContext('2d').drawImage(image,0,0,400,400);
