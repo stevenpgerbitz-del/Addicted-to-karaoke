@@ -84,7 +84,7 @@
  // their own directory/privacy settings are counted.
  async function visibleDirectoryMembers(){
    const rows=await fetchRows('member_profiles',
-     'user_id,stage_name,bio,karaoke_interests,created_at,profile_visibility,avatar_path',
+     'user_id,stage_name,profile_slug,bio,karaoke_interests,created_at,profile_visibility,avatar_path',
      q=>q.eq('directory_visible',true).order('stage_name',{ascending:true}).limit(200));
    const visible=rows.filter(m=>m.profile_visibility!=='private'&&
      (m.profile_visibility!=='members'||signed()));
@@ -283,18 +283,21 @@
        elem('p','a2k-d-directory-info','Unable to load member profiles right now.'));
    }
  };
- window.a2kOpenMemberProfile=async function(userId,source='members'){
-   if(!/^[a-f0-9-]{36}$/i.test(String(userId||'')))return;
+ window.a2kOpenMemberProfile=async function(memberRef,source='members'){
+   const identifier=String(memberRef||'');
+   const isId=/^[a-f0-9-]{36}$/i.test(identifier);
+   if(!isId&&!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(identifier))return;
    const target=shell();if(!target)return;
    const serial=++request;lastSource=source;
    target.replaceChildren(elem('p','a2k-d-directory-info','Loading member profile…'));
    const isCurrent=()=>serial===request&&target.isConnected;
    try{
      const members=await fetchRows('member_profiles',
-       'user_id,stage_name,bio,created_at,karaoke_interests,favorite_genres,profile_visibility,song_visibility,avatar_path',
-       q=>q.eq('user_id',userId).limit(1));
+       'user_id,stage_name,profile_slug,bio,created_at,karaoke_interests,favorite_genres,profile_visibility,song_visibility,avatar_path',
+       q=>q.eq(isId?'user_id':'profile_slug',identifier).limit(1));
      if(!isCurrent())return;
      const member=members[0];
+     const userId=member?.user_id;
      const isSelf=signed()&&String(authUser.id)===String(userId);
      if(!member||(member.profile_visibility==='private'&&!isSelf)||
        (member.profile_visibility==='members'&&!signed()&&!isSelf)){
@@ -315,8 +318,8 @@
        return null;
      });
      if(!isCurrent())return;
-     // Use a stable member ID in the URL; display names can change.
-     history.replaceState(null,'','#member/'+encodeURIComponent(userId));
+     // The database-assigned slug is permanent, even when a stage name changes.
+     history.replaceState(null,'','#member/'+encodeURIComponent(member.profile_slug||userId));
      const profileLayout=elem('div','a2k-d-members-layout a2k-d-members-profile-layout');
      const profileResult=elem('div','a2k-d-members-main a2k-d-selected-member');
      const {sidebar:directorySidebar}=makeDirectorySidebar(visibleMembers,{
@@ -329,7 +332,7 @@
      share.type='button';
      share.setAttribute('aria-label','Share member profile link');
      share.onclick=async()=>{
-       const url=location.origin+location.pathname+'#member/'+encodeURIComponent(userId);
+       const url=location.origin+location.pathname+'#member/'+encodeURIComponent(member.profile_slug||userId);
        try{
          if(navigator.share){
            await navigator.share({title:(member.stage_name||'Member')+' · Addicted to Karaoke',url});
@@ -667,8 +670,8 @@
 
  // Shareable member URLs use the existing profile and its privacy checks.
  function openMemberLink(){
-   const match=/^#member\/([a-f0-9-]{36})$/i.exec(location.hash);
-   if(match){window.a2kDesktopOpenMemberRoute?.(match[1]);return;}
+   const match=/^#member\/([a-z0-9-]{1,70})$/i.exec(location.hash);
+   if(match){window.a2kDesktopOpenMemberRoute?.(match[1].toLowerCase());return;}
    if(location.hash==='#members')window.a2kOpenMembersLanding?.();
  }
  window.addEventListener('hashchange',openMemberLink);
