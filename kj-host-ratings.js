@@ -214,32 +214,21 @@ async function submit(){
    e.code==='23505'?'You have already reviewed this host for that performance date.':cleanError(e);
  }finally{state.busy=false;button.disabled=false}
 }
-async function refreshVenueHostButtons(){
- var wrapper=document.getElementById('a2k-kj-rate-links');
- if(!wrapper){wrapper=el('div');wrapper.id='a2k-kj-rate-links';wrapper.hidden=true;
-  var actions=document.querySelector('#venue-screen .actions');
-  if(actions)actions.insertAdjacentElement('afterend',wrapper);
- }
- if(!wrapper)return;
- var current;
- try{current=sampleVenues.find(x=>x.id===selectedVenue)}catch(_){return}
- var venueId=current?.databaseId;
- wrapper.replaceChildren();wrapper.hidden=true;
- if(!venueId||!db()||document.getElementById('venue-screen')?.hidden)return;
- var callId=venueId;wrapper.dataset.venue=callId;
- try{
-  var links=await db().from('kj_review_venues').select('host_user_id').eq('venue_id',venueId);
-  if(links.error||wrapper.dataset.venue!==callId||!links.data?.length)return;
-  var ids=[...new Set(links.data.map(x=>x.host_user_id))];
-  var hosts=await db().from('kj_review_hosts').select('user_id,stage_name').eq('enabled',true).in('user_id',ids);
-  if(hosts.error||wrapper.dataset.venue!==callId)return;
-  for(let host of hosts.data||[]){
-   var button=el('button','a2k-kj-mini-button','🎤 Rate '+host.stage_name);
-   button.type='button';button.onclick=()=>open(host.user_id,venueId);
-   wrapper.append(button);
-  }
-  wrapper.hidden=!wrapper.children.length;
- }catch(e){console.warn('KJ ratings unavailable',e)}
+// Venue-linked KJs are shown with the schedule, not below Call / Share.
+async function venueHosts(venueId){
+ var client=db();if(!venueId||!client)return [];
+ var links=await client.from('kj_review_venues').select('host_user_id').eq('venue_id',venueId);
+ if(links.error)throw links.error;
+ var ids=[...new Set((links.data||[]).map(x=>x.host_user_id).filter(Boolean))];
+ if(!ids.length)return [];
+ var hosts=await client.from('kj_review_hosts')
+   .select('user_id,stage_name').eq('enabled',true).in('user_id',ids);
+ if(hosts.error)throw hosts.error;
+ return (hosts.data||[]).map(h=>({id:h.user_id,name:h.stage_name}))
+   .filter(h=>h.id&&h.name);
+}
+function refreshVenueHostButtons(){
+ document.getElementById('a2k-kj-rate-links')?.remove();
 }
 async function refreshSelfKjProfile(){
  var anchor=document.getElementById('atk-kj-profile-entry');
@@ -368,5 +357,5 @@ function init(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
 else init();
-window.a2kKjRatings={open:open,refreshVenue:refreshVenueHostButtons};
+window.a2kKjRatings={open:open,refreshVenue:refreshVenueHostButtons,venueHosts:venueHosts};
 })();
