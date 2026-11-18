@@ -277,7 +277,12 @@
    if(root&&root!==tracked){
     innerObserver?.disconnect();
     tracked=root;
-    innerObserver=new MutationObserver(()=>{if(!previewOn)void ensureLaunch()});
+    innerObserver=new MutationObserver(()=>{
+      // A real Members navigation replaces the demo contents. Reset the
+      // preview flag so the founder can reopen the sample afterwards.
+      if(previewOn&&!root.querySelector('.a2k-d-demo-preview'))previewOn=false;
+      if(!previewOn)void ensureLaunch();
+    });
     innerObserver.observe(root,{childList:true});
    }
    if(root&&!previewOn)void ensureLaunch();
