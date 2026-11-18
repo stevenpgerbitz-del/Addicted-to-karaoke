@@ -384,7 +384,7 @@
      void window.a2kOpenMembersDirectory(shell);
  };
  window.a2kDesktopOpenMemberRoute=function(userId){
-   if(!/^[a-f0-9-]{36}$/i.test(String(userId||'')))return;
+   if(!/^(?:[a-f0-9-]{36}|[a-z0-9]+(?:-[a-z0-9]+)*)$/i.test(String(userId||'')))return;
    const shell=enterMembers();
    if(shell&&typeof window.a2kOpenMemberProfile==='function')
      void window.a2kOpenMemberProfile(userId,'members');
