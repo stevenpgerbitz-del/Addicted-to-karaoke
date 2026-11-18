@@ -1103,3 +1103,13 @@
   font-size:12px!important;
  }
 }
+
+/* Build 308 — show 'Account Removal Wizard' only once on desktop:
+   keep the ornate sidebar label and hide the duplicate top subtitle.
+   Preserve the centered Addicted to Karaoke banner, its 31px title,
+   the stage art, review spacing, controls and mobile layout. */
+@media (min-width:781px) {
+ #a2k-delete-account-dialog .a2k-deletion-app-subtitle {
+  display:none!important;
+ }
+}
