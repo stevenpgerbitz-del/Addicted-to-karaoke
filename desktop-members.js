@@ -297,7 +297,7 @@
    const head=elem('div','a2k-d-member-tile-head');
    const avatar=publicAvatar(member);
    // Role on desktop portrait; existing mobile member role remains unchanged.
-   avatar.append(elem('span','a2k-d-member-photo-tag',rolesOf(member)[0]||'Member'));
+   avatar.append(elem('span','a2k-d-member-photo-tag',rolesOf(member).map(role=>role==='KJ / Host'?'KJ Host':role).join(' / ')||'Member'));
    const label=elem('div');
    const stage=elem('h3','',member.stage_name||'Karaoke Member');
    if(member._emblems?.is_verified)stage.append(verifiedMark());
