@@ -121,7 +121,7 @@ async function save(payload){
  var name=text(s.name,30);
  if(name.length<3)throw Error('Please enter a display name with at least three characters.');
  if(roles.includes('kj')&&s.kjBusiness&&!text(s.kjEmail)&&!text(s.kjPhone))throw Error('KJ business requires an email or phone number.');
- if(roles.includes('owner')&&s.ownerBusiness&&!text(s.ownerEmail)&&!text(s.ownerPhone)&&!user().email)throw Error('Venue owner contact requires an email or phone number.');
+ if(roles.includes('owner')&&s.ownerBusiness&&!text(s.ownerEmail)&&!text(s.ownerPhone)&&!user().email)throw Error('Venue staff contact requires an email or phone number.');
  var profileUpdate={stage_name:name,bio:text(s.bio,300),karaoke_interests:rls,
     favorite_genres:roles.includes('singer')?(s.singerGenres||[]).filter(x=>typeof x==='string').slice(0,30):old.favorite_genres||[],
     directory_visible:priv.directory!==false,
