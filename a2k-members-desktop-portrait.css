@@ -178,3 +178,46 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member>.a2k-d-member-prof
 @media(prefers-reduced-motion:reduce){
 html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile{transition:none!important}
 }
+
+/* A2K 329 — specificity fix. Legacy 240/250 styles were winning over
+   the new portrait cards, leaving the pictures at 50–58px.
+   Use the exact card-nested selectors below so the approved images fill. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory:has(.a2k-d-members-grid){
+  box-sizing:border-box!important;width:100%!important;
+  max-width:none!important;margin-inline:0!important;padding:10px 16px 30px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile .a2k-d-member-tile-head{
+  position:relative!important;display:flex!important;flex-direction:column!important;
+  align-items:stretch!important;justify-content:flex-start!important;
+  width:100%!important;min-width:0!important;min-height:0!important;
+  height:auto!important;gap:11px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile .a2k-d-member-avatar{
+  box-sizing:border-box!important;position:relative!important;display:grid!important;
+  flex:0 0 auto!important;place-items:center!important;
+  width:100%!important;max-width:none!important;min-width:0!important;
+  height:auto!important;min-height:0!important;
+  aspect-ratio:1/1!important;margin:0!important;
+  border:1px solid #dbb17d!important;border-radius:12px!important;
+  background:radial-gradient(ellipse at 50% 13%,#8a4d37 0%,#521f17 68%,#351410)!important;
+  color:#ffe6bd!important;font:italic 700 clamp(40px,4vw,74px)/1 Georgia,serif!important;
+  overflow:hidden!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile .a2k-d-member-avatar-image{
+  position:absolute!important;inset:0!important;display:block!important;
+  width:100%!important;height:100%!important;object-fit:cover!important;
+  object-position:center 27%!important;border-radius:11px!important;z-index:1!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile .a2k-d-member-photo-tag{
+  position:absolute!important;bottom:9px!important;left:50%!important;
+  transform:translateX(-50%)!important;z-index:2!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile .a2k-d-member-tile-head>div{
+  display:block!important;flex:0 0 auto!important;width:100%!important;
+  min-width:0!important;text-align:center!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile .a2k-d-member-summary{
+  min-height:2.8em!important;
+ }
+}
