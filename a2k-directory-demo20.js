@@ -1,4 +1,4 @@
-/* A2K member-directory density preview — 20 entirely fictional members.
+/* A2K member-directory density preview — 50 entirely fictional members.
    Founder-only visual simulation. No user accounts, member numbers, awards,
    auth records, or production statistics are created or modified. */
 (function(){
@@ -6,7 +6,7 @@
  const ROOT_ID='a2k-d-directory';
  // A special opt-in preview URL can show fictional records without creating
  // accounts or requiring access to the real Founder management privileges.
- const demoLink=new URLSearchParams(location.search).get('a2k_demo')==='members20';
+ const demoLink=['members50','members20'].includes(new URLSearchParams(location.search).get('a2k_demo'));
  let demoAutoOpened=false;
  const DEMO=[
   ['DJ Scarlet',['kj'],['verified_kj','founding_tester'],true,true,'Hosts retro karaoke across town.','80s Classics','2024-04-12'],
@@ -28,7 +28,37 @@
   ['Harmony Hall Manager',['venue_owner'],[],false,true,'Connecting the community with live music.','All Genres','2026-04-18'],
   ['DJ Northern Lights',['kj'],['verified_kj','venue_1'],true,true,'Songs for every generation.','Variety','2025-02-08'],
   ['The Karaoke Collector',['singer'],['song_100','favorite_25','review_25','song_75'],false,true,'My song list is never finished.','Rock & Pop','2024-11-19'],
-  ['Preview Founder',['singer'],['founder'],true,true,'Example of the founder display.','80s & 90s','2023-07-07']
+  ['Preview Founder',['singer'],['founder'],true,true,'Example of the founder display.','80s & 90s','2023-07-07'],
+  ['Belt It Brenda',['singer'],['review_25','song_75'],true,true,'Making every chorus count.','Power Ballads','2025-03-12'],
+  ['DJ Copper Mic',['kj'],['verified_kj','venue_10'],true,true,'Weekend host with a love for old-school hits.','Classic Hits','2024-02-25'],
+  ['Neon-Free Nick',['singer'],['song_1'],false,false,'First song down, many more to go.','Rock','2026-11-01'],
+  ['The Duet Department',['singer','kj'],['founding_tester','song_25','favorite_5'],false,true,'Two voices are better than one.','Duets','2025-10-14'],
+  ['Velvet Lounge Crew',['venue_owner'],['verified_venue_owner','venue_25'],true,true,'Welcoming singers and hosts alike.','Variety','2024-06-05'],
+  ['Country Roads Chris',['singer'],['song_100','favorite_25','review_75'],true,true,'Every night needs a little country.','Country','2024-08-08'],
+  ['DJ Midnight Mix',['kj'],['verified_kj','community_supporter','review_100'],true,true,'Mixing unforgettable karaoke nights.','Dance & Pop','2023-12-01'],
+  ['Harmony Hannah',['singer'],[],false,true,'New here and ready to sing!','Acoustic Pop','2026-10-03'],
+  ['Backstage Ben',['singer','venue_owner'],['favorite_10','venue_1'],true,true,'Part singer, part event organizer.','Indie Rock','2025-07-19'],
+  ['Miss Melody',['singer'],['song_25','review_1'],false,true,'Here for the music and the friendships.','Motown','2026-01-27'],
+  ['DJ Silver Record',['kj'],['verified_kj','venue_100','review_25','song_75'],true,true,'Keeping microphones busy every weekend.','80s & 90s','2024-10-09'],
+  ['The Longest Karaoke Stage Name Ever',['singer'],['review_100','favorite_10'],true,false,'A long name and an even longer song list.','Show Tunes','2025-02-14'],
+  ['Sing It Again Samira',['singer'],['song_75','favorite_5'],false,true,'Still looking for the perfect encore.','R&B','2025-09-06'],
+  ['Spotlight Shift Manager',['venue_owner'],['verified_venue_owner','community_supporter'],true,false,'Helping every performer find their spotlight.','All Genres','2024-03-29'],
+  ['Open Mic Oliver',['singer'],['song_1','favorite_1'],false,true,'Just getting started.','Pop','2026-10-31'],
+  ['DJ Heartland',['kj','singer'],['verified_kj','review_75','venue_10'],true,true,'Hosting karaoke across the heartland.','Country & Classic Rock','2025-04-16'],
+  ['The Golden Era',['singer'],['song_100','review_100','favorite_25','venue_25'],true,true,'Oldies never go out of style.','50s & 60s','2023-09-22'],
+  ['Stage Door Taylor',['venue_owner','singer'],['venue_1','favorite_5'],false,true,'Connecting singers and venues.','Indie Pop','2026-03-03'],
+  ['Rockin Robin',['singer'],['song_25'],true,true,'Guitar solos welcome.','Classic Rock','2025-12-18'],
+  ['MC Microphone Molly',['kj'],[],false,false,'Excited for my first hosting event.','Top 40','2026-11-06'],
+  ['Last Call Legends',['kj','venue_owner'],['verified_kj','verified_venue_owner','community_supporter'],true,true,'Late-night karaoke is our favorite tradition.','Variety','2024-05-20'],
+  ['Cassette Casey',['singer'],['founding_tester','review_25'],true,true,'Raised on mixtapes and singalongs.','80s','2025-11-12'],
+  ['Soulful Simone',['singer'],['song_100','review_75','favorite_25'],false,true,'Give me a soulful harmony.','Soul','2024-11-30'],
+  ['Des Moines DJ Collective',['kj'],['verified_kj','venue_25','review_100'],true,true,'Bringing hosts and venues together.','All Eras','2025-01-12'],
+  ['Bluebird Bar Team',['venue_owner'],['verified_venue_owner','venue_10'],false,true,'A welcoming place for music lovers.','Country & Pop','2024-12-24'],
+  ['Chorus Line Charlie',['singer'],['review_1'],false,false,'Always happy to cheer for another singer.','Broadway','2026-07-04'],
+  ['Jazzy Jasmine',['singer'],['favorite_10','song_75'],true,true,'A little swing goes a long way.','Jazz','2025-06-07'],
+  ['DJ Saturday Spotlight',['kj'],['verified_kj','founding_tester','review_75','venue_100'],true,true,'Saturday nights are for karaoke.','Party Anthems','2024-07-27'],
+  ['Melody & Friends',['singer','kj'],['song_25','venue_1'],false,true,'Friends who sing together stay together.','Duets & Pop','2026-02-05'],
+  ['Acoustic Avenue',['singer'],[],false,true,'Taking my first step into karaoke.','Acoustic','2026-11-14']
  ].map((v,i)=>({id:i+1,name:v[0],roles:v[1],badges:v[2],verified:v[3],
   portrait:v[4],about:v[5],music:v[6],joined:v[7]}));
  const LABELS={
@@ -184,7 +214,7 @@
  function banner(){
   const b=create('div','a2k-d-demo-notice');
   const tag=create('strong','','DEMO PREVIEW');
-  const note=create('span','','20 fictional profiles · No actual members or accounts were created');
+  const note=create('span','','50 fictional profiles · No actual members or accounts were created');
   b.append(tag,note);return b;
  }
  function back(){
@@ -206,7 +236,7 @@
   wrap.append(banner());
   const headline=create('div','a2k-d-demo-head');
   const title=create('div','');
-  title.append(create('h1','','Members'),create('p','','How our directory could look with 20 different members'));
+  title.append(create('h1','','Members'),create('p','','How our directory could look with 50 different members'));
   headline.append(title,back());
   wrap.append(headline);
   const filters=create('section','a2k-d-demo-toolbar');
@@ -220,7 +250,7 @@
   for(const [key,name] of [['name','Name A–Z'],['newest','Newest'],['oldest','Oldest']]){
    const option=create('option','',name);option.value=key;sort.append(option);
   }
-  const totals=create('span','a2k-d-demo-total','20 sample members');
+  const totals=create('span','a2k-d-demo-total','50 sample members');
   top.append(search,totals,sort);
   const chips=create('div','a2k-d-demo-filter-tabs');
   const roleButtons=new Map();let role='all';
@@ -257,7 +287,7 @@
   const root=byId(ROOT_ID);if(!root)return;
   const page=create('div','a2k-d-demo-preview a2k-d-demo-profile');
   page.append(banner());
-  const backBtn=create('button','a2k-d-demo-return','← Back to 20 Samples');
+  const backBtn=create('button','a2k-d-demo-return','← Back to 50 Samples');
   backBtn.type='button';backBtn.onclick=show;page.append(backBtn);
   const columns=create('div','a2k-d-demo-profile-columns');
   const side=create('section','a2k-d-demo-profile-side');
@@ -284,16 +314,16 @@
  async function ensureLaunch(){
   if(previewOn||!desktop())return;
   const root=byId(ROOT_ID),toolbar=root?.querySelector('.a2k-d-members-toolbar');
-  if(!root||!toolbar||byId('a2k-d-demo-20-launch'))return;
+  if(!root||!toolbar||byId('a2k-d-demo-50-launch'))return;
   if(!await mayPreview()||!root.contains(toolbar)||previewOn)return;
   if(demoLink&&!demoAutoOpened){
     demoAutoOpened=true;
     show();
     return;
   }
-  const btn=create('button','a2k-d-demo-launch','Preview 20 Members');
-  btn.id='a2k-d-demo-20-launch';btn.type='button';
-  btn.title='Founder-only, fictional 20-member layout preview';
+  const btn=create('button','a2k-d-demo-launch','Preview 50 Members');
+  btn.id='a2k-d-demo-50-launch';btn.type='button';
+  btn.title='Founder-only, fictional 50-member layout preview';
   btn.addEventListener('click',show);
   toolbar.insertBefore(btn,toolbar.querySelector('.a2k-d-member-sort-label'));
  }
