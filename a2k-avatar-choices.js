@@ -34,7 +34,7 @@
   document.body.append(dialog);return dialog;
  }
  async function choose(key){
-  if(busy||!window.authClient||!window.authUser||!window.memberProfile)return;
+  if(busy||typeof authClient==='undefined'||!authClient||typeof authUser==='undefined'||!authUser||typeof memberProfile==='undefined'||!memberProfile)return;
   const feedback=document.getElementById('a2k-avatar-choice-feedback');
   const controls=dialog.querySelectorAll('button');busy=true;controls.forEach(b=>b.disabled=true);
   feedback.textContent='Saving picture…';
@@ -63,7 +63,7 @@
   finally{busy=false;controls.forEach(b=>b.disabled=false)}
  }
  window.a2kOpenAvatarChoices=function(){
-  if(!window.authUser||!window.memberProfile)return;
+  if(typeof authUser==='undefined'||!authUser||typeof memberProfile==='undefined'||!memberProfile)return;
   build();
   dialog.querySelector('#a2k-avatar-choice-feedback').textContent='';
   if(!dialog.open)dialog.showModal();
