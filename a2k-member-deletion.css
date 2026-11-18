@@ -1131,3 +1131,14 @@
   pointer-events:none;
  }
 }
+
+/* Build 310 — typography-only refinement for the desktop banner.
+   Use Playfair Display for the single, centered Addicted to Karaoke
+   heading; retain its size, cream color, gold underline, and Georgia
+   fallback. All other wizard fonts and mobile styles remain unchanged. */
+@media (min-width:781px) {
+ #a2k-delete-account-dialog .a2k-deletion-app-brand {
+  font-family:'Playfair Display',Georgia,'Times New Roman',serif!important;
+  font-weight:700!important;
+ }
+}
