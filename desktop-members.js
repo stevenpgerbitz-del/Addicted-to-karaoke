@@ -85,8 +85,25 @@
    founder:'Founder',founding_tester:'Founding Tester',verified_kj:'Verified KJ',
    verified_venue_owner:'Verified Venue Staff',community_supporter:'Community Supporter',
    super_admin:'Super Admin',admin:'Admin',moderator:'Moderator',
-   review_100:'Review Master',song_100:'Songbook Legend',venue_100:'Karaoke Pioneer',
+   review_1:'Review Rookie',review_25:'Review Contributor',
+   review_75:'Review Expert',review_100:'Review Master',
+   song_1:'First Pick',song_25:'Song Collector',song_75:'Music Enthusiast',
+   song_100:'Songbook Legend',venue_1:'Karaoke Scout',
+   venue_10:'Karaoke Discoverer',venue_25:'Karaoke Pathfinder',
+   venue_100:'Karaoke Pioneer',favorite_1:'Favorite Finder',
+   favorite_5:'Favorite Explorer',favorite_10:'Favorite Enthusiast',
    favorite_25:'Favorite Superfan'
+ };
+ const badgeRarity={
+   founder:'Legendary',founding_tester:'Legendary',review_100:'Legendary',
+   song_100:'Legendary',venue_100:'Legendary',favorite_25:'Legendary',
+   verified_kj:'Epic',verified_venue_owner:'Epic',community_supporter:'Epic',
+   super_admin:'Epic',review_75:'Epic',song_75:'Epic',
+   venue_25:'Epic',favorite_10:'Epic',
+   admin:'Rare',moderator:'Rare',review_25:'Rare',song_25:'Rare',
+   venue_10:'Rare',favorite_5:'Rare',
+   review_1:'Uncommon',song_1:'Uncommon',venue_1:'Uncommon',
+   favorite_1:'Uncommon'
  };
  async function fetchMemberEmblems(members){
    const map=new Map();
@@ -111,13 +128,16 @@
  function featuredChip(code){
    const label=featuredBadgeLabels[code];
    if(!label)return null;
-   const chip=elem('span','a2k-d-member-featured-chip');
-   chip.setAttribute('title',label);
+   const chip=elem('span','a2k-d-member-featured-chip a2k-d-icon-only-badge');
+   const hint=label+' · '+(badgeRarity[code]||'Common')+' badge';
+   chip.setAttribute('title',hint);
+   chip.setAttribute('aria-label',hint);
+   chip.setAttribute('role','img');
    const art=elem('img','a2k-d-member-featured-art');
    art.src='assets/badges/'+code+'.png?v=319';
    art.alt='';art.loading='lazy';
-   art.onerror=()=>art.remove();
-   chip.append(art,elem('span','',label));
+   art.onerror=()=>chip.remove();
+   chip.append(art);
    return chip;
  }
  // The directory sidebar is the same component in the directory and
@@ -247,17 +267,12 @@
    label.append(stage,elem('p','a2k-d-directory-meta',rolesOf(member).join(' · ')||'Member'));
    head.append(avatar,label);box.append(head);
    const featured=elem('div','a2k-d-directory-featured');
-   const earned=(Array.isArray(member._emblems?.badge_codes)?member._emblems.badge_codes:[]).slice(0,2);
+   const earned=(Array.isArray(member._emblems?.badge_codes)?member._emblems.badge_codes:[]).slice(0,4);
    for(const code of earned){
      const chip=featuredChip(code);
      if(chip)featured.append(chip);
    }
-   // Self-declared KJ role is a role chip, NOT an awarded/verified badge.
-   if(rolesOf(member).includes('KJ / Host')&&!earned.includes('verified_kj')){
-     const kj=elem('span','a2k-d-member-role-chip');
-     kj.append(directoryIcon('headphones'),elem('span','','KJ / Host'));
-     featured.append(kj);
-   }
+   // The selected KJ/Host role stays on the photo, not among earned badges.
    if(featured.childElementCount)box.append(featured);
    // Member biographies belong on the full profile, not in directory tiles.
    // This existing RPC enforces public/member/private profile visibility.
@@ -280,7 +295,10 @@
    if(since&&member._prefs?.show_member_since!==false)box.append(elem('p','a2k-d-member-since','Member since '+since));
    const view=elem('button','a2k-d-directory-action','View Profile');
    view.type='button';
-   view.setAttribute('aria-label','View profile for '+(member.stage_name||'Karaoke Member'));
+   const featuredLabels=earned.map(code=>featuredBadgeLabels[code]).filter(Boolean);
+   view.setAttribute('aria-label','View profile for '+(member.stage_name||'Karaoke Member')+
+     (featuredLabels.length?'. Featured badges: '+featuredLabels.join(', '):''));
+   if(featuredLabels.length)view.title=featuredLabels.join(' · ');
    view.onclick=()=>window.a2kOpenMemberProfile(member.user_id,'members');
    box.append(view);
    return box;
