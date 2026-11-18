@@ -215,7 +215,7 @@
    const target=root||shell();
    if(!target)return;
    const serial=++request;lastSource='members';
-   if(location.hash.startsWith('#member/'))history.replaceState(null,'','#find');
+   history.replaceState(null,'','#members');
    target.replaceChildren(elem('h1','','Members'),
      elem('p','a2k-d-directory-info','Loading member directory…'));
    try{
@@ -668,8 +668,8 @@
  // Shareable member URLs use the existing profile and its privacy checks.
  function openMemberLink(){
    const match=/^#member\/([a-f0-9-]{36})$/i.exec(location.hash);
-   if(!match)return;
-   window.a2kDesktopOpenMemberRoute?.(match[1]);
+   if(match){window.a2kDesktopOpenMemberRoute?.(match[1]);return;}
+   if(location.hash==='#members')window.a2kOpenMembersLanding?.();
  }
  window.addEventListener('hashchange',openMemberLink);
  if(document.readyState==='loading')
