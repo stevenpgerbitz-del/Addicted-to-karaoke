@@ -196,6 +196,8 @@
    const box=elem('article','a2k-d-directory-card a2k-d-member-tile');
    const head=elem('div','a2k-d-member-tile-head');
    const avatar=publicAvatar(member);
+   // Role on desktop portrait; existing mobile member role remains unchanged.
+   avatar.append(elem('span','a2k-d-member-photo-tag',rolesOf(member)[0]||'Member'));
    const label=elem('div');
    label.append(elem('h3','',member.stage_name||'Karaoke Member'),
      elem('p','a2k-d-directory-meta',rolesOf(member).join(' · ')||'Member'));
@@ -207,7 +209,9 @@
      : null;
    if(since&&member._prefs?.show_member_since!==false)box.append(elem('p','a2k-d-member-since','Member since '+since));
    const view=elem('button','a2k-d-directory-action','View Profile');
-   view.type='button';view.onclick=()=>window.a2kOpenMemberProfile(member.user_id,'members');
+   view.type='button';
+   view.setAttribute('aria-label','View profile for '+(member.stage_name||'Karaoke Member'));
+   view.onclick=()=>window.a2kOpenMemberProfile(member.user_id,'members');
    box.append(view);
    return box;
  }
