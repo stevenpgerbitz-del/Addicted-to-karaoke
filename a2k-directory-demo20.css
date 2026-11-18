@@ -257,3 +257,16 @@
   color:#e5c49b!important;padding:0 2px!important;
  }
 }
+
+/* Blue-check verified filter: preserve the existing burgundy/gold chip layout. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-verified-filter{
+  border-color:#8bb9d9!important;
+  color:#afdafa!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-verified-filter[aria-pressed="true"]{
+  background:#204a69!important;color:#fff3da!important;
+  border-color:#a9ddff!important;
+  box-shadow:inset 0 0 0 1px #8cc8ea77!important;
+ }
+}
