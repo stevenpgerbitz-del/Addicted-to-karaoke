@@ -4,6 +4,10 @@
 (function(){
  'use strict';
  const ROOT_ID='a2k-d-directory';
+ // A special opt-in preview URL can show fictional records without creating
+ // accounts or requiring access to the real Founder management privileges.
+ const demoLink=new URLSearchParams(location.search).get('a2k_demo')==='members20';
+ let demoAutoOpened=false;
  const DEMO=[
   ['DJ Scarlet',['kj'],['verified_kj','founding_tester'],true,true,'Hosts retro karaoke across town.','80s Classics','2024-04-12'],
   ['Mic Drop Mike',['singer'],['song_25'],false,true,'Classic rock and big finales.','Classic Rock','2025-06-21'],
@@ -62,6 +66,7 @@
   catch{return null}
  };
  async function mayPreview(){
+  if(demoLink&&desktop())return true;
   const uid=currentUid();
   if(!desktop()||!uid||typeof authClient==='undefined'||!authClient)return false;
   if(authUid!==uid){authUid=uid;allowed=false;pendingAuth=null}
@@ -174,7 +179,7 @@
   return b;
  }
  function show(){
-  if(!desktop()||!allowed)return;
+  if(!desktop()||(!allowed&&!demoLink))return;
   const root=byId(ROOT_ID);if(!root)return;
   previewOn=true;
   const wrap=create('div','a2k-d-demo-preview');
@@ -261,6 +266,11 @@
   const root=byId(ROOT_ID),toolbar=root?.querySelector('.a2k-d-members-toolbar');
   if(!root||!toolbar||byId('a2k-d-demo-20-launch'))return;
   if(!await mayPreview()||!root.contains(toolbar)||previewOn)return;
+  if(demoLink&&!demoAutoOpened){
+    demoAutoOpened=true;
+    show();
+    return;
+  }
   const btn=create('button','a2k-d-demo-launch','Preview 20 Members');
   btn.id='a2k-d-demo-20-launch';btn.type='button';
   btn.title='Founder-only, fictional 20-member layout preview';
@@ -292,6 +302,9 @@
    outerObserver.observe(parent,{childList:true});
   }
   attach();
+  // The URL is explicitly chosen for design review; do not depend on the
+  // Founder's account login or on a previously mounted directory.
+  if(demoLink&&desktop())window.a2kOpenMembersLanding?.();
   window.addEventListener('resize',()=>{
    if(previewOn&&!desktop()){
     previewOn=false;
