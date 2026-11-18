@@ -268,14 +268,30 @@
   toolbar.insertBefore(btn,toolbar.querySelector('.a2k-d-member-sort-label'));
  }
  function boot(){
-  const root=byId(ROOT_ID);
-  if(!root)return;
-  const observer=new MutationObserver(()=>{if(!previewOn)void ensureLaunch()});
-  observer.observe(root,{childList:true});
-  void ensureLaunch();
+  // Desktop Vintage creates #a2k-d-directory lazily when Members is opened.
+  // Watch its permanent Find-screen parent, then watch the live directory root.
+  const parent=byId('find-screen');
+  let tracked=null,innerObserver=null;
+  function attach(){
+   const root=byId(ROOT_ID);
+   if(root&&root!==tracked){
+    innerObserver?.disconnect();
+    tracked=root;
+    innerObserver=new MutationObserver(()=>{if(!previewOn)void ensureLaunch()});
+    innerObserver.observe(root,{childList:true});
+   }
+   if(root&&!previewOn)void ensureLaunch();
+  }
+  if(parent){
+   const outerObserver=new MutationObserver(attach);
+   outerObserver.observe(parent,{childList:true});
+  }
+  attach();
   window.addEventListener('resize',()=>{
    if(previewOn&&!desktop()){
-    previewOn=false;void window.a2kOpenMembersDirectory?.(root,{restore:true});
+    previewOn=false;
+    const root=byId(ROOT_ID);
+    if(root)void window.a2kOpenMembersDirectory?.(root,{restore:true});
    }
   },{passive:true});
  }
