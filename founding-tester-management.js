@@ -52,11 +52,61 @@
    get('mg2-founding-status').textContent=error.message||'Try again.';
   }
  }
+ function confirmBadgeChange(action,member){
+  return new Promise(resolve=>{
+   const dialog=el('dialog','mg2-beta-confirm');
+   dialog.setAttribute('aria-labelledby','mg2-beta-confirm-heading');
+   dialog.setAttribute('aria-modal','true');
+   const shell=el('div','mg2-beta-confirm-shell');
+   const brand=el('p','mg2-beta-confirm-brand','ADDicted to Karaoke');
+   brand.textContent='Addicted to Karaoke';
+   const heading=el('h2','',action==='award'?'Award Founding Tester?':'Revoke Founding Tester?');
+   heading.id='mg2-beta-confirm-heading';
+   const row=el('div','mg2-beta-confirm-detail');
+   const image=el('img');
+   image.src='assets/badges/founding_tester.svg';
+   image.alt='Founding Tester — Beta Team badge';
+   const copy=el('div','');
+   copy.append(el('strong','','FOUNDING TESTER'),el('span','','BETA TEAM'));
+   row.append(image,copy);
+   const message=el('p','mg2-beta-confirm-message',
+    (action==='award'?'Award':'Revoke')+' the Founding Tester — Beta Team badge '+
+    (action==='award'?'to ':'from ')+(member.stage_name||'this member')+'?');
+   const note=el('p','mg2-beta-confirm-note',action==='award'
+    ?'This uses one of the 25 available badge spots.'
+    :'This makes the badge spot available to another member.');
+   const actions=el('div','mg2-beta-confirm-actions');
+   const cancel=el('button','','Cancel');cancel.type='button';
+   const confirm=el('button','mg2-beta-confirm-approve',action==='award'?'Award Badge':'Revoke Badge');
+   confirm.type='button';
+   actions.append(cancel,confirm);
+   shell.append(brand,heading,row,message,note,actions);
+   dialog.append(shell);
+   let settled=false;
+   function finish(approved){
+    if(settled)return;
+    settled=true;
+    if(dialog.open)dialog.close();
+    resolve(approved);
+   }
+   cancel.addEventListener('click',()=>finish(false));
+   confirm.addEventListener('click',()=>finish(true));
+   dialog.addEventListener('cancel',event=>{event.preventDefault();finish(false)});
+   dialog.addEventListener('click',event=>{if(event.target===dialog)finish(false)});
+   dialog.addEventListener('close',()=>{
+    dialog.remove();
+    if(!settled){settled=true;resolve(false)}
+   },{once:true});
+   document.body.append(dialog);
+   try{dialog.showModal();cancel.focus()}
+   catch(error){dialog.remove();if(!settled){settled=true;resolve(false)}}
+  });
+ }
  async function change(action){
   const member=selected;
   if(loading||!member||!founder())return;
-  if(action==='revoke'&&!window.confirm('Revoke the Founding Tester badge from '+(member.stage_name||'this member')+'? This frees one of the 25 spots.'))return;
-  if(action==='award'&&!window.confirm('Award the Founding Tester — Beta Team badge to '+(member.stage_name||'this member')+'?'))return;
+  if(!await confirmBadgeChange(action,member))return;
+  if(selected?.id!==member.id||!founder())return;
   loading=true;get('mg2-founding-award').disabled=true;get('mg2-founding-revoke').disabled=true;
   get('mg2-founding-status').textContent=action==='award'?'Awarding badge…':'Revoking badge…';
   try{
@@ -86,6 +136,22 @@
  '.mg2-founding-actions{display:flex;gap:9px;margin-top:10px}',
  '.mg2-founding-actions button{font-size:13px;min-height:38px}',
  '#mg2-founding-status{font-size:12px;margin:8px 0 0}',
+ '.mg2-beta-confirm{box-sizing:border-box;width:min(390px,calc(100vw - 30px));max-height:85dvh;overflow-y:auto;margin:auto;padding:0;border:1px solid #b68a58;border-radius:17px;background:linear-gradient(145deg,#32161b,#1b1012);color:#f6e7d2;box-shadow:0 20px 65px #000c}',
+ '.mg2-beta-confirm::backdrop{background:rgba(0,0,0,.78)}',
+ '.mg2-beta-confirm-shell{padding:22px 18px 17px;text-align:center}',
+ '.mg2-beta-confirm-brand{font:italic 700 16px Georgia,serif;color:#d5a969;margin:0 0 12px}',
+ '.mg2-beta-confirm h2{font:700 24px/1.2 Georgia,serif;color:#f9ebd6;margin:0 0 14px}',
+ '.mg2-beta-confirm-detail{display:flex;justify-content:center;align-items:center;gap:13px;border:1px solid #865343;background:#432127;border-radius:12px;padding:10px 12px;text-align:left}',
+ '.mg2-beta-confirm-detail img{width:57px;height:65px;object-fit:contain;flex:none}',
+ '.mg2-beta-confirm-detail div{display:flex;flex-direction:column;gap:5px;min-width:0}',
+ '.mg2-beta-confirm-detail strong{font:700 16px/1.2 Georgia,serif;color:#ffe6b6}',
+ '.mg2-beta-confirm-detail span{font:700 11px/1.2 Arial,sans-serif;color:#d8ac71;letter-spacing:1.4px}',
+ '.mg2-beta-confirm-message{font:15px/1.5 Arial,sans-serif;color:#f6e7d2;margin:16px 0 7px;overflow-wrap:anywhere}',
+ '.mg2-beta-confirm-note{font:12px/1.4 Arial,sans-serif;color:#d8bca1;margin:0 0 17px}',
+ '.mg2-beta-confirm-actions{display:flex;gap:10px}',
+ '.mg2-beta-confirm-actions button{flex:1;min-width:0;min-height:44px;padding:12px 8px;border-radius:10px;border:1px solid #e36f62;background:linear-gradient(#a72a27,#671312);color:#fff0e1;font:700 14px Arial,sans-serif;cursor:pointer}',
+ '.mg2-beta-confirm-actions button:focus-visible{outline:2px solid #ffdea5;outline-offset:3px}',
+ '.mg2-beta-confirm-actions .mg2-beta-confirm-approve{background:linear-gradient(#bc342d,#761511)}',
  '#mg2-founding-tester[hidden]{display:none!important}'
  ].join('');
  const style=el('style');style.textContent=css;document.head.append(style);
