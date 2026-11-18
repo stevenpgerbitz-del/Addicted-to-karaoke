@@ -177,7 +177,7 @@
   const view=create('button','a2k-d-directory-action','View sample profile');
   view.type='button';view.setAttribute('aria-label','View fictional sample profile of '+m.name+
    (m.badges.length?'. Sample badges: '+sortedAwards(m).map(x=>LABELS[x]||x).join(', '):''));
-  if(m.badges.length)view.title=sortedAwards(m).map(x=>LABELS[x]||x).join(' · ');
+  if(m.badges.length)view.title=sortedAwards(m).slice(0,4).map(code=>(LABELS[code]||code)+' ('+(rarityName[rarityRank[code]||1]||'Common')+')').join(' · ');
   view.onclick=()=>profile(m);
   tile.append(view);return tile;
  }
