@@ -314,12 +314,19 @@
   const totals=create('span','a2k-d-demo-total','1,000 sample members');
   top.append(search,totals,sort);
   const chips=create('div','a2k-d-demo-filter-tabs');
-  const roleButtons=new Map();let role='all',pageNumber=1;
+  const roleButtons=new Map();let selectedRoles=new Set(),verifiedOnly=false,pageNumber=1;
   for(const [id,label] of GROUPS){
    const n=DEMO.filter(m=>id==='all'||(id==='verified'?m.verified:m.roles.includes(id))).length;
    const b=create('button','a2k-d-demo-filter'+(id==='verified'?' a2k-d-demo-verified-filter':''),label+' ('+n+')');
-   b.type='button';b.dataset.role=id;b.setAttribute('aria-pressed',String(id===role));
-   b.onclick=()=>{role=id;pageNumber=1;draw()};
+   b.type='button';b.dataset.role=id;
+   b.setAttribute('aria-pressed',String(id==='all'));
+   b.onclick=()=>{
+    if(id==='all'){selectedRoles.clear();verifiedOnly=false}
+    else if(id==='verified')verifiedOnly=!verifiedOnly;
+    else if(selectedRoles.has(id))selectedRoles.delete(id);
+    else selectedRoles.add(id);
+    pageNumber=1;draw();
+   };
    chips.append(b);roleButtons.set(id,b);
   }
    filters.append(top,chips);wrap.append(filters);
@@ -334,7 +341,7 @@
   history.replaceState(null,'','#members');
   function draw(){
    const q=search.value.toLocaleLowerCase().trim();
-   const list=DEMO.filter(m=>(role==='all'||(role==='verified'?m.verified:m.roles.includes(role)))&&
+   const list=DEMO.filter(m=>(!selectedRoles.size||[...selectedRoles].some(role=>m.roles.includes(role)))&&(!verifiedOnly||m.verified)&&
     (!q||[m.name,m.about,m.music,m.roles.map(x=>LABELS[x]).join(' '),m.badges.map(x=>LABELS[x]).join(' ')]
      .join(' ').toLocaleLowerCase().includes(q)));
    if(sort.value==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
@@ -381,7 +388,11 @@
     }
    empty.hidden=list.length!==0;
    totals.textContent=list.length+' of '+DEMO.length+' sample members';
-   for(const [id,b] of roleButtons)b.setAttribute('aria-pressed',String(id===role));
+   for(const [id,b] of roleButtons){
+    const active=id==='all'?(!selectedRoles.size&&!verifiedOnly):
+      id==='verified'?verifiedOnly:selectedRoles.has(id);
+    b.setAttribute('aria-pressed',String(active));
+   }
 
   }
   search.addEventListener('input',()=>{pageNumber=1;draw()});sort.addEventListener('change',()=>{pageNumber=1;draw()});draw();
