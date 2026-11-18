@@ -336,6 +336,73 @@
      list.replaceChildren(el('p','a2k-d-directory-info','Unable to load listings right now. Please try again.'));
    }
  }
+ // Mobile Spotlight: Events uses the existing published special-events directory.
+ window.a2kOpenCommunityEvents=function(){
+   if(!window.matchMedia('(max-width:1023px)').matches)return;
+   sidebarGo('events');
+ };
+ // Community reviews: public, approved reviews for published venues only.
+ let reviewFeedRequest=0;
+ window.a2kOpenCommunityReviews=async function(){
+   if(!window.matchMedia('(max-width:1023px)').matches)return;
+   const myRequest=++reviewFeedRequest;
+   go('find');
+   selectedDesktopTab='reviews';
+   document.getElementById('find-screen')?.classList.add('a2k-d-directory-active');
+   const shell=directoryView();
+   if(!shell)return;
+   const back=el('button','a2k-d-directory-back','← Back to Find Karaoke');
+   back.type='button';back.onclick=()=>go('find');
+   const title=el('h1','','Community Reviews');
+   const info=el('p','a2k-d-directory-intro','Approved reviews of published karaoke venues.');
+   const list=el('div','a2k-d-directory-grid a2k-mobile-review-feed');
+   list.append(el('p','a2k-d-directory-info','Loading community reviews…'));
+   shell.replaceChildren(back,title,info,list);
+   const active=()=>myRequest===reviewFeedRequest&&shell.isConnected&&
+     selectedDesktopTab==='reviews'&&document.getElementById('find-screen')?.classList.contains('a2k-d-directory-active');
+   try{
+     const [venues,reviews]=await Promise.all([
+       getPublishedRows('venues?select=id,name,city,state&published=eq.true&publication_status=eq.published&limit=400'),
+       getPublishedRows('reviews?select=id,venue_id,display_name,comment,created_at,review_ratings(score)&status=eq.approved&order=created_at.desc&limit=100')
+     ]);
+     if(!active())return;
+     const published=new Map((Array.isArray(venues)?venues:[]).map(v=>[String(v.id),v]));
+     list.replaceChildren();
+     for(const item of (Array.isArray(reviews)?reviews:[])){
+       const venue=published.get(String(item.venue_id));
+       if(!venue)continue;
+       const article=el('article','a2k-d-directory-card a2k-mobile-review-card');
+       article.append(el('h2','',venue.name||'Karaoke venue'));
+       const score=(Array.isArray(item.review_ratings)?item.review_ratings:[])
+         .map(r=>Number(r.score)).filter(n=>Number.isFinite(n)&&n>=1&&n<=5);
+       const avg=score.length?(score.reduce((a,b)=>a+b,0)/score.length).toFixed(1):'';
+       const date=item.created_at&&Number.isFinite(Date.parse(item.created_at))
+         ?new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric'}).format(new Date(item.created_at)):'';
+       const byline=[item.display_name||'Community member',date].filter(Boolean).join(' · ');
+       article.append(el('p','a2k-d-directory-meta',byline));
+       if(avg)article.append(el('p','a2k-mobile-review-rating','★ '+avg+' / 5'));
+       if(item.comment)article.append(el('p','a2k-mobile-review-text',item.comment));
+       const button=el('button','a2k-d-directory-action','View Venue Reviews');
+       button.type='button';
+       button.onclick=async()=>{
+         try{await Promise.resolve(window.liveVenueLoadPromise)}catch(error){}
+         const match=typeof sampleVenues!=='undefined'?sampleVenues.find(v=>
+           String(v.databaseId)===String(venue.id)&&v.publication_status==='published'):null;
+         if(match&&typeof openVenue==='function'){
+           openVenue(match.id);
+           if(typeof tab==='function')tab('reviews');
+         }else{
+           go('find');
+         }
+       };
+       article.append(button);list.append(article);
+     }
+     if(!list.children.length)list.append(el('p','a2k-d-directory-info','No approved venue reviews are available yet.'));
+   }catch(error){
+     console.warn('Community reviews unavailable',error);
+     if(active())list.replaceChildren(el('p','a2k-d-directory-info','Community reviews are unavailable right now.'));
+   }
+ };
  function sidebarGo(key){
    if(key==='about'){showAbout();return}
    if(key==='join'){
