@@ -119,9 +119,11 @@
   song_25:'Song Collector',song_75:'Music Enthusiast',
   song_100:'Songbook Legend',review_1:'Review Rookie',
   review_25:'Review Contributor',review_75:'Review Expert',
-  review_100:'Review Master',favorite_5:'Favorite Explorer',
-  favorite_10:'Favorite Enthusiast',favorite_25:'Favorite Superfan',
-  venue_1:'Karaoke Scout',venue_10:'Karaoke Discoverer'
+  review_100:'Review Master',favorite_1:'Favorite Finder',
+  favorite_5:'Favorite Explorer',favorite_10:'Favorite Enthusiast',
+  favorite_25:'Favorite Superfan',venue_1:'Karaoke Scout',
+  venue_10:'Karaoke Discoverer',venue_25:'Karaoke Pathfinder',
+  venue_100:'Karaoke Pioneer'
  };
  const GROUPS=[
   ['all','All Members'],['singer','Singers'],['kj','KJ / Hosts'],
@@ -202,7 +204,7 @@
   frame.setAttribute('aria-hidden','true');
   if(member.portrait){
    const img=create('img','a2k-d-member-avatar-image');
-   img.src=portraitSrc(member.id-1);img.alt='';
+   img.src=portraitSrc(member.id-1);img.alt='';img.loading='lazy';
    frame.append(img);
   }
   if(!big){
