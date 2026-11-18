@@ -680,6 +680,22 @@ html.a2k-live-setup-frame #app {
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;display=swap">
 <link rel="stylesheet" href="a2k-member-setup-master.css?v=314">
+<style>
+/* Build 316 — live desktop iframe is tightly fitted to the wizard,
+   so it cannot cover the current website with a white canvas. */
+@media screen and (min-width:761px){
+ html.a2k-live-setup-frame #app{
+  width:100%!important;height:100dvh!important;
+  min-height:100dvh!important;padding:0!important;
+ }
+ html.a2k-live-setup-frame #app .shell,
+ html.a2k-live-setup-frame #app .shell.maximized{
+  width:100%!important;max-width:100%!important;
+  height:100dvh!important;max-height:100dvh!important;
+  margin:0!important;transform:none!important;
+ }
+}
+</style>
 </head>
 <body><div class="website-stage" aria-hidden="true"><div class="website-hero"></div><div class="website-cards"><div class="website-card"><span class="web-symbol">🎙</span><h2>Discover Karaoke Venues</h2><p>Find karaoke bars, clubs, and events near you.</p><span class="web-link">Browse Venues →</span></div><div class="website-card"><span class="web-symbol">★</span><h2>Built for the Karaoke Community</h2><p>Singers, KJs, and venues all in one place.</p></div><div class="website-card"><span class="web-symbol">♟</span><h2>Join the Addicted to Karaoke Community</h2><p>Connect with singers, KJs, and karaoke fans throughout the community.</p><span class="web-link">Get Involved →</span></div></div><div class="website-lower"></div><span class="website-stamp">DEMO WEBSITE BACKGROUND · NOT LIVE</span></div><div class="website-scrim" aria-hidden="true"></div><div id="app"></div><script>
 (()=>{
