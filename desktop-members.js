@@ -13,7 +13,7 @@
  let request=0,lastSource='members';
  const client=()=>typeof authClient!=='undefined'?authClient:null;
  const signed=()=>typeof authUser!=='undefined'&&!!authUser?.id;
- let directoryState={role:'all',search:'',order:'newest'};
+ let directoryState={role:'all',search:'',order:'newest',verifiedOnly:false};
  const directoryRoles=[
    {id:'all',label:'All Members',icon:'users'},
    {id:'singer',label:'Singers',role:'Singer',icon:'mic'},
@@ -158,6 +158,38 @@
    const emblems=await fetchMemberEmblems(visible);
    return visible.map(m=>({...m,_prefs:byId.get(m.user_id)||null,
      _emblems:emblems.get(m.user_id)||null}));
+ }
+
+ // Live member discovery belongs above the portraits, not in a left rail.
+ function makeDirectoryTopControls(members,{role='all',search='',verified=false,onRole=()=>{},onSearch=()=>{},onVerified=()=>{}}={}){
+   const panel=elem('section','a2k-d-directory-top-controls');
+   panel.setAttribute('aria-label','Search and filter members');
+   const input=elem('input','a2k-d-directory-top-search');
+   input.type='search';input.placeholder='Search members…';input.maxLength=100;
+   input.setAttribute('aria-label','Search members');input.value=search;
+   input.addEventListener('input',()=>onSearch(input.value));
+   panel.append(input);
+   const options=elem('div','a2k-d-directory-top-tabs');
+   options.setAttribute('role','group');options.setAttribute('aria-label','Filter by member role and verification');
+   const roleButtons=new Map();
+   for(const item of directoryRoles){
+     const total=item.id==='all'?members.length:members.filter(m=>rolesOf(m).includes(item.role)).length;
+     const button=elem('button','a2k-d-directory-top-filter');
+     button.type='button';button.dataset.role=item.id;
+     button.setAttribute('aria-pressed',String(item.id===role));
+     button.append(directoryIcon(item.icon),elem('span','',item.label+' ('+total+')'));
+     button.onclick=()=>onRole(item.id);
+     options.append(button);roleButtons.set(item.id,button);
+   }
+   const verifiedCount=members.filter(m=>m._emblems?.is_verified===true).length;
+   const verifiedButton=elem('button','a2k-d-directory-top-filter a2k-d-directory-top-verified');
+   verifiedButton.type='button';
+   verifiedButton.setAttribute('aria-pressed',String(verified));
+   verifiedButton.append(elem('span','a2k-d-top-verified-icon','✓'),elem('span','','Verified ('+verifiedCount+')'));
+   verifiedButton.onclick=onVerified;
+   options.append(verifiedButton);
+   panel.append(options);
+   return {panel,input,roleButtons,verifiedButton};
  }
  function makeDirectorySidebar(members,{role='all',search='',onRole=()=>{},onSearch=()=>{}}={}){
    const sidebar=elem('aside','a2k-d-members-filters a2k-d-shared-members-sidebar');
@@ -324,12 +356,14 @@
      const initial=opts.restore?directoryState:opts;
      let selected=directoryRoles.some(item=>item.id===initial.role)?initial.role:'all';
      let order=['name','newest','oldest'].includes(initial.order)?initial.order:'newest';
-     const {sidebar:filters,input,roleButtons}=makeDirectorySidebar(members,{
-       role:selected,search:String(initial.search||'').slice(0,100),
+     let verifiedOnly=initial.verifiedOnly===true;
+     const {panel:topControls,input,roleButtons,verifiedButton}=makeDirectoryTopControls(members,{
+       role:selected,search:String(initial.search||'').slice(0,100),verified:verifiedOnly,
        onRole:id=>{selected=id;draw();},
-       onSearch:()=>draw()
+       onSearch:()=>draw(),
+       onVerified:()=>{verifiedOnly=!verifiedOnly;draw();}
      });
-   const results=elem('div','a2k-d-members-main');
+     const results=elem('div','a2k-d-members-main');
      const toolbar=elem('div','a2k-d-members-toolbar');
      const count=elem('p','a2k-d-members-count');
      const sorter=elem('label','a2k-d-member-sort-label','Sort by');
@@ -365,7 +399,11 @@
        const roleButton=roleButtons.get(mobileRole.value);
        if(roleButton)roleButton.click();
      });
-     mobileTools.append(mobileSearch,mobileRole);
+     const mobileVerified=elem('button','a2k-d-mobile-member-verified-filter','✓ Verified');
+     mobileVerified.type='button';
+     mobileVerified.setAttribute('aria-pressed',String(verifiedOnly));
+     mobileVerified.onclick=()=>verifiedButton.click();
+     mobileTools.append(mobileSearch,mobileRole,mobileVerified);
      const list=elem('div','a2k-d-directory-grid a2k-d-members-grid');
      const empty=elem('p','a2k-d-directory-info','No members match that search.');
      empty.id='a2k-d-members-empty';empty.hidden=true;
@@ -380,7 +418,8 @@
        const shown=cards.filter(({member})=>{
          const matchRole=selected==='all'||rolesOf(member).includes(directoryRoles.find(r=>r.id===selected)?.role);
          const searchText=[member.stage_name,member.bio,...rolesOf(member)].filter(Boolean).join(' ').toLocaleLowerCase();
-         return matchRole&&(!term||searchText.includes(term));
+         return matchRole&&(!verifiedOnly||member._emblems?.is_verified===true)&&
+           (!term||searchText.includes(term));
        }).sort((a,b)=>order==='newest'?joined(b.member)-joined(a.member):
          order==='oldest'?joined(a.member)-joined(b.member):
          String(a.member.stage_name||'').localeCompare(String(b.member.stage_name||'')));
@@ -390,14 +429,15 @@
        empty.hidden=shown.length!==0;
        empty.textContent=members.length?'No members match your search and filters.':'No member profiles are visible in the directory yet.';
        for(const [id,button] of roleButtons)button.setAttribute('aria-pressed',String(selected===id));
+       verifiedButton.setAttribute('aria-pressed',String(verifiedOnly));
+       mobileVerified.setAttribute('aria-pressed',String(verifiedOnly));
        mobileRole.value=selected;
        mobileSearch.value=input.value;
-       directoryState={role:selected,search:input.value,order};
+       directoryState={role:selected,search:input.value,order,verifiedOnly};
      }
-     // Match the approved layout: directory controls and Members heading start
-     // side by side. The heading belongs to the results column, not above both.
-     results.append(heading,intro,mobileTools,toolbar,list,empty);
-     layout.append(filters,results);
+     // Full-width approved directory: controls above the portrait cards.
+     results.append(heading,intro,topControls,mobileTools,toolbar,list,empty);
+     layout.append(results);
      target.replaceChildren(layout);
      select.addEventListener('change',()=>{order=select.value;draw()});
      draw();

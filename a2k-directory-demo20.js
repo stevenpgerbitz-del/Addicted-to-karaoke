@@ -427,20 +427,11 @@
   root.replaceChildren(page);
  }
  async function ensureLaunch(){
-  if(previewOn||!desktop())return;
+  // Explicit test link only: never add a preview button to the live directory.
+  if(previewOn||!demoLink||!desktop()||demoAutoOpened)return;
   const root=byId(ROOT_ID),toolbar=root?.querySelector('.a2k-d-members-toolbar');
-  if(!root||!toolbar||byId('a2k-d-demo-100-launch'))return;
-  if(!await mayPreview()||!root.contains(toolbar)||previewOn)return;
-  if(demoLink&&!demoAutoOpened){
-    demoAutoOpened=true;
-    show();
-    return;
-  }
-  const btn=create('button','a2k-d-demo-launch','Preview 1,000 Members');
-  btn.id='a2k-d-demo-100-launch';btn.type='button';
-  btn.title='Founder-only, fictional 1,000-member layout preview';
-  btn.addEventListener('click',show);
-  toolbar.insertBefore(btn,toolbar.querySelector('.a2k-d-member-sort-label'));
+  if(!root||!toolbar||!root.contains(toolbar))return;
+  demoAutoOpened=true;show();
  }
  function boot(){
   // Desktop Vintage creates #a2k-d-directory lazily when Members is opened.
