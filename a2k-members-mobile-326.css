@@ -596,3 +596,19 @@
   grid-template-rows:60px auto auto auto auto!important;
  }
 }
+
+
+/* Build 330: Align the visible name text, not its decorative underline.
+   The decoration was taking vertical space inside the centered name block. */
+@media(max-width:1023px){
+ #a2k-d-directory .a2k-d-public-profile-sidebar > h1::before,
+ #a2k-d-directory .a2k-d-public-profile-sidebar > h1::after{
+   content:none!important;
+   display:none!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > h1{
+   align-self:center!important;
+   justify-self:start!important;
+   transform:translateY(4px);
+ }
+}
