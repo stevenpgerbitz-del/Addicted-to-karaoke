@@ -1091,3 +1091,15 @@
   scroll-padding-top:30px;
  }
 }
+
+/* Build 307 — give the centered desktop banner more presence.
+   Increase text sizes only. Keep approved 74px header, curtains,
+   title alignment, gold frame, and separate mobile treatment. */
+@media (min-width:781px) {
+ #a2k-delete-account-dialog .a2k-deletion-app-brand {
+  font-size:31px!important;
+ }
+ #a2k-delete-account-dialog .a2k-deletion-app-subtitle {
+  font-size:12px!important;
+ }
+}
