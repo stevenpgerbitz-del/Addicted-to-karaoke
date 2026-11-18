@@ -314,7 +314,7 @@
   const totals=create('span','a2k-d-demo-total','1,000 sample members');
   top.append(search,totals,sort);
   const chips=create('div','a2k-d-demo-filter-tabs');
-  const roleButtons=new Map();let role='all',pageNumber=1;
+  const roleButtons=new Map();let role='all',verifiedOnly=false,pageNumber=1;
   for(const [id,label] of GROUPS){
    const n=DEMO.filter(m=>id==='all'||m.roles.includes(id)).length;
    const b=create('button','a2k-d-demo-filter',label+' ('+n+')');
@@ -322,7 +322,15 @@
    b.onclick=()=>{role=id;pageNumber=1;draw()};
    chips.append(b);roleButtons.set(id,b);
   }
-  filters.append(top,chips);wrap.append(filters);
+  const verifiedCount=DEMO.filter(m=>m.verified).length;
+   const verifiedButton=create('button','a2k-d-demo-filter a2k-d-demo-verified-filter','✓ Verified ('+verifiedCount+')');
+   verifiedButton.type='button';
+   verifiedButton.setAttribute('aria-label','Show only blue-check verified members');
+   verifiedButton.setAttribute('aria-pressed','false');
+   verifiedButton.title='Filter by blue-check verified account status';
+   verifiedButton.onclick=()=>{verifiedOnly=!verifiedOnly;pageNumber=1;draw()};
+   chips.append(verifiedButton);
+   filters.append(top,chips);wrap.append(filters);
   const grid=create('div','a2k-d-directory-grid a2k-d-members-grid a2k-d-demo-grid');
   const empty=create('p','a2k-d-demo-empty','No sample members match those filters.');
   empty.hidden=true;
@@ -334,7 +342,7 @@
   history.replaceState(null,'','#members');
   function draw(){
    const q=search.value.toLocaleLowerCase().trim();
-   const list=DEMO.filter(m=>(role==='all'||m.roles.includes(role))&&
+   const list=DEMO.filter(m=>(role==='all'||m.roles.includes(role))&&(!verifiedOnly||m.verified)&&
     (!q||[m.name,m.about,m.music,m.roles.map(x=>LABELS[x]).join(' '),m.badges.map(x=>LABELS[x]).join(' ')]
      .join(' ').toLocaleLowerCase().includes(q)));
    if(sort.value==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
@@ -382,6 +390,7 @@
    empty.hidden=list.length!==0;
    totals.textContent=list.length+' of '+DEMO.length+' sample members';
    for(const [id,b] of roleButtons)b.setAttribute('aria-pressed',String(id===role));
+    verifiedButton.setAttribute('aria-pressed',String(verifiedOnly));
   }
   search.addEventListener('input',()=>{pageNumber=1;draw()});sort.addEventListener('change',()=>{pageNumber=1;draw()});draw();
  }
