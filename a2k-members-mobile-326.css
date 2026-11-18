@@ -556,3 +556,43 @@
   font-size:22px!important;
  }
 }
+
+
+/* Build 329: Center the member name vertically beside the portrait.
+   Only this mobile header alignment changes. Roles and member facts remain
+   beneath the name; badge, contact and section layouts are untouched. */
+@media(max-width:1023px){
+ #a2k-d-directory .a2k-d-public-profile-sidebar{
+  grid-template-rows:74px auto auto auto auto!important;
+  grid-template-areas:
+   "avatar name"
+   ". role"
+   ". facts"
+   "badges badges"
+   "contact contact"!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar.a2k-d-mobile-has-featured{
+  grid-template-areas:
+   "avatar name featured"
+   ". role featured"
+   ". facts featured"
+   "badges badges badges"
+   "contact contact contact"!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-member-avatar-large{
+  grid-area:avatar!important;
+  grid-row:1/2!important;
+  align-self:center!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > h1{
+  grid-area:name!important;
+  grid-column:2!important;
+  grid-row:1/2!important;
+  align-self:center!important;
+ }
+}
+@media(max-width:370px){
+ #a2k-d-directory .a2k-d-public-profile-sidebar{
+  grid-template-rows:60px auto auto auto auto!important;
+ }
+}
