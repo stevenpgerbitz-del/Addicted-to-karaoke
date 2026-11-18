@@ -368,6 +368,19 @@
    selectedDesktopTab=key;go(key);
    activeMenu();
  }
+ // Open a public member link through the existing Members page, not a new layout.
+ window.a2kDesktopOpenMemberRoute=function(userId){
+   if(!/^[a-f0-9-]{36}$/i.test(String(userId||'')))return;
+   go('find');
+   selectedDesktopTab='members';
+   const find=document.getElementById('find-screen');
+   if(find)find.classList.add('a2k-d-directory-active');
+   const shell=document.getElementById('a2k-d-directory');
+   if(shell)shell.hidden=false;
+   activeMenu();
+   if(typeof window.a2kOpenMemberProfile==='function')
+     void window.a2kOpenMemberProfile(userId,'members');
+ };
  function makeSidebar(app){
    const sidebar=el('aside','a2k-desktop-sidebar');
    sidebar.id='a2k-desktop-sidebar';
