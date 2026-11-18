@@ -242,13 +242,13 @@
   const image=document.createElement('img');image.src='assets/badges/'+encodeURIComponent(item.code)+'.svg';image.alt='';
   image.onerror=()=>{image.hidden=true};
   const words=document.createElement('span');words.className='atk-earned-words';
-  const kicker=document.createElement('small');kicker.textContent='NEW BADGE EARNED!';
+  const kicker=document.createElement('small');kicker.textContent=item.kind==='removed'?'BADGE UPDATE':'NEW BADGE EARNED!';
   const title=document.createElement('strong');title.textContent=item.label;
-  const sub=document.createElement('span');sub.textContent=item.code==='founding_tester'?'Welcome to the Beta Team!':(item.description||'View your badges');
+  const sub=document.createElement('span');sub.textContent=item.kind==='removed'?'This badge has been removed from your profile.':(item.code==='founding_tester'?'Welcome to the Beta Team!':(item.description||'View your badges'));
   words.append(kicker,title,sub);button.append(image,words);button.addEventListener('click',openBadges);
   const close=document.createElement('button');close.type='button';close.className='atk-earned-close';
   close.textContent='×';close.setAttribute('aria-label','Dismiss notification');close.addEventListener('click',clear);
-  el.append(button,close);document.body.append(el);toast=el;timeout=setTimeout(clear,5000);
+  el.append(button,close);document.body.append(el);toast=el;timeout=setTimeout(clear,item.kind==='removed'?8000:5000);
  }
  async function check(){
   if(checking||typeof authClient==='undefined'||!authClient||typeof authUser==='undefined'||!authUser?.id)return;
@@ -269,8 +269,36 @@
     const age=now-Date.parse(v.awarded_at||'');
     return Number.isFinite(age)&&age>=0&&age<120000;
    });
-   for(const v of newItems)queue.push({code:String(v.badge_code),label:String(v.profile_badge_types.label||'New badge'),description:String(v.profile_badge_types.description||'')});
-   if(newItems.length&&!toast)showNext();
+   // Compare only with a previously recorded server result. First-time visitors
+   // never receive spurious "removed" notifications for earlier changes.
+   const removedCodes=before?[...before].filter(code=>!codes.includes(code)):[];
+   let removedLabels={};
+   if(removedCodes.length){
+    try{
+     const {data:types,error:typesError}=await authClient.from('profile_badge_types')
+      .select('code,label').in('code',removedCodes);
+     if(!typesError&&Array.isArray(types))
+      for(const t of types)removedLabels[t.code]=t.label;
+    }catch(err){console.warn('Badge titles unavailable for update notification',err)}
+   }
+   // Recheck identity after the optional catalog lookup to avoid cross-account
+   // notifications if somebody signs out while the request is in flight.
+   if(authUser?.id!==id)return;
+   for(const v of newItems)queue.push({
+    kind:'earned',code:String(v.badge_code),
+    label:String(v.profile_badge_types.label||'New badge'),
+    description:String(v.profile_badge_types.description||'')
+   });
+   for(const code of removedCodes)queue.push({
+    kind:'removed',code:String(code),
+    label:String(removedLabels[code]||'Achievement badge'),description:''
+   });
+   // Keep the existing gallery fresh without forcing a reload or displaying
+   // anything to other members.
+   if((newItems.length||removedCodes.length)&&!toast)showNext();
+   if((newItems.length||removedCodes.length)&&
+      !document.getElementById('auth-profile')?.hidden&&
+      typeof memberLoadBadges==='function')void memberLoadBadges(id);
   }catch(err){console.warn('Badge notifications unavailable',err)}
   finally{checking=false}
  }
