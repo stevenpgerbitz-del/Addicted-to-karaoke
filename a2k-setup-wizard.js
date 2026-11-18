@@ -11,7 +11,7 @@
  const roles=[
   {id:'singer',label:'Singer',icon:'♫',description:'Songs, favorites and your favorite karaoke places'},
   {id:'kj',label:'KJ / Host',icon:'🎤',description:'Your hosting details and first karaoke night'},
-  {id:'venue_owner',label:'Venue Owner',icon:'♛',description:'Your venue and verification contact details'}
+  {id:'venue_owner',label:'Venue Staff',icon:'♛',description:'Your venue and verification contact details'}
  ];
  const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
  const formSteps=()=>{
@@ -155,7 +155,7 @@
    inputField(content,'Contact phone (optional)','kjPhone',{type:'tel',inputMode:'tel',placeholder:'(515) 222-2222',max:14,phone:true});
    visibility('After verification, what may be public?','kjShowEmail','kjShowPhone');
   }else if(phase==='owner-details'){
-   heading.textContent='Your Venue Owner Details';
+   heading.textContent='Your Venue Staff Details';
    content.append(textLine('Enter your venue or business name. Contact information is optional and private until you choose to share it.'));
    inputField(content,'Venue or business name','ownerName',{placeholder:'Your business name',max:120});
    inputField(content,'Contact email (optional)','ownerEmail',{type:'email',placeholder:'you@example.com',max:254});
