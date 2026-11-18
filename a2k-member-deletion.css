@@ -978,10 +978,11 @@
  }
  #a2k-delete-account-dialog .a2k-deletion-sidebar::before{
   content:"";display:block;position:absolute;z-index:1;pointer-events:none;
-  left:0;top:122px;width:47px;height:255px;
-  background:linear-gradient(90deg,rgba(27,0,4,.6) 0%,rgba(110,6,20,.44) 22%,rgba(39,0,9,.58) 47%,rgba(130,7,20,.24) 75%,transparent 100%);
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 20%,rgba(0,0,0,.9) 57%,transparent 100%);
-  mask-image:linear-gradient(to bottom,transparent 0%,#000 20%,rgba(0,0,0,.9) 57%,transparent 100%);
+  /* Subdued velvet folds continue from the stage into the sidebar. */
+  left:0;top:112px;width:58px;height:345px;
+  background:linear-gradient(90deg,rgba(27,0,4,.72) 0%,rgba(107,4,18,.48) 14%,rgba(41,0,9,.7) 31%,rgba(142,17,27,.39) 47%,rgba(39,0,9,.54) 67%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.86) 18%,#000 36%,rgba(0,0,0,.72) 65%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.86) 18%,#000 36%,rgba(0,0,0,.72) 65%,transparent 100%);
  }
  #a2k-delete-account-dialog .a2k-deletion-sidebar::after{
   content:"";display:block;position:absolute;z-index:0;pointer-events:none;
@@ -1014,3 +1015,6 @@
   mask-image:linear-gradient(to right,#000 0%,#000 76%,rgba(0,0,0,.68) 88%,transparent 100%)!important;
  }
 }
+
+/* Build 294 — enhance only the flowing velvet tail in the desktop sidebar.
+   Keep all stage artwork, gold sweep, buttons, sizing and mobile behavior. */
