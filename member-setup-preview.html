@@ -663,6 +663,20 @@ html,body{background:#210309}
  }
 }
 @media screen and (max-width:760px){.shell .footer .setup-build-number{display:none!important}}
+/* Build 315: transparent surrounding canvas in LIVE mode only.
+   The approved wizard shell stays intact; reveal the actual parent site. */
+html.a2k-live-setup-frame,
+html.a2k-live-setup-frame body {
+ background:transparent!important;
+ background-color:transparent!important;
+}
+html.a2k-live-setup-frame .website-stage,
+html.a2k-live-setup-frame .website-scrim {
+ display:none!important;
+}
+html.a2k-live-setup-frame #app {
+ background:transparent!important;
+}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;display=swap">
 <link rel="stylesheet" href="a2k-member-setup-master.css?v=314">
@@ -687,6 +701,9 @@ let venues=[{name:'Velvet Note',city:'Des Moines, IA'},{name:'Moonlight Mic',cit
 const initial=()=>({route:0,roles:[],name:'Mr Steve',bio:'',location:'Boone, IA',level:'',photo:'',singerGenres:[],selectedSongs:[],selectedVenues:[],songQuery:'',singerVenueQuery:'',kjBusiness:'',kjEmail:'',kjPhone:'',hosts:[],hostDraft:'',hostEdit:-1,kjVenueQuery:'',kjVenues:[],newVenueName:'',newVenueCity:'',scheduleTab:'weekly',scheduleVenue:'',days:[],startTime:'20:00',endTime:'00:00',schedule:[],editSchedule:-1,eventTitle:'',eventDate:'',ownerBusiness:'',ownerEmail:'',ownerPhone:'',ownerVenueQuery:'',ownerVenue:null,ownerVenueNewName:'',ownerVenueNewCity:'',ownerAmenities:[],ownerGenres:[],postPolicy:'owner',claimSubmitted:false,privacy:{directory:true,displayName:true,photo:true,location:true,memberSince:true,email:false,phone:false,genres:true,reviews:true,songs:true,kjSchedule:true,venues:true},privacyMessage:true,privacyNotif:false,skipped:[],error:'',modal:false});
 let s=initial();
 const LIVE=new URLSearchParams(location.search).get('live')==='1';
+// The real account setup is a transparent modal over the existing A2K page.
+// Only the standalone demo retains its illustrated sample website background.
+if(LIVE)document.documentElement.classList.add('a2k-live-setup-frame');
 if(LIVE){s.name='';s.location='';venues=[];s.privacy.songs=false;}
 let routes=[];
 let uiMinimized=false,uiClosed=false,uiMaximized=false;
