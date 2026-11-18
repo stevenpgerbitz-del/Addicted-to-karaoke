@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="Illustrated female figure">
+ <defs><radialGradient id="bg"><stop stop-color="#78362e"/><stop offset="1" stop-color="#290e0c"/></radialGradient><linearGradient id="coat" x2="1" y2="1"><stop stop-color="#573040"/><stop offset="1" stop-color="#1c1a20"/></linearGradient></defs>
+ <rect width="320" height="320" fill="url(#bg)"/><circle cx="260" cy="55" r="39" fill="#a77552" opacity=".17"/>
+ <path d="M26 320 Q31 247 108 229 Q159 244 213 229 Q290 245 295 320" fill="url(#coat)" stroke="#c59c6d" stroke-width="4"/>
+ <path d="M88 161 Q47 73 108 42 Q156 9 214 49 Q258 88 229 188 L248 244 184 227 107 245 71 218Z" fill="#4c241d" stroke="#8b533a" stroke-width="3"/>
+ <path d="M133 204 L132 241 Q160 259 188 239 L185 203" fill="#b97a59"/>
+ <ellipse cx="160" cy="146" rx="67" ry="86" fill="#daa180" stroke="#a96d51" stroke-width="3"/>
+ <path d="M94 133 Q79 67 122 51 Q166 26 211 64 Q229 91 226 139 Q208 116 198 83 Q155 109 105 104Z" fill="#4c241d"/>
+ <path d="M111 137 Q127 125 141 135 M180 135 Q193 124 210 137" fill="none" stroke="#55372f" stroke-width="5" stroke-linecap="round"/>
+ <ellipse cx="129" cy="146" rx="5" ry="6" fill="#382724"/><ellipse cx="193" cy="146" rx="5" ry="6" fill="#382724"/>
+ <path d="M161 150 L154 174 Q163 180 169 172" fill="none" stroke="#9a624b" stroke-width="3" stroke-linecap="round"/>
+ <path d="M139 192 Q160 204 182 191" fill="none" stroke="#8b4142" stroke-width="4" stroke-linecap="round"/>
+ <path d="M84 112 Q67 178 83 225 M232 114 Q248 174 225 225" stroke="#4c241d" stroke-width="19" fill="none"/><circle cx="97" cy="189" r="6" fill="#d6ae6a"/><circle cx="224" cy="189" r="6" fill="#d6ae6a"/>
+ <path d="M114 239 L156 275 L202 239" fill="none" stroke="#caa172" stroke-width="4"/>
+ </svg>
