@@ -215,6 +215,7 @@
    const target=root||shell();
    if(!target)return;
    const serial=++request;lastSource='members';
+   if(location.hash.startsWith('#member/'))history.replaceState(null,'','#find');
    target.replaceChildren(elem('h1','','Members'),
      elem('p','a2k-d-directory-info','Loading member directory…'));
    try{
@@ -314,6 +315,8 @@
        return null;
      });
      if(!isCurrent())return;
+     // Use a stable member ID in the URL; display names can change.
+     history.replaceState(null,'','#member/'+encodeURIComponent(userId));
      const profileLayout=elem('div','a2k-d-members-layout a2k-d-members-profile-layout');
      const profileResult=elem('div','a2k-d-members-main a2k-d-selected-member');
      const {sidebar:directorySidebar}=makeDirectorySidebar(visibleMembers,{
@@ -322,6 +325,25 @@
      });
      profileLayout.append(directorySidebar,profileResult);
      const showProfile=()=>target.replaceChildren(profileLayout);
+     const share=elem('button','a2k-d-directory-back a2k-d-profile-share','Share Profile');
+     share.type='button';
+     share.setAttribute('aria-label','Share member profile link');
+     share.onclick=async()=>{
+       const url=location.origin+location.pathname+'#member/'+encodeURIComponent(userId);
+       try{
+         if(navigator.share){
+           await navigator.share({title:(member.stage_name||'Member')+' · Addicted to Karaoke',url});
+           return;
+         }
+       }catch(error){if(error.name==='AbortError')return;}
+       try{
+         await navigator.clipboard.writeText(url);
+         share.textContent='Link Copied!';
+         window.setTimeout(()=>{if(share.isConnected)share.textContent='Share Profile'},2200);
+       }catch(error){
+         const selection=window.prompt('Copy member profile link:',url);
+       }
+     };
      const overview=elem('div','a2k-d-public-profile-overview');
      const side=elem('aside','a2k-d-public-profile-sidebar');
      side.setAttribute('aria-label','Member information and badges');
@@ -436,7 +458,7 @@
        tabs.append(profileTab,scheduleTab);
        contentRail.prepend(tabs);
        contentRail.append(schedulePanel);
-       profileResult.replaceChildren(backButton(source),overview);
+       profileResult.replaceChildren(backButton(source),share,overview);
        showProfile();
        activate('profile');
        void (async()=>{
@@ -497,7 +519,7 @@
          }
        })();
      }else{
-       profileResult.replaceChildren(backButton(source),overview);
+       profileResult.replaceChildren(backButton(source),share,overview);
        showProfile();
      }
      const badgeArt=new Set(['song_1','song_25','song_75','song_100','favorite_1','favorite_5','favorite_10','favorite_25','review_1','review_25','review_75','review_100','venue_1','venue_10','venue_25','venue_100','founder','founding_tester','community_supporter','verified_kj','verified_venue_owner','super_admin','admin','moderator']);
@@ -642,5 +664,16 @@
        'This profile is not available to you or could not be loaded.'));
    }
  };
+
+ // Shareable member URLs use the existing profile and its privacy checks.
+ function openMemberLink(){
+   const match=/^#member\/([a-f0-9-]{36})$/i.exec(location.hash);
+   if(!match)return;
+   window.a2kDesktopOpenMemberRoute?.(match[1]);
+ }
+ window.addEventListener('hashchange',openMemberLink);
+ if(document.readyState==='loading')
+   document.addEventListener('DOMContentLoaded',openMemberLink,{once:true});
+ else openMemberLink();
 
 })();
