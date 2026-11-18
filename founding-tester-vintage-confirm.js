@@ -16,7 +16,7 @@
   const top=el('div','mg2-section-top');
   top.append(el('h3','','Founding Tester — Beta Team'));
   const row=el('div','mg2-founding-row');
-  const img=el('img');img.src='assets/badges/founding_tester.svg';img.alt='Founding Tester Beta Team badge';
+  const img=el('img');img.src='assets/badges/founding_tester.png?v=319';img.alt='Founding Tester Beta Team badge';
   const copy=el('div','mg2-founding-copy');
   const counter=el('strong','','Loading badge status…');counter.id='mg2-founding-count';
   const info=el('p','','Exclusive to 25 eligible members. Founder-awarded; vacant spots return when an account is permanently deleted.');info.id='mg2-founding-note';
@@ -64,7 +64,7 @@
    heading.id='mg2-beta-confirm-heading';
    const row=el('div','mg2-beta-confirm-detail');
    const image=el('img');
-   image.src='assets/badges/founding_tester.svg';
+   image.src='assets/badges/founding_tester.png?v=319';
    image.alt='Founding Tester — Beta Team badge';
    const copy=el('div','');
    copy.append(el('strong','','FOUNDING TESTER'),el('span','','BETA TEAM'));
