@@ -79,6 +79,47 @@
    const mapping={singer:'Singer',kj:'KJ / Host',venue_owner:'Venue Staff'};
    return roles.map(x=>mapping[x]).filter(Boolean);
  }
+ // Directory badges and blue checks use A2K's read-only privacy-scoped
+ // database lookup; the KJ role is never mistaken for a verified KJ award.
+ const featuredBadgeLabels={
+   founder:'Founder',founding_tester:'Founding Tester',verified_kj:'Verified KJ',
+   verified_venue_owner:'Verified Venue Staff',community_supporter:'Community Supporter',
+   super_admin:'Super Admin',admin:'Admin',moderator:'Moderator',
+   review_100:'Review Master',song_100:'Songbook Legend',venue_100:'Karaoke Pioneer',
+   favorite_25:'Favorite Superfan'
+ };
+ async function fetchMemberEmblems(members){
+   const map=new Map();
+   if(!members?.length||!client())return map;
+   try{
+     const ids=members.map(m=>m.user_id).filter(Boolean).slice(0,200);
+     const {data,error}=await client().rpc('a2k_public_member_emblems',{p_user_ids:ids});
+     if(error)throw error;
+     for(const row of data||[]){
+       if(ids.includes(row.user_id))map.set(row.user_id,row);
+     }
+   }catch(error){console.warn('Public member badges unavailable',error)}
+   return map;
+ }
+ function verifiedMark(){
+   const check=elem('span','a2k-d-member-verified-mark','✓');
+   check.setAttribute('role','img');
+   check.setAttribute('aria-label','Verified account');
+   check.title='Verified account';
+   return check;
+ }
+ function featuredChip(code){
+   const label=featuredBadgeLabels[code];
+   if(!label)return null;
+   const chip=elem('span','a2k-d-member-featured-chip');
+   chip.setAttribute('title',label);
+   const art=elem('img','a2k-d-member-featured-art');
+   art.src='assets/badges/'+code+'.png?v=319';
+   art.alt='';art.loading='lazy';
+   art.onerror=()=>art.remove();
+   chip.append(art,elem('span','',label));
+   return chip;
+ }
  // The directory sidebar is the same component in the directory and
  // alongside each member profile. Only members visible under RLS and
  // their own directory/privacy settings are counted.
@@ -94,7 +135,9 @@
      'user_id,show_photo,show_member_since,show_display_name',q=>q.in('user_id',visible.map(m=>m.user_id)).limit(200));}
    catch(error){console.warn('Member display settings unavailable; showing only basic profiles.',error);}
    const byId=new Map(preferences.map(p=>[p.user_id,p]));
-   return visible.map(m=>({...m,_prefs:byId.get(m.user_id)||null}));
+   const emblems=await fetchMemberEmblems(visible);
+   return visible.map(m=>({...m,_prefs:byId.get(m.user_id)||null,
+     _emblems:emblems.get(m.user_id)||null}));
  }
  function makeDirectorySidebar(members,{role='all',search='',onRole=()=>{},onSearch=()=>{}}={}){
    const sidebar=elem('aside','a2k-d-members-filters a2k-d-shared-members-sidebar');
@@ -199,9 +242,23 @@
    // Role on desktop portrait; existing mobile member role remains unchanged.
    avatar.append(elem('span','a2k-d-member-photo-tag',rolesOf(member)[0]||'Member'));
    const label=elem('div');
-   label.append(elem('h3','',member.stage_name||'Karaoke Member'),
-     elem('p','a2k-d-directory-meta',rolesOf(member).join(' · ')||'Member'));
+   const stage=elem('h3','',member.stage_name||'Karaoke Member');
+   if(member._emblems?.is_verified)stage.append(verifiedMark());
+   label.append(stage,elem('p','a2k-d-directory-meta',rolesOf(member).join(' · ')||'Member'));
    head.append(avatar,label);box.append(head);
+   const featured=elem('div','a2k-d-directory-featured');
+   const earned=(Array.isArray(member._emblems?.badge_codes)?member._emblems.badge_codes:[]).slice(0,2);
+   for(const code of earned){
+     const chip=featuredChip(code);
+     if(chip)featured.append(chip);
+   }
+   // Self-declared KJ role is a role chip, NOT an awarded/verified badge.
+   if(rolesOf(member).includes('KJ / Host')&&!earned.includes('verified_kj')){
+     const kj=elem('span','a2k-d-member-role-chip');
+     kj.append(directoryIcon('headphones'),elem('span','','KJ / Host'));
+     featured.append(kj);
+   }
+   if(featured.childElementCount)box.append(featured);
    // Member biographies belong on the full profile, not in directory tiles.
    // This existing RPC enforces public/member/private profile visibility.
    const memberNumber=elem('p','a2k-d-member-number');
@@ -363,6 +420,9 @@
        return null;
      });
      if(!isCurrent())return;
+     member._emblems=visibleMembers?.find(m=>m.user_id===userId)?._emblems||
+       (await fetchMemberEmblems([member])).get(userId)||null;
+     if(!isCurrent())return;
      // The database-assigned slug is permanent, even when a stage name changes.
      history.replaceState(null,'','#member/'+encodeURIComponent(member.profile_slug||userId));
      const profileLayout=elem('div','a2k-d-members-layout a2k-d-members-profile-layout');
@@ -397,6 +457,7 @@
      side.setAttribute('aria-label','Member information and badges');
      const avatar=publicAvatar(member,true);
      const name=elem('h1','',member.stage_name||'Karaoke Member');
+     if(member._emblems?.is_verified)name.append(verifiedMark());
      const role=elem('p','a2k-d-profile-role',roles.join(' · ')||'Member');
      side.append(avatar,name,role);
      const flourish=elem('div','a2k-d-profile-flourish');
