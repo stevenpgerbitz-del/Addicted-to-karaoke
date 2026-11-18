@@ -1,0 +1,180 @@
+/* A2K 328: approved team-photo member directory and Airbnb-inspired profile.
+   Desktop presentation ONLY. Preserve A2K burgundy/cream/gold and mobile 326. */
+#a2k-d-directory .a2k-d-member-photo-tag{display:none}
+@media(min-width:1024px){
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-layout:not(.a2k-d-members-profile-layout){
+ grid-template-columns:minmax(205px,230px) minmax(0,1fr)!important;gap:20px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-main>h1{
+ text-align:center!important;color:#f7dbb0!important;
+ font:italic 700 clamp(30px,2.6vw,41px)/1.16 Georgia,serif!important;margin:2px 0 8px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-main>.a2k-d-directory-intro{
+ text-align:center!important;color:#dfc8a9!important;margin:0 0 18px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:19px 14px!important;align-items:stretch!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid>.a2k-d-member-tile{
+ position:relative!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ width:100%!important;min-width:0!important;min-height:0!important;height:100%!important;
+ padding:10px 10px 14px!important;margin:0!important;gap:7px!important;overflow:hidden!important;
+ border:1px solid #ae895b!important;border-radius:15px!important;
+ background:linear-gradient(145deg,#401a15,#23110e)!important;
+ box-shadow:0 4px 12px #0005,inset 0 1px 0 #e6ba7824!important;
+ transition:transform .15s ease,box-shadow .15s ease;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid>.a2k-d-member-tile:hover{
+ transform:translateY(-3px);box-shadow:0 8px 22px #0008!important;border-color:#ebbc7c!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile:focus-within{
+ outline:3px solid #ffe0ac!important;outline-offset:3px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile-head{
+ position:relative!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ gap:10px!important;width:100%!important;height:auto!important;min-height:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-avatar{
+ box-sizing:border-box!important;position:relative!important;display:grid!important;place-items:center!important;
+ flex:none!important;width:100%!important;max-width:none!important;min-width:0!important;
+ height:auto!important;min-height:0!important;aspect-ratio:1/1!important;
+ margin:0!important;border:1px solid #d1a875!important;border-radius:12px!important;
+ background:radial-gradient(ellipse at 50% 15%,#884636,#401915)!important;
+ color:#fbe5bd!important;font:italic 700 clamp(40px,4vw,74px)/1 Georgia,serif!important;
+ overflow:hidden!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-avatar-image{
+ position:absolute!important;inset:0!important;z-index:1!important;
+ width:100%!important;height:100%!important;border-radius:11px!important;
+ object-fit:cover!important;object-position:center 25%!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-member-photo-tag{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ position:absolute!important;bottom:9px!important;left:50%!important;transform:translateX(-50%)!important;
+ z-index:2!important;max-width:calc(100% - 14px)!important;
+ padding:5px 9px!important;border:1px solid #e1ba83!important;border-radius:999px!important;
+ background:#f4e4c8!important;box-shadow:0 2px 8px #0007!important;
+ color:#511b18!important;font:700 11px/1.15 Georgia,serif!important;
+ white-space:nowrap!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile-head>div{
+ width:100%!important;min-width:0!important;display:block!important;flex:none!important;text-align:center!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile h3{
+ margin:0!important;color:#ffe0b5!important;font:700 clamp(16px,1.4vw,21px)/1.18 Georgia,serif!important;
+ text-align:center!important;overflow-wrap:anywhere!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-directory-meta{display:none!important}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-summary{
+ display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;
+ min-height:2.8em!important;max-height:2.8em!important;overflow:hidden!important;
+ margin:3px 0 0!important;color:#e0c8ae!important;
+ font:13px/1.4 Georgia,serif!important;text-align:center!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-since{
+ margin:auto 0 0!important;align-self:center!important;color:#cfb08c!important;
+ font:12px/1.3 Georgia,serif!important;text-align:center!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-member-tile>.a2k-d-directory-action{
+ position:absolute!important;inset:0!important;z-index:5!important;display:block!important;
+ width:100%!important;max-width:none!important;height:100%!important;min-height:0!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:15px!important;
+ background:transparent!important;box-shadow:none!important;color:transparent!important;
+ opacity:0!important;cursor:pointer!important;
+}
+/* Individual profile: remove discovery rail and give the selected member a spacious 2-column page. */
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-profile-layout{
+ display:block!important;width:100%!important;min-width:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-profile-layout>.a2k-d-members-filters{display:none!important}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+ gap:0 10px!important;align-items:start!important;width:100%!important;min-width:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member>.a2k-d-directory-back{
+ grid-column:1!important;grid-row:1!important;justify-self:start!important;margin:0 0 16px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member>.a2k-d-profile-share{
+ grid-column:2!important;grid-row:1!important;justify-self:end!important;margin:0 0 16px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member>.a2k-d-member-profile-pane{
+ grid-column:1/-1!important;grid-row:2!important;display:grid!important;
+ grid-template-columns:minmax(265px,310px) minmax(0,1fr)!important;
+ gap:25px!important;align-items:start!important;width:100%!important;min-width:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane>.a2k-d-public-profile-sidebar{
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;
+ margin:0!important;padding:24px 19px!important;
+ border:1.5px solid #cca36c!important;border-radius:18px!important;
+ background:linear-gradient(155deg,#572019,#32140f 75%,#1c0d0b)!important;
+ box-shadow:0 7px 21px #0006,inset 0 1px 0 #f4c38d30!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-public-profile-sidebar>.a2k-d-member-avatar-large{
+ width:137px!important;min-width:137px!important;height:137px!important;min-height:137px!important;
+ border:3px solid #e2bb7f!important;border-radius:50%!important;margin:0 auto 12px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-public-profile-sidebar h1{
+ color:#ffe1b7!important;font:italic 700 clamp(27px,2.5vw,35px)/1.14 Georgia,serif!important;
+ text-align:center!important;margin:0 0 8px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-profile-facts{
+ display:flex!important;flex-direction:column!important;gap:10px!important;width:100%!important;
+ margin:13px 0 16px!important;padding:14px 0 16px!important;
+ border-top:1px solid #9b704c!important;border-bottom:1px solid #9b704c!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-public-profile-awards{
+ width:100%!important;margin:0!important;padding:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-public-badges{
+ justify-content:flex-start!important;gap:8px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-profile-content-rail{
+ display:flex!important;flex-direction:column!important;gap:14px!important;width:100%!important;min-width:0!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main{
+ display:flex!important;flex-direction:column!important;gap:17px!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-public-profile-section{
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;margin:0!important;
+ padding:23px 25px!important;border:1px solid #9b7654!important;border-radius:16px!important;
+ background:linear-gradient(140deg,#301712,#1d100d)!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-profile-about{
+ padding:27px 28px!important;border:1.5px solid #c29762!important;
+ background:linear-gradient(140deg,#3e1c15,#26110e)!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-public-profile-section h2{
+ color:#ffe0b0!important;font:italic 700 25px/1.22 Georgia,serif!important;
+ margin:0 0 14px!important;padding:0 0 12px!important;border-bottom:1px solid #8c5c41!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-story{
+ color:#f1ddc2!important;font:16px/1.6 Georgia,serif!important;max-width:75ch!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-interest-tile{
+ border-radius:999px!important;padding:8px 13px!important;background:#48241c!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-content-rail>.a2k-d-profile-tabs{
+ display:flex!important;gap:8px!important;margin:0 0 6px!important;padding:5px!important;
+ border:1px solid #a87953!important;border-radius:12px!important;background:#2d1612!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-content-rail .a2k-d-profile-tab{
+ padding:10px 18px!important;border:0!important;border-radius:9px!important;
+ background:transparent!important;color:#edd1aa!important;font:700 14px Georgia,serif!important;
+}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-content-rail .a2k-d-profile-tab[aria-selected=true]{
+ background:#e2bd86!important;color:#4c1c15!important;
+}
+}
+@media(min-width:1024px) and (max-width:1500px){
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(min-width:1024px) and (max-width:1240px){
+html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member>.a2k-d-member-profile-pane{
+ grid-template-columns:minmax(220px,250px) minmax(0,1fr)!important;gap:15px!important;
+}
+}
+@media(prefers-reduced-motion:reduce){
+html.a2k-desktop-live #a2k-d-directory .a2k-d-member-tile{transition:none!important}
+}
