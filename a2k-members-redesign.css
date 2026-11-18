@@ -372,3 +372,54 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-songboo
  #a2k-d-directory .a2k-d-public-profile-main{width:100%!important}
  #a2k-d-directory .a2k-d-profile-share{margin-left:8px!important}
 }
+
+
+/* Build 324: Mobile-only events/reviews reached from Community Spotlight. */
+@media (max-width:1023px){
+ #find-screen.a2k-d-directory-active #a2k-d-directory .a2k-d-directory-grid{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:10px;
+  padding:0;margin:11px 0 22px;
+ }
+ #a2k-d-directory .a2k-d-directory-intro,
+ #a2k-d-directory .a2k-d-directory-info{
+  color:#e4c8a5;font:14px/1.45 Georgia,serif;max-width:100%;
+ }
+ #a2k-d-directory .a2k-d-directory-search{
+  display:block;box-sizing:border-box;width:100%;min-height:44px;
+  padding:9px 12px;margin:11px 0;
+  border:1px solid #ad8358;border-radius:10px;
+  background:#271310;color:#f7dfbd;font:15px Georgia,serif;
+ }
+ #a2k-d-directory :is(.a2k-d-directory-event-card,.a2k-mobile-review-card){
+  box-sizing:border-box;display:flex;flex-direction:column;align-items:stretch;
+  gap:7px;min-width:0;max-width:100%;margin:0;padding:14px;
+  border:1.5px solid #ad8558;border-radius:12px;
+  background:linear-gradient(140deg,#451b16,#24110f);color:#f5dbb9;
+ }
+ #a2k-d-directory .a2k-d-directory-event-card{
+  display:flex!important;flex-wrap:wrap;flex-direction:row;
+  align-items:flex-start;
+ }
+ #a2k-d-directory .a2k-d-directory-event-card .a2k-d-event-info{
+  min-width:0;flex:1 1 165px;
+ }
+ #a2k-d-directory .a2k-d-directory-event-card .a2k-d-directory-action{
+  flex-basis:100%;width:100%;
+ }
+ #a2k-d-directory .a2k-mobile-review-card h2{
+  margin:0;color:#ffe1b8;font:italic 700 20px/1.2 Georgia,serif;
+ }
+ #a2k-d-directory .a2k-mobile-review-card .a2k-d-directory-meta{
+  margin:0;color:#dab992;font:12px/1.3 Georgia,serif;
+ }
+ #a2k-d-directory .a2k-mobile-review-rating{
+  margin:0;color:#f5c587;font:700 14px Georgia,serif;
+ }
+ #a2k-d-directory .a2k-mobile-review-text{
+  margin:1px 0 5px;color:#f6debf;font:14px/1.5 Georgia,serif;
+  white-space:pre-wrap;overflow-wrap:anywhere;
+ }
+ #a2k-d-directory .a2k-mobile-review-card .a2k-d-directory-action{
+  width:100%;margin-top:5px;
+ }
+}
