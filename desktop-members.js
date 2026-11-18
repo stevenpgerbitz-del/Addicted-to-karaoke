@@ -202,8 +202,21 @@
    label.append(elem('h3','',member.stage_name||'Karaoke Member'),
      elem('p','a2k-d-directory-meta',rolesOf(member).join(' · ')||'Member'));
    head.append(avatar,label);box.append(head);
-   const summary=elem('p','a2k-d-member-summary',member.bio||'');
-   if(member.bio)box.append(summary);
+   // Member biographies belong on the full profile, not in directory tiles.
+   // This existing RPC enforces public/member/private profile visibility.
+   const memberNumber=elem('p','a2k-d-member-number');
+   memberNumber.hidden=true;
+   box.append(memberNumber);
+   if(typeof window.matchMedia==='function'&&window.matchMedia('(min-width:1024px)').matches&&client()){
+     void client().rpc('a2k_public_member_number',{p_user_id:member.user_id})
+       .then(({data,error})=>{
+         if(error)throw error;
+         if(data){
+           memberNumber.textContent='Member #'+String(data);
+           memberNumber.hidden=false;
+         }
+       }).catch(error=>console.warn('Public member number unavailable',error));
+   }
    const since=member.created_at&&Number.isFinite(new Date(member.created_at).getTime())
      ? new Intl.DateTimeFormat('en-US',{month:'short',year:'numeric'}).format(new Date(member.created_at))
      : null;
