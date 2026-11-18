@@ -31,7 +31,7 @@ function open(isManual){
  overlay.setAttribute('aria-modal','true');
  frame=document.createElement('iframe');
  frame.title='Addicted to Karaoke Member Setup Wizard';
- frame.src='member-setup-preview.html?live=1&v=320';
+ frame.src='member-setup-preview.html?live=1&v=344';
  frame.setAttribute('referrerpolicy','same-origin');
  frame.onerror=function(){
    var m=manual;close();
@@ -65,6 +65,13 @@ async function initial(){
    data.venues=venues;
  }catch(e){console.warn('Addicted to Karaoke setup lookup incomplete:',e)}
  send('init',data);
+}
+async function presetPhotoBlob(kind){
+ var src=kind==='male'?'assets/a2k-avatar-male.svg':'assets/a2k-avatar-female.svg';
+ var image=new Image();image.src=src;await image.decode();
+ var canvas=document.createElement('canvas');canvas.width=400;canvas.height=400;
+ canvas.getContext('2d').drawImage(image,0,0,400,400);
+ return await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Could not prepare selected illustration.')),'image/jpeg',0.9));
 }
 async function photoDataUrl(dataUrl){
  var encoded=String(dataUrl||'');
@@ -133,11 +140,21 @@ async function save(payload){
  var updated=fail(await client().from('member_profiles').update(profileUpdate).eq('user_id',id).select('*').single());
  if(!allowed())throw Error('Your login changed while saving.');
  Object.assign(old,updated);
- if(s.photo&&/^data:image\//.test(s.photo)){
-   var blob=await photoDataUrl(s.photo),path=id+'/avatar.jpg';
-   fail(await client().storage.from('member-avatars').upload(path,blob,{contentType:'image/jpeg',upsert:true,cacheControl:'60'}));
-   var p=fail(await client().from('member_profiles').update({avatar_path:path,updated_at:now}).eq('user_id',id).select('avatar_path,updated_at').single());
-   Object.assign(old,p);
+ if(s.avatarChanged){
+   if(s.avatarPreset==='mic'&&!s.photo){
+     var reset=fail(await client().from('member_profiles').update({avatar_path:null,updated_at:now})
+       .eq('user_id',id).select('avatar_path,updated_at').single());
+     Object.assign(old,reset);
+   }else{
+     var blob=s.photo&&/^data:image\//.test(s.photo)?
+       await photoDataUrl(s.photo):await presetPhotoBlob(s.avatarPreset==='female'?'female':'male');
+     var path=id+'/avatar.jpg';
+     fail(await client().storage.from('member-avatars').upload(path,blob,{contentType:'image/jpeg',upsert:true,cacheControl:'60'}));
+     var p=fail(await client().from('member_profiles').update({avatar_path:path,updated_at:now})
+       .eq('user_id',id).select('avatar_path,updated_at').single());
+     Object.assign(old,p);
+   }
+   if(typeof memberShowAvatar==='function')memberShowAvatar();
  }
  if(roles.includes('kj')||roles.includes('owner')){
    var d={user_id:id,kj_business_name:roles.includes('kj')?text(s.kjBusiness,120):'',kj_hosts:roles.includes('kj')?[name,...(s.hosts||[])].filter(Boolean).slice(0,12):[],
