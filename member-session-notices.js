@@ -239,7 +239,7 @@
   const item=queue.shift(),el=document.createElement('div');
   el.className='atk-earned-toast';el.setAttribute('role','status');
   const button=document.createElement('button');button.type='button';button.className='atk-earned-open';
-  const image=document.createElement('img');image.src='assets/badges/'+encodeURIComponent(item.code)+'.svg';image.alt='';
+  const image=document.createElement('img');image.src='assets/badges/'+encodeURIComponent(item.code)+'.png?v=319';image.alt='';
   image.onerror=()=>{image.hidden=true};
   const words=document.createElement('span');words.className='atk-earned-words';
   const kicker=document.createElement('small');kicker.textContent=item.kind==='removed'?'BADGE UPDATE':'NEW BADGE EARNED!';
