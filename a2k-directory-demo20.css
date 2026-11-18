@@ -230,3 +230,30 @@
   border:0!important;border-radius:0!important;
  }
 }
+
+/* Fictional 1,000-member preview: compact, keyboard-friendly pagination. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-pagination{
+  display:flex!important;flex-wrap:wrap!important;align-items:center!important;
+  justify-content:center!important;gap:8px!important;margin:24px auto 10px!important;
+  padding:14px 10px!important;border-top:1px solid #946943!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-page-control{
+  font:700 14px/1.2 Georgia,serif!important;min-width:38px!important;min-height:38px!important;
+  padding:8px 12px!important;color:#f4dfbb!important;background:#54261d!important;
+  border:1px solid #b88e59!important;border-radius:8px!important;cursor:pointer!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-page-control.is-current{
+  color:#32150f!important;background:#e9c68a!important;border-color:#f8dfad!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-page-control:disabled{
+  opacity:.42!important;cursor:not-allowed!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-page-summary{
+  width:100%!important;text-align:center!important;color:#e5c49b!important;
+  font:13px/1.5 Georgia,serif!important;margin-top:4px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-page-ellipsis{
+  color:#e5c49b!important;padding:0 2px!important;
+ }
+}
