@@ -394,3 +394,165 @@
   gap:3px;padding:7px 3px;font-size:12px;
  }
 }
+
+
+/* Build 327: match the approved profile header when a member has public
+   contact information. Explicit grid areas prevent the avatar/name drifting
+   apart as extra optional fields are added. Mobile only. */
+@media(max-width:1023px){
+ #a2k-d-directory .a2k-d-public-profile-sidebar{
+  display:grid!important;
+  grid-template-columns:74px minmax(0,1fr)!important;
+  grid-template-rows:auto auto auto auto auto!important;
+  grid-template-areas:
+   "avatar name"
+   "avatar role"
+   "avatar facts"
+   "badges badges"
+   "contact contact"!important;
+  justify-items:stretch!important;
+  align-items:start!important;
+  align-content:start!important;
+  column-gap:11px!important;
+  row-gap:3px!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar.a2k-d-mobile-has-featured{
+  grid-template-columns:74px minmax(0,1fr) 60px!important;
+  grid-template-areas:
+   "avatar name featured"
+   "avatar role featured"
+   "avatar facts featured"
+   "badges badges badges"
+   "contact contact contact"!important;
+  column-gap:9px!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-member-avatar-large{
+  grid-area:avatar!important;
+  grid-row:1/4!important;
+  align-self:start!important;
+  justify-self:start!important;
+  margin:0!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > h1{
+  grid-area:name!important;
+  grid-column:2!important;
+  grid-row:1!important;
+  align-self:end!important;
+  justify-self:start!important;
+  text-align:left!important;
+  margin:0!important;padding:0!important;
+  font:italic 700 clamp(23px,5.8vw,30px)/1.12 Georgia,serif!important;
+  text-shadow:none!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-profile-role{
+  grid-area:role!important;
+  grid-column:2!important;
+  grid-row:2!important;
+  align-self:start!important;
+  justify-self:start!important;
+  text-align:left!important;
+  margin:2px 0!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-profile-flourish + .a2k-d-profile-facts{
+  grid-area:facts!important;
+  grid-column:2!important;
+  grid-row:3!important;
+  align-self:start!important;
+  justify-self:stretch!important;
+  width:100%!important;
+  min-width:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:3px!important;
+  padding:0!important;
+  margin:2px 0 0!important;
+  border:0!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-profile-flourish + .a2k-d-profile-facts .a2k-d-profile-fact{
+  min-height:0!important;
+  line-height:1.25!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  align-items:flex-start!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-mobile-featured-badge:not([hidden]){
+  grid-area:featured!important;
+  grid-column:3!important;
+  grid-row:1/4!important;
+  display:flex!important;
+  width:60px!important;
+  max-width:60px!important;
+  height:77px!important;
+  justify-self:end!important;
+  align-self:start!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-public-profile-awards{
+  grid-area:badges!important;
+  grid-column:1/-1!important;
+  grid-row:4!important;
+  margin:12px 0 0!important;
+  padding:10px 0 0!important;
+  align-self:stretch!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-mobile-contact-card{
+  grid-area:contact!important;
+  grid-column:1/-1!important;
+  grid-row:5!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  flex-wrap:wrap!important;
+  gap:4px 10px!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:8px 0 0!important;
+  padding:10px 0 0!important;
+  border:0!important;
+  border-top:1px solid #935b40!important;
+  background:transparent!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-mobile-contact-card > h2{
+  display:inline!important;
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:none!important;
+  color:#e8c59a!important;
+  font:700 12px/1.3 Georgia,serif!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-mobile-contact-card > a{
+  display:inline!important;
+  flex:0 1 auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  color:#f5d7a9!important;
+  font:13px/1.35 Georgia,serif!important;
+  text-decoration:underline!important;
+  text-underline-offset:2px!important;
+  overflow-wrap:anywhere!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-mobile-contact-card > a:focus-visible{
+  outline:2px solid #ffdb9d!important;
+  outline-offset:3px!important;
+ }
+}
+@media(max-width:370px){
+ #a2k-d-directory .a2k-d-public-profile-sidebar.a2k-d-mobile-has-featured{
+  grid-template-columns:60px minmax(0,1fr) 52px!important;
+  column-gap:7px!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > .a2k-d-mobile-featured-badge:not([hidden]){
+  width:52px!important;max-width:52px!important;height:67px!important;
+ }
+ #a2k-d-directory .a2k-d-public-profile-sidebar > h1{
+  font-size:22px!important;
+ }
+}
