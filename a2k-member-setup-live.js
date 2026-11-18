@@ -22,23 +22,23 @@ function open(isManual){
  opening=true;manual=!!isManual;ownerId=user().id;
  previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';
  if(typeof atkWelcomeDialogOwnerId!=='undefined')atkWelcomeDialogOwnerId=ownerId;
- if(!manual&&document.getElementById('signin-screen')?.hidden&&typeof navigate==='function')navigate('signin');
+ // Keep the user's current site section visible behind this modal; do not navigate.
  overlay=document.createElement('section');
  overlay.id='a2k-member-setup-live-overlay';
- Object.assign(overlay.style,{position:'fixed',inset:'0',zIndex:'100001',background:'#210008',overflow:'hidden'});
+ Object.assign(overlay.style,{position:'fixed',inset:'0',zIndex:'100001',background:'rgba(22,0,7,.65)',backdropFilter:'blur(2px)',WebkitBackdropFilter:'blur(2px)',overflow:'hidden'});
  overlay.setAttribute('role','dialog');
  overlay.setAttribute('aria-label','Addicted to Karaoke member setup');
  overlay.setAttribute('aria-modal','true');
  frame=document.createElement('iframe');
  frame.title='Addicted to Karaoke Member Setup Wizard';
- frame.src='member-setup-preview.html?live=1&v=314';
+ frame.src='member-setup-preview.html?live=1&v=315';
  frame.setAttribute('referrerpolicy','same-origin');
  frame.onerror=function(){
    var m=manual;close();
    if(typeof originalWizardStart==='function')originalWizardStart(m);
    else if(typeof authStatus==='function')authStatus('Could not open setup. Please refresh the page and try again.');
  };
- Object.assign(frame.style,{border:'0',width:'100%',height:'100%',display:'block'});
+ Object.assign(frame.style,{border:'0',width:'100%',height:'100%',display:'block',background:'transparent'});
  overlay.appendChild(frame);document.body.appendChild(overlay);opening=false;
 }
 async function initial(){
