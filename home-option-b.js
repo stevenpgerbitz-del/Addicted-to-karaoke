@@ -235,8 +235,53 @@
   if(logo&&!logo.complete)logo.addEventListener('load',queueHomeFit,{once:true});
   queueHomeFit();
  }
+ // Spotlight counters are links only on phone/tablet: desktop remains informational.
+ function setupMobileSpotlight(){
+  const grid=root()?.querySelector('.a2k-b-stats-grid');
+  if(!grid||grid.dataset.mobileLinksBound)return;
+  grid.dataset.mobileLinksBound='true';
+  const compact=window.matchMedia('(max-width:1023px)');
+  const destinations={
+   events:()=>window.a2kOpenCommunityEvents?.(),
+   reviews:()=>window.a2kOpenCommunityReviews?.(),
+   members:()=>window.a2kOpenMembersLanding?.(),
+   venues:navFind
+  };
+  const cards=Array.from(grid.querySelectorAll('.a2k-b-stat'));
+  function update(){
+   for(const card of cards){
+    const key=card.querySelector('[data-a2k-b-stat]')?.dataset.a2kBStat;
+    const accessible=!!destinations[key]&&compact.matches;
+    if(accessible){
+     card.setAttribute('role','button');
+     card.setAttribute('tabindex','0');
+     card.setAttribute('aria-label','Browse '+key);
+     card.dataset.mobileSpotlightLink=key;
+    }else{
+     card.removeAttribute('role');card.removeAttribute('tabindex');
+     card.removeAttribute('aria-label');delete card.dataset.mobileSpotlightLink;
+    }
+   }
+  }
+  function activate(target){
+   if(!compact.matches)return;
+   const card=target.closest?.('.a2k-b-stat');
+   const key=card?.dataset.mobileSpotlightLink;
+   if(key&&destinations[key])destinations[key]();
+  }
+  grid.addEventListener('click',event=>activate(event.target));
+  grid.addEventListener('keydown',event=>{
+   if(!compact.matches||!['Enter',' '].includes(event.key))return;
+   if(!event.target.matches('.a2k-b-stat[data-mobile-spotlight-link]'))return;
+   event.preventDefault();activate(event.target);
+  });
+  if(compact.addEventListener)compact.addEventListener('change',update);
+  else compact.addListener(update);
+  update();
+ }
  function init(){
   if(!root()||!document.getElementById('a2k-b-tonight'))return;
+  setupMobileSpotlight();
   setupHomeFit();
   void loadStats();
   void loadFeatured();
