@@ -500,7 +500,7 @@
        profileResult.replaceChildren(backButton(source),overview);
        showProfile();
      }
-     const badgeArt=new Set(['founder','super_admin','admin','moderator','founding_kj','member_10','member_100','member_1000','review_1','review_25','review_75','review_100','song_1','song_25','song_75','song_100','venue_1','venue_10','venue_25','venue_100']);
+     const badgeArt=new Set(['song_1','song_25','song_75','song_100','favorite_1','favorite_5','favorite_10','favorite_25','review_1','review_25','review_75','review_100','venue_1','venue_10','venue_25','venue_100','founder','founding_tester','community_supporter','verified_kj','verified_venue_owner','super_admin','admin','moderator']);
      try{
        const [awarded,types]=await Promise.all([
          fetchRows('profile_badge_awards','badge_code',q=>q.eq('user_id',userId).limit(100)),
@@ -515,7 +515,7 @@
          const emblem=elem('span','a2k-d-illustrated-badge');
          emblem.setAttribute('role','img');emblem.setAttribute('aria-label',label);emblem.title=label;
          if(badgeArt.has(code)){
-           const img=elem('img');img.src='assets/badges/'+code+'.svg';img.alt='';
+           const img=elem('img');img.src='assets/badges/'+code+'.png?v=319';img.alt='';
            img.loading='lazy';emblem.append(img);
          }else emblem.append(elem('span','a2k-d-badge-fallback','★'));
          badges.append(emblem);
