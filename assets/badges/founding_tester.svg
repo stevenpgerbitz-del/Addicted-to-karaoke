@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 270" role="img" aria-label="Addicted to Karaoke Founding Tester Beta Team badge">
+<defs><radialGradient id="wine"><stop stop-color="#84362d"/><stop offset=".62" stop-color="#4b1b1b"/><stop offset="1" stop-color="#1b0f10"/></radialGradient><linearGradient id="gold" x2="1" y2="1"><stop stop-color="#f9e6b1"/><stop offset=".35" stop-color="#ad7942"/><stop offset=".63" stop-color="#e9c986"/><stop offset="1" stop-color="#8b582d"/></linearGradient><linearGradient id="cream" x2="0" y2="1"><stop stop-color="#fff3d6"/><stop offset="1" stop-color="#dfbe85"/></linearGradient><filter id="shadow"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-opacity=".7"/></filter></defs>
+<g filter="url(#shadow)">
+<path d="M120 9Q165 14 211 43L222 156Q217 223 120 258Q23 223 18 156L29 43Q75 14 120 9Z" fill="#23100f" stroke="url(#gold)" stroke-width="7"/>
+<path d="M120 18Q166 23 203 48L213 153Q208 214 120 246Q32 214 27 153L37 48Q74 23 120 18Z" fill="url(#wine)" stroke="#e5be7d" stroke-width="2"/>
+<path d="M42 69Q26 154 70 217M198 69Q214 154 170 217" fill="none" stroke="#d8aa67" stroke-width="3"/>
+<g fill="#e4bb79"><ellipse cx="42" cy="104" rx="5" ry="12" transform="rotate(-35 42 104)"/><ellipse cx="38" cy="124" rx="5" ry="12" transform="rotate(-27 38 124)"/><ellipse cx="43" cy="146" rx="5" ry="12" transform="rotate(-17 43 146)"/><ellipse cx="50" cy="169" rx="5" ry="12" transform="rotate(-12 50 169)"/><ellipse cx="198" cy="104" rx="5" ry="12" transform="rotate(35 198 104)"/><ellipse cx="202" cy="124" rx="5" ry="12" transform="rotate(27 202 124)"/><ellipse cx="197" cy="146" rx="5" ry="12" transform="rotate(17 197 146)"/><ellipse cx="190" cy="169" rx="5" ry="12" transform="rotate(12 190 169)"/></g>
+<text x="120" y="55" text-anchor="middle" fill="#f5e4bb" font-family="Georgia,serif" font-weight="bold" font-size="19">Addicted to</text>
+<text x="120" y="79" text-anchor="middle" fill="#f9eacc" font-family="Georgia,serif" font-weight="bold" font-style="italic" font-size="26">Karaoke</text>
+<g transform="translate(120 119) rotate(-22)"><rect x="-13" y="-33" width="26" height="44" rx="13" fill="url(#gold)" stroke="#f4ddac" stroke-width="2"/><path d="M-15 4Q-15 25 0 25Q15 25 15 4M0 25V35M-11 35H11" stroke="#e8c388" stroke-width="4" fill="none"/><path d="M-9 -18H9M-9 -11H9M-8 -4H8" stroke="#6e3e30" stroke-width="2"/></g>
+<path d="M5 158Q120 140 235 158L223 199Q120 183 17 199Z" fill="url(#cream)" stroke="#ac783b" stroke-width="4"/>
+<text x="120" y="175" text-anchor="middle" fill="#48201b" font-family="Georgia,serif" font-weight="bold" font-size="21">FOUNDING</text>
+<text x="120" y="193" text-anchor="middle" fill="#48201b" font-family="Georgia,serif" font-weight="bold" font-size="22">TESTER</text>
+<text x="120" y="220" text-anchor="middle" fill="#f9e6b6" font-family="Georgia,serif" font-weight="bold" letter-spacing="2" font-size="16">BETA TEAM</text>
+<path d="M120 227l4 8 9 1-7 6 2 8-8-4-8 4 2-8-7-6 9-1z" fill="#d9b36e"/>
+</g></svg>
