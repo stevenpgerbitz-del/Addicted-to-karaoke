@@ -429,7 +429,9 @@ function founderPreview(box,venue){
       venue.databaseId||null);
   });
   section.append(button);
-  saturday.insertAdjacentElement('afterend',section);
+  const hostArea=saturday.querySelector('.a2k-schedule-hosts');
+  if(hostArea)hostArea.append(section);
+  else saturday.insertAdjacentElement('afterend',section);
 }
 // Return sample metrics only; never store them as real reviews.
 window.a2kKjDemoRating=()=>{
