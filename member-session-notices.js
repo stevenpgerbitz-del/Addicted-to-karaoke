@@ -215,3 +215,89 @@
  }
  install();
 })();
+/* A2K earned-badge notifications: non-modal, vintage, one notification per new server award. */
+(function(){
+ 'use strict';
+ const KEY='atk-seen-badge-awards-v1:',MS=60000;
+ let checking=false,activeUser='',toast=null,timeout=null,queue=[];
+ function clear(){
+  if(timeout)clearTimeout(timeout);
+  timeout=null;
+  if(toast)toast.remove();
+  toast=null;
+  if(queue.length)setTimeout(showNext,150);
+ }
+ function openBadges(){
+  clear();
+  if(typeof navigate==='function')navigate('signin');
+  const section=document.querySelector('#auth-profile .profile-about-awards');
+  if(section){const details=section.closest('details');if(details)details.open=true;section.scrollIntoView({behavior:'smooth',block:'center'});}
+ }
+ function showNext(){
+  if(toast||!queue.length)return;
+  const item=queue.shift(),el=document.createElement('div');
+  el.className='atk-earned-toast';el.setAttribute('role','status');
+  const button=document.createElement('button');button.type='button';button.className='atk-earned-open';
+  const image=document.createElement('img');image.src='assets/badges/'+encodeURIComponent(item.code)+'.svg';image.alt='';
+  image.onerror=()=>{image.hidden=true};
+  const words=document.createElement('span');words.className='atk-earned-words';
+  const kicker=document.createElement('small');kicker.textContent='NEW BADGE EARNED!';
+  const title=document.createElement('strong');title.textContent=item.label;
+  const sub=document.createElement('span');sub.textContent=item.description||'View your badges';
+  words.append(kicker,title,sub);button.append(image,words);button.addEventListener('click',openBadges);
+  const close=document.createElement('button');close.type='button';close.className='atk-earned-close';
+  close.textContent='×';close.setAttribute('aria-label','Dismiss notification');close.addEventListener('click',clear);
+  el.append(button,close);document.body.append(el);toast=el;timeout=setTimeout(clear,5000);
+ }
+ async function check(){
+  if(checking||typeof authClient==='undefined'||!authClient||typeof authUser==='undefined'||!authUser?.id)return;
+  checking=true;const id=authUser.id;
+  try{
+   const {data,error}=await authClient.from('profile_badge_awards')
+    .select('badge_code,awarded_at,profile_badge_types(label,category,description)').eq('user_id',id);
+   if(error)throw error;
+   if(authUser?.id!==id)return;
+   const items=(data||[]).filter(v=>v.profile_badge_types&&(v.profile_badge_types.category==='achievement'||v.badge_code==='founder'));
+   const storageKey=KEY+id;
+   let before=null;
+   try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(Array.isArray(saved))before=new Set(saved);}catch(_){}
+   const codes=[...new Set(items.map(v=>v.badge_code))];
+   try{localStorage.setItem(storageKey,JSON.stringify(codes));}catch(_){}
+   const now=Date.now(),newItems=items.filter(v=>{
+    if(before)return !before.has(v.badge_code);
+    const age=now-Date.parse(v.awarded_at||'');
+    return Number.isFinite(age)&&age>=0&&age<120000;
+   });
+   for(const v of newItems)queue.push({code:String(v.badge_code),label:String(v.profile_badge_types.label||'New badge'),description:String(v.profile_badge_types.description||'')});
+   if(newItems.length&&!toast)showNext();
+  }catch(err){console.warn('Badge notifications unavailable',err)}
+  finally{checking=false}
+ }
+ function sync(){
+  const id=typeof authUser!=='undefined'?authUser?.id||'':'';
+  if(id!==activeUser){
+   activeUser=id;queue=[];if(toast){toast.remove();toast=null}
+   if(timeout){clearTimeout(timeout);timeout=null}
+  }
+  if(id&&document.visibilityState==='visible')void check();
+ }
+ const css=[
+ '.atk-earned-toast{position:fixed;right:20px;bottom:24px;z-index:9000;width:min(330px,calc(100vw - 28px));display:flex;align-items:flex-start;border:1px solid #b38a51;border-radius:12px;background:linear-gradient(145deg,#421b24,#241216);box-shadow:0 6px 25px #0008;color:#f7e5c8;animation:atk-earned-in .2s ease-out}',
+ '.atk-earned-open{flex:1;display:flex;gap:10px;align-items:center;min-width:0;padding:10px 4px 10px 11px;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer}',
+ '.atk-earned-open img{width:44px;height:50px;object-fit:contain;flex:none}',
+ '.atk-earned-words{display:flex;flex-direction:column;gap:3px;min-width:0}',
+ '.atk-earned-words small{font:700 10px Arial,sans-serif;letter-spacing:.4px;color:#e0b77a}',
+ '.atk-earned-words strong{font:700 15px Georgia,serif;color:#fff0d5}',
+ '.atk-earned-words span{font:12px/1.3 Arial,sans-serif;color:#d9c2a9;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
+ '.atk-earned-close{border:0;background:transparent;color:#ead1b7;font-size:22px;min-width:34px;min-height:35px;cursor:pointer}',
+ '@keyframes atk-earned-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}',
+ '@media(max-width:799px){.atk-earned-toast{right:14px;bottom:calc(77px + env(safe-area-inset-bottom))}}',
+ '@media(prefers-reduced-motion:reduce){.atk-earned-toast{animation:none}}'
+ ].join('');
+ const style=document.createElement('style');style.textContent=css;document.head.append(style);
+ setTimeout(sync,1000);setInterval(sync,MS);
+ document.addEventListener('visibilitychange',sync);
+ window.addEventListener('focus',sync);
+ if(typeof authClient!=='undefined'&&authClient?.auth)
+  authClient.auth.onAuthStateChange(()=>setTimeout(sync,100));
+})();
