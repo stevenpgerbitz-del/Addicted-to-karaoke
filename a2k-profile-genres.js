@@ -1,5 +1,5 @@
 /* A2K Build 253 — favorite genres inside About Me, ABOVE Run Setup Wizard.
-   Separate from the Singer / KJ / Venue Owner interests used for navigation.
+   Separate from the Singer / KJ / Venue Staff interests used for navigation.
    Stored in member_profiles.favorite_genres, subject to existing owner-only RLS. */
 (function(){
  'use strict';
