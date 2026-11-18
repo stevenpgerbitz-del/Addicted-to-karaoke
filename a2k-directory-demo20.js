@@ -136,7 +136,7 @@
  };
  const GROUPS=[
   ['all','All Members'],['singer','Singers'],['kj','KJ / Hosts'],
-  ['venue_owner','Venue Staff']
+  ['venue_owner','Venue Staff'],['verified','✓ Verified']
  ];
  const BGS=['#6c3b32','#5b4337','#614532','#65342d','#4a3945','#60442f'];
  const SKINS=['#ddb18c','#a8644a','#e0c0a1','#87614b','#c28d6b','#e2b899'];
@@ -314,22 +314,14 @@
   const totals=create('span','a2k-d-demo-total','1,000 sample members');
   top.append(search,totals,sort);
   const chips=create('div','a2k-d-demo-filter-tabs');
-  const roleButtons=new Map();let role='all',verifiedOnly=false,pageNumber=1;
+  const roleButtons=new Map();let role='all',pageNumber=1;
   for(const [id,label] of GROUPS){
-   const n=DEMO.filter(m=>id==='all'||m.roles.includes(id)).length;
-   const b=create('button','a2k-d-demo-filter',label+' ('+n+')');
+   const n=DEMO.filter(m=>id==='all'||(id==='verified'?m.verified:m.roles.includes(id))).length;
+   const b=create('button','a2k-d-demo-filter'+(id==='verified'?' a2k-d-demo-verified-filter':''),label+' ('+n+')');
    b.type='button';b.dataset.role=id;b.setAttribute('aria-pressed',String(id===role));
    b.onclick=()=>{role=id;pageNumber=1;draw()};
    chips.append(b);roleButtons.set(id,b);
   }
-  const verifiedCount=DEMO.filter(m=>m.verified).length;
-   const verifiedButton=create('button','a2k-d-demo-filter a2k-d-demo-verified-filter','✓ Verified ('+verifiedCount+')');
-   verifiedButton.type='button';
-   verifiedButton.setAttribute('aria-label','Show only blue-check verified members');
-   verifiedButton.setAttribute('aria-pressed','false');
-   verifiedButton.title='Filter by blue-check verified account status';
-   verifiedButton.onclick=()=>{verifiedOnly=!verifiedOnly;pageNumber=1;draw()};
-   chips.append(verifiedButton);
    filters.append(top,chips);wrap.append(filters);
   const grid=create('div','a2k-d-directory-grid a2k-d-members-grid a2k-d-demo-grid');
   const empty=create('p','a2k-d-demo-empty','No sample members match those filters.');
@@ -342,7 +334,7 @@
   history.replaceState(null,'','#members');
   function draw(){
    const q=search.value.toLocaleLowerCase().trim();
-   const list=DEMO.filter(m=>(role==='all'||m.roles.includes(role))&&(!verifiedOnly||m.verified)&&
+   const list=DEMO.filter(m=>(role==='all'||(role==='verified'?m.verified:m.roles.includes(role)))&&
     (!q||[m.name,m.about,m.music,m.roles.map(x=>LABELS[x]).join(' '),m.badges.map(x=>LABELS[x]).join(' ')]
      .join(' ').toLocaleLowerCase().includes(q)));
    if(sort.value==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
@@ -390,7 +382,7 @@
    empty.hidden=list.length!==0;
    totals.textContent=list.length+' of '+DEMO.length+' sample members';
    for(const [id,b] of roleButtons)b.setAttribute('aria-pressed',String(id===role));
-    verifiedButton.setAttribute('aria-pressed',String(verifiedOnly));
+
   }
   search.addEventListener('input',()=>{pageNumber=1;draw()});sort.addEventListener('change',()=>{pageNumber=1;draw()});draw();
  }
