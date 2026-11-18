@@ -298,7 +298,7 @@
    const featuredLabels=earned.map(code=>featuredBadgeLabels[code]).filter(Boolean);
    view.setAttribute('aria-label','View profile for '+(member.stage_name||'Karaoke Member')+
      (featuredLabels.length?'. Featured badges: '+featuredLabels.join(', '):''));
-   if(featuredLabels.length)view.title=featuredLabels.join(' · ');
+   if(featuredLabels.length)view.title=earned.map(code=>(featuredBadgeLabels[code]||code)+' ('+(badgeRarity[code]||'Common')+')').join(' · ');
    view.onclick=()=>window.a2kOpenMemberProfile(member.user_id,'members');
    box.append(view);
    return box;
