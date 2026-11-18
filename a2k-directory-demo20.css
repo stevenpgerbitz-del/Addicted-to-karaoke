@@ -198,3 +198,35 @@
   transition:none!important;
  }
 }
+
+/* A2K 338: award artwork only, up to four genuinely earned badges per
+   desktop directory card. Full badge descriptions stay on member profiles. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-directory-featured{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex-wrap:nowrap!important;gap:5px!important;
+  margin:1px 0 3px!important;padding:3px 0!important;
+  min-width:0!important;width:100%!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid
+ .a2k-d-member-featured-chip.a2k-d-icon-only-badge{
+  position:relative!important;box-sizing:border-box!important;
+  display:inline-flex!important;flex:0 1 40px!important;
+  width:clamp(31px,2.55vw,40px)!important;max-width:40px!important;
+  height:43px!important;min-width:0!important;
+  align-items:center!important;justify-content:center!important;
+  padding:2px!important;margin:0!important;gap:0!important;
+  border:1px solid #c69b66!important;border-radius:8px!important;
+  background:linear-gradient(#55241c,#2b120e)!important;
+  box-shadow:inset 0 1px 0 #e8c39c22!important;
+  overflow:hidden!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid
+ .a2k-d-member-featured-chip.a2k-d-icon-only-badge img{
+  display:block!important;flex:none!important;
+  width:100%!important;max-width:37px!important;
+  height:100%!important;max-height:39px!important;
+  margin:0!important;object-fit:contain!important;
+  border:0!important;border-radius:0!important;
+ }
+}
