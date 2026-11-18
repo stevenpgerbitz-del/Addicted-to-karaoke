@@ -295,7 +295,7 @@
    contactCache=Array.isArray(data)?data:[];
    root.replaceChildren();
    const owners=contactCache.filter(c=>c.contact_kind==='owner'),hosts=contactCache.filter(c=>c.contact_kind==='kj');
-   if(!owners.length)root.append(mk('p','mv2-empty-contact','No verified venue owner is linked to this venue.'));
+   if(!owners.length)root.append(mk('p','mv2-empty-contact','No verified venue staff member is linked to this venue.'));
    for(const contact of owners)root.append(contactButton(contact));
    if(!hosts.length)root.append(mk('p','mv2-empty-contact','No registered KJ is linked to this venue yet.'));
    for(const contact of hosts)root.append(contactButton(contact));
@@ -318,7 +318,7 @@
  function contactButton(c){
   const card=btn('',()=>openContact(c),'mv2-contact-card');
   const info=mk('span','mv2-contact-info');
-  info.append(mk('small','',c.contact_kind==='owner'?'Verified Venue Owner':'KJ / Host'),
+  info.append(mk('small','',c.contact_kind==='owner'?'Verified Venue Staff':'KJ / Host'),
    mk('strong','',c.stage_name||'Registered member'));
   if(c.member_number!=null)info.append(mk('small','','Member #'+String(c.member_number).padStart(6,'0')));
   card.append(contactAvatar(c),info,icon('chevron'));return card;
@@ -329,7 +329,7 @@
   head.append(contactAvatar(c));
   const identity=mk('div','');
   identity.append(mk('h3','',c.stage_name||'Registered member'),
-    mk('p','',c.contact_kind==='owner'?'Verified Venue Owner':'KJ / Host'));
+    mk('p','',c.contact_kind==='owner'?'Verified Venue Staff':'KJ / Host'));
   head.append(identity);overlayBody.append(head);
   const details=mk('dl','mv2-contact-metadata');
   if(c.member_number!=null)details.append(row('Member #',String(c.member_number).padStart(6,'0')));
