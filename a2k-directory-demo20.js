@@ -1,4 +1,4 @@
-/* A2K member-directory density preview — 100 entirely fictional members.
+/* A2K member-directory density preview — 1,000 entirely fictional members.
    Founder-only visual simulation. No user accounts, member numbers, awards,
    auth records, or production statistics are created or modified. */
 (function(){
@@ -6,9 +6,9 @@
  const ROOT_ID='a2k-d-directory';
  // A special opt-in preview URL can show fictional records without creating
  // accounts or requiring access to the real Founder management privileges.
- const demoLink=['members100','members50','members20'].includes(new URLSearchParams(location.search).get('a2k_demo'));
+ const demoLink=['members1000','members100','members50','members20'].includes(new URLSearchParams(location.search).get('a2k_demo'));
  let demoAutoOpened=false;
- const DEMO=[
+ const BASE_DEMO=[
   ['DJ Scarlet',['kj'],['verified_kj','founding_tester'],true,true,'Hosts retro karaoke across town.','80s Classics','2024-04-12'],
   ['Mic Drop Mike',['singer'],['song_25'],false,true,'Classic rock and big finales.','Classic Rock','2025-06-21'],
   ['The Velvet Voice',['singer'],['song_100','review_75'],true,true,'Ballads are my specialty.','Soul & R&B','2024-07-10'],
@@ -111,6 +111,15 @@
   ["The Final Encore Society",["singer","kj"],["verified_kj","song_100","review_75","favorite_25"],true,true,"Saving the best singalong for last.","Rock & Pop","2023-07-18"]
  ].map((v,i)=>({id:i+1,name:v[0],roles:v[1],badges:v[2],verified:v[3],
   portrait:v[4],about:v[5],music:v[6],joined:v[7]}));
+ const DEMO=Array.from({length:1000},(_,i)=>{
+  const original=BASE_DEMO[i%BASE_DEMO.length];
+  const iteration=Math.floor(i/BASE_DEMO.length);
+  return {...original,id:i+1,
+   name:iteration?original.name+' · Encore '+(iteration+1):original.name,
+   badges:iteration?original.badges.filter(b=>b!=='founder'&&b!=='founding_tester'):original.badges.slice()
+  };
+ });
+ const PAGE_SIZE=40;
  const LABELS={
   singer:'Singer',kj:'KJ / Host',venue_owner:'Venue Staff',
   founder:'Founder',founding_tester:'Founding Tester',
@@ -266,7 +275,7 @@
  function banner(){
   const b=create('div','a2k-d-demo-notice');
   const tag=create('strong','','DEMO PREVIEW');
-  const note=create('span','','100 fictional profiles · No actual members or accounts were created');
+  const note=create('span','','1,000 fictional profiles · No actual members or accounts were created');
   b.append(tag,note);return b;
  }
  function back(){
@@ -288,7 +297,7 @@
   wrap.append(banner());
   const headline=create('div','a2k-d-demo-head');
   const title=create('div','');
-  title.append(create('h1','','Members'),create('p','','How our directory could look with 100 different members'));
+  title.append(create('h1','','Members'),create('p','','How our directory could look with 1,000 different members'));
   headline.append(title,back());
   wrap.append(headline);
   const filters=create('section','a2k-d-demo-toolbar');
@@ -302,15 +311,15 @@
   for(const [key,name] of [['name','Name A–Z'],['newest','Newest'],['oldest','Oldest']]){
    const option=create('option','',name);option.value=key;sort.append(option);
   }
-  const totals=create('span','a2k-d-demo-total','100 sample members');
+  const totals=create('span','a2k-d-demo-total','1,000 sample members');
   top.append(search,totals,sort);
   const chips=create('div','a2k-d-demo-filter-tabs');
-  const roleButtons=new Map();let role='all';
+  const roleButtons=new Map();let role='all',pageNumber=1;
   for(const [id,label] of GROUPS){
    const n=DEMO.filter(m=>id==='all'||m.roles.includes(id)).length;
    const b=create('button','a2k-d-demo-filter',label+' ('+n+')');
    b.type='button';b.dataset.role=id;b.setAttribute('aria-pressed',String(id===role));
-   b.onclick=()=>{role=id;draw()};
+   b.onclick=()=>{role=id;pageNumber=1;draw()};
    chips.append(b);roleButtons.set(id,b);
   }
   filters.append(top,chips);wrap.append(filters);
@@ -318,6 +327,9 @@
   const empty=create('p','a2k-d-demo-empty','No sample members match those filters.');
   empty.hidden=true;
   wrap.append(grid,empty);
+   const pagination=create('nav','a2k-d-demo-pagination');
+   pagination.setAttribute('aria-label','Preview member pages');
+   wrap.append(pagination);
   root.replaceChildren(wrap);
   history.replaceState(null,'','#members');
   function draw(){
@@ -327,19 +339,58 @@
      .join(' ').toLocaleLowerCase().includes(q)));
    if(sort.value==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
    else list.sort((a,b)=>sort.value==='oldest'?a.joined.localeCompare(b.joined):b.joined.localeCompare(a.joined));
-   grid.replaceChildren(...list.map(card));
+   const totalPages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+    pageNumber=Math.min(pageNumber,totalPages);
+    const offset=(pageNumber-1)*PAGE_SIZE;
+    grid.replaceChildren(...list.slice(offset,offset+PAGE_SIZE).map(card));
+    pagination.replaceChildren();
+    if(list.length>PAGE_SIZE){
+      const prev=create('button','a2k-d-demo-page-control','‹ Previous');
+      prev.type='button';prev.disabled=pageNumber===1;
+      prev.onclick=()=>turnPage(pageNumber-1);
+      pagination.append(prev);
+      const first=Math.max(1,Math.min(pageNumber-2,totalPages-4));
+      const last=Math.min(totalPages,first+4);
+      if(first>1){
+        pagination.append(pageButton(1));
+        if(first>2)pagination.append(create('span','a2k-d-demo-page-ellipsis','…'));
+      }
+      for(let n=first;n<=last;n++)pagination.append(pageButton(n));
+      if(last<totalPages){
+        if(last<totalPages-1)pagination.append(create('span','a2k-d-demo-page-ellipsis','…'));
+        pagination.append(pageButton(totalPages));
+      }
+      const next=create('button','a2k-d-demo-page-control','Next ›');
+      next.type='button';next.disabled=pageNumber===totalPages;
+      next.onclick=()=>turnPage(pageNumber+1);
+      pagination.append(next);
+      const range=create('span','a2k-d-demo-page-summary',
+        'Showing '+(offset+1)+'–'+Math.min(offset+PAGE_SIZE,list.length)+' of '+list.length+
+        ' · Page '+pageNumber+' of '+totalPages);
+      pagination.append(range);
+    }
+    function pageButton(n){
+      const b=create('button','a2k-d-demo-page-control'+(n===pageNumber?' is-current':''),String(n));
+      b.type='button';b.setAttribute('aria-label','Page '+n);
+      if(n===pageNumber)b.setAttribute('aria-current','page');
+      b.onclick=()=>turnPage(n);return b;
+    }
+    function turnPage(n){
+      if(n<1||n>totalPages||n===pageNumber)return;
+      pageNumber=n;draw();filters.scrollIntoView({block:'start',behavior:'auto'});
+    }
    empty.hidden=list.length!==0;
    totals.textContent=list.length+' of '+DEMO.length+' sample members';
    for(const [id,b] of roleButtons)b.setAttribute('aria-pressed',String(id===role));
   }
-  search.addEventListener('input',draw);sort.addEventListener('change',draw);draw();
+  search.addEventListener('input',()=>{pageNumber=1;draw()});sort.addEventListener('change',()=>{pageNumber=1;draw()});draw();
  }
  function profile(m){
   if(!previewOn)return;
   const root=byId(ROOT_ID);if(!root)return;
   const page=create('div','a2k-d-demo-preview a2k-d-demo-profile');
   page.append(banner());
-  const backBtn=create('button','a2k-d-demo-return','← Back to 100 Samples');
+  const backBtn=create('button','a2k-d-demo-return','← Back to 1,000 Samples');
   backBtn.type='button';backBtn.onclick=show;page.append(backBtn);
   const columns=create('div','a2k-d-demo-profile-columns');
   const side=create('section','a2k-d-demo-profile-side');
@@ -373,9 +424,9 @@
     show();
     return;
   }
-  const btn=create('button','a2k-d-demo-launch','Preview 100 Members');
+  const btn=create('button','a2k-d-demo-launch','Preview 1,000 Members');
   btn.id='a2k-d-demo-100-launch';btn.type='button';
-  btn.title='Founder-only, fictional 100-member layout preview';
+  btn.title='Founder-only, fictional 1,000-member layout preview';
   btn.addEventListener('click',show);
   toolbar.insertBefore(btn,toolbar.querySelector('.a2k-d-member-sort-label'));
  }
