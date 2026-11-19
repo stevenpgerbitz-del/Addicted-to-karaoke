@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V12</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V13</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -185,6 +185,20 @@ html{overflow-y:scroll;scrollbar-gutter:stable;scroll-behavior:auto}
 body{background-attachment:scroll}
 .site-header,.site-header img{animation:none!important;transition:none!important}
 
+/* V13: the banner artwork has a baked-in curved gold bottom-left edge.
+   Hide only that tiny artwork corner, leaving the photo and header seam intact. */
+.site-header{position:relative;border-radius:0}
+.site-header img{border-radius:0}
+.site-header::after{
+ content:"";
+ position:absolute;
+ bottom:2px;
+ left:0;
+ width:24px;
+ height:23px;
+ background:linear-gradient(90deg,#030101 0%,#030101 68%,rgba(3,1,1,0) 100%);
+ pointer-events:none;
+}
 /* V12: original integrated sidebar framing—no floating panel or competing corners. */
 .side{
  position:relative;
