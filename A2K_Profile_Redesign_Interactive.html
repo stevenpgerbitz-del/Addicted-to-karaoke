@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V20</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V21</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -353,6 +353,36 @@ body{background-attachment:scroll}
   font-size:12px;
  }
 }
+/* V21: replace fuzzy image-within-image thumbnails with five original SVG engraved badges. */
+.wizard-section .wizard-image.wizard-icon-badge{
+ position:relative;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ flex:none;
+ overflow:hidden;
+ border:1px solid #b78d58;
+ border-radius:9px;
+ background:radial-gradient(ellipse at 47% 32%,#57232a 0%,#361017 65%,#220a0e 100%);
+ box-shadow:inset 0 1px rgba(255,229,183,.19),0 1px 3px rgba(27,6,9,.25);
+}
+.wizard-section .wizard-icon-badge::before{
+ content:"";
+ position:absolute;
+ inset:4px;
+ border:1px solid rgba(230,191,125,.33);
+ border-radius:6px;
+ pointer-events:none;
+}
+.wizard-section .wizard-icon-badge svg{
+ width:42px;
+ height:42px;
+ display:block;
+ filter:drop-shadow(0 1px 1px rgba(0,0,0,.36));
+}
+@media(max-width:1350px){
+ .wizard-section .wizard-icon-badge svg{width:38px;height:38px}
+}
 @media(max-width:720px){.side{display:none}}
 </style></head>
 <body><div class="site">
@@ -395,7 +425,19 @@ function field(label,value){return `<div class="field-line"><span>${esc(label)}<
 function roleDisplay(){return data.roles.map(k=>roles.find(r=>r[0]===k)?.[1]||k).join(' / ')||'None';}
 function feature(icon,title,sub,action,button){return `<div class="feature-row"><span class="icon">${icon}</span><div class="feature-text"><strong>${esc(title)}</strong><small>${esc(sub)}</small></div>${action?`<button type="button" data-action="${esc(action)}">${esc(button||'Edit')}</button>`:''}</div>`;}
 function tags(){return data.genres.map(x=>`<button type="button" class="tag" data-action="genre" data-target="${esc(x)}">${esc(x)}</button>`).join('')||'<span class="note">No favorite genres yet.</span>';}
-function wizardCards(){return wizardList.map(([key,name,desc])=>`<div class="wizard-row"><img class="wizard-image" src="${ART[key]}" alt=""><div class="wizard-text"><strong>${esc(name)}</strong><small>${esc(desc)}</small></div><button type="button" class="wizard-go" data-wizard="${key}">Run Wizard &nbsp; ❯</button></div>`).join('');}
+/* Original hand-drawn vectors: sharp at every size, with a shared engraved badge style. */
+function wizardBadge(key){
+ const glyphs={
+ general:'<path d="M28 8h8l1.2 6a19 19 0 0 1 4.3 1.8l5.1-3.2 5.5 5.5-3.2 5.1a18 18 0 0 1 1.8 4.3l6 1.2v8l-6 1.2a18 18 0 0 1-1.8 4.3l3.2 5.1-5.5 5.5-5.1-3.2a18 18 0 0 1-4.3 1.8l-1.2 6h-8l-1.2-6a18 18 0 0 1-4.3-1.8l-5.1 3.2-5.5-5.5 3.2-5.1a18 18 0 0 1-1.8-4.3l-6-1.2v-8l6-1.2a18 18 0 0 1 1.8-4.3l-3.2-5.1 5.5-5.5 5.1 3.2a18 18 0 0 1 4.3-1.8Z" fill="#c49b5d" fill-opacity=".14"/><circle cx="32" cy="32" r="8" fill="#ecd29d" fill-opacity=".12"/><circle cx="32" cy="32" r="3.5" stroke-width="1.1"/>',
+ singer:'<rect x="24" y="9" width="16" height="30" rx="8" fill="#ddbf7e" fill-opacity=".13"/><path d="M19 29v4c0 8 6 14 13 14s13-6 13-14v-4"/><path d="M32 47v9M22 56h20"/><path d="M26.5 17.5h11M26.5 23h11M26.5 28.5h11" stroke-width="1.15"/><path d="M47 10v11m0-11 7-2m-7 13c-4-1-6 2-3 4 3 2 6-1 3-4Z" stroke-width="1.6"/>',
+ kj:'<path d="M12 35v-6a20 20 0 0 1 40 0v6"/><rect x="10" y="31" width="10" height="19" rx="4" fill="#dcc18a" fill-opacity=".13"/><rect x="44" y="31" width="10" height="19" rx="4" fill="#dcc18a" fill-opacity=".13"/><path d="M52 49c-2 5-8 8-15 8"/><rect x="30" y="54" width="8" height="5" rx="2.5" fill="#dabb7d" fill-opacity=".25"/><path d="M24 31c1-5 4-8 8-8s7 3 8 8" stroke-width="1.6" opacity=".7"/>',
+ venue:'<path d="M14 28h36v27H14Z" fill="#dfbe7f" fill-opacity=".08"/><path d="M12 20h40l-3 10H15Z" fill="#e6c585" fill-opacity=".13"/><path d="M21 20l-1 10M32 20v10M43 20l1 10M12 30c2 3 6 3 8 0 3 3 8 3 12 0 4 3 9 3 12 0 3 3 7 3 8 0"/><path d="M25 55V38h14v17M17 37h5m20 0h5M17 45h5m20 0h5"/><path d="M24 15h16M28 11h8" stroke-width="1.7"/>',
+ privacy:'<path d="M32 7 49 14v14c0 13-7 21-17 28C22 49 15 41 15 28V14Z" fill="#e0bd7f" fill-opacity=".1"/><path d="M32 13 43 17.5v11c0 10-4 16-11 21-7-5-11-11-11-21v-11Z" stroke-width="1.3" opacity=".68"/><rect x="24" y="30" width="16" height="13" rx="2.5" fill="#d6ae65" fill-opacity=".25"/><path d="M27 30v-5a5 5 0 0 1 10 0v5"/><circle cx="32" cy="35.5" r="1.5" fill="#eac988" stroke="none"/><path d="M32 37v2.2" stroke-width="1.5"/>'
+ };
+ const glyph=glyphs[key]||glyphs.general;
+ return '<span class="wizard-image wizard-icon-badge" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" focusable="false"><g fill="none" stroke="#eac788" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+glyph+'</g></svg></span>';
+}
+function wizardCards(){return wizardList.map(([key,name,desc])=>`<div class="wizard-row">${wizardBadge(key)}<div class="wizard-text"><strong>${esc(name)}</strong><small>${esc(desc)}</small></div><button type="button" class="wizard-go" data-wizard="${key}">Run Wizard &nbsp; ❯</button></div>`).join('');}
 function overview(){
 const profile=panel('<span class="ico">▣</span> Profile Information',`<div class="rows"><div class="info-row"><span class="field">Display Name:</span><span class="value">${esc(data.name)}</span></div><div class="info-row"><span class="field">Location:</span><span class="value">${data.privacy.location?esc(data.location):esc(data.location)+' (private)'}</span></div><div class="info-row"><span class="field">Karaoke Interests:</span><span class="value">${esc(roleDisplay())}</span></div></div>`,['edit','profile'], 'profile-info');
 const bio=panel('<span class="ico">♧</span> About Me',`<p class="panel-copy">${esc(data.bio)}</p>`,['edit','bio'],'about-preview');
