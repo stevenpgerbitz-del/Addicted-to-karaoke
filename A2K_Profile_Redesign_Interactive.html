@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V31</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V32</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -825,15 +825,11 @@ body{background-attachment:scroll}
 #a2k-delete-account-dialog.a2k-general-setup-preview .gen-interests-step .gen-interest-tile:focus-visible{
  outline:3px solid #ffe7a6;outline-offset:2px;
 }
-@keyframes a2k-v31-role-jiggle{
- 0%,100%{transform:translateY(0) rotate(0deg)}
- 24%{transform:translateY(-3px) rotate(-1.4deg)}
- 50%{transform:translateY(-2px) rotate(1.3deg)}
- 75%{transform:translateY(-3px) rotate(-.6deg)}
-}
+/* V32: the live wizard's original hover behavior: a simple 2px lift.
+   Keep the independent gold selected glow and keyboard focus unchanged. */
 @media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
  #a2k-delete-account-dialog.a2k-general-setup-preview .gen-interests-step .gen-interest-tile:hover{
-  animation:a2k-v31-role-jiggle .48s ease-in-out 1;
+  transform:translateY(-2px);
  }
 }
 @media(max-width:780px){
@@ -1177,7 +1173,7 @@ function openGeneralSetup(){
  '<div id="a2k-deletion-stage" class="a2k-deletion-stage"></div>'+
  '<p id="gen-wizard-error" class="gen-wizard-error" role="alert"></p>'+
  '</section></div>'+
- '<footer class="a2k-deletion-footer"><div class="a2k-deletion-footer-progress"><strong class="a2k-deletion-footer-label" id="gen-progress-label">Step 1 of 4</strong><small class="a2k-deletion-footer-build">Profile Preview V31</small></div>'+
+ '<footer class="a2k-deletion-footer"><div class="a2k-deletion-footer-progress"><strong class="a2k-deletion-footer-label" id="gen-progress-label">Step 1 of 4</strong><small class="a2k-deletion-footer-build">Profile Preview V32</small></div>'+
  '<div class="a2k-deletion-footer-actions"><button type="button" class="a2k-deletion-btn a2k-deletion-btn-subtle" id="gen-cancel">Cancel</button>'+
  '<button type="button" class="a2k-deletion-btn a2k-deletion-btn-subtle" id="gen-back" hidden>Previous</button>'+
  '<button type="button" class="a2k-deletion-btn a2k-deletion-btn-primary" id="gen-next">Continue</button></div></footer>';
