@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V19</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V20</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -243,85 +243,114 @@ body{background-attachment:scroll}
 @media(min-width:721px) and (max-width:1150px){
  #sideNav>.nav-link:nth-child(2){font-size:16px;gap:6px;padding-left:6px;padding-right:5px}
 }
-/* V19: align the existing five wizard launch rows without repainting them.
-   Specific to the Overview wizard panel: other cards and wizard dialogs stay unchanged. */
-.wizard-section .panel-inner{padding:12px 13px 13px}
+/* V20 — restrained vintage-plaque treatment for the five wizard launch rows only.
+   Keep original wizard art and A2K palette; do not alter actual wizard modals. */
+.wizard-section .panel-inner{padding:13px 14px 14px}
 .wizard-section .panel-title{margin-bottom:3px}
-.wizard-section .subtitle{margin-bottom:11px}
+.wizard-section .subtitle{margin-bottom:12px}
 .wizard-section .wizard-list{gap:7px}
 .wizard-section .wizard-row{
  display:grid;
- grid-template-columns:80px minmax(0,1fr) 128px;
+ grid-template-columns:70px minmax(0,1fr) 120px;
  align-items:center;
- gap:12px;
- min-height:70px;
- padding:7px 10px;
+ column-gap:13px;
+ min-height:72px;
+ padding:8px 12px;
+ border:1px solid #b99561;
+ border-radius:9px;
+ background:linear-gradient(180deg,#f1e4cf 0%,#e4ceaa 100%);
+ box-shadow:inset 0 1px rgba(255,250,234,.75),0 2px 3px rgba(0,0,0,.22);
+ color:#36150f;
 }
 .wizard-section .wizard-image{
- width:80px;
- height:52px;
  display:block;
- align-self:center;
- border-radius:8px;
- object-fit:cover;
+ width:70px;
+ height:52px;
+ object-fit:contain;
  object-position:center;
+ align-self:center;
+ border:1px solid #ad875b;
+ border-radius:7px;
+ background:#3e1418;
+ box-shadow:0 1px 3px rgba(33,11,9,.28);
 }
 .wizard-section .wizard-text{
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
  min-width:0;
  align-self:center;
 }
 .wizard-section .wizard-text strong{
- font-size:17px;
- line-height:1.12;
+ display:block;
  margin:0;
+ font-size:17px;
+ line-height:1.18;
+ font-weight:700;
+ color:#32100d;
 }
 .wizard-section .wizard-text small{
  display:block;
- font-size:12px;
- line-height:1.3;
  margin-top:4px;
+ font-size:12.5px;
+ line-height:1.32;
+ color:#503329;
  overflow-wrap:break-word;
 }
 .wizard-section .wizard-go{
  display:inline-flex;
  align-items:center;
  justify-content:center;
- width:128px;
- min-height:38px;
- padding:7px 8px;
- white-space:nowrap;
- font-size:13px;
- line-height:1.15;
  justify-self:end;
  align-self:center;
+ width:120px;
+ min-height:37px;
+ padding:7px 8px;
+ border:1px solid #a77d55;
+ border-radius:8px;
+ background:linear-gradient(180deg,#65212a,#431017);
+ box-shadow:inset 0 1px rgba(255,222,179,.16),0 1px 3px rgba(0,0,0,.28);
+ color:#fff0d1;
+ font-size:12.5px;
+ line-height:1.15;
+ white-space:nowrap;
+}
+.wizard-section .wizard-row:hover{border-color:#c9a879}
+.wizard-section .wizard-go:hover{background:linear-gradient(180deg,#742c34,#50151d)}
+@media(min-width:761px) and (max-width:1350px){
+ .wizard-section .wizard-row{grid-template-columns:62px minmax(0,1fr) 112px;column-gap:9px;padding:7px 9px}
+ .wizard-section .wizard-image{width:62px;height:50px}
+ .wizard-section .wizard-text strong{font-size:15.5px}
+ .wizard-section .wizard-text small{font-size:12px}
+ .wizard-section .wizard-go{width:112px;font-size:12px;padding:7px 5px}
 }
 @media(max-width:760px){
  .wizard-section .panel-inner{padding:11px}
  .wizard-section .wizard-row{
-  grid-template-columns:68px minmax(0,1fr);
+  grid-template-columns:62px minmax(0,1fr);
   grid-template-rows:auto auto;
-  min-height:104px;
+  min-height:99px;
   gap:6px 10px;
-  padding:9px;
+  padding:8px 9px;
  }
  .wizard-section .wizard-image{
   grid-column:1;
   grid-row:1 / 3;
-  width:68px;
-  height:56px;
+  width:62px;
+  height:55px;
   align-self:center;
  }
  .wizard-section .wizard-text{grid-column:2;grid-row:1}
- .wizard-section .wizard-text strong{font-size:16px;line-height:1.14}
- .wizard-section .wizard-text small{font-size:12px;line-height:1.25}
+ .wizard-section .wizard-text strong{font-size:16px;line-height:1.17}
+ .wizard-section .wizard-text small{font-size:12px;line-height:1.27}
  .wizard-section .wizard-go{
   grid-column:2;
   grid-row:2;
   justify-self:end;
-  width:125px;
-  min-height:36px;
-  font-size:12px;
+  width:114px;
+  min-height:35px;
   margin:0;
+  font-size:12px;
  }
 }
 @media(max-width:720px){.side{display:none}}
