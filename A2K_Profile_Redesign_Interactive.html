@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V24</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V25</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -437,6 +437,18 @@ body{background-attachment:scroll}
 .modal-progress .wizard-image.wizard-icon-badge{display:flex;align-items:center;justify-content:center;width:100%;height:88px;margin-bottom:16px;border:1px solid #c18c58;border-radius:9px;background:radial-gradient(ellipse at 45% 30%,#57232a,#26090f 80%);color:#eac788}
 .modal-progress .wizard-icon-badge svg{width:62px;height:62px}
 @media(max-width:760px){.tab-ico .wizard-icon-inline{width:18px;height:18px}.tab-page .wizard-icon-badge svg{width:35px;height:35px}}
+/* V25: restore the existing site's three optional default portraits in the redesign preview. */
+.preview-avatar-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:8px 0 13px}
+.preview-avatar-option{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;padding:9px 7px 10px;border:1.5px solid #bb945e;border-radius:11px;background:linear-gradient(#fff6e6,#e8d2ae);color:#481e19;font:700 13px/1.2 Arial,sans-serif;cursor:pointer}
+.preview-avatar-option img{display:block;width:100%;max-width:112px;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid #a37b4f}
+.preview-avatar-option span{text-align:center}
+.preview-avatar-option:hover{border-color:#89501f;box-shadow:0 2px 7px #0003}
+.preview-avatar-option[aria-pressed="true"]{border-color:#b27831;outline:2px solid #7c242b;outline-offset:-4px;background:#f1ddb8}
+.preview-avatar-option:focus-visible{outline:3px solid #7c242b;outline-offset:2px}
+.preview-avatar-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.preview-avatar-actions #previewAvatarStatus{font:12px/1.35 Arial,sans-serif;color:#6d4133}
+.modal-content .preview-avatar-note{margin:10px 0 0;font:12px/1.35 Arial,sans-serif;color:#6d4133}
+@media(max-width:760px){.preview-avatar-options{gap:6px}.preview-avatar-option{padding:6px 4px;font-size:11px}.preview-avatar-option img{max-width:86px}}
 @media(max-width:720px){.side{display:none}}
 </style></head>
 <body><div class="site">
@@ -543,12 +555,23 @@ function updateHeader(){const name=$('#memberName');name.innerHTML=`${esc(data.n
 function render(){const defs=tabDefs();if(!defs.find(t=>t[0]===active))active='overview';$('#tabs').innerHTML=defs.map(([key,label,ico])=>`<button type="button" class="tab ${active===key?'active':''}" role="tab" data-tab="${key}" aria-selected="${active===key}" tabindex="${active===key?'0':'-1'}"><span aria-hidden="true" class="tab-ico">${tabIcon(key)}</span>${label}</button>`).join('');$('#tabContent').innerHTML=views[active]();$('#tabContent').setAttribute('aria-label',defs.find(t=>t[0]===active)[1]);updateHeader();}
 function showDialog(title,body){wizard=null;returnFocus=document.activeElement;const dialog=$('#modalDialog');dialog.classList.remove('large');$('#modalHeading').textContent=title;$('#modalProgress').innerHTML='';$('#modalContent').innerHTML=body;$('#modalBack').hidden=true;$('#modalNext').hidden=true;$('#modalCancel').textContent='Close';$('#modalOverlay').hidden=false;$('#modalCancel').focus();}
 function closeDialog(){$('#modalOverlay').hidden=true;wizard=null;render();returnFocus?.focus?.();}
+/* Preview-only copy of the site's approved three portrait choices. */
+const PROFILE_AVATAR_CHOICES=[
+ ['mic','Microphone','assets/a2k-avatar-microphone-theatrical.png'],
+ ['male','Male figure','assets/a2k-avatar-male-theatrical.png'],
+ ['female','Female figure','assets/a2k-avatar-female-theatrical.png']
+];
+function profileAvatarPicker(){
+ return '<div class="preview-avatar-options" role="group" aria-label="Default profile picture options">'+
+ PROFILE_AVATAR_CHOICES.map(([key,label,url])=>'<button type="button" class="preview-avatar-option" data-avatar-choice="'+key+'" aria-pressed="'+(data.photo===url||(!data.photo&&key==='mic'))+'"><img src="'+url+'" alt=""><span>'+label+(key==='mic'?' · Default':'')+'</span></button>').join('')+
+ '</div><div class="preview-avatar-actions"><button type="button" class="action-btn" data-avatar-upload>Upload My Own Photo</button><span id="previewAvatarStatus" role="status">Choose a portrait or upload your own.</span></div><p class="preview-avatar-note">Changes affect only this design preview. No member account or database is updated.</p>';
+}
 function editor(type){if(type==='profile'){showDialog('Edit Profile — Preview',`<div class="modal-form"><label>Display Name<input id="editName" type="text" value="${esc(data.name)}" maxlength="60"></label><label>Location<input type="text" id="editLocation" value="${esc(data.location)}"></label><p>Changes update this HTML preview only.</p><button class="action-btn" type="button" data-save="profile">Apply to Preview</button></div>`);}
  else if(type==='bio')showDialog('Edit About Me — Preview',`<div class="modal-form"><label>About Me<textarea id="editBio">${esc(data.bio)}</textarea></label><button class="action-btn" data-save="bio">Apply to Preview</button></div>`);
  else if(type==='genres')showDialog('Favorite Genres & Eras',`<p>Tap the music choices you like. You can choose multiple.</p><div class="modal-choices">${['Rock','Pop','Country','80s','90s','2000s','Classic Rock','Oldies','Hip-Hop','R&B','Singalongs','Alternative'].map(x=>`<button type="button" class="choice" data-choice="genre" data-value="${x}" aria-pressed="${data.genres.includes(x)}">${x}</button>`).join('')}</div><div style="margin-top:18px"><button class="action-btn" data-save="genres">Close &amp; Keep Choices</button></div>`);
  else if(type==='venues')showDialog('Favorite Venues — Preview',`<div class="modal-form"><label>Add a favorite venue<input id="newVenue" type="text" placeholder="Venue name"></label><p>These are example names. No real venue search is performed.</p><button class="action-btn" data-save="venue">Add to Preview</button></div>`);
  else if(type==='song')showDialog('Add a Song — Preview',`<div class="modal-form"><label>Song title<input id="newSong" type="text" placeholder="Song name"></label><label>Artist<input id="newArtist" type="text" placeholder="Artist"></label><button class="action-btn" data-save="song">Add to Preview</button></div>`);
- else if(type==='photo')showDialog('Change Profile Photo — Preview',`<div class="modal-form"><label>Choose a photo from your device<input id="newPhoto" type="file" accept="image/png,image/jpeg,image/webp"></label><p>This photo stays in your browser for this preview only. Nothing is uploaded.</p><button class="action-btn" data-save="photo">Use Photo in Preview</button></div>`);
+ else if(type==='photo')showDialog('Choose Your Profile Picture',profileAvatarPicker());
  else showDialog('Preview Only',`<p>This control represents a feature in the proposed layout. We will connect it to the actual A2K member data only after you approve the design.</p>`);
 }
 const wizardSteps={general:['My Profile','Photo & Location','Select Roles'],singer:['Karaoke Experience','Favorite Genres','Favorite Songs','Favorite Venues'],kj:['Host Details','Co-Hosts','Hosting Venues','Schedule'],venue:['Venue Information','Venue Claim','Amenities & Genres'],privacy:['Profile Visibility','Karaoke Privacy','Confirm Settings']};
@@ -560,7 +583,7 @@ function wizardPage(type,index){
  const pick=wizardSteps[type][index];let inner=`<h3>${pick}</h3>`;
  if(type==='general'){
   if(index===0)inner+=`<p>Get the essentials ready so other A2K members can recognize you.</p><div class="modal-form"><label>Display Name<input id="wizName" type="text" value="${esc(data.name)}"></label><label>About Me (optional)<textarea id="wizBio">${esc(data.bio)}</textarea></label></div>`;
-  if(index===1)inner+=`<p>Add a location and an optional profile photo. The existing picture stays selected unless changed.</p><div class="modal-form"><label>City or ZIP<input id="wizLocation" type="text" value="${esc(data.location)}"></label><div class="inline-note">The profile picture is managed with the camera control on the main preview.</div></div>`;
+  if(index===1)inner+=`<p>Add a location and an optional profile photo. The existing picture stays selected unless changed.</p><div class="modal-form"><label>City or ZIP<input id="wizLocation" type="text" value="${esc(data.location)}"></label>${profileAvatarPicker()}</div>`;
   if(index===2)inner+=`<p>Choose one or more roles. Relevant profile tabs appear automatically.</p>${choices(roles.map(x=>x[1]),'role',data.roles.map(k=>roles.find(r=>r[0]===k)?.[1]),true)}`;
  }
  if(type==='singer'){
@@ -603,7 +626,14 @@ function saveEditor(type){if(type==='profile'){data.name=$('#editName')?.value.t
  else if(type==='photo'){const f=$('#newPhoto')?.files?.[0];if(f&&f.type.startsWith('image/')){const reader=new FileReader();reader.onload=()=>{data.photo=reader.result;closeDialog()};reader.readAsDataURL(f)}else closeDialog()}
 }
 document.addEventListener('click',e=>{
- const avatarButton=e.target.closest('[data-photo-picker]');if(avatarButton){$('#avatarFilePicker').click();return}
+ const avatarSelect=e.target.closest('[data-avatar-choice]');
+ if(avatarSelect){
+  const selected=PROFILE_AVATAR_CHOICES.find(([key])=>key===avatarSelect.dataset.avatarChoice);
+  if(selected){data.photo=selected[2];updateHeader();document.querySelectorAll('[data-avatar-choice]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.avatarChoice===selected[0])));const status=$('#previewAvatarStatus');if(status)status.textContent=selected[1]+' selected for preview.';}
+  return;
+ }
+ const avatarUpload=e.target.closest('[data-avatar-upload]');if(avatarUpload){$('#avatarFilePicker').click();return}
+ const avatarButton=e.target.closest('[data-photo-picker]');if(avatarButton){editor('photo');return}
  const editButton=e.target.closest('[data-edit]');if(editButton){editor(editButton.dataset.edit);return}
  const x=e.target.closest('[data-tab]');if(x){active=x.dataset.tab;render();return}
  const role=e.target.closest('[data-role]');if(role){const key=role.dataset.role;data.roles.includes(key)?data.roles=data.roles.filter(r=>r!==key):data.roles.push(key);render();return}
@@ -620,7 +650,7 @@ document.addEventListener('click',e=>{
  if(e.target.closest('#modalNext')){wizardNext();return}
  if(e.target===$('#modalOverlay'))closeDialog();
 });
-document.addEventListener('change',e=>{if(e.target.id!=='avatarFilePicker')return;const f=e.target.files?.[0];if(!f)return;if(!/^image\/(png|jpeg|webp)$/.test(f.type)){showDialog('Choose a Photo',`<p>Please choose a JPG, PNG, or WebP picture.</p>`);e.target.value='';return}const reader=new FileReader();reader.onload=()=>{data.photo=reader.result;updateHeader()};reader.readAsDataURL(f);e.target.value='';});
+document.addEventListener('change',e=>{if(e.target.id!=='avatarFilePicker')return;const f=e.target.files?.[0];if(!f)return;if(!/^image\/(png|jpeg|webp)$/.test(f.type)){showDialog('Choose a Photo',`<p>Please choose a JPG, PNG, or WebP picture.</p>`);e.target.value='';return}const reader=new FileReader();reader.onload=()=>{data.photo=reader.result;updateHeader();document.querySelectorAll('[data-avatar-choice]').forEach(b=>b.setAttribute('aria-pressed','false'));const status=$('#previewAvatarStatus');if(status)status.textContent='Your own photo selected for preview.';};reader.readAsDataURL(f);e.target.value='';});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#modalOverlay').hidden){closeDialog();return}if(e.target.closest('.tabs')&&['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){const defs=tabDefs().map(x=>x[0]);let n=defs.indexOf(active);if(e.key==='ArrowRight')n=(n+1)%defs.length;if(e.key==='ArrowLeft')n=(n-1+defs.length)%defs.length;if(e.key==='Home')n=0;if(e.key==='End')n=defs.length-1;active=defs[n];render();$('#tabs').querySelector(`[data-tab="${active}"]`)?.focus();e.preventDefault();}});
 drawNav();render();
 })();
