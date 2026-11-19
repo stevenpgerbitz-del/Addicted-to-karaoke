@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V28</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V29</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -576,82 +576,12 @@ body{background-attachment:scroll}
  .a2k-general-setup-preview .gen-tile img{width:68px;height:68px}
 }
 
-/* V28 — Screen 1: fill the approved wizard content area with the same three
-   fields, instead of leaving unused space below a compact form card.
-   No inner scrolling, no change to the other three screens. */
-#a2k-delete-account-dialog.a2k-general-setup-preview .a2k-deletion-stage.gen-profile-basics-step{
- display:flex;
- flex-direction:column;
- min-height:0;
- padding:17px clamp(16px,2vw,24px) 17px!important;
- overflow:hidden!important;
-}
-.a2k-general-setup-preview .gen-profile-basics-step .a2k-deletion-section-title{
- flex:0 0 auto;
- margin-bottom:8px;
-}
-.a2k-general-setup-preview .gen-profile-basics-step .gen-subtext{
- flex:0 0 auto;
- margin:0 0 clamp(12px,2.5vh,20px);
-}
-#a2k-delete-account-dialog.a2k-general-setup-preview .gen-profile-basics-step .gen-card{
- display:grid;
- grid-template-rows:auto minmax(0,1fr) auto;
- gap:clamp(12px,2.6vh,20px);
- flex:1 1 auto;
- min-height:0;
- margin:0;
- padding:clamp(17px,2.5vh,24px) clamp(16px,2vw,25px);
- align-content:stretch;
-}
-.a2k-general-setup-preview .gen-profile-basics-step .gen-field{
- min-height:0;
- margin:0;
- gap:8px;
- font-size:clamp(14px,1.35vw,17px);
-}
-.a2k-general-setup-preview .gen-profile-basics-step .gen-field input{
- flex:0 0 auto;
- min-height:clamp(43px,6vh,55px);
- font-size:clamp(15px,1.5vw,19px);
-}
-.a2k-general-setup-preview .gen-profile-basics-step .gen-field textarea{
- flex:1 1 auto;
- height:100%;
- min-height:80px;
- max-height:none;
- font-size:clamp(15px,1.5vw,19px);
- resize:none;
-}
-@media(max-width:780px){
- #a2k-delete-account-dialog.a2k-general-setup-preview .a2k-deletion-stage.gen-profile-basics-step{
-  padding:10px 10px 12px!important;
- }
+/* V29: restore V27's original compact typography and field sizes.
+   Only extend Screen 1's parchment form panel slightly on spacious desktop screens. */
+@media (min-width:781px) and (min-height:710px) {
  #a2k-delete-account-dialog.a2k-general-setup-preview .gen-profile-basics-step .gen-card{
-  padding:12px 12px;
-  gap:11px;
+  padding-bottom:clamp(35px,5.5vh,50px);
  }
- .a2k-general-setup-preview .gen-profile-basics-step .gen-subtext{
-  margin-bottom:10px;
- }
- .a2k-general-setup-preview .gen-profile-basics-step .gen-field{gap:5px}
- .a2k-general-setup-preview .gen-profile-basics-step .gen-field input{
-  min-height:42px;font-size:15px;
- }
- .a2k-general-setup-preview .gen-profile-basics-step .gen-field textarea{
-  min-height:65px;font-size:15px;
- }
-}
-@media(max-height:670px){
- #a2k-delete-account-dialog.a2k-general-setup-preview .a2k-deletion-stage.gen-profile-basics-step{
-  padding-top:8px!important;padding-bottom:8px!important;
- }
- #a2k-delete-account-dialog.a2k-general-setup-preview .gen-profile-basics-step .gen-card{
-  padding:10px 13px;gap:8px;
- }
- .a2k-general-setup-preview .gen-profile-basics-step .gen-subtext{margin-bottom:8px}
- .a2k-general-setup-preview .gen-profile-basics-step .gen-field input{min-height:38px}
- .a2k-general-setup-preview .gen-profile-basics-step .gen-field textarea{min-height:55px}
 }
 </style></head>
 <body><div class="site">
@@ -932,7 +862,7 @@ function openGeneralSetup(){
  '<div id="a2k-deletion-stage" class="a2k-deletion-stage"></div>'+
  '<p id="gen-wizard-error" class="gen-wizard-error" role="alert"></p>'+
  '</section></div>'+
- '<footer class="a2k-deletion-footer"><div class="a2k-deletion-footer-progress"><strong class="a2k-deletion-footer-label" id="gen-progress-label">Step 1 of 4</strong><small class="a2k-deletion-footer-build">Profile Preview V28</small></div>'+
+ '<footer class="a2k-deletion-footer"><div class="a2k-deletion-footer-progress"><strong class="a2k-deletion-footer-label" id="gen-progress-label">Step 1 of 4</strong><small class="a2k-deletion-footer-build">Profile Preview V29</small></div>'+
  '<div class="a2k-deletion-footer-actions"><button type="button" class="a2k-deletion-btn a2k-deletion-btn-subtle" id="gen-cancel">Cancel</button>'+
  '<button type="button" class="a2k-deletion-btn a2k-deletion-btn-subtle" id="gen-back" hidden>Previous</button>'+
  '<button type="button" class="a2k-deletion-btn a2k-deletion-btn-primary" id="gen-next">Continue</button></div></footer>';
