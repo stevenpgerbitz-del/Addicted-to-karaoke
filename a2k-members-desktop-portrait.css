@@ -100,18 +100,18 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member>.a2k-d-profile-sha
 }
 html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member>.a2k-d-member-profile-pane{
  grid-column:1/-1!important;grid-row:2!important;display:grid!important;
- grid-template-columns:minmax(265px,310px) minmax(0,1fr)!important;
+ grid-template-columns:minmax(248px,284px) minmax(0,1fr)!important;
  gap:25px!important;align-items:start!important;width:100%!important;min-width:0!important;
 }
 html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane>.a2k-d-public-profile-sidebar{
  box-sizing:border-box!important;width:100%!important;min-width:0!important;
- margin:0!important;padding:24px 19px!important;
+ margin:0!important;padding:20px 16px!important;
  border:1.5px solid #cca36c!important;border-radius:18px!important;
  background:linear-gradient(155deg,#572019,#32140f 75%,#1c0d0b)!important;
  box-shadow:0 7px 21px #0006,inset 0 1px 0 #f4c38d30!important;
 }
 html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-public-profile-sidebar>.a2k-d-member-avatar-large{
- width:137px!important;min-width:137px!important;height:137px!important;min-height:137px!important;
+ width:122px!important;min-width:122px!important;height:122px!important;min-height:122px!important;
  border:3px solid #e2bb7f!important;border-radius:50%!important;margin:0 auto 12px!important;
 }
 html.a2k-desktop-live #a2k-d-directory .a2k-d-member-profile-pane .a2k-d-public-profile-sidebar h1{
@@ -172,7 +172,7 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid{grid-template-columns
 @media(min-width:1024px) and (max-width:1240px){
 html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member>.a2k-d-member-profile-pane{
- grid-template-columns:minmax(220px,250px) minmax(0,1fr)!important;gap:15px!important;
+ grid-template-columns:minmax(214px,238px) minmax(0,1fr)!important;gap:15px!important;
 }
 }
 @media(prefers-reduced-motion:reduce){
