@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V51</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V52</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -2154,7 +2154,7 @@ function desktopRoleShell(label,steps,build){
  return dialog;
 }
 function openPrivacyDesktop(){
- const dialog=desktopRoleShell('Privacy Wizard',['Profile Visibility','Profile & Contact Details','My Karaoke Activity'],'Privacy Preview V51');
+ const dialog=desktopRoleShell('Privacy Wizard',['Profile Visibility','Profile & Contact Details','My Karaoke Activity'],'Privacy Preview V52');
  const opener=document.activeElement;
  const stage=dialog.querySelector('#a2k-singer-stage');
  stage.className='a2k-deletion-stage kj-business-stage privacy-audience-stage';
@@ -2165,7 +2165,8 @@ function openPrivacyDesktop(){
   ['What appears on my profile',[['displayName','Display Name'],['photo','Profile Photo'],['location','City / Area'],['memberSince','Member Since']]],
   ['Contact Information',[['email','Show My Email'],['phone','Show My Phone']]]
  ];
- const details={displayName:true,memberSince:true,email:false,phone:false,...data.privacy};
+ const activityGroups=[['What appears on my profile',[['musicEras','Favorite Music & Eras'],['reviews','My Reviews'],['songs','My Song List'],['venues','Favorite Venues']]]];
+ const details={musicEras:true,displayName:true,memberSince:true,email:false,phone:false,...data.privacy};
  let step=0;
  const audienceMarkup='<h2 class="a2k-deletion-section-title">Profile Visibility</h2><div class="a2k-deletion-stage-box privacy-options"><fieldset><legend>Who can see your profile?</legend><div class="gen-tile-grid">'+options.map(([name,detail])=>'<button type="button" class="gen-tile" data-audience="'+name+'"><b>'+name+'</b><small>'+detail+'</small></button>').join('')+'</div></fieldset><fieldset><legend>Member Directory</legend><div class="gen-toggle-grid"><button type="button" class="gen-tile" data-listed="yes">Show Me in Directory</button><button type="button" class="gen-tile" data-listed="no">Hide Me from Directory</button></div></fieldset><p class="gen-note" role="status"></p></div>';
  function refresh(){
@@ -2174,7 +2175,7 @@ function openPrivacyDesktop(){
    button.setAttribute('aria-pressed',String((button.dataset.listed==='yes')===listed));
    button.disabled=audience==='Private';
   }
-  if(step===1)return;
+  if(step!==0)return;
   stage.querySelector('[role=status]').textContent=audience==='Private'?'Private profiles are hidden from the Member Directory.':listed?'Your profile can appear in member searches.':'Your profile stays out of member searches. People in your chosen audience can still use your profile link.';
  }
  stage.addEventListener('click',event=>{
@@ -2195,14 +2196,17 @@ function openPrivacyDesktop(){
  const previous=dialog.querySelector('#singer-desktop-back');
  function showStep(index){
   step=index;
+  const groups=step===2?activityGroups:detailGroups;
+  const heading=step===2?'My Karaoke Activity':'Profile &amp; Contact Details';
+  const note=step===1?'Email and phone are hidden by default. Authorized administrators can still review venue owner contact details.':audience==='Private'?'Your profile is private. Only you can see this activity.':'These choices apply to your '+(audience==='Public'?'public':'members-only')+' profile.';
   stage.innerHTML=step===0?audienceMarkup:
-   '<h2 tabindex="-1" class="a2k-deletion-section-title">Profile &amp; Contact Details</h2><div class="a2k-deletion-stage-box privacy-options privacy-details">'+detailGroups.map(([title,fields])=>
+   '<h2 tabindex="-1" class="a2k-deletion-section-title">'+heading+'</h2><div class="a2k-deletion-stage-box privacy-options privacy-details">'+groups.map(([title,fields])=>
     '<fieldset><legend>'+title+'</legend><div class="gen-toggle-grid">'+fields.map(([key,label])=>
      '<button type="button" class="gen-tile" data-detail="'+key+'" aria-pressed="'+details[key]+'"><b>'+label+'</b><small>'+(details[key]?'Shown':'Hidden')+'</small></button>'
     ).join('')+'</div></fieldset>'
-   ).join('')+'<p class="gen-note">Email and phone are hidden by default. Authorized administrators can still review venue owner contact details.</p></div>';
+   ).join('')+'<p class="gen-note">'+note+'</p></div>';
   previous.hidden=step===0;
-  save.textContent=step===0?'Continue':'Save Preview';
+  save.textContent=step<2?'Continue':'Save Preview';
   dialog.querySelector('#singer-desktop-progress').textContent='Step '+(step+1)+' of 3';
   dialog.querySelectorAll('[data-step]').forEach((item,i)=>{
    item.classList.toggle('current',i===step);item.classList.toggle('complete',i<step);
@@ -2211,10 +2215,10 @@ function openPrivacyDesktop(){
   refresh();
   if(dialog.open)(stage.querySelector('h2[tabindex]')||stage.querySelector('[aria-pressed=true]')).focus();
  }
- previous.onclick=()=>showStep(0);
+ previous.onclick=()=>showStep(step-1);
  save.onclick=()=>{
-  if(step===0){showStep(1);return;}
-  for(const [,fields] of detailGroups)for(const [key] of fields)data.privacy[key]=details[key];
+  if(step<2){showStep(step+1);return;}
+  for(const [,fields] of [...detailGroups,...activityGroups])for(const [key] of fields)data.privacy[key]=details[key];
   data.profileAudience=audience;data.privacy.directory=listed;dialog.close();render();
  };
  dialog.querySelector('#singer-desktop-cancel').onclick=()=>dialog.close();
