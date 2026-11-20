@@ -1609,6 +1609,16 @@ function openSingerDesktop(){
  '<button type="button" class="a2k-deletion-btn a2k-deletion-btn-primary" id="singer-desktop-next">Continue</button></div></footer>';
  singerDesktopDialog=dialog;
  dialog.addEventListener('cancel',event=>{event.preventDefault();closeSingerDesktop(false)});
+ dialog.addEventListener('keydown',event=>{
+  const tab=event.target.closest('[data-singer-category]');
+  if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+  event.preventDefault();
+  const n=SINGER_DESKTOP_GENRE_GROUPS.length;
+  singerDesktopCategory=event.key==='Home'?0:event.key==='End'?n-1:
+    (singerDesktopCategory+(event.key==='ArrowRight'?1:-1)+n)%n;
+  renderSingerDesktopStage();
+  dialog.querySelector('[data-singer-category="'+singerDesktopCategory+'"]')?.focus();
+ });
  dialog.addEventListener('click',event=>{
   if(event.target.closest('#singer-desktop-cancel')){closeSingerDesktop(false);return}
   if(event.target.closest('#singer-desktop-back')){
@@ -1644,11 +1654,13 @@ function openSingerDesktop(){
    const had=singerDesktopGenres.includes(name);
    if(!had&&singerDesktopGenres.length>=SINGER_DESKTOP_GENRE_LIMIT){
     dialog.querySelector('#a2k-singer-music-status').textContent='You can select up to '+SINGER_DESKTOP_GENRE_LIMIT+' favorites. Deselect one to add another.';
+    dialog.querySelector('.singer-music-legend').textContent='Limit reached — deselect one favorite before adding another.';
     return;
    }
    singerDesktopGenres=had?singerDesktopGenres.filter(x=>x!==name):[...singerDesktopGenres,name];
    genre.setAttribute('aria-pressed',String(!had));
    dialog.querySelector('#a2k-singer-count').textContent=singerDesktopGenres.length+' / '+SINGER_DESKTOP_GENRE_LIMIT+' selected';
+   dialog.querySelector('.singer-music-legend').textContent='Showing '+SINGER_DESKTOP_GENRE_GROUPS[singerDesktopCategory].values.length+' of '+SINGER_DESKTOP_GENRES.length+' available options';
    dialog.querySelector('#a2k-singer-music-status').textContent=name+(!had?' selected.':' deselected.');
   }
  });
