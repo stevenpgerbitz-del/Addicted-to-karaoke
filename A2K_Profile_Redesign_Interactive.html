@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V44</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V45</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -2384,7 +2384,7 @@ function openKjBusiness(){
 function openVenueStaffBusiness(){
  const steps=['Business Information','Your Venue','Venue Settings','Confirm & Finish'];
  const opener=document.activeElement;
- const dialog=desktopRoleShell('Venue Staff Wizard',steps,'Venue Staff Preview V44');
+ const dialog=desktopRoleShell('Venue Staff Wizard',steps,'Venue Staff Preview V45');
  const stage=dialog.querySelector('#a2k-singer-stage');
  stage.className='a2k-deletion-stage kj-business-stage';
  stage.innerHTML=`<div class="kj-business-heading"><img src="${GENERAL_ROLE_ART.venue}" alt=""><h2 class="a2k-deletion-section-title">Business Information</h2></div>
@@ -2398,14 +2398,82 @@ function openVenueStaffBusiness(){
  const form=stage.querySelector('form');
  const {business,email,phone}=form.elements;
  const save=dialog.querySelector('#singer-desktop-next');
- save.type='submit';save.setAttribute('form',form.id);save.textContent='Save Preview';
+ save.type='submit';save.setAttribute('form',form.id);save.textContent='Continue';
  form.addEventListener('input',event=>event.target.setCustomValidity(''));
  form.addEventListener('submit',event=>{
   event.preventDefault();
   business.setCustomValidity(business.value.trim()?'':'Enter your business name.');
   phone.setCustomValidity(/\d/.test(phone.value)?'':'Enter a contact phone number.');
   if(!form.reportValidity())return;
+  showVenue(true);
+ });
+ const venuePage=stage.cloneNode(false);venuePage.removeAttribute('id');venuePage.hidden=true;stage.after(venuePage);
+ venuePage.innerHTML=`<h2 class="a2k-deletion-section-title">Your Venue</h2>
+ <section class="a2k-deletion-stage-box singer-venue-panel">
+ <label for="staff-venue-search">Find the venue you represent</label><input id="staff-venue-search" type="search" placeholder="Venue name, city, or ZIP" maxlength="120">
+ <div data-results aria-live="polite"></div><div class="singer-venue-pages" data-pages></div>
+ <button type="button" data-new>Can’t find your venue?</button></section>
+ <form class="a2k-deletion-stage-box kj-business-form" hidden><label>Venue name<input required name="venueName" maxlength="160"></label>
+ <label>City<input required name="city" maxlength="100"></label>
+ <div><button type="button" data-dismiss>Back to search</button> <button>Add draft venue</button></div></form>
+ <section class="a2k-deletion-stage-box singer-venue-panel" data-selected hidden><strong>Selected venue</strong><div data-summary></div>
+ <p>A2K reviews venue claims before granting staff access.</p><button type="button" data-change>Change venue</button></section>`;
+ const searchPanel=venuePage.querySelector('section'),missing=venuePage.querySelector('form');
+ const get=sel=>venuePage.querySelector(sel),query=get('#staff-venue-search'),summary=get('[data-selected]');
+ const back=dialog.querySelector('#singer-desktop-back');
+ let selected=data.venueStaffSelection?{...data.venueStaffSelection}:null,rows=[],page=0,version=0,timer;
+ function displayMode(mode){
+  searchPanel.hidden=mode!=='search';missing.hidden=mode!=='new';summary.hidden=mode!=='selected';
+  if(mode==='selected')get('[data-summary]').innerHTML='<strong>'+esc(selected.name)+'</strong><br>'+esc([selected.city,selected.state,selected.draft?'Preview draft':''].filter(Boolean).join(', '));
+  if(mode==='search'){search();query.focus()}else if(mode==='new')missing.elements.venueName.focus();else get('[data-change]').focus();
+ }
+ function search(delay=0){
+  const seq=++version;clearTimeout(timer);rows=[];get('[data-pages]').replaceChildren();get('[data-results]').textContent='Searching published venues…';
+  timer=setTimeout(async()=>{
+   try{
+    const matches=await searchPublishedVenues(query.value,page*3);
+    if(seq!==version||!dialog.open)return;
+    rows=matches.slice(0,3);
+    get('[data-results]').innerHTML=rows.map((row,i)=>'<div class="singer-venue-row"><div><strong>'+esc(row.name)+'</strong><small>'+esc([row.city,row.state].filter(Boolean).join(', '))+'</small></div><button type="button" data-pick="'+i+'" aria-label="'+esc('Select '+row.name)+'">Select</button></div>').join('')||'No matching published venues.';
+    if(page||matches.length>3)get('[data-pages]').innerHTML='<button type="button" data-dir="-1" '+(page?'':'disabled')+'>Previous results</button><span>Page '+(page+1)+'</span><button type="button" data-dir="1" '+(matches.length<4?'disabled':'')+'>More results</button>';
+   }catch{if(seq===version&&dialog.open)get('[data-results]').innerHTML='Directory unavailable. <button type="button" data-retry>Try again</button>'}
+  },delay);
+ }
+ query.oninput=()=>{page=0;search(200)};
+ venuePage.onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.hasAttribute('data-pick')){const row=rows[Number(b.dataset.pick)];if(row){selected={...row};displayMode('selected')}}
+  else if(b.hasAttribute('data-change')||b.hasAttribute('data-dismiss'))displayMode('search');
+  else if(b.hasAttribute('data-new'))displayMode('new');
+  else if(b.dataset.dir){page+=Number(b.dataset.dir);search()}
+  else if(b.hasAttribute('data-retry'))search();
+ };
+ missing.oninput=e=>e.target.setCustomValidity('');
+ missing.onsubmit=e=>{
+  e.preventDefault();
+  for(const input of [missing.elements.venueName,missing.elements.city])input.setCustomValidity(input.value.trim()?'':'Enter a value.');
+  if(!missing.reportValidity())return;
+  selected={name:missing.elements.venueName.value.trim(),city:missing.elements.city.value.trim(),id:'draft-'+crypto.randomUUID(),draft:true};
+  missing.reset();displayMode('selected');
+ };
+ function showVenue(active){
+  stage.hidden=active;venuePage.hidden=!active;back.hidden=!active;
+  save.type=active?'button':'submit';save.textContent=active?'Save Preview':'Continue';
+  dialog.querySelector('#singer-desktop-progress').textContent=active?'Step 2 of 4':'Step 1 of 4';
+  dialog.querySelector('.a2k-deletion-progress-label').textContent=steps[Number(active)];
+  dialog.querySelectorAll('.a2k-deletion-timeline-item').forEach((node,i)=>{
+   const current=i===Number(active);node.classList.toggle('current',current);node.classList.toggle('completed',i<Number(active));
+   if(current)node.setAttribute('aria-current','step');else node.removeAttribute('aria-current');
+  });
+  dialog.querySelectorAll('.a2k-deletion-progress-dot').forEach((node,i)=>node.classList.toggle('current',i===Number(active)));
+  if(active)displayMode(selected?'selected':'search');else business.focus();
+ }
+ back.onclick=()=>showVenue(false);
+ save.addEventListener('click',()=>{
+  if(venuePage.hidden)return;
+  if(!missing.hidden){missing.requestSubmit();return}
   data.venueStaffBusiness=business.value.trim();data.venueStaffEmail=email.value.trim();data.venueStaffPhone=phone.value.trim();
+  if(selected){data.venueStaffSelection={...selected};data.venueBusiness=selected.name}
   dialog.close();render();
  });
  dialog.querySelector('#singer-desktop-cancel').onclick=()=>dialog.close();
