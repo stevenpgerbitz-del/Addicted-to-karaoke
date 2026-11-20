@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V43</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V44</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -2381,7 +2381,39 @@ function openKjBusiness(){
  document.body.append(dialog);dialog.showModal();business.focus();
 }
 
-function openWizard(type){if(type==='kj'&&window.matchMedia('(min-width:781px)').matches){openKjBusiness();return;}if(type==='general'){openGeneralSetup();return;}if(type==='singer'&&window.matchMedia('(min-width:781px)').matches){openSingerDesktop();return;}returnFocus=document.activeElement;wizard={type,index:0};$('#modalDialog').classList.add('large');$('#modalHeading').textContent=wizardNames[type];$('#modalOverlay').hidden=false;drawWizard();}
+function openVenueStaffBusiness(){
+ const steps=['Business Information','Your Venue','Venue Settings','Confirm & Finish'];
+ const opener=document.activeElement;
+ const dialog=desktopRoleShell('Venue Staff Wizard',steps,'Venue Staff Preview V44');
+ const stage=dialog.querySelector('#a2k-singer-stage');
+ stage.className='a2k-deletion-stage kj-business-stage';
+ stage.innerHTML=`<div class="kj-business-heading"><img src="${GENERAL_ROLE_ART.venue}" alt=""><h2 class="a2k-deletion-section-title">Business Information</h2></div>
+ <form id="venue-staff-business" class="a2k-deletion-stage-box kj-business-form">
+ <label>Business Name<input name="business" required maxlength="160" autocomplete="organization" placeholder="Your business name" value="${esc(data.venueStaffBusiness)}"></label>
+ <div class="kj-contact-fields">
+ <label>Contact Email<input name="email" required type="email" maxlength="254" autocomplete="email" placeholder="Business email address" value="${esc(data.venueStaffEmail)}"></label>
+ <label>Phone Number<input name="phone" required type="tel" maxlength="50" autocomplete="tel" placeholder="(555) 555-0123" value="${esc(data.venueStaffPhone)}"></label></div>
+ <p>All three fields are required.</p>
+ <p class="kj-private-note"><strong>Private by default.</strong> A2K admins can use these contact details to verify your connection to the venue. You’ll choose later what appears publicly.</p></form>`;
+ const form=stage.querySelector('form');
+ const {business,email,phone}=form.elements;
+ const save=dialog.querySelector('#singer-desktop-next');
+ save.type='submit';save.setAttribute('form',form.id);save.textContent='Save Preview';
+ form.addEventListener('input',event=>event.target.setCustomValidity(''));
+ form.addEventListener('submit',event=>{
+  event.preventDefault();
+  business.setCustomValidity(business.value.trim()?'':'Enter your business name.');
+  phone.setCustomValidity(/\d/.test(phone.value)?'':'Enter a contact phone number.');
+  if(!form.reportValidity())return;
+  data.venueStaffBusiness=business.value.trim();data.venueStaffEmail=email.value.trim();data.venueStaffPhone=phone.value.trim();
+  dialog.close();render();
+ });
+ dialog.querySelector('#singer-desktop-cancel').onclick=()=>dialog.close();
+ dialog.addEventListener('close',()=>{dialog.remove();if(opener?.isConnected)opener.focus()},{once:true});
+ document.body.append(dialog);dialog.showModal();business.focus();
+}
+
+function openWizard(type){if(type==='venue'&&window.matchMedia('(min-width:781px)').matches){openVenueStaffBusiness();return;}if(type==='kj'&&window.matchMedia('(min-width:781px)').matches){openKjBusiness();return;}if(type==='general'){openGeneralSetup();return;}if(type==='singer'&&window.matchMedia('(min-width:781px)').matches){openSingerDesktop();return;}returnFocus=document.activeElement;wizard={type,index:0};$('#modalDialog').classList.add('large');$('#modalHeading').textContent=wizardNames[type];$('#modalOverlay').hidden=false;drawWizard();}
 function selectChoice(id,value){if(id==='role')data.roles.includes(value)?data.roles=data.roles.filter(x=>x!==value):data.roles.push(value);if(id==='level')data.level=value;if(id==='genre')data.genres.includes(value)?data.genres=data.genres.filter(x=>x!==value):data.genres.push(value);}
 function choices(items,which,current,multiple){return `<div class="modal-choices">${items.map(x=>`<button type="button" class="choice" data-choice="${which}" data-value="${esc(x)}" aria-pressed="${multiple?current.includes(x):current===x}">${esc(x)}</button>`).join('')}</div>`;}
 function wizardPage(type,index){
