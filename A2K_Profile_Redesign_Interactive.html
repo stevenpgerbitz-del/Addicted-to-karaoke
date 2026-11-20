@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V46</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V47</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -2390,7 +2390,7 @@ function openKjBusiness(){
 function openVenueStaffBusiness(){
  const steps=['Business Information','Your Venue','Venue Settings','Confirm & Finish'];
  const opener=document.activeElement;
- const dialog=desktopRoleShell('Venue Staff Wizard',steps,'Venue Staff Preview V46');
+ const dialog=desktopRoleShell('Venue Staff Wizard',steps,'Venue Staff Preview V47');
  const stage=dialog.querySelector('#a2k-singer-stage');
  stage.className='a2k-deletion-stage kj-business-stage';
  stage.innerHTML=`<div class="kj-business-heading"><img src="${GENERAL_ROLE_ART.venue}" alt=""><h2 class="a2k-deletion-section-title">Business Information</h2></div>
@@ -2463,7 +2463,8 @@ function openVenueStaffBusiness(){
   missing.reset();displayMode('selected');
  };
  const settingsPage=stage.cloneNode(false);settingsPage.removeAttribute('id');settingsPage.hidden=true;venuePage.after(settingsPage);
- const amenities=['Food','Full Bar','Drinks','Outdoor Seating','Parking','Accessible','Wi-Fi','Pool Tables','Darts','TVs','Private Karaoke Rooms'];
+ const foodOptions=['Snacks & Bar Food','Full Menu'];
+ const amenities=[...foodOptions,'Full Bar','Drinks','Outdoor Seating','Parking','Accessible','Wi-Fi','Pool Tables','Darts','TVs','Private Karaoke Rooms'];
  const genres=['All Genres','Classic Rock','Country','Rock','Pop','R&B','Hip-Hop','80s','90s','2000s','Oldies','Alternative'];
  const drafts=new Map();
  let section='Amenities';
@@ -2481,7 +2482,7 @@ function openVenueStaffBusiness(){
   const names=['Amenities','Karaoke Genres','Schedule Posting'];
   const options=section===names[0]?amenities:section===names[1]?genres:['Venue Staff / Admin Only','Allow Member Submissions'];
   const selectedValues=section===names[0]?draft.amenities:section===names[1]?draft.genres:[options[draft.posting==='owner'?0:1]];
-  const description=section===names[0]?'Which amenities does this venue offer?':section===names[1]?'Which karaoke genres are welcome?':'Who can propose karaoke times? Member submissions require approval before publishing.';
+  const description=section===names[0]?(draft.amenities.includes('Food')?'Food is listed. Choose a food option when the menu is confirmed.':'Choose up to one food option and any other amenities that apply.'):section===names[1]?'Which karaoke genres are welcome?':'Who can propose karaoke times? Member submissions require approval before publishing.';
   settingsPage.innerHTML+='<section class="a2k-deletion-stage-box singer-venue-panel staff-options"><strong>'+esc(selected.name)+'</strong><div class="staff-sections">'+names.map(n=>'<button type="button" data-section="'+n+'" aria-pressed="'+(n===section)+'">'+n+'</button>').join('')+'</div><p>'+description+'</p><div class="staff-tiles">'+options.map((o,i)=>'<button type="button" data-option="'+i+'" aria-pressed="'+selectedValues.includes(o)+'">'+esc(o)+'</button>').join('')+'</div></section>';
  }
  settingsPage.onclick=e=>{
@@ -2494,6 +2495,7 @@ function openVenueStaffBusiness(){
   else{
    const key=section==='Amenities'?'amenities':'genres',value=(key==='amenities'?amenities:genres)[index],current=draft[key];
    if(current.includes(value))draft[key]=current.filter(x=>x!==value);
+   else if(key==='amenities'&&foodOptions.includes(value))draft.amenities=[...current.filter(x=>x!=='Food'&&!foodOptions.includes(x)),value];
    else if(value==='All Genres')draft.genres=[value];
    else draft[key]=[...current.filter(x=>x!=='All Genres'),value];
   }
