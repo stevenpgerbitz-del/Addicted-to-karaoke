@@ -31,7 +31,7 @@ function open(isManual){
  overlay.setAttribute('aria-modal','true');
  frame=document.createElement('iframe');
  frame.title='Addicted to Karaoke Member Setup Wizard';
- frame.src='member-setup-preview.html?live=1&v=351';
+ frame.src='member-setup-preview.html?live=1&v=352';
  frame.setAttribute('referrerpolicy','same-origin');
  frame.onerror=function(){
    var m=manual;close();
@@ -131,12 +131,12 @@ async function save(payload){
  if(roles.includes('owner')&&s.ownerBusiness&&!text(s.ownerEmail)&&!text(s.ownerPhone)&&!user().email)throw Error('Venue staff contact requires an email or phone number.');
  var profileUpdate={stage_name:name,bio:text(s.bio,300),karaoke_interests:rls,
     favorite_genres:roles.includes('singer')?(s.singerGenres||[]).filter(x=>typeof x==='string').slice(0,30):old.favorite_genres||[],
-    directory_visible:priv.directory!==false,
     song_visibility:priv.songs===true?'public':'private',updated_at:now};
  // Never grant verified identities or management roles from self-declared interests.
- // Hiding the profile name means the profile itself must not be publicly readable.
- if(priv.displayName===false)profileUpdate.profile_visibility='private';
- else if(old.profile_visibility==='private'&&priv.displayName!==false)profileUpdate.profile_visibility='members';
+ if(['public','members','private'].includes(priv.audience)&&!payload.skipPrivacy){
+   profileUpdate.profile_visibility=priv.audience;
+   profileUpdate.directory_visible=priv.audience!=='private'&&priv.directory===true;
+ }
  var updated=fail(await client().from('member_profiles').update(profileUpdate).eq('user_id',id).select('*').single());
  if(!allowed())throw Error('Your login changed while saving.');
  Object.assign(old,updated);

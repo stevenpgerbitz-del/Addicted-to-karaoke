@@ -467,7 +467,11 @@
      if(!member||(member.profile_visibility==='private'&&!isSelf)||
        (member.profile_visibility==='members'&&!signed()&&!isSelf)){
        target.replaceChildren(backButton(source),elem('p','a2k-d-directory-info',
-         'This member has not shared a profile with you.'));
+         signed()?'This member has not shared a profile with you.':'Sign in to view profiles shared with members.'));
+       if(!signed()){
+         const login=elem('button','a2k-d-directory-action','Sign In');
+         login.type='button';login.onclick=()=>navigate('signin');target.append(login);
+       }
        return;
      }
      let preferenceRows=[];
