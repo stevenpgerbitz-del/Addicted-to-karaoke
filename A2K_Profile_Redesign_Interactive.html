@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#280b0b" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Addicted to Karaoke | Profile Reference-Match Preview V47</title>
+<title>Addicted to Karaoke | Profile Reference-Match Preview V48</title>
 <style>
 :root{--wine:#690810;--wine2:#4c090d;--panel:#270707;--cream:#f5dcb0;--ivory:#fff0d1;--oldgold:#c49c5f;--darkgold:#805629;--muted:#d6bba0;--ink:#34090b;--line:#ae7d45;--softline:#67402e;--edge:#ab7744}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#090505;color:#f4e0c0;font:16px/1.36 Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffe1a2;outline-offset:3px}a{color:inherit}[hidden]{display:none!important}
@@ -1391,6 +1391,8 @@ body{background-attachment:scroll}
 .staff-options .staff-sections,.staff-options .staff-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
 .staff-options .staff-sections{border-bottom:1px solid #bc965d;padding-bottom:10px}
 .staff-options .staff-tiles button[aria-pressed=true],.staff-options .staff-sections button[aria-pressed=true]{border:2px solid #946d35;box-shadow:inset 0 0 0 1px #f3d796;text-decoration:underline;text-underline-offset:3px}
+.staff-options .staff-amenities{grid-template-columns:repeat(3,minmax(max-content,1fr));grid-auto-rows:32px}
+.staff-options .staff-amenities button{box-sizing:border-box;padding:3px 6px;white-space:nowrap;font-size:15px;line-height:1.15}
 .staff-options p{margin:4px 0;font:15px/1.4 Arial,sans-serif;color:#5a3c2c}
 .staff-options .staff-tiles:has(button:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
 </style></head>
@@ -2390,7 +2392,7 @@ function openKjBusiness(){
 function openVenueStaffBusiness(){
  const steps=['Business Information','Your Venue','Venue Settings','Confirm & Finish'];
  const opener=document.activeElement;
- const dialog=desktopRoleShell('Venue Staff Wizard',steps,'Venue Staff Preview V47');
+ const dialog=desktopRoleShell('Venue Staff Wizard',steps,'Venue Staff Preview V48');
  const stage=dialog.querySelector('#a2k-singer-stage');
  stage.className='a2k-deletion-stage kj-business-stage';
  stage.innerHTML=`<div class="kj-business-heading"><img src="${GENERAL_ROLE_ART.venue}" alt=""><h2 class="a2k-deletion-section-title">Business Information</h2></div>
@@ -2483,7 +2485,7 @@ function openVenueStaffBusiness(){
   const options=section===names[0]?amenities:section===names[1]?genres:['Venue Staff / Admin Only','Allow Member Submissions'];
   const selectedValues=section===names[0]?draft.amenities:section===names[1]?draft.genres:[options[draft.posting==='owner'?0:1]];
   const description=section===names[0]?(draft.amenities.includes('Food')?'Food is listed. Choose a food option when the menu is confirmed.':'Choose up to one food option and any other amenities that apply.'):section===names[1]?'Which karaoke genres are welcome?':'Who can propose karaoke times? Member submissions require approval before publishing.';
-  settingsPage.innerHTML+='<section class="a2k-deletion-stage-box singer-venue-panel staff-options"><strong>'+esc(selected.name)+'</strong><div class="staff-sections">'+names.map(n=>'<button type="button" data-section="'+n+'" aria-pressed="'+(n===section)+'">'+n+'</button>').join('')+'</div><p>'+description+'</p><div class="staff-tiles">'+options.map((o,i)=>'<button type="button" data-option="'+i+'" aria-pressed="'+selectedValues.includes(o)+'">'+esc(o)+'</button>').join('')+'</div></section>';
+  settingsPage.innerHTML+='<section class="a2k-deletion-stage-box singer-venue-panel staff-options"><strong>'+esc(selected.name)+'</strong><div class="staff-sections">'+names.map(n=>'<button type="button" data-section="'+n+'" aria-pressed="'+(n===section)+'">'+n+'</button>').join('')+'</div><p>'+description+'</p><div class="staff-tiles'+(section===names[0]?' staff-amenities':'')+'">'+options.map((o,i)=>'<button type="button" data-option="'+i+'" aria-pressed="'+selectedValues.includes(o)+'">'+esc(o)+'</button>').join('')+'</div></section>';
  }
  settingsPage.onclick=e=>{
   const btn=e.target.closest('button');if(!btn)return;
