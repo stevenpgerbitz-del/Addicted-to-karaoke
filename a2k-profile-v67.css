@@ -1,0 +1,186 @@
+/*
+ A2K PROFILE V67 — logged-in profile in the approved V64 preview structure,
+ 2026-11-22. Companion to a2k-profile-v67.js, which rebuilds #auth-profile
+ into the preview page's structure (tab bar, wide identity header, Profile
+ Information / About Me on the left, My Activity / Profile Setup &
+ Preferences on the right). This file styles that structure and supersedes
+ the V66 profile layout (V65/V66 files stay in place; V67 loads last).
+
+ Palette per the approved design: burgundy / oxblood panels, antique gold
+ borders, cream text, Georgia italic headings, near-black lounge ground.
+*/
+
+/* V66 laid #auth-profile out as its own grid; V67 returns it to normal
+   flow — the existing desktop column module (a2k-profile-grid.js) owns
+   the two columns below the header. */
+#auth-profile:not([hidden]){display:block!important;}
+
+/* ---------- Tab bar ---------- */
+#auth-profile .v67-tabs{
+  display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;
+  padding:4px 2px 12px;scrollbar-width:none;
+}
+#auth-profile .v67-tabs::-webkit-scrollbar{display:none;}
+#auth-profile .v67-tab{
+  flex:1 0 auto;min-width:120px;
+  font-family:Georgia,serif;font-size:15px;font-weight:700;
+  color:#f3e2c8;background:linear-gradient(160deg,#4a1712,#2a0f0c);
+  border:1.5px solid #a07c51;border-radius:10px;
+  padding:10px 14px;cursor:pointer;white-space:nowrap;
+}
+#auth-profile .v67-tab:hover{border-color:#d8b17b;}
+#auth-profile .v67-tab.v67-tab-active{
+  background:linear-gradient(160deg,#f6e7c9,#e6c998);
+  color:#3a130d;border-color:#d8b17b;
+}
+
+/* ---------- Identity header (the existing hero, restructured) ---------- */
+#auth-profile .member-hero.v67-hero{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.85fr);
+  align-items:center;gap:14px 22px;
+  text-align:left!important;
+  padding:18px 22px!important;
+  background:radial-gradient(ellipse at top left,#61241d48,transparent 62%),
+    linear-gradient(145deg,#321915,#150e0c)!important;
+  border:1.5px solid #a07c51!important;border-radius:15px!important;
+  box-shadow:inset 0 0 0 2px #e1bc8324!important;
+}
+#auth-profile .v67-hero-id{display:flex;align-items:center;gap:16px;min-width:0;}
+#auth-profile .v67-hero .member-avatar{
+  width:118px!important;height:118px!important;flex:none;
+}
+#auth-profile .v67-hero .member-identity-line{justify-content:flex-start!important;}
+#auth-profile .v67-hero h2,
+#auth-profile .v67-hero .member-identity-line h2{
+  font-size:30px!important;text-align:left!important;
+}
+#auth-profile .v67-hero .member-identity-facts{
+  border-top:none;padding-top:2px;align-items:flex-start;width:auto;
+}
+#auth-profile .v67-hero .member-identity-facts .member-muted{text-align:left!important;}
+#auth-profile .v67-hero .profile-badge-labels{justify-content:flex-start;}
+#auth-profile .v67-hero-roles{
+  border-left:1px solid #886749;padding-left:22px;min-width:0;
+}
+#auth-profile .v67-hero-tools{
+  border-left:1px solid #886749;padding-left:22px;min-width:0;
+  display:flex;flex-direction:column;gap:8px;
+}
+#auth-profile .v67-hero-zone-title{
+  font-family:Georgia,serif;font-weight:700;color:#f3e2c8;
+  font-size:15px;margin-bottom:8px;
+}
+#auth-profile .v67-hero-tools .v67-hero-zone-title{margin-bottom:0;}
+#auth-profile .v67-role-chips{display:flex;flex-wrap:wrap;gap:7px;}
+#auth-profile .v67-role-chip{
+  font-size:13px;color:#f3e2c8;
+  border:1.5px solid #a07c51;border-radius:999px;
+  padding:5px 12px;background:#3a1512;white-space:nowrap;
+}
+#auth-profile .v67-role-note{font-size:13px;color:#d6bea0;font-style:italic;}
+#auth-profile .v67-hero .profile-action-grid{width:100%;}
+#auth-profile .v67-hero .profile-management-label{display:none;}
+#auth-profile .v67-tool-btn,
+#auth-profile .v67-hero .profile-action{
+  width:100%;text-align:center;
+  font-family:Georgia,serif;font-size:14.5px;font-weight:700;
+  color:#f3e2c8;background:linear-gradient(160deg,#4a1712,#2a0f0c);
+  border:1.5px solid #a07c51;border-radius:9px;
+  padding:9px 12px;cursor:pointer;
+}
+#auth-profile .v67-tool-btn:hover,
+#auth-profile .v67-hero .profile-action:hover{border-color:#d8b17b;}
+/* The build stamp keeps its own row under the header zones. */
+#auth-profile .member-hero.v67-hero > .v67-build-stamp{grid-column:1 / -1;}
+
+/* ---------- V67 cards ---------- */
+#auth-profile .v67-card{
+  display:block;
+  background:radial-gradient(ellipse at top left,#61241d40,transparent 60%),
+    linear-gradient(150deg,#2e1712,#160d0b);
+  border:1.5px solid #a07c51;border-radius:12px;
+  padding:16px 18px;margin:0 0 12px;
+  box-shadow:inset 0 0 0 2px #e1bc831c;
+}
+#auth-profile .v67-card-head{margin-bottom:10px;}
+#auth-profile .v67-card-title{
+  font-family:Georgia,serif;font-style:italic;font-weight:700;
+  color:#f5dfba;font-size:20px;margin:0;
+}
+#auth-profile .v67-card-sub{color:#d6bea0;font-size:13px;margin:4px 0 0;}
+
+/* Profile Information rows */
+#auth-profile .v67-info-row{
+  display:flex;gap:14px;padding:8px 0;
+  border-bottom:1px solid #5d4034;font-size:14.5px;
+}
+#auth-profile .v67-info-row:last-child{border-bottom:none;}
+#auth-profile .v67-info-label{color:#f3e2c8;font-weight:700;min-width:132px;}
+#auth-profile .v67-info-value{color:#e9d3ab;font-weight:400;}
+
+/* My Activity stats */
+#auth-profile .v67-stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;
+}
+#auth-profile .v67-stat{
+  background:linear-gradient(160deg,#571d16,#38120e);
+  border:1.5px solid #a07c51;border-radius:10px;
+  padding:12px 8px;text-align:center;
+  display:flex;flex-direction:column;gap:3px;
+}
+#auth-profile .v67-stat-n{color:#f5dfba;font-size:19px;font-weight:700;}
+#auth-profile .v67-stat-label{color:#e9d3ab;font-size:12.5px;}
+
+/* Profile Setup & Preferences rows (parchment rows, like the preview) */
+#auth-profile .v67-setup-list{display:flex;flex-direction:column;gap:9px;}
+#auth-profile .v67-setup-row{
+  display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+  background:linear-gradient(160deg,#f6e7c9,#ecd3a4);
+  border:1.5px solid #a07c51;border-radius:10px;
+  padding:11px 13px;cursor:pointer;color:#2c130d;
+}
+#auth-profile .v67-setup-row:hover{border-color:#7c5a34;}
+#auth-profile .v67-setup-icon{
+  flex:none;width:42px;height:42px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  background:#38120e;color:#f3e2c8;border:1.5px solid #a07c51;
+}
+#auth-profile .v67-setup-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+#auth-profile .v67-setup-name{font-family:Georgia,serif;font-size:16.5px;color:#2c130d;}
+#auth-profile .v67-setup-desc{font-size:12.5px;color:#5d4034;line-height:1.35;}
+#auth-profile .v67-setup-pill{
+  flex:none;font-family:Georgia,serif;font-weight:700;font-size:13.5px;
+  color:#f6e7c9;background:linear-gradient(160deg,#681d19,#48120e);
+  border:1.5px solid #a07c51;border-radius:8px;padding:7px 11px;white-space:nowrap;
+}
+
+/* ---------- Tab filtering ----------
+   Overview shows every card. Other tabs show only their group; cards keep
+   their DOM/grid placement, they are simply not displayed. */
+#auth-profile[data-v67-view="about"] .profile-nav-card:not(.v67-g-about),
+#auth-profile[data-v67-view="karaoke"] .profile-nav-card:not(.v67-g-karaoke),
+#auth-profile[data-v67-view="kj"] .profile-nav-card:not(.v67-g-kj),
+#auth-profile[data-v67-view="venue"] .profile-nav-card:not(.v67-g-venue){
+  display:none!important;
+}
+
+/* ---------- Narrow screens: single column, header stacks ---------- */
+@media (max-width: 899px){
+  #auth-profile .member-hero.v67-hero{
+    grid-template-columns:1fr;justify-items:center;text-align:center!important;
+  }
+  #auth-profile .v67-hero-id{flex-direction:column;text-align:center;}
+  #auth-profile .v67-hero .member-identity-line{justify-content:center!important;}
+  #auth-profile .v67-hero h2,
+  #auth-profile .v67-hero .member-identity-line h2{text-align:center!important;}
+  #auth-profile .v67-hero .member-identity-facts{align-items:center;}
+  #auth-profile .v67-hero .member-identity-facts .member-muted{text-align:center!important;}
+  #auth-profile .v67-hero .profile-badge-labels{justify-content:center;}
+  #auth-profile .v67-hero-roles,
+  #auth-profile .v67-hero-tools{
+    border-left:none;padding-left:0;width:100%;text-align:center;
+  }
+  #auth-profile .v67-role-chips{justify-content:center;}
+  #auth-profile .v67-tab{min-width:104px;font-size:14px;}
+}
