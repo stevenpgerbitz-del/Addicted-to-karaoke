@@ -8,12 +8,34 @@
 
  Palette per the approved design: burgundy / oxblood panels, antique gold
  borders, cream text, Georgia italic headings, near-black lounge ground.
+
+ V68 PATCH (2026-11-22, loaded as ?v=68; filename unchanged) — fixes from
+ Steven's live QA of V67:
+   - Hero zones are pinned to explicit grid columns/row 1 with !important.
+     V67 relied on auto-placement, but the hero carries extra children (the
+     build-stamp div and the empty .member-identity-facts shell V66's script
+     appends) and legacy positional rules target hero children by
+     :nth-child, so the zones landed in the wrong cells.
+   - #auth-founder-badge is displayed in the hero when the site's own code
+     unhides it: a2k-profile-grid.css hides it everywhere in #auth-profile
+     with !important ("hide the duplicate text token in Account").
+   - The "Management Tools" label stays hidden: profile-management-layout
+     .css re-displays it for founders through a high-specificity :has() rule.
+   - #member-karaoke-interests is hidden inside the hero (the My Roles chips
+     already convey it; the Profile Information card still mirrors it).
+   - Tabs shrink proportionally so all five fit the content width, and the
+     profile is capped to its container so V68 adds no horizontal scrollbar.
+   - Setup row descriptions/titles/pills get !important colors: V67's bare
+     declarations did not hold in the full 47-stylesheet cascade and the
+     descriptions washed out to the template's cream.
 */
 
 /* V66 laid #auth-profile out as its own grid; V67 returns it to normal
    flow — the existing desktop column module (a2k-profile-grid.js) owns
    the two columns below the header. */
 #auth-profile:not([hidden]){display:block!important;}
+/* V68: the profile never forces the page wider than its container. */
+#auth-profile{max-width:100%;overflow-x:clip;}
 
 /* ---------- Tab bar ---------- */
 #auth-profile .v67-tabs{
@@ -22,11 +44,13 @@
 }
 #auth-profile .v67-tabs::-webkit-scrollbar{display:none;}
 #auth-profile .v67-tab{
-  flex:1 0 auto;min-width:120px;
+  /* V68: tabs share the bar's width proportionally (flex-basis 0, no hard
+     minimum) so all five always fit the content column on desktop. */
+  flex:1 1 0;min-width:0;
   font-family:Georgia,serif;font-size:15px;font-weight:700;
   color:#f3e2c8;background:linear-gradient(160deg,#4a1712,#2a0f0c);
   border:1.5px solid #a07c51;border-radius:10px;
-  padding:10px 14px;cursor:pointer;white-space:nowrap;
+  padding:10px 6px;cursor:pointer;white-space:nowrap;
 }
 #auth-profile .v67-tab:hover{border-color:#d8b17b;}
 #auth-profile .v67-tab.v67-tab-active{
@@ -37,16 +61,33 @@
 /* ---------- Identity header (the existing hero, restructured) ---------- */
 #auth-profile .member-hero.v67-hero{
   display:grid!important;
-  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.85fr);
+  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.85fr)!important;
   align-items:center;gap:14px 22px;
   text-align:left!important;
+  max-width:100%;box-sizing:border-box;
   padding:18px 22px!important;
   background:radial-gradient(ellipse at top left,#61241d48,transparent 62%),
     linear-gradient(145deg,#321915,#150e0c)!important;
   border:1.5px solid #a07c51!important;border-radius:15px!important;
   box-shadow:inset 0 0 0 2px #e1bc8324!important;
 }
-#auth-profile .v67-hero-id{display:flex;align-items:center;gap:16px;min-width:0;}
+/* V68: explicit zone placement — one row, three columns, regardless of
+   DOM order, stray hero children, or legacy :nth-child hero rules (one of
+   which sets display:contents on the hero's second child). */
+#auth-profile .v67-hero-id{
+  display:flex!important;align-items:center;gap:16px;min-width:0;
+  grid-column:1!important;grid-row:1!important;
+}
+#auth-profile .v67-hero-roles{grid-column:2!important;grid-row:1!important;}
+#auth-profile .v67-hero-tools{
+  grid-column:3!important;grid-row:1!important;
+  display:flex!important;
+}
+/* Any other direct hero child (e.g. a leftover facts shell) goes to its
+   own full-width row below the stamp instead of displacing a zone. */
+#auth-profile .member-hero.v67-hero > :not(.v67-hero-id):not(.v67-hero-roles):not(.v67-hero-tools):not(.v67-build-stamp){
+  grid-column:1 / -1;grid-row:3;
+}
 #auth-profile .v67-hero .member-avatar{
   width:118px!important;height:118px!important;flex:none;
 }
@@ -80,7 +121,32 @@
 }
 #auth-profile .v67-role-note{font-size:13px;color:#d6bea0;font-style:italic;}
 #auth-profile .v67-hero .profile-action-grid{width:100%;}
-#auth-profile .v67-hero .profile-management-label{display:none;}
+/* V68: profile-management-layout.css re-displays this label for founders
+   via .profile-action-grid:has(>.profile-action:not(:first-child)
+   :not([hidden])) with higher specificity than V67's bare rule — pin it
+   off with !important. The tools zone shows only its "Account Tools"
+   title and the two buttons, as in the preview. */
+#auth-profile .v67-hero .profile-management-label{display:none!important;}
+/* V68: the interests line ("Singer") is not repeated inside the hero —
+   the My Roles chips beside it already say it, and the Profile
+   Information card mirrors the element's text. The element itself stays
+   in the DOM, untouched, for the code that reads and updates it. */
+#auth-profile .v67-hero #member-karaoke-interests{display:none!important;}
+/* V68: founder badge in the identity facts. a2k-profile-grid.css hides
+   #auth-founder-badge everywhere in #auth-profile with !important (its
+   intent was only to hide the duplicate in the Account card); this rule
+   outranks it inside the hero, and only when the site's own code has
+   unhidden the badge for this member — [hidden] keeps it off. */
+#auth-profile .member-hero.v67-hero .auth-founder-badge:not([hidden]){
+  display:inline-flex!important;align-items:center;
+  margin:4px 0 0;padding:5px 14px;
+  border:1px solid #d4aa53;border-radius:999px;
+  background:linear-gradient(135deg,#34240e,#0d0b08);
+  color:#f6d88a;font-weight:800;font-size:13px;letter-spacing:.04em;
+}
+#auth-profile .v67-hero .member-identity-facts{
+  display:flex!important;flex-direction:column;align-items:flex-start!important;gap:4px;
+}
 #auth-profile .v67-tool-btn,
 #auth-profile .v67-hero .profile-action{
   width:100%;text-align:center;
@@ -92,17 +158,21 @@
 #auth-profile .v67-tool-btn:hover,
 #auth-profile .v67-hero .profile-action:hover{border-color:#d8b17b;}
 /* The build stamp keeps its own row under the header zones. */
-#auth-profile .member-hero.v67-hero > .v67-build-stamp{grid-column:1 / -1;}
+#auth-profile .member-hero.v67-hero > .v67-build-stamp{
+  grid-column:1 / -1!important;grid-row:2!important;
+}
 
 /* ---------- V67 cards ---------- */
 #auth-profile .v67-card{
-  display:block;
+  display:block;box-sizing:border-box;max-width:100%;
   background:radial-gradient(ellipse at top left,#61241d40,transparent 60%),
     linear-gradient(150deg,#2e1712,#160d0b);
   border:1.5px solid #a07c51;border-radius:12px;
   padding:16px 18px;margin:0 0 12px;
   box-shadow:inset 0 0 0 2px #e1bc831c;
 }
+/* V68: grid columns from a2k-profile-grid.js never force width either. */
+#auth-profile .a2k-profile-column{min-width:0;}
 #auth-profile .v67-card-head{margin-bottom:10px;}
 #auth-profile .v67-card-title{
   font-family:Georgia,serif;font-style:italic;font-weight:700;
@@ -136,6 +206,7 @@
 #auth-profile .v67-setup-list{display:flex;flex-direction:column;gap:9px;}
 #auth-profile .v67-setup-row{
   display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+  box-sizing:border-box;
   background:linear-gradient(160deg,#f6e7c9,#ecd3a4);
   border:1.5px solid #a07c51;border-radius:10px;
   padding:11px 13px;cursor:pointer;color:#2c130d;
@@ -147,11 +218,19 @@
   background:#38120e;color:#f3e2c8;border:1.5px solid #a07c51;
 }
 #auth-profile .v67-setup-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
-#auth-profile .v67-setup-name{font-family:Georgia,serif;font-size:16.5px;color:#2c130d;}
-#auth-profile .v67-setup-desc{font-size:12.5px;color:#5d4034;line-height:1.35;}
-#auth-profile .v67-setup-pill{
+/* V68: !important + higher specificity — V67's bare color declarations
+   washed out in the full cascade (the template layer paints card content
+   cream). Descriptions use a darker brown than V67's #5d4034 for a
+   comfortable read on the cream rows, as in the preview. */
+#auth-profile .v67-setup-card .v67-setup-row .v67-setup-name{
+  font-family:Georgia,serif;font-size:16.5px;color:#2c130d!important;
+}
+#auth-profile .v67-setup-card .v67-setup-row .v67-setup-desc{
+  font-size:12.5px;color:#4a3226!important;line-height:1.35;
+}
+#auth-profile .v67-setup-card .v67-setup-row .v67-setup-pill{
   flex:none;font-family:Georgia,serif;font-weight:700;font-size:13.5px;
-  color:#f6e7c9;background:linear-gradient(160deg,#681d19,#48120e);
+  color:#f6e7c9!important;background:linear-gradient(160deg,#681d19,#48120e);
   border:1.5px solid #a07c51;border-radius:8px;padding:7px 11px;white-space:nowrap;
 }
 
@@ -168,8 +247,19 @@
 /* ---------- Narrow screens: single column, header stacks ---------- */
 @media (max-width: 899px){
   #auth-profile .member-hero.v67-hero{
-    grid-template-columns:1fr;justify-items:center;text-align:center!important;
+    grid-template-columns:1fr!important;justify-items:center;text-align:center!important;
   }
+  /* V68: release the desktop zone pinning — everything stacks in one
+     column in DOM order. */
+  #auth-profile .v67-hero-id,
+  #auth-profile .v67-hero-roles,
+  #auth-profile .v67-hero-tools{
+    grid-column:1!important;grid-row:auto!important;
+  }
+  #auth-profile .member-hero.v67-hero > .v67-build-stamp{
+    grid-column:1!important;grid-row:auto!important;
+  }
+  #auth-profile .v67-hero .member-identity-facts{align-items:center!important;}
   #auth-profile .v67-hero-id{flex-direction:column;text-align:center;}
   #auth-profile .v67-hero .member-identity-line{justify-content:center!important;}
   #auth-profile .v67-hero h2,
@@ -182,5 +272,7 @@
     border-left:none;padding-left:0;width:100%;text-align:center;
   }
   #auth-profile .v67-role-chips{justify-content:center;}
-  #auth-profile .v67-tab{min-width:104px;font-size:14px;}
+  /* V68: on narrow screens the tab bar scrolls horizontally instead of
+     squeezing (the bar itself scrolls — the page never does). */
+  #auth-profile .v67-tab{flex:1 0 auto;min-width:104px;font-size:14px;}
 }

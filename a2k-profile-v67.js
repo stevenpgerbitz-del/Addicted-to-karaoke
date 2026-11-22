@@ -2,6 +2,17 @@
  A2K PROFILE V67 — logged-in profile restructured to the approved V64 preview
  page (A2K_Profile_Redesign_Interactive.html, Overview tab), 2026-11-22.
 
+ V68 PATCH (2026-11-22, loaded as ?v=68; filenames unchanged): fixes from
+ Steven's live QA of V67 —
+   - syncHero() re-asserts the header structure on every profile mutation:
+     membership + founder badge kept inside the identity facts (V66's script
+     leaves an empty hero-level .member-identity-facts shell behind, and
+     a2k-profile-grid.css hides #auth-founder-badge anywhere in the profile —
+     the V68 CSS overrides that inside the hero), zone order re-checked, the
+     "Management Tools" label kept hidden in the tools zone.
+   - Card titles no longer use the ▦ / ▤ glyphs, which rendered as odd
+     boxes on some systems.
+
  V65/V66 only restyled the existing profile; the preview is a different page
  STRUCTURE. This script performs that structure change at runtime, using only
  existing live elements, IDs, handlers and dialogs:
@@ -136,6 +147,58 @@
     } catch (e) {}
   }
 
+  /* ---------------- header upkeep (V68) ----------------
+     Other modules keep touching the hero after build: V66's script appends
+     its own .member-identity-facts shell to the hero, and the auth code
+     fills/unhides the membership line and founder badge asynchronously.
+     syncHero() restores the intended end state whenever anything drifts.
+     It only writes to the DOM when something is actually out of place, so
+     it cannot loop with the MutationObserver that calls it. */
+  function syncHero() {
+    try {
+      var hero = els.hero;
+      if (!hero) return;
+      var facts = els.facts;
+      if (facts) {
+        var membership = $('auth-display-membership');
+        if (membership && membership.parentNode !== facts) facts.appendChild(membership);
+        var founder = $('auth-founder-badge');
+        if (founder && founder.parentNode !== facts) facts.appendChild(founder);
+        if (membership && founder && facts.contains(membership) && facts.contains(founder) &&
+            (founder.compareDocumentPosition(membership) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+          // Founder badge must sit after the membership line.
+          facts.appendChild(membership);
+          facts.appendChild(founder);
+        }
+      }
+      // V66's hero-level facts shell: harvest anything left in it, then
+      // remove it once empty — as a direct hero child it is a stray grid
+      // item that displaces the real zones.
+      var strays = hero.querySelectorAll(':scope > .member-identity-facts');
+      Array.prototype.forEach.call(strays, function (s) {
+        if (s === facts) return;
+        if (facts) { while (s.firstChild) facts.appendChild(s.firstChild); }
+        if (!s.firstChild && s.parentNode === hero) hero.removeChild(s);
+      });
+      // Zone order inside the hero: identity, roles, tools.
+      var idZ = els.idZone, rZ = els.rolesZone, tZ = els.toolsZone;
+      if (idZ && rZ && tZ && hero.contains(idZ) && hero.contains(rZ) && hero.contains(tZ)) {
+        var kids = Array.prototype.slice.call(hero.children);
+        var i1 = kids.indexOf(idZ), i2 = kids.indexOf(rZ), i3 = kids.indexOf(tZ);
+        if (!(i1 < i2 && i2 < i3)) {
+          hero.appendChild(idZ);
+          hero.appendChild(rZ);
+          hero.appendChild(tZ);
+        }
+      }
+      // The "Management Tools" label never shows inside Account Tools
+      // (profile-management-layout.css re-displays it for founders via a
+      // :has() rule; the V68 CSS hides it too — this is belt and braces).
+      var label = hero.querySelector('.profile-management-label');
+      if (label && label.style.display !== 'none') label.style.display = 'none';
+    } catch (e) {}
+  }
+
   /* ---------------- card placement ----------------
      Desktop uses the existing a2k-profile-grid.js columns when present;
      otherwise (mobile) cards stack in DOM order. This only ever moves the
@@ -242,6 +305,7 @@
       var founder = $('auth-founder-badge');
       if (founder) facts.appendChild(founder);
       nameBlock.appendChild(facts);
+      els.facts = facts;
     }
 
     var rolesZone = el('div', 'v67-hero-roles');
@@ -260,6 +324,11 @@
     hero.appendChild(idZone);
     hero.appendChild(rolesZone);
     hero.appendChild(toolsZone);
+    els.hero = hero;
+    els.idZone = idZone;
+    els.rolesZone = rolesZone;
+    els.toolsZone = toolsZone;
+    syncHero();
 
     /* --- 2. tab bar --- */
     var tabs = el('nav', 'v67-tabs');
@@ -277,7 +346,7 @@
     /* --- 3a. Profile Information card (left column) --- */
     var info = el('section', 'profile-nav-card v67-card v67-info-card');
     var infoHead = el('div', 'v67-card-head');
-    infoHead.appendChild(el('h3', 'v67-card-title', '▦ Profile Information'));
+    infoHead.appendChild(el('h3', 'v67-card-title', 'Profile Information'));
     info.appendChild(infoHead);
     var rows = el('div', 'v67-info-rows');
     function infoRow(label) {
@@ -296,7 +365,7 @@
     /* --- 3b. My Activity card (right column) --- */
     var activity = el('section', 'profile-nav-card v67-card v67-activity-card');
     var actHead = el('div', 'v67-card-head');
-    actHead.appendChild(el('h3', 'v67-card-title', '▤ My Activity'));
+    actHead.appendChild(el('h3', 'v67-card-title', 'My Activity'));
     activity.appendChild(actHead);
     els.activityTiles = el('div', 'v67-stats');
     activity.appendChild(els.activityTiles);
@@ -378,6 +447,7 @@
     syncRolesAndInfo();
     syncStats();
     var mo = new MutationObserver(function () {
+      syncHero();
       if (!allPlaced()) { placeCards(); return; }
       syncRolesAndInfo();
       syncStats();
