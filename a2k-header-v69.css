@@ -1,0 +1,54 @@
+/*
+ A2K HEADER V69 — crisp logo strip + slim header band, 2026-11-22.
+
+ The site header logo and the Home hero logo used an embedded WebP of
+ only 935×477 px, displayed at up to ~2x its natural width on desktop —
+ hence the blur Steven reported. index.html now embeds the V64 preview's
+ wide logo strip (1672×165) in both places instead. This file, loaded
+ LAST in index.html, makes both images render at the strip's natural
+ wide aspect and trims the bands around them:
+
+   - the sticky site header becomes a slim band (the strip's height at
+     full width) instead of a tall crop; its sticky behavior and the
+     back button are untouched apart from the button being layered over
+     the strip's left edge so the band stays one strip tall;
+   - the Home hero band loses its extra padding/max-height crop so the
+     strip shows whole.
+
+ Scoped to the app header (excluding the separate desktop header
+ element) and the Home hero only — nothing else about the header or
+ hero is redesigned.
+*/
+
+/* ---------- Site header (all non-Home screens) ---------- */
+body .app>header:not(#a2k-desktop-header){
+  min-height:0!important;
+  padding:0!important;
+}
+body .app>header:not(#a2k-desktop-header)>img{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  object-fit:contain;
+}
+/* The back button floats over the strip's left edge: visible and
+   clickable, without adding a second row to the band. */
+body .app>header:not(#a2k-desktop-header) #unified-back{
+  position:absolute;
+  left:10px;top:50%;
+  transform:translateY(-50%);
+  z-index:3;
+}
+
+/* ---------- Home hero logo ---------- */
+#home-screen .a2k-b-hero{
+  padding:0!important;
+}
+#home-screen .a2k-b-hero img.approved-logo{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  object-fit:contain;
+}
