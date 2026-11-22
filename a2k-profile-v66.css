@@ -1,0 +1,103 @@
+/*
+ A2K PROFILE V66 — logged-in profile in the approved V64 preview layout, 2026-11-22
+ The V64 preview page (A2K_Profile_Redesign_Interactive.html) is the design for
+ the logged-in user's OWN profile page. This file restyles the existing live
+ #auth-profile view into that layout:
+   - LEFT: identity card — large round portrait, italic stage name, verified
+     check, member number / member-since facts, founder + badge labels
+   - RIGHT: the existing stacked section cards — My Hosting Venues, My Venues,
+     About Me, My Karaoke Songs, Favorite Venues, My Reviews, Account —
+     in their existing order, with all existing controls working as before.
+ Presentational layout only, plus a small companion script
+ (a2k-profile-v66.js) that moves the existing member-number and founder
+ elements into the identity card. No data, IDs, handlers or functionality
+ are changed; elements keep their IDs wherever they are placed.
+ Load AFTER a2k-template-v65.css.
+*/
+
+/* Identity card (the existing hero, restyled to the preview) */
+#auth-profile .member-hero{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  text-align:center!important;
+  gap:10px!important;
+  padding:22px 18px!important;
+  background:radial-gradient(ellipse at top left,#61241d48,transparent 62%),
+    linear-gradient(145deg,#321915,#150e0c)!important;
+  border:1.5px solid #a07c51!important;
+  border-radius:15px!important;
+  box-shadow:inset 0 0 0 2px #e1bc8324!important;
+}
+#auth-profile .member-avatar-wrap{position:relative;}
+#auth-profile .member-avatar{
+  width:128px!important;height:128px!important;
+  border-radius:50%!important;
+  border:2px solid #d8b17b!important;
+  background:#281712!important;
+  box-shadow:inset 0 0 0 2px #120a09,0 2px 5px #0009!important;
+  display:flex;align-items:center;justify-content:center;
+  font-size:52px;overflow:hidden;
+}
+#auth-profile .member-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+#auth-profile .member-identity-line{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+#auth-profile .member-hero h2,
+#auth-profile .member-identity-line h2{
+  font-family:Georgia,serif!important;
+  font-style:italic!important;
+  color:#f5dfba!important;
+  font-size:28px!important;
+  margin:0!important;
+}
+/* Gold flourish divider under the stage name */
+#auth-profile .member-identity-facts{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  border-top:1px solid #886749;
+  padding-top:10px;width:100%;
+}
+#auth-profile .member-identity-facts .member-muted{
+  text-align:center!important;margin:0!important;color:#d6bea0!important;
+}
+#auth-profile .auth-founder-badge{margin:2px auto!important;}
+#auth-profile .profile-badge-labels{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:6px;
+}
+#auth-profile #member-karaoke-interests{
+  color:#d6bea0!important;text-align:center!important;
+}
+#auth-profile .profile-action-grid{width:100%;}
+
+/* Desktop: two columns — identity left (1/3), section cards right (2/3) */
+@media (min-width:900px){
+  #auth-profile{
+    display:grid!important;
+    grid-template-columns:minmax(280px,1fr) 2fr;
+    column-gap:16px;
+    row-gap:12px;
+    align-items:start;
+  }
+  #auth-profile[hidden]{display:none!important;}
+  #auth-profile .member-hero{
+    grid-column:1;
+    grid-row:1 / span 24;
+  }
+  #auth-profile>.profile-nav-card{
+    grid-column:2;
+    margin:0!important;
+    width:auto!important;
+  }
+  #auth-profile>dialog{grid-column:1 / -1;}
+}
+
+/* Section cards on the right keep the V65 template card treatment and
+   get the preview's compact heading style */
+#auth-profile .profile-nav-card{
+  border-radius:12px!important;
+}
+#auth-profile .profile-nav-title{
+  font-family:Georgia,serif!important;
+  font-weight:700!important;
+  color:#f3e2c8!important;
+}
