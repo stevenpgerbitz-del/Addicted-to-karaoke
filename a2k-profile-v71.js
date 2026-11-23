@@ -46,9 +46,10 @@
  sub-cards (Hosting Team, Schedule, Venue Details, Posting
  Preferences…) have NO live elements on the real profile — the live
  KJ/Venue data lives behind the KJ entry flow and the My Venues card —
- so they are honestly omitted rather than fabricated. The My Reviews
- card is not in any V71 tab set (the preview has no Reviews card; the
- count still shows in My Activity). Location row and Photos stat
+ so they are honestly omitted rather than fabricated. The preview
+ has no Reviews card, but the live My Reviews card keeps its V69
+ home on the My Karaoke tab — functionality never changes, and its
+ count also shows in My Activity. Location row and Photos stat
  remain omitted: the live profile stores neither.
 
  Everything still works exactly as before: only existing live
@@ -736,9 +737,10 @@
     tag(els.account, ['about']);
     tag(els.songs, ['karaoke']);
     tag(els.favorites, ['karaoke']);
-    // els.reviews intentionally carries no group: the preview has no
-    // Reviews card (its count lives in My Activity). The card stays
-    // in the DOM, untouched, simply not assigned to a tab.
+    // The preview has no Reviews card, but the live My Reviews card
+    // keeps the tab home it had in V69 — My Karaoke — so no live
+    // section becomes unreachable (functionality never changes).
+    tag(els.reviews, ['karaoke']);
     tag(els.kj, ['kj']);
     tag(els.owner, ['venue']);
 
@@ -746,7 +748,7 @@
     VIEWS = {
       overview: { left: [els.infoCard, els.about, els.genresCard], right: [els.activityCard, els.setupCard] },
       about: { left: [els.infoCard, els.storyCard, els.settings], right: [els.interestsCard, els.awards, els.account] },
-      karaoke: { left: [els.genresCard, els.favorites], right: [els.songs, els.setupCard] },
+      karaoke: { left: [els.genresCard, els.favorites], right: [els.songs, els.setupCard, els.reviews] },
       kj: { left: [els.kj], right: [els.setupCard] },
       venue: { left: [els.owner], right: [els.setupCard] }
     };
