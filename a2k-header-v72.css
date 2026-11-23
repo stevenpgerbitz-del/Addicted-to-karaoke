@@ -1,0 +1,62 @@
+/*
+ A2K HEADER V72 — new neon-sign banner, 2026-11-22.
+
+ Supersedes a2k-header-v69.css. Steven picked a new banner drawn as
+ one piece: a glowing neon "Addicted to Karaoke" sign on the lounge
+ wall with the red leather couches stretching to the right
+ (assets/a2k-banner-v72.svg, 2560x427, 6:1). It replaces the old logo
+ strip in all three places the strip appeared:
+
+   - DESKTOP: the JS-built #a2k-desktop-header paints its artwork as a
+     CSS background (a2k-desktop-polish.css points it at an SVG
+     wrapper of the old strip). Below, the same header is pointed at
+     the new banner instead; its 240px height and cover fit stay, and
+     at the common 1440px width the 6:1 art fills the band exactly.
+     The invisible brand click-layer and the member buttons that
+     overlay the band are untouched.
+   - THE APP HEADER (phones/tablets, and the element the desktop
+     header's brand button mirrors): both logo <img> tags in
+     index.html now reference the new banner file, shown whole as
+     under V69.
+   - THE HOME HERO shows the banner whole, as under V69.
+*/
+
+/* ---------- Desktop header artwork ---------- */
+html.a2k-desktop-live body #a2k-desktop-header{
+  background-image:url("assets/a2k-banner-v72.svg")!important;
+  background-position:center 25%!important;
+  background-size:cover!important;
+}
+
+/* ---------- Site header (app header, non-desktop) ---------- */
+body .app>header:not(#a2k-desktop-header){
+  min-height:0!important;
+  padding:0!important;
+}
+body .app>header:not(#a2k-desktop-header)>img{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  object-fit:contain;
+}
+/* The back button floats over the band's left edge: visible and
+   clickable, without adding a second row to the band. */
+body .app>header:not(#a2k-desktop-header) #unified-back{
+  position:absolute;
+  left:10px;top:50%;
+  transform:translateY(-50%);
+  z-index:3;
+}
+
+/* ---------- Home hero logo ---------- */
+#home-screen .a2k-b-hero{
+  padding:0!important;
+}
+#home-screen .a2k-b-hero img.approved-logo{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  object-fit:contain;
+}
