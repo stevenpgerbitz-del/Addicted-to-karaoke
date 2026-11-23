@@ -1,0 +1,427 @@
+/*
+ A2K PROFILE V70 — logged-in profile, hero + tab bar fixed against the
+ REAL page cascade, 2026-11-22. Companion to a2k-profile-v70.js.
+ Supersedes the V69 layer (a2k-profile-v69.js/css stay in the repo,
+ unused). Everything V69 got right is carried forward unchanged in
+ effect: founder badge, stage-name typography, build-stamp suppression
+ in the hero, the Favorite Music & Eras split card, the Overview card
+ set and per-tab filtering, wizard rows, My Activity tiles.
+
+ WHY V69's HERO AND TABS FAILED LIVE (diagnosed 2026-11-22 by rendering
+ the real profile DOM with the real stylesheets in load order — the
+ numbers below are measured, not guessed):
+
+ The V69 preview file was a hand-built simulation that assumed
+ #auth-profile is a plain block container and that the hero's grid
+ template came from the V69 stylesheet. On the real page:
+
+ 1. #auth-profile is a TWO-COLUMN GRID on desktop.
+    desktop-vintage.css:
+      html.a2k-desktop-live #signin-screen #auth-profile:not([hidden])
+        {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    has specificity 2-2-1 and beat V69's
+    "#auth-profile:not([hidden]){display:block!important}" (1-1-0).
+    V69's tab bar (nav.v69-tabs, a direct child of #auth-profile)
+    therefore became ONE grid cell: measured 571px of the 1160px
+    profile — the "narrow pills". And because the hero carries
+    grid-row:1 / span 24 (a2k-profile-v66.css @media(min-width:900px) —
+    the V66 stylesheet is still loaded), grid auto-placement put the
+    bar in row 25: BELOW the hero, not above it.
+
+ 2. The hero's column template is NOT V69's.
+    desktop-vintage.css:
+      html.a2k-desktop-live #auth-profile > .member-hero
+        {grid-template-columns:120px minmax(0,1fr) minmax(220px,260px)!important}
+    is specificity 1-2-1; V69's template rule was 1-2-0 — the extra
+    `html` element selector in the desktop-vintage prefix wins the tie.
+    V69's grid-template-areas DID apply (nothing else sets areas), so
+    the "id" area was the 120px avatar column: the identity zone was
+    squeezed to 120px, its name/facts content overflowed rightward
+    into the "roles" column, and the roles zone's first chip landed on
+    top of the wrapped Member # line (measured overlap: true).
+
+ 3. The tools zone is displaced to a second row.
+    desktop-vintage.css:
+      html.a2k-desktop-live #auth-profile > .member-hero > div:last-child
+        {grid-column:3!important;grid-row:2!important}   (1-3-2)
+    After V69's restructure the tools zone is the hero's last-child
+    div, and that rule beat V69's ".v69-hero-tools{grid-area:tools}"
+    (1-1-0). Measured: tools at column 3 / row 2, hero rows
+    179px + 137px, hero height 362px — the tall hero with dead space
+    and Account Tools sitting low on the right.
+
+ V70's response: stop fighting the profile grid — place the tab bar
+ and hero explicitly inside it (tab bar row 1 full width, hero row 2),
+ and give the hero template and zone rules enough specificity to beat
+ the incumbents on their own terms:
+   - hero template/areas: html-prefixed rule at 1-3-1 (beats 1-2-1)
+   - zone placement:      html-prefixed rules at 1-4-1 (beat the
+                          last-child rule at 1-3-2 — :last-child
+                          counts in the class column)
+   - hero grid-row:       explicit row 2, !important (crushes the
+                          V66 stylesheet's span-24 rule, 1-1-0 normal)
+
+ Palette per the approved design: burgundy / oxblood panels, antique
+ gold borders, cream text, Georgia italic headings, near-black lounge
+ ground.
+*/
+
+/* The profile is a grid on desktop (desktop-vintage.css owns that and
+   wins); V70 places its two full-width rows explicitly instead of
+   pretending the profile is block flow. The profile never forces the
+   page wider than its container. */
+#auth-profile{max-width:100%;overflow-x:clip;min-width:0;}
+
+/* ---------- Tab bar: row 1 of the profile grid, full width ---------- */
+#auth-profile > .v70-tabs{
+  grid-column:1 / -1!important;
+  grid-row:1!important;
+  display:flex;gap:8px;flex-wrap:nowrap;
+  width:100%;max-width:100%;box-sizing:border-box;min-width:0;
+  overflow:hidden;
+  padding:4px 2px 12px;
+}
+#auth-profile .v70-tab{
+  /* Tabs share the bar's width proportionally (flex-basis 0, no hard
+     minimum) so all five always fit the content column on desktop; the
+     label ellipsizes inside its own button rather than pushing the bar
+     wider than the profile. */
+  flex:1 1 0;min-width:0;max-width:100%;
+  overflow:hidden;text-overflow:ellipsis;
+  font-family:Georgia,serif;font-size:15px;font-weight:700;
+  color:#f3e2c8;background:linear-gradient(160deg,#4a1712,#2a0f0c);
+  border:1.5px solid #a07c51;border-radius:10px;
+  padding:10px 6px;cursor:pointer;white-space:nowrap;
+}
+#auth-profile .v70-tab:hover{border-color:#d8b17b;}
+#auth-profile .v70-tab.v70-tab-active{
+  background:linear-gradient(160deg,#f6e7c9,#e6c998);
+  color:#3a130d;border-color:#d8b17b;
+}
+/* JS fit pass fallbacks, applied only if the bar still measures wide. */
+#auth-profile .v70-tabs.v70-tabs-tight{gap:6px;}
+#auth-profile .v70-tabs.v70-tabs-tight .v70-tab{font-size:13.5px;padding:9px 4px;}
+#auth-profile .v70-tabs.v70-tabs-tight2{gap:5px;}
+#auth-profile .v70-tabs.v70-tabs-tight2 .v70-tab{font-size:12.5px;padding:8px 3px;letter-spacing:-.01em;}
+
+/* ---------- Identity header (the existing hero, restructured) ---------- */
+/* Placement inside the profile grid: row 2, full width. !important at
+   1-2-0 crushes the V66 stylesheet's grid-row:1/span 24 (1-1-0, not
+   !important) that pushed everything else below the hero. */
+#auth-profile > .member-hero.v70-hero{
+  grid-column:1 / -1!important;
+  grid-row:2!important;
+}
+/* The hero's own grid. The html.a2k-desktop-live twin below carries
+   the same declarations at 1-3-1, which is what actually beats
+   desktop-vintage.css's 1-2-1 template rule on desktop. */
+#auth-profile .member-hero.v70-hero{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.85fr)!important;
+  grid-template-areas:"id roles tools"!important;
+  grid-template-rows:auto!important;
+  align-items:center;gap:14px 22px;
+  text-align:left!important;
+  max-width:100%;box-sizing:border-box;min-width:0;
+  /* Shrink-wrap: the hero ends shortly below its tallest zone. */
+  min-height:0!important;height:auto!important;
+  padding:18px 22px!important;
+  background:radial-gradient(ellipse at top left,#61241d48,transparent 62%),
+    linear-gradient(145deg,#321915,#150e0c)!important;
+  border:1.5px solid #a07c51!important;border-radius:15px!important;
+  box-shadow:inset 0 0 0 2px #e1bc8324!important;
+}
+html.a2k-desktop-live #auth-profile > .member-hero.v70-hero{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.85fr)!important;
+  grid-template-areas:"id roles tools"!important;
+  grid-template-rows:auto!important;
+}
+/* Zone placement via named areas. The incumbent to beat is
+   desktop-vintage's "> div:last-child{grid-column:3;grid-row:2}"
+   rule at 1-3-2 (:last-child counts in the class column) — it
+   dropped the tools zone into a second row under V69, whose zone
+   rule was only 1-1-0. These html-prefixed rules are 1-4-1 and win
+   outright. (A generic last-child neutralizer does NOT work here:
+   at 1-4-2 it would override the tools zone's own grid-area and
+   leave its placement to auto-placement luck — verified in the
+   V70 harness, so the strength lives on the zone rules themselves.) */
+html.a2k-desktop-live #auth-profile > .member-hero.v70-hero > .v70-hero-id{
+  grid-area:id!important;
+  display:flex!important;align-items:center;gap:16px;min-width:0;
+}
+html.a2k-desktop-live #auth-profile > .member-hero.v70-hero > .v70-hero-roles{
+  grid-area:roles!important;min-width:0;
+}
+html.a2k-desktop-live #auth-profile > .member-hero.v70-hero > .v70-hero-tools{
+  grid-area:tools!important;min-width:0;
+  display:flex!important;flex-direction:column;gap:8px;
+}
+/* Same placement for non-desktop-live contexts (narrow windows
+   before the desktop layout engages); the stacked mobile block at
+   the end of this file restates the areas for small screens. */
+#auth-profile .member-hero.v70-hero > .v70-hero-id{
+  grid-area:id;
+  display:flex;align-items:center;gap:16px;min-width:0;
+}
+#auth-profile .member-hero.v70-hero > .v70-hero-roles{grid-area:roles;min-width:0;}
+#auth-profile .member-hero.v70-hero > .v70-hero-tools{
+  grid-area:tools;min-width:0;
+  display:flex;flex-direction:column;gap:8px;
+}
+/* Any other direct hero child (a leftover shell, the stamp) is taken
+   out of the zone row entirely. */
+#auth-profile .member-hero.v70-hero > :not(.v70-hero-id):not(.v70-hero-roles):not(.v70-hero-tools){
+  display:none!important;
+}
+#auth-profile .v70-hero .member-avatar{
+  width:118px!important;height:118px!important;flex:none;
+}
+#auth-profile .v70-hero .member-identity-line{justify-content:flex-start!important;}
+/* STAGE NAME — the V64 preview's identity typography (carried from
+   V69, where it verified live): bold italic Georgia in warm cream.
+   1-3-1 with !important outranks a2k-vintage-global.css (1-1-1) and
+   desktop-vintage.css's html.a2k-desktop-live rule (1-2-2). */
+#auth-profile .member-hero.v70-hero .member-identity-line h2{
+  font:bold italic clamp(32px,3vw,44px)/1 Georgia,serif!important;
+  color:#fff0ce!important;
+  letter-spacing:-.025em;
+  white-space:nowrap;
+}
+#auth-profile .v70-hero .member-identity-facts{
+  border-top:none;padding-top:2px;align-items:flex-start;width:auto;
+}
+#auth-profile .v70-hero .member-identity-facts .member-muted{text-align:left!important;}
+#auth-profile .v70-hero .profile-badge-labels{justify-content:flex-start;}
+#auth-profile .v70-hero-roles{
+  border-left:1px solid #886749;padding-left:22px;min-width:0;
+}
+#auth-profile .v70-hero-tools{
+  border-left:1px solid #886749;padding-left:22px;min-width:0;
+}
+#auth-profile .v70-hero-zone-title{
+  font-family:Georgia,serif;font-weight:700;color:#f3e2c8;
+  font-size:15px;margin-bottom:8px;
+}
+#auth-profile .v70-hero-tools .v70-hero-zone-title{margin-bottom:0;}
+#auth-profile .v70-role-chips{display:flex;flex-wrap:wrap;gap:7px;}
+#auth-profile .v70-role-chip{
+  font-size:13px;color:#f3e2c8;
+  border:1.5px solid #a07c51;border-radius:999px;
+  padding:5px 12px;background:#3a1512;white-space:nowrap;
+}
+#auth-profile .v70-role-note{font-size:13px;color:#d6bea0;font-style:italic;}
+#auth-profile .v70-hero .profile-action-grid{width:100%;}
+/* profile-management-layout.css re-displays this label for founders
+   through a high-specificity :has() rule — pin it off with !important.
+   The tools zone shows only its "Account Tools" title and the buttons,
+   as in the preview. */
+#auth-profile .v70-hero .profile-management-label{display:none!important;}
+/* The interests line ("Singer") is not repeated inside the hero — the
+   My Roles chips beside it already say it, and the Profile Information
+   card mirrors the element's text. The element itself stays in the
+   DOM, untouched, for the code that reads and updates it. */
+#auth-profile .v70-hero #member-karaoke-interests{display:none!important;}
+/* FOUNDER BADGE — carried from V69 (verified live). Both IDs + hero
+   scoping (specificity 2-3-0) outrank a2k-profile-grid.css's two-ID
+   hide rule (2-0-0); :not([hidden]) means the badge appears only when
+   the site's own auth code has unhidden it for the founder. */
+#auth-profile .member-hero.v70-hero #auth-founder-badge:not([hidden]){
+  display:inline-flex!important;align-items:center;
+  margin:4px 0 0;padding:5px 14px;
+  border:1px solid #d4aa53;border-radius:999px;
+  background:linear-gradient(135deg,#34240e,#0d0b08);
+  color:#f6d88a;font-weight:800;font-size:13px;letter-spacing:.04em;
+}
+#auth-profile .v70-hero .member-identity-facts{
+  display:flex!important;flex-direction:column;align-items:flex-start!important;gap:4px;
+}
+#auth-profile .v70-tool-btn,
+#auth-profile .v70-hero .profile-action{
+  width:100%;text-align:center;
+  font-family:Georgia,serif;font-size:14.5px;font-weight:700;
+  color:#f3e2c8;background:linear-gradient(160deg,#4a1712,#2a0f0c);
+  border:1.5px solid #a07c51;border-radius:9px;
+  padding:9px 12px;cursor:pointer;
+}
+#auth-profile .v70-tool-btn:hover,
+#auth-profile .v70-hero .profile-action:hover{border-color:#d8b17b;}
+/* The build stamp never shows inside the profile hero. The JS tags
+   the stamp's wrapper with .v70-build-stamp; the :has() rule covers
+   the same node even before the tag lands. Hero only — the stamp
+   still renders everywhere else on the site. */
+#auth-profile .member-hero.v70-hero > .v70-build-stamp{display:none!important;}
+#auth-profile .member-hero.v70-hero > div:has(> [data-build-version]){display:none!important;}
+
+/* ---------- V70 cards (carried from V69) ---------- */
+#auth-profile .v70-card{
+  display:block;box-sizing:border-box;max-width:100%;min-width:0;
+  background:radial-gradient(ellipse at top left,#61241d40,transparent 60%),
+    linear-gradient(150deg,#2e1712,#160d0b);
+  border:1.5px solid #a07c51;border-radius:12px;
+  padding:16px 18px;margin:0 0 12px;
+  box-shadow:inset 0 0 0 2px #e1bc831c;
+}
+/* Grid columns from a2k-profile-grid.js never force width either. */
+#auth-profile .a2k-profile-column{min-width:0;}
+#auth-profile .v70-card-head{margin-bottom:10px;}
+#auth-profile .v70-card-title{
+  font-family:Georgia,serif;font-style:italic;font-weight:700;
+  color:#f5dfba;font-size:20px;margin:0;
+}
+#auth-profile .v70-card-sub{color:#d6bea0;font-size:13px;margin:4px 0 0;}
+
+/* Profile Information rows */
+#auth-profile .v70-info-row{
+  display:flex;gap:14px;padding:8px 0;
+  border-bottom:1px solid #5d4034;font-size:14.5px;
+}
+#auth-profile .v70-info-row:last-child{border-bottom:none;}
+#auth-profile .v70-info-label{color:#f3e2c8;font-weight:700;min-width:132px;}
+#auth-profile .v70-info-value{color:#e9d3ab;font-weight:400;}
+
+/* Favorite Music & Eras — the split-out genres card. The genres block
+   keeps its own module styles (a2k-profile-genres.css); here its
+   heading row is dressed as the card's title row, matching the
+   preview. */
+#auth-profile .v70-genres-card .a2k-member-genres-heading{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:10px;
+}
+#auth-profile .v70-genres-card .a2k-member-genres-heading strong{
+  font-family:Georgia,serif;font-style:italic;font-weight:700;
+  color:#f5dfba;font-size:20px;
+}
+#auth-profile .v70-genres-card .a2k-member-genre-chip{
+  border-color:#a07c51;color:#f3e2c8;background:#3a1512;
+}
+/* The genres module scopes ALL of its block styling to
+   ".member-about ..." (a2k-profile-genres.css), so the moment the
+   block is split into its own card it loses its layout: the saved
+   chips rendered as one run-on line of text under V69. These rules
+   re-apply the module's own declarations, scoped to the split card,
+   so the block looks exactly as it did inside About Me. */
+#auth-profile .v70-genres-card .a2k-member-genres-chips{
+  display:flex;flex-wrap:wrap;gap:8px;
+}
+#auth-profile .v70-genres-card .a2k-member-genre-chip,
+#auth-profile .v70-genres-card .a2k-member-genre-choice{
+  display:inline-flex;align-items:center;justify-content:center;
+  box-sizing:border-box;min-height:34px;padding:7px 14px;
+  border:1.5px solid #b68b54;border-radius:999px;
+  background:linear-gradient(180deg,#5a281d,#311610);
+  color:#f8ddbb;font:700 13px/1.2 Georgia,serif;
+  box-shadow:inset 0 1px 0 #7c4a30,0 1px 2px #0008;
+}
+#auth-profile .v70-genres-card .a2k-member-genre-choice{cursor:pointer}
+#auth-profile .v70-genres-card .a2k-member-genre-choice[aria-pressed="true"]{
+  background:linear-gradient(180deg,#932f22,#651b18);
+  border:2px solid #f4c08c;
+  padding:6px 13px;
+  box-shadow:inset 0 0 0 1px #b9654b;
+}
+#auth-profile .v70-genres-card .a2k-member-genres-choices{
+  display:grid;gap:15px;min-width:0;
+}
+#auth-profile .v70-genres-card .a2k-member-genre-group{
+  display:block;min-width:0;padding:11px 0 0;
+  border-top:1px solid #75503a;
+}
+#auth-profile .v70-genres-card .a2k-member-genre-group:first-child{
+  padding-top:0;border-top:0;
+}
+#auth-profile .v70-genres-card .a2k-member-genre-group-title{
+  display:block;margin:0 0 10px;color:#f3d5aa;
+  font:700 14px/1.25 Georgia,serif;
+}
+#auth-profile .v70-genres-card .a2k-member-genre-group-choices{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+}
+#auth-profile .v70-genres-card .a2k-member-genres-help{
+  margin:0 0 11px;color:#ddbea4;font:12px/1.45 Georgia,serif;
+}
+#auth-profile .v70-genres-card .a2k-member-genres-heading .profile-section-edit{
+  flex:none;min-height:36px;padding:7px 13px;
+}
+
+/* My Activity stats */
+#auth-profile .v70-stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;
+}
+#auth-profile .v70-stat{
+  background:linear-gradient(160deg,#571d16,#38120e);
+  border:1.5px solid #a07c51;border-radius:10px;
+  padding:12px 8px;text-align:center;
+  display:flex;flex-direction:column;gap:3px;
+}
+#auth-profile .v70-stat-n{color:#f5dfba;font-size:19px;font-weight:700;}
+#auth-profile .v70-stat-label{color:#e9d3ab;font-size:12.5px;}
+
+/* Profile Setup & Preferences rows (parchment rows, like the preview) */
+#auth-profile .v70-setup-list{display:flex;flex-direction:column;gap:9px;}
+#auth-profile .v70-setup-row{
+  display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+  box-sizing:border-box;
+  background:linear-gradient(160deg,#f6e7c9,#ecd3a4);
+  border:1.5px solid #a07c51;border-radius:10px;
+  padding:11px 13px;cursor:pointer;color:#2c130d;
+}
+#auth-profile .v70-setup-row:hover{border-color:#7c5a34;}
+#auth-profile .v70-setup-icon{
+  flex:none;width:42px;height:42px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  background:#38120e;color:#f3e2c8;border:1.5px solid #a07c51;
+}
+#auth-profile .v70-setup-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+/* !important + higher specificity — bare color declarations washed
+   out in the full multi-stylesheet cascade (learned in V68). */
+#auth-profile .v70-setup-card .v70-setup-row .v70-setup-name{
+  font-family:Georgia,serif;font-size:16.5px;color:#2c130d!important;
+}
+#auth-profile .v70-setup-card .v70-setup-row .v70-setup-desc{
+  font-size:12.5px;color:#4a3226!important;line-height:1.35;
+}
+#auth-profile .v70-setup-card .v70-setup-row .v70-setup-pill{
+  flex:none;font-family:Georgia,serif;font-weight:700;font-size:13.5px;
+  color:#f6e7c9!important;background:linear-gradient(160deg,#681d19,#48120e);
+  border:1.5px solid #a07c51;border-radius:8px;padding:7px 11px;white-space:nowrap;
+}
+
+/* ---------- Tab filtering ----------
+   EVERY tab shows exactly its own set, Overview included. Cards keep
+   their DOM/grid placement; non-members of the active set are simply
+   not displayed. Group classes are (re)applied by the V70 script
+   whenever cards appear, so late-injected cards filter correctly. */
+#auth-profile[data-v70-view="overview"] .profile-nav-card:not(.v70-g-overview),
+#auth-profile[data-v70-view="about"] .profile-nav-card:not(.v70-g-about),
+#auth-profile[data-v70-view="karaoke"] .profile-nav-card:not(.v70-g-karaoke),
+#auth-profile[data-v70-view="kj"] .profile-nav-card:not(.v70-g-kj),
+#auth-profile[data-v70-view="venue"] .profile-nav-card:not(.v70-g-venue){
+  display:none!important;
+}
+
+/* ---------- Narrow screens: single column, header stacks ----------
+   (Kept at V68/V69 behavior; the dedicated mobile redo is a later
+   phase.) */
+@media (max-width: 899px){
+  #auth-profile .member-hero.v70-hero{
+    grid-template-columns:1fr!important;
+    grid-template-areas:"id" "roles" "tools"!important;
+    justify-items:center;text-align:center!important;
+  }
+  #auth-profile .v70-hero .member-identity-facts{align-items:center!important;}
+  #auth-profile .v70-hero-id{flex-direction:column;text-align:center;}
+  #auth-profile .v70-hero .member-identity-line{justify-content:center!important;}
+  #auth-profile .v70-hero h2,
+  #auth-profile .v70-hero .member-identity-line h2{text-align:center!important;}
+  #auth-profile .v70-hero .member-identity-facts .member-muted{text-align:center!important;}
+  #auth-profile .v70-hero .profile-badge-labels{justify-content:center;}
+  #auth-profile .v70-hero-roles,
+  #auth-profile .v70-hero-tools{
+    border-left:none;padding-left:0;width:100%;text-align:center;
+  }
+  #auth-profile .v70-role-chips{justify-content:center;}
+  /* On narrow screens the tabs squeeze with the fit classes rather
+     than scrolling the page; labels ellipsize inside their buttons. */
+  #auth-profile .v70-tab{font-size:13px;padding:9px 3px;}
+}
