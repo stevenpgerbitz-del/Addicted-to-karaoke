@@ -1,0 +1,69 @@
+/* Addicted to Karaoke - site layer V2 (Milo, Nov 23, 2026).
+   Footer band + the Sign In page's Google button constraint. */
+
+/* Footer: spans the app shell under whichever screen is showing. */
+.a2k-site-footer {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 30px;
+  padding: 26px 20px 34px;
+  border-top: 1px solid rgba(230, 201, 152, .18);
+}
+.a2k-site-footer .a2k-footer-brand {
+  font: italic 700 21px Georgia, serif;
+  color: #f3e2c8;
+}
+.a2k-site-footer .a2k-footer-tag {
+  margin: 7px 0 0;
+  font: 14px Georgia, serif;
+  color: rgba(243, 226, 200, .72);
+}
+.a2k-site-footer .a2k-footer-legal {
+  margin: 10px 0 0;
+  font: 12.5px Georgia, serif;
+  color: rgba(243, 226, 200, .45);
+}
+/* On small screens keep the footer clear of the fixed bottom nav. */
+@media (max-width: 1023px) {
+  .a2k-site-footer { padding-bottom: 112px; }
+}
+
+/* Sign In: the Google button renders full-width and reads as a
+   slab; constrain it to a tidy centered button width. */
+#auth-guest .atk-google-direct {
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Suggest-a-Venue wizard: the fields container becomes a stack of
+   step sections, each keeping the form's own two-column grid. */
+#atk-suggest-venue-dialog .atk-suggest-venue-fields { display: block; }
+#atk-suggest-venue-dialog .a2k-wiz-step {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px 10px;
+}
+#atk-suggest-venue-dialog .a2k-wiz-step[hidden] { display: none !important; }
+#atk-suggest-venue-dialog .a2k-wiz-head { margin: 0 0 14px; }
+#atk-suggest-venue-dialog .a2k-wiz-pill {
+  display: inline-block; padding: 5px 13px; border: 1px solid #c9a86a; border-radius: 999px;
+  font: 700 12px Georgia, serif; letter-spacing: .09em; text-transform: uppercase;
+  color: #e6c998; background: #2b130e;
+}
+#atk-suggest-venue-dialog .a2k-wiz-title {
+  font: italic 700 20px Georgia, serif; color: #f3e2c8;
+  margin: 10px 0 0; padding-bottom: 8px;
+  border-bottom: 1px solid rgba(230, 201, 152, .25);
+}
+/* Action row: Back left, Cancel + Continue/Submit right. */
+#atk-suggest-venue-dialog .atk-suggest-venue-actions {
+  display: flex; gap: 10px; align-items: stretch;
+}
+#atk-suggest-venue-dialog .atk-suggest-venue-actions #atk-suggest-venue-cancel { margin-right: auto; }
+#atk-suggest-venue-dialog .atk-suggest-venue-actions button { padding: 0 18px; }
+#atk-suggest-venue-dialog .atk-suggest-venue-actions button[hidden] { display: none !important; }
+
+/* The dialog's own sheet stretches it to full height (inset:0 with
+   height:auto), which left a slab of dead space under the shorter
+   wizard steps. Hug the content instead; the cap and the internal
+   scrolling are unchanged. */
+#atk-suggest-venue-dialog[open] { height: fit-content; }
