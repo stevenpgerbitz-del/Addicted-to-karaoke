@@ -1,0 +1,215 @@
+/* Addicted to Karaoke — public member profile, Sophie design layer (V74).
+   Styles the DOM built by desktop-members.js (a2kOpenMemberProfile)
+   into the approved member-profile design. Presentation only; the
+   renderer keeps owning data and privacy. Desktop shell only. */
+
+@media (min-width: 900px) {
+
+  /* The renderer toggles panes with the hidden attribute (KJ schedule
+     tab, expandable lists); the layer's display rules must never
+     override it inside the profile. */
+  .a2k-d-selected-member [hidden] { display: none !important; }
+
+  /* ---------- page frame: the profile stands alone ---------- */
+  .a2k-d-members-profile-layout { display: block !important; }
+  .a2k-d-members-profile-layout > .a2k-d-shared-members-sidebar { display: none !important; }
+  .a2k-d-selected-member { max-width: 1060px; margin: 0 auto; padding: 6px 10px 30px; }
+
+  .a2k-d-selected-member .a2k-d-directory-back {
+    background: linear-gradient(160deg, #571f1a, #3d130e); color: #f3e2c8;
+    border: 1.5px solid #a07c51; border-radius: 10px; padding: 9px 18px;
+    font: 700 14.5px Georgia, serif; cursor: pointer;
+  }
+  .a2k-d-selected-member .a2k-d-profile-share {
+    background: transparent; margin-left: 10px;
+  }
+
+  .a2k-d-selected-member .a2k-d-public-profile-overview {
+    display: flex !important; flex-direction: column; gap: 18px; margin-top: 14px;
+  }
+
+  /* ---------- hero ---------- */
+  .a2k-d-selected-member .a2k-d-public-profile-sidebar {
+    display: grid !important;
+    grid-template-columns: 118px 1fr auto;
+    grid-template-areas: 'avatar name featured' 'avatar role featured' 'avatar facts featured';
+    column-gap: 22px; align-items: center;
+    background: radial-gradient(120% 150% at 18% 0%, #571f1a 0%, #2b100c 58%, #1d0f0c 100%);
+    border: 1.5px solid #b08d57; border-radius: 16px;
+    padding: 22px 26px; box-shadow: 0 10px 28px rgba(0, 0, 0, .45);
+  }
+  .a2k-d-selected-member .a2k-d-member-avatar-large {
+    grid-area: avatar; width: 118px; height: 118px; border-radius: 50%;
+    border: 2.5px solid #c9a15f; overflow: hidden; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; background: #2b130e; color: #f3e2c8;
+  }
+  .a2k-d-selected-member .a2k-d-member-avatar-large .a2k-d-member-avatar-image {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  }
+  .a2k-d-selected-member .a2k-d-public-profile-sidebar > h1 {
+    grid-area: name; margin: 0; color: #fff0ce;
+    font: italic 700 34px/1.1 Georgia, serif;
+  }
+  .a2k-d-selected-member .a2k-d-member-verified-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 21px; height: 21px; border-radius: 50%;
+    background: #2f7fd0; color: #fff; font-size: 13px; font-style: normal;
+    vertical-align: middle; margin-left: 8px;
+  }
+  .a2k-d-selected-member .a2k-d-profile-fact-value { color: #f3e2c8; }
+  .a2k-d-selected-member .a2k-d-profile-role { color: #f3e2c8; }
+  /* Badge emblems keep the design size wherever they appear. */
+  .a2k-d-selected-member .a2k-d-illustrated-badge {
+    display: inline-block; width: 62px; height: 62px; flex: 0 0 auto;
+  }
+  .a2k-d-selected-member .a2k-d-illustrated-badge img {
+    width: 100%; height: 100%; object-fit: contain; display: block;
+  }
+  .a2k-d-selected-member .a2k-d-public-badges {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  }
+  .a2k-d-selected-member .a2k-d-profile-role { grid-area: role; margin: 6px 0 0; }
+  .a2k-d-selected-member .v74-role-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .a2k-d-selected-member .v74-role-chip {
+    background: #571f1a; border: 1.5px solid #a07c51; color: #f3e2c8;
+    border-radius: 999px; padding: 4px 13px; font: 700 13px Georgia, serif;
+  }
+  .a2k-d-selected-member .a2k-d-profile-flourish { display: none; }
+  .a2k-d-selected-member .a2k-d-profile-facts {
+    grid-area: facts; display: flex; gap: 10px; align-items: center;
+    margin-top: 8px; color: #f3e2c8; font: 15px Georgia, serif;
+  }
+  .a2k-d-selected-member .a2k-d-profile-fact { display: flex; align-items: center; }
+  .a2k-d-selected-member .a2k-d-profile-fact-icon { display: none; }
+  .a2k-d-selected-member .a2k-d-profile-joined::before {
+    content: '·'; margin-right: 10px; color: #ba9360; font-weight: 700;
+  }
+  /* Awards section before the layer moves it: hold the featured slot. */
+  .a2k-d-selected-member .a2k-d-public-profile-sidebar > .a2k-d-public-profile-awards { grid-area: featured; }
+  .a2k-d-selected-member .a2k-d-public-profile-sidebar > .a2k-d-public-profile-awards > h2 {
+    color: #f3e2c8; font: italic 700 17px Georgia, serif; margin: 0 0 8px;
+  }
+
+  /* Featured badges (layer-built clones in the hero). */
+  .a2k-d-selected-member .v74-featured { grid-area: featured; text-align: left; }
+  .a2k-d-selected-member .v74-featured-title {
+    color: #f3e2c8; font: italic 700 17px Georgia, serif; margin: 0 0 8px;
+  }
+  .a2k-d-selected-member .v74-featured-row { display: flex; gap: 10px; }
+  .a2k-d-selected-member .v74-featured-row .a2k-d-illustrated-badge,
+  .a2k-d-selected-member .v74-featured-row .a2k-d-illustrated-badge img { width: 62px; height: 62px; }
+  .a2k-d-selected-member .v74-view-all-badges {
+    background: none; border: none; padding: 0; margin-top: 9px; cursor: pointer;
+    color: #f3e2c8; font: 14.5px Georgia, serif; text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ---------- main column ---------- */
+  .a2k-d-selected-member .a2k-d-profile-content-rail { display: block; }
+  .a2k-d-selected-member .a2k-d-public-profile-main {
+    display: flex !important; flex-direction: column; gap: 18px;
+  }
+
+  /* Cream About / Favorite Music card. */
+  .a2k-d-selected-member .v74-cream-card {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    background: linear-gradient(168deg, #f8ecd4, #eedcae);
+    border: 1.5px solid #b08d57; border-radius: 14px; padding: 20px 24px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .35);
+  }
+  .a2k-d-selected-member .v74-cream-card .a2k-d-public-profile-section {
+    background: none !important; border: none !important; box-shadow: none !important;
+    padding: 0 !important; margin: 0 !important;
+  }
+  .a2k-d-selected-member .v74-cream-card h2 {
+    color: #4a1712 !important; font: italic 700 20px Georgia, serif; margin: 0 0 10px;
+  }
+  .a2k-d-selected-member .v74-cream-card .a2k-d-profile-story {
+    color: #43302a; font: 15.5px/1.55 Georgia, serif; margin: 0;
+  }
+  .a2k-d-selected-member .v74-cream-card .a2k-d-profile-muted { color: #6d5138; }
+  .a2k-d-selected-member .v74-cream-card .a2k-d-profile-interest-tiles { display: flex; flex-wrap: wrap; gap: 8px; }
+  .a2k-d-selected-member .v74-cream-card .a2k-d-profile-interest-tile {
+    background: #571f1a; color: #f3e2c8; border: 1px solid #7d2d24;
+    border-radius: 999px; padding: 5px 14px; font: 700 13.5px Georgia, serif;
+  }
+
+  /* Dark content cards: songs, venues, KJ reviews, badges. */
+  .a2k-d-selected-member .a2k-d-public-profile-main > .a2k-d-public-profile-section,
+  .a2k-d-selected-member .a2k-d-public-profile-main > .a2k-d-public-profile-awards {
+    background: linear-gradient(165deg, #2b130e, #1d0f0c);
+    border: 1.5px solid #a07c51; border-radius: 14px;
+    padding: 18px 22px; box-shadow: 0 8px 22px rgba(0, 0, 0, .35);
+  }
+  .a2k-d-selected-member .a2k-d-public-profile-main h2 {
+    color: #f3e2c8; font: italic 700 20px Georgia, serif; margin: 0 0 8px;
+  }
+
+  /* Songs. */
+  .a2k-d-selected-member .a2k-d-profile-section-heading {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .a2k-d-selected-member .a2k-d-songbook-more {
+    background: #571f1a; color: #f3e2c8; border: 1.5px solid #a07c51;
+    border-radius: 9px; padding: 7px 14px; font: 700 13.5px Georgia, serif; cursor: pointer;
+  }
+  .a2k-d-selected-member .a2k-d-songbook-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 2px; border-bottom: 1px solid rgba(176, 141, 87, .25);
+  }
+  .a2k-d-selected-member .a2k-d-songbook-item:last-child { border-bottom: none; }
+  .a2k-d-selected-member .a2k-d-songbook-heart { color: #c8554d; font-size: 17px; width: 20px; text-align: center; }
+  .a2k-d-selected-member .a2k-d-songbook-copy { display: flex; flex-direction: column; }
+  .a2k-d-selected-member .a2k-d-songbook-copy strong { color: #f3e2c8; font: 700 15.5px Georgia, serif; }
+  .a2k-d-selected-member .a2k-d-songbook-copy small { color: #d6bea0; font: 13px Georgia, serif; }
+  .a2k-d-selected-member .a2k-d-songbook-type {
+    margin-left: auto; color: #e6c998; border: 1px solid #a07c51; border-radius: 999px;
+    padding: 3px 11px; font: 700 12px Georgia, serif; white-space: nowrap;
+  }
+  .a2k-d-selected-member .a2k-d-profile-muted { color: #d6bea0; font: 14px Georgia, serif; }
+
+  /* Favorite venues. */
+  .a2k-d-selected-member .a2k-d-profile-venue-item {
+    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+    background: none; border: none; border-bottom: 1px solid rgba(176, 141, 87, .25);
+    padding: 10px 2px; cursor: pointer; color: #f3e2c8;
+  }
+  .a2k-d-selected-member .a2k-d-profile-venue-item:last-child { border-bottom: none; }
+  .a2k-d-selected-member .a2k-d-venue-icon { color: #ba9360; }
+  .a2k-d-selected-member .a2k-d-venue-copy { display: flex; flex-direction: column; }
+  .a2k-d-selected-member .a2k-d-venue-copy strong { font: 700 15.5px Georgia, serif; }
+  .a2k-d-selected-member .a2k-d-venue-copy small { color: #d6bea0; font: 13px Georgia, serif; }
+
+  /* Badges card (collapsible). */
+  .a2k-d-selected-member .v74-badges-card { position: relative; }
+  .a2k-d-selected-member .v74-badges-card .a2k-d-public-badges { display: none; }
+  .a2k-d-selected-member .v74-badges-card.v74-open .a2k-d-public-badges {
+    display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px;
+  }
+  .a2k-d-selected-member .v74-badges-card .a2k-d-illustrated-badge,
+  .a2k-d-selected-member .v74-badges-card .a2k-d-illustrated-badge img { width: 72px; height: 72px; }
+  .a2k-d-selected-member .v74-badges-toggle {
+    position: absolute; top: 12px; right: 16px; background: none; border: none;
+    color: #e6c998; font-size: 22px; cursor: pointer; line-height: 1; padding: 4px 8px;
+  }
+
+  /* KJ profile / schedule tabs. */
+  .a2k-d-selected-member .a2k-d-profile-tabs { display: flex; gap: 10px; margin-bottom: 18px; }
+  .a2k-d-selected-member .a2k-d-profile-tab {
+    flex: 1; background: linear-gradient(160deg, #4a1712, #2a0f0c); color: #f3e2c8;
+    border: 1.5px solid #a07c51; border-radius: 10px; padding: 10px 6px;
+    font: 700 15px Georgia, serif; cursor: pointer;
+  }
+  .a2k-d-selected-member .a2k-d-profile-tab[aria-selected='true'] {
+    background: linear-gradient(160deg, #f3e2c8, #e6c998); color: #2b130e;
+  }
+  .a2k-d-selected-member .a2k-d-profile-schedule-card {
+    display: flex; align-items: center; gap: 12px; padding: 10px 2px;
+    border-bottom: 1px solid rgba(176, 141, 87, .25);
+  }
+  .a2k-d-selected-member .a2k-d-profile-schedule-copy { display: flex; flex-direction: column; }
+  .a2k-d-selected-member .a2k-d-profile-schedule-copy strong { color: #f3e2c8; font: 700 15.5px Georgia, serif; }
+  .a2k-d-selected-member .a2k-d-profile-schedule-copy span,
+  .a2k-d-selected-member .a2k-d-profile-schedule-copy small { color: #d6bea0; font: 13px Georgia, serif; }
+}
