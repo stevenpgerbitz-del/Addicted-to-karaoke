@@ -1,0 +1,244 @@
+/* Addicted to Karaoke — public member profile, Sophie design layer (V76 fix).
+   Styles the DOM built by desktop-members.js (a2kOpenMemberProfile)
+   into the approved member-profile design. Presentation only; the
+   renderer keeps owning data and privacy. Desktop shell only.
+   NOTE: the site's own member stylesheets scope their rules under
+   html.a2k-desktop-live #a2k-d-directory with !important, so this
+   layer uses the same anchor with one more class and !important on
+   contested properties — anything less loses the cascade. */
+
+@media (min-width: 900px) {
+
+  /* The renderer toggles panes with the hidden attribute (KJ schedule
+     tab, expandable lists); the layer's display rules must never
+     override it inside the profile. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member [hidden] { display: none !important; }
+
+  /* ---------- page frame: the profile stands alone ---------- */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-members-profile-layout { display: block !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-members-profile-layout > .a2k-d-shared-members-sidebar { display: none !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member { max-width: 1060px !important; margin: 0 auto !important; padding: 6px 10px 30px !important; }
+
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-directory-back {
+    background: linear-gradient(160deg, #571f1a, #3d130e) !important; color: #f3e2c8 !important;
+    border: 1.5px solid #a07c51 !important; border-radius: 10px !important; padding: 9px 18px !important;
+    font: 700 14.5px Georgia, serif !important; cursor: pointer;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-share {
+    background: transparent !important; margin-left: 10px;
+  }
+
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-overview {
+    display: flex !important; flex-direction: column !important; gap: 18px !important; margin-top: 14px !important; align-items: stretch !important;
+  }
+
+  /* ---------- hero band ---------- */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-sidebar {
+    display: grid !important;
+    grid-template-columns: 118px 1fr auto !important;
+    grid-template-areas: 'avatar name featured' 'avatar role featured' 'avatar facts featured' !important;
+    column-gap: 22px !important; align-items: center !important;
+    background: radial-gradient(120% 150% at 18% 0%, #571f1a 0%, #2b100c 58%, #1d0f0c 100%) !important;
+    border: 1.5px solid #b08d57 !important; border-radius: 16px !important;
+    padding: 22px 26px !important; box-shadow: 0 10px 28px rgba(0, 0, 0, .45) !important;
+    width: auto !important; max-width: none !important; height: auto !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-member-avatar-large {
+    grid-area: avatar; width: 118px !important; height: 118px !important; min-width: 118px !important; min-height: 118px !important;
+    border-radius: 50% !important; border: 2.5px solid #c9a15f !important; overflow: hidden !important; position: relative !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    font-size: 44px !important; background: #2b130e !important; color: #f3e2c8 !important; margin: 0 !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-member-avatar-large .a2k-d-member-avatar-image {
+    position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-sidebar > h1 {
+    grid-area: name; margin: 0 !important; color: #fff0ce !important;
+    font: italic 700 34px/1.1 Georgia, serif !important; text-align: left !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-member-verified-mark {
+    display: inline-flex !important; align-items: center !important; justify-content: center !important;
+    width: 21px !important; height: 21px !important; border-radius: 50% !important;
+    background: #2f7fd0 !important; color: #fff !important; font-size: 13px !important; font-style: normal !important;
+    vertical-align: middle !important; margin-left: 8px !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-role {
+    grid-area: role; margin: 6px 0 0 !important; color: #f3e2c8 !important; text-align: left !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-role-chips { display: flex !important; gap: 8px !important; flex-wrap: wrap !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-role-chip {
+    background: transparent !important; border: 1px solid #a07c51 !important; color: #f3e2c8 !important;
+    border-radius: 999px !important; padding: 4px 13px !important; font: 700 13px Georgia, serif !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-flourish { display: none !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-facts {
+    grid-area: facts; display: flex !important; flex-direction: row !important; gap: 10px !important; align-items: center !important;
+    margin: 8px 0 0 !important; padding: 0 !important; border: none !important; background: none !important;
+    color: #f3e2c8 !important; font: 15px Georgia, serif !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-fact {
+    display: flex !important; align-items: center !important; margin: 0 !important; padding: 0 !important; border: none !important; background: none !important; white-space: nowrap !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-fact-icon { display: none !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-fact-value { color: #f3e2c8 !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-joined::before {
+    content: '·' !important; margin-right: 10px; color: #ba9360 !important; font-weight: 700 !important;
+  }
+  /* Awards section before the layer moves it: hold the featured slot. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-sidebar > .a2k-d-public-profile-awards { grid-area: featured; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-sidebar > .a2k-d-public-profile-awards > h2 {
+    color: #f3e2c8 !important; font: italic 700 17px Georgia, serif !important; margin: 0 0 8px !important; text-align: left !important;
+  }
+  /* Public contact block (when the member shares one): facts row. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-sidebar > .a2k-d-profile-contact { grid-area: facts; }
+
+  /* Badge emblems keep the design size wherever they appear, and sit
+     on the card's dark red while their art loads (never a white box). */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-illustrated-badge {
+    display: inline-flex !important; align-items: center !important; justify-content: center !important;
+    width: 62px !important; height: 62px !important; min-width: 62px !important; min-height: 62px !important;
+    flex: 0 0 auto !important; overflow: hidden !important;
+    background: linear-gradient(145deg, #411d19, #22110f) !important;
+    border: 1px solid #c99b61 !important; border-radius: 10px !important; padding: 2px !important;
+    box-sizing: border-box !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-illustrated-badge img {
+    width: 100% !important; height: 100% !important; max-width: 100% !important;
+    object-fit: contain !important; display: block !important; background: #2b130e !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-badges {
+    display: flex !important; flex-wrap: wrap !important; gap: 10px !important; align-items: center !important;
+    max-width: none !important; margin: 0 !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-badges > .a2k-d-profile-muted,
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-badges > .a2k-d-directory-intro { flex: 1 1 100% !important; }
+
+  /* Featured badges (layer-built clones in the hero). */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-featured { grid-area: featured; text-align: left !important; border-left: 1px solid rgba(176, 141, 87, .45) !important; padding-left: 22px !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-featured-title {
+    color: #f3e2c8 !important; font: italic 700 17px Georgia, serif !important; margin: 0 0 8px !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-featured-row { display: flex !important; gap: 10px !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-view-all-badges {
+    background: none !important; border: none !important; padding: 0 !important; margin-top: 9px !important; cursor: pointer;
+    color: #f3e2c8 !important; font: 14.5px Georgia, serif !important; text-decoration: underline !important;
+    text-underline-offset: 3px;
+  }
+
+  /* ---------- main column ---------- */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-content-rail { display: block !important; width: auto !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main {
+    display: flex !important; flex-direction: column !important; gap: 18px !important; width: auto !important; margin: 0 !important;
+  }
+
+  /* Cream About / Favorite Music card. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-cream-card {
+    display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 24px !important;
+    background: linear-gradient(168deg, #f8ecd4, #eedcae) !important;
+    border: 1.5px solid #b08d57 !important; border-radius: 14px !important; padding: 20px 24px !important;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .35) !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-public-profile-section {
+    background: none !important; border: none !important; box-shadow: none !important;
+    padding: 0 !important; margin: 0 !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main .v74-cream-card h2 {
+    color: #4a1712 !important; font: italic 700 20px Georgia, serif !important; margin: 0 0 10px !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-story {
+    color: #43302a !important; font: 15.5px/1.55 Georgia, serif !important; margin: 0 !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-muted { color: #6d5138 !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-interest-tiles { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-interest-tile {
+    background: #fffaf0 !important; color: #4a1712 !important; border: 1px solid #a07c51 !important;
+    border-radius: 999px !important; padding: 5px 14px !important; font: 700 13.5px Georgia, serif !important;
+  }
+
+  /* Dark content cards: songs, venues, KJ reviews, badges. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main > .a2k-d-public-profile-section,
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main > .a2k-d-public-profile-awards {
+    background: linear-gradient(165deg, #2b130e, #1d0f0c) !important;
+    border: 1.5px solid #a07c51 !important; border-radius: 14px !important;
+    padding: 18px 22px !important; box-shadow: 0 8px 22px rgba(0, 0, 0, .35) !important; margin: 0 !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main h2 {
+    color: #f3e2c8 !important; font: italic 700 20px Georgia, serif !important; margin: 0 0 8px !important;
+  }
+
+  /* Songs. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-section-heading {
+    display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-more {
+    background: #571f1a !important; color: #f3e2c8 !important; border: 1.5px solid #a07c51 !important;
+    border-radius: 9px !important; padding: 7px 14px !important; font: 700 13.5px Georgia, serif !important; cursor: pointer;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-item {
+    display: flex !important; align-items: center !important; gap: 12px !important;
+    padding: 10px 2px !important; border-bottom: 1px solid rgba(176, 141, 87, .25) !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-item:last-child { border-bottom: none !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-heart { color: #c8554d !important; font-size: 17px !important; width: 20px !important; text-align: center !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-copy { display: flex !important; flex-direction: column !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-copy strong { color: #f3e2c8 !important; font: 700 15.5px Georgia, serif !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-copy small { color: #d6bea0 !important; font: 13px Georgia, serif !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-type {
+    margin-left: auto !important; color: #e6c998 !important; border: 1px solid #a07c51 !important; border-radius: 999px !important;
+    padding: 3px 11px !important; font: 700 12px Georgia, serif !important; white-space: nowrap !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-muted { color: #d6bea0 !important; font: 14px Georgia, serif !important; }
+
+  /* Favorite venues. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-venue-item {
+    display: flex !important; align-items: center !important; gap: 12px !important; width: 100% !important; text-align: left !important;
+    background: none !important; border: none !important; border-bottom: 1px solid rgba(176, 141, 87, .25) !important;
+    padding: 10px 2px !important; cursor: pointer; color: #f3e2c8 !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-venue-item:last-child { border-bottom: none !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-venue-icon { color: #ba9360 !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-venue-copy { display: flex !important; flex-direction: column !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-venue-copy strong { font: 700 15.5px Georgia, serif !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-venue-copy small { color: #d6bea0 !important; font: 13px Georgia, serif !important; }
+
+  /* Badges card (collapsible). */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-badges-card { position: relative !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-badges-card .a2k-d-public-badges { display: none !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-badges-card.v74-open .a2k-d-public-badges {
+    display: flex !important; flex-wrap: wrap !important; gap: 12px !important; margin-top: 10px !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-badges-card .a2k-d-illustrated-badge {
+    width: 72px !important; height: 72px !important; min-width: 72px !important; min-height: 72px !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-badges-toggle {
+    position: absolute !important; top: 12px !important; right: 16px !important; background: none !important; border: none !important;
+    color: #e6c998 !important; font-size: 22px !important; cursor: pointer; line-height: 1 !important; padding: 4px 8px !important;
+  }
+
+  /* Songs | Favorite Venues side by side (design layout). */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main.v74-songvenue-grid {
+    display: grid !important; grid-template-columns: 1.15fr .85fr !important; gap: 18px !important; align-items: start !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-songvenue-grid > * { grid-column: 1 / -1 !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-songvenue-grid > .a2k-d-profile-songs,
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-songvenue-grid > .a2k-d-profile-favorite-venues { grid-column: auto !important; }
+
+  /* KJ profile / schedule tabs. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-tabs { display: flex !important; gap: 10px !important; margin-bottom: 18px !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-tab {
+    flex: 1 !important; background: linear-gradient(160deg, #4a1712, #2a0f0c) !important; color: #f3e2c8 !important;
+    border: 1.5px solid #a07c51 !important; border-radius: 10px !important; padding: 10px 6px !important;
+    font: 700 15px Georgia, serif !important; cursor: pointer;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-tab[aria-selected='true'] {
+    background: linear-gradient(160deg, #f3e2c8, #e6c998) !important; color: #2b130e !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-schedule-card {
+    display: flex !important; align-items: center !important; gap: 12px !important; padding: 10px 2px !important;
+    border-bottom: 1px solid rgba(176, 141, 87, .25) !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-schedule-copy { display: flex !important; flex-direction: column !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-schedule-copy strong { color: #f3e2c8 !important; font: 700 15.5px Georgia, serif !important; }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-schedule-copy span,
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-schedule-copy small { color: #d6bea0 !important; font: 13px Georgia, serif !important; }
+}
