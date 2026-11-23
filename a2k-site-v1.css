@@ -1,0 +1,37 @@
+/* Addicted to Karaoke - site layer V1 (Milo, Nov 23, 2026).
+   Footer band + the Sign In page's Google button constraint. */
+
+/* Footer: spans the app shell under whichever screen is showing. */
+.a2k-site-footer {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 30px;
+  padding: 26px 20px 34px;
+  border-top: 1px solid rgba(230, 201, 152, .18);
+}
+.a2k-site-footer .a2k-footer-brand {
+  font: italic 700 21px Georgia, serif;
+  color: #f3e2c8;
+}
+.a2k-site-footer .a2k-footer-tag {
+  margin: 7px 0 0;
+  font: 14px Georgia, serif;
+  color: rgba(243, 226, 200, .72);
+}
+.a2k-site-footer .a2k-footer-legal {
+  margin: 10px 0 0;
+  font: 12.5px Georgia, serif;
+  color: rgba(243, 226, 200, .45);
+}
+/* On small screens keep the footer clear of the fixed bottom nav. */
+@media (max-width: 1023px) {
+  .a2k-site-footer { padding-bottom: 112px; }
+}
+
+/* Sign In: the Google button renders full-width and reads as a
+   slab; constrain it to a tidy centered button width. */
+#auth-guest .atk-google-direct {
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}

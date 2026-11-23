@@ -5,6 +5,11 @@
   let rows=[], mode='all', loaded=false, detailsDialog=null, submitDialog=null, busy=false;
   // A fresh visit begins in discovery mode. Filtering starts only on deliberate visitor action.
   let discoveryStarted=false;
+  // Steven (Nov 23, 2026): a fresh visit should not open on an empty
+  // page - it opens on the karaoke happening today (visitor's local
+  // site timezone). Any deliberate visitor action (search, filter,
+  // tab, nearby) ends the today-only view and starts full discovery.
+  let todayOnly=true;
   const byId=id=>document.getElementById(id);
   const node=(tag,className,text)=>{
     const item=document.createElement(tag);
@@ -396,6 +401,25 @@
     const genre=byId('genre-filter')?.value||'';
     const rating=Number(byId('review-filter')?.value||0);
     const now=new Date();
+    const todayKey=chicagoDateKey(now);
+    const overlapsToday=(startAt,endAt)=>
+      chicagoDateKey(startAt)<=todayKey&&chicagoDateKey(endAt)>=todayKey;
+    const showingToday=todayOnly&&!discoveryStarted;
+    let effectiveToday=showingToday;
+    if(effectiveToday){
+      // If nothing at all is scheduled today, fall back to the full
+      // upcoming list so the page is never empty.
+      const anyVenue=(typeof sampleVenues!=='undefined'&&Array.isArray(sampleVenues)?sampleVenues:[])
+        .some(place=>{
+          if(!place||place.specialEventsOnly)return false;
+          const next=nextKaraoke(place,now);
+          return !!next&&overlapsToday(next.startAt,next.endAt);
+        });
+      const anyEvent=rows.some(event=>
+        new Date(event.end_at)>now&&
+        overlapsToday(new Date(event.start_at),new Date(event.end_at)));
+      effectiveToday=anyVenue||anyEvent;
+    }
     let shownVenues=0,shownEvents=0,unscheduled=0;
     const byCard=new Map();
     parent.querySelectorAll('.venue-teaser').forEach(card=>{
@@ -427,7 +451,8 @@
         window.a2kNearbyVenueMatches(place):true;
       // Venues added solely for one-time events are represented by their event
       // cards and can still be opened from those cards.
-      card.hidden=!discoveryStarted||mode==='events'||!place||place.specialEventsOnly||
+      card.hidden=!(discoveryStarted||showingToday)||mode==='events'||!place||place.specialEventsOnly||
+        (effectiveToday&&!(next&&overlapsToday(next.startAt,next.endAt)))||
         !matchesText||!matchesState||!matchesCity||!matchesGenre||!matchesRating||!matchesNearby;
       if(!card.hidden){
         shownVenues++;
@@ -451,7 +476,8 @@
         window.a2kNearbyVenueMatches(place):true;
       // Already-ended events are excluded both by the database query and here,
       // in case the user leaves this page open until the event passes.
-      card.hidden=!discoveryStarted||mode==='venues'||new Date(event.end_at)<=now||
+      card.hidden=!(discoveryStarted||showingToday)||mode==='venues'||new Date(event.end_at)<=now||
+        (effectiveToday&&!overlapsToday(new Date(event.start_at),new Date(event.end_at)))||
         !matches||!matchesState||!matchesCity||!matchesGenre||!matchesRating||!matchesNearby;
       if(!card.hidden)shownEvents++;
       byCard.set(card,new Date(event.start_at).getTime());
@@ -466,11 +492,19 @@
       return a.textContent.localeCompare(b.textContent);
     });
     parent.append(...cards);
-    byId('no-results').hidden=!discoveryStarted||shownVenues+shownEvents>0;
+    byId('no-results').hidden=!(discoveryStarted||showingToday)||shownVenues+shownEvents>0;
     const count=byId('results-count');
     if(count){
-      if(!discoveryStarted){
+      if(!discoveryStarted&&!showingToday){
         count.textContent='Search, choose a state or city, or use your location to find karaoke.';
+        return;
+      }
+      if(showingToday){
+        count.textContent=effectiveToday?
+          'Karaoke today: '+(shownVenues+shownEvents)+
+            (shownVenues+shownEvents===1?' place':' places'):
+          'No karaoke scheduled today \u00b7 Coming up: '+(shownVenues-unscheduled+shownEvents)+
+            ' scheduled nights'+(unscheduled?' \u00b7 '+unscheduled+' more venues':'');
         return;
       }
       count.textContent=
