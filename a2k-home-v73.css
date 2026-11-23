@@ -1,0 +1,113 @@
+/*
+ A2K HOME V73 — every Home block is a card, 2026-11-22.
+
+ Desktop only (html.a2k-desktop-live). Steven's verdict on the live
+ Home page: "borders all running together" — the desktop layer had
+ stacked three generations of overrides: Tonight and Featured Venue
+ were not cards at all (headings floating on the page background with
+ a rule trailing to the edge, venue cards sitting directly on the
+ background), the Find card wore three stacked inset frame shadows,
+ and Community Spotlight's heading was a ribbon clipped over its
+ card's top edge.
+
+ V73 gives every Home block the same card treatment the profile
+ pages already use (one border, one soft shadow, heading seated
+ inside the card, even padding), and the venue rows inside Tonight /
+ Karaoke Tonight become quieter inner cards. The grid layout, the
+ DOM, and every behavior are unchanged; phone/tablet layouts are
+ untouched (the mobile redo is a later phase).
+*/
+
+html.a2k-desktop-live body #home-screen .a2k-b-home{
+  gap:18px 22px!important;
+}
+
+/* ---------- one card language ---------- */
+html.a2k-desktop-live body #home-screen .a2k-b-section[aria-labelledby="a2k-b-tonight-title"],
+html.a2k-desktop-live body #home-screen .a2k-b-section[aria-labelledby="a2k-b-feature-title"],
+html.a2k-desktop-live body #home-screen .a2k-b-stats,
+html.a2k-desktop-live body #home-screen #a2k-desktop-upcoming{
+  background:linear-gradient(165deg,#2b1811,#1e110b)!important;
+  border:1.5px solid #b08d57!important;
+  border-radius:15px!important;
+  box-shadow:0 4px 12px rgba(0,0,0,.5)!important;
+  padding:18px!important;
+}
+
+/* ---------- headings sit inside their cards ---------- */
+html.a2k-desktop-live body #home-screen .a2k-b-home .a2k-b-heading{
+  margin:0 0 14px!important;
+}
+html.a2k-desktop-live body #home-screen .a2k-b-home .a2k-b-heading:after{
+  content:none!important;
+}
+html.a2k-desktop-live body #home-screen .a2k-b-home .a2k-b-heading h2{
+  font:italic 700 23px/1.15 Georgia,serif!important;
+  color:#f6e1be!important;
+}
+html.a2k-desktop-live body #home-screen .a2k-b-viewall{
+  font-size:13px!important;
+}
+
+/* ---------- Find Karaoke card: one frame, not three ---------- */
+html.a2k-desktop-live body #home-screen .a2k-b-home .a2k-b-find{
+  border:1.5px solid #cfa96f!important;
+  border-radius:16px!important;
+  box-shadow:0 4px 12px rgba(0,0,0,.5)!important;
+}
+
+/* ---------- inner cards (Tonight venues, Featured, Upcoming) ---------- */
+html.a2k-desktop-live body #home-screen .a2k-b-card{
+  background:linear-gradient(150deg,#3a1f14,#241209)!important;
+  border:1px solid #a57c4c!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+}
+html.a2k-desktop-live body #home-screen .a2k-b-tonight-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px!important;
+}
+@media (max-width:1240px){
+  html.a2k-desktop-live body #home-screen .a2k-b-tonight-grid{
+    grid-template-columns:1fr!important;
+  }
+}
+
+/* ---------- Community Spotlight: heading off the ribbon ---------- */
+html.a2k-desktop-live body #home-screen .a2k-b-stats .a2k-b-spotlight-heading{
+  position:static!important;
+  width:auto!important;max-width:none!important;min-height:0!important;
+  margin:0 0 14px!important;padding:0!important;
+  background:none!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;clip-path:none!important;
+  color:#f6e1be!important;
+  font:italic 700 23px/1.15 Georgia,serif!important;
+  text-align:left!important;justify-content:flex-start!important;
+}
+html.a2k-desktop-live body #home-screen .a2k-b-stats-grid{
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  padding:2px 0 0!important;
+}
+
+/* ---------- Karaoke Tonight (desktop upcoming rail) ---------- */
+html.a2k-desktop-live body #home-screen #a2k-desktop-upcoming .a2k-d-upcoming-heading{
+  margin-bottom:14px!important;
+}
+html.a2k-desktop-live body #home-screen #a2k-desktop-upcoming h2{
+  font:italic 700 23px/1.15 Georgia,serif!important;
+  color:#f6e1be!important;
+}
+html.a2k-desktop-live body #home-screen #a2k-desktop-upcoming h2:before{
+  content:none!important;
+}
+html.a2k-desktop-live body #home-screen #a2k-desktop-upcoming .a2k-d-upcoming-item{
+  background:linear-gradient(150deg,#3a1f14,#241209)!important;
+  border:1px solid #a57c4c!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+}
+
+/* ---------- build stamp: not for visitors (element kept in DOM) ---------- */
+html.a2k-desktop-live body #home-screen .a2k-b-build{
+  display:none!important;
+}
