@@ -808,7 +808,7 @@
            let expanded=false;
            function drawFavorites(){
              list.replaceChildren();
-             for(const v of (expanded?places:places.slice(0,1))){
+             for(const v of (expanded?places:places.slice(0,3))){
                const entry=elem('button','a2k-d-profile-venue-item');
                entry.type='button';
                const icon=elem('span','a2k-d-venue-icon','⌂');
