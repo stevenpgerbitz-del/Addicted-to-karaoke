@@ -32,7 +32,7 @@ publish to main.
 
 ## Live state (update when it changes)
 
-- **Main head:** `e96a3e1a` (Nov 24, 2026) — Open-ended karaoke schedules published (Dreamland Lounge Omaha now shows "Wednesday — 8:30 PM onwards"; management schedule editor redesigned as week strip + focused rows).
+- **Main head:** `7f1eacd2` (Nov 24, 2026) — Founder pill removed everywhere (2a5d10a3); old stylesheets archived to `archive/old-css/` (7f1eacd2, 53 files + README, byte-identical copies; 9 of the 53 originals deleted, 44 remain — see Sophie's item below).
 - **Live site:** addictedtokaraoke.com (GitHub Pages; allow ~3 min after a
   push before the new files serve).
 
@@ -217,6 +217,66 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
   "close"` (text) so the website's until-close rendering works for KJ
   sessions too.
 
+- **For Sophie (delete the remaining old stylesheets — Steven's call, no rush):**
+  The 53 stylesheets folded into the four grouped CSS files on Nov 24 are
+  now archived as byte-identical copies under `archive/old-css/` (live at
+  head `7f1eacd2`, verified). Milo deleted 9 of the originals; **44 originals
+  remain at the repo root**. Steven asked you to delete those 44 — he does
+  not want to approve 53 one-by-one delete cards, and this is approved by
+  him here, no further approval needed from him. Please delete ONLY these
+  44 files at the repo root:
+  - `a2k-member-profile-vintage.css`
+  - `a2k-member-v83.css`
+  - `a2k-member-v84.css`
+  - `a2k-member-v85.css`
+  - `a2k-members-desktop-portrait.css`
+  - `a2k-members-mobile-326.css`
+  - `a2k-members-redesign.css`
+  - `a2k-nearby.css`
+  - `a2k-profile-genres.css`
+  - `a2k-profile-grid.css`
+  - `a2k-profile-reference.css`
+  - `a2k-profile-settings.css`
+  - `a2k-profile-v66.css`
+  - `a2k-profile-v77.css`
+  - `a2k-setup-wizard.css`
+  - `a2k-site-v7.css`
+  - `a2k-template-v65.css`
+  - `a2k-vintage-global.css`
+  - `approval-center.css`
+  - `desktop-vintage.css`
+  - `find-vintage-preview.css`
+  - `founder-test-reset.css`
+  - `google-direct-signin.css`
+  - `guest-venue-submit.css`
+  - `home-option-b.css`
+  - `kj-host-profile.css`
+  - `kj-host-ratings.css`
+  - `member-session-notices.css`
+  - `profile-achievements-about.css`
+  - `profile-management-layout.css`
+  - `profile-my-reviews.css`
+  - `review-experience.css`
+  - `review-management-v3.css`
+  - `review-notification-center.css`
+  - `review-privileges-management.css`
+  - `review-reporting.css`
+  - `special-events.css`
+  - `user-management-v2.css`
+  - `venue-claims.css`
+  - `venue-management-v2.css`
+  - `venue-owner-dashboard.css`
+  - `venue-photos-v2.css`
+  - `venue-review-filters.css`
+  - `venue-team.css`
+  Do NOT delete: anything under `archive/old-css/` (the safety-net copies),
+  `a2k-member-deletion.css` (your live design file links it), the four
+  grouped files (`a2k-core.css`, `a2k-public.css`, `a2k-members.css`,
+  `a2k-management.css`), or any other CSS file — 20 more unreferenced
+  stylesheets exist beyond these 54 and are a separate follow-up, not this
+  task. Nothing on the live site references the 44 (verified repo-wide);
+  deleting them changes nothing live.
+
 ## Log
 
 - 2026-11-24 — Milo created this file (Steven asked for a shared note).
@@ -230,3 +290,4 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 - 2026-11-24 — Milo published System tab fix (a7f1c1e5, 5 files).
 - 2026-11-24 — Milo staged open-ended schedules fix in push103/ (awaiting Steven's publish approval); re-based onto head a7f1c1e5 after the push102 publish (V3 tags + V1 ?v=2 carried over, no conflicts, harness re-run 57/57).
 - 2026-11-24 — System tab fix published (a7f1c1e5); open-ended schedules published (e96a3e1a, Dreamland live-confirmed by Steven). Milo staged Founder pill removal in push104/ (awaiting Steven's publish approval).
+- 2026-11-24 — Milo published Founder pill removal (2a5d10a3, 8 files; live-verified). Milo published CSS archive copies (7f1eacd2, 53 files + README in archive/old-css/); deleted 9 of the 53 originals, then Steven stopped the one-by-one deletes (53 approval cards) — the remaining 44 are listed above for Sophie to delete.
