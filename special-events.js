@@ -370,15 +370,23 @@
       const weekday=DAY_NAMES[new Date(date+'T12:00:00Z').getUTCDay()];
       for(const slot of schedule){
         if(String(slot?.day||'').toLowerCase()!==weekday.toLowerCase())continue;
-        const start=String(slot.start||''),end=String(slot.end||'');
-        if(!/^\d{2}:\d{2}$/.test(start)||!/^\d{2}:\d{2}$/.test(end)||start===end)continue;
+        const start=String(slot.start||''),endRaw=slot.end;
+        const endKind=endRaw==='close'?'close':(/^\d{2}:\d{2}$/.test(endRaw||'')?'fixed':(endRaw==null||endRaw===''?'onwards':null));
+        if(!/^\d{2}:\d{2}$/.test(start)||!endKind)continue;
+        const end=endKind==='fixed'?String(endRaw):null;
+        if(end&&start===end)continue;
         let startAt,endAt;
         try{
           startAt=new Date(toIso(date,start));
-          endAt=new Date(toIso(end<=start?addDays(date,1):date,end));
+          // Open-ended nights have no end time. For "is this tonight / is it
+          // happening now" math only, the session runs to the end of its
+          // calendar day (Chicago). This bound is never displayed or stored.
+          endAt=endKind==='fixed'
+            ?new Date(toIso(end<=start?addDays(date,1):date,end))
+            :new Date(toIso(addDays(date,1),'00:00'));
         }catch(_){continue}
         if(endAt<=now||endAt<=startAt)continue;
-        if(!next||startAt<next.startAt)next={startAt,endAt,ongoing:startAt<=now};
+        if(!next||startAt<next.startAt)next={startAt,endAt,ongoing:startAt<=now,endKind};
       }
     }
     nextCache.byId.set(venueItem.id,next);
@@ -387,8 +395,11 @@
   function whenLabel(session){
     if(!session)return 'Karaoke times not confirmed';
     const day=datePart=>fmt(datePart,{weekday:'short',month:'short',day:'numeric'});
+    const prefix=session.ongoing?'🎤 Happening now · ':'🎤 Next: ';
+    if(session.endKind==='onwards')return prefix+day(session.startAt)+' · '+time(session.startAt)+' onwards';
+    if(session.endKind==='close')return prefix+day(session.startAt)+' · '+time(session.startAt)+' until close';
     const endsNextDay=chicagoDateKey(session.startAt)!==chicagoDateKey(session.endAt);
-    return (session.ongoing?'🎤 Happening now · ':'🎤 Next: ')+
+    return prefix+
       day(session.startAt)+' · '+time(session.startAt)+'–'+
       (endsNextDay?'next day ':'')+time(session.endAt);
   }

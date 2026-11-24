@@ -668,6 +668,12 @@
              today.setUTCDate(today.getUTCDate()+delta);
              return new Intl.DateTimeFormat('en-US',{timeZone:'UTC',month:'short',day:'numeric'}).format(today);
            };
+           const sessionRange=(session)=>{
+             const start=localClock(session.start_time);
+             if(session.end_time==='close')return start+' until close';
+             if(session.end_time==null||session.end_time==='')return start+' onwards';
+             return start+' – '+localClock(session.end_time);
+           };
            for(const session of rows){
              if(!days.includes(session.day))continue;
              const card=elem('article','a2k-d-profile-schedule-card');
@@ -676,7 +682,7 @@
              copy.append(elem('strong','',session.venue_name||'Karaoke Venue'),
                elem('span','',[session.city,session.state].filter(Boolean).join(', ')),
                elem('small','','Every '+session.day+' · Next: '+nextDate(session.day,session.start_time)+' · '+
-                 localClock(session.start_time)+' – '+localClock(session.end_time)));
+                 sessionRange(session)));
              card.append(icon,copy);
              if(session.venue_id&&typeof window.atkFavoriteOpenVenue==='function'){
                const open=elem('button','a2k-d-profile-schedule-link','View Venue');

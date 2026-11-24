@@ -274,7 +274,7 @@
   profile.replaceChildren(row('Genres',genres),
    row('About This Venue',v.description),row('Amenities',amenities));
   const schedule=Array.isArray(v.karaoke_schedule)?v.karaoke_schedule:[];
-  const lines=schedule.map(x=>(x.day||'Day')+' · '+formatTime(x.start)+'–'+formatTime(x.end));
+  const lines=schedule.map(x=>(x.day||'Day')+' · '+formatTime(x.start)+(x.end==='close'?' until close':x.end==null||x.end===''?' onwards':'–'+formatTime(x.end)));
   get('mv2-values-karaoke').replaceChildren(
    row('Karaoke Days & Times',lines.length?lines.join(' | '):'No schedule posted'));
  }

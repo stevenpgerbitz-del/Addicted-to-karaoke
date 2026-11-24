@@ -31,7 +31,7 @@ function open(isManual){
  overlay.setAttribute('aria-modal','true');
  frame=document.createElement('iframe');
  frame.title='Addicted to Karaoke Member Setup Wizard';
- frame.src='member-setup-preview.html?live=1&v=354';
+ frame.src='member-setup-preview.html?live=1&v=355';
  frame.setAttribute('referrerpolicy','same-origin');
  frame.onerror=function(){
    var m=manual;close();
@@ -210,13 +210,14 @@ async function save(payload){
    if(favorites.length)fail(await client().from('venue_favorites').upsert(favorites,{onConflict:'user_id,venue_id',ignoreDuplicates:true}));
  }
  if(roles.includes('kj')){
-   var byVenue=new Map();
+   var normEnd=function(e){return e==='close'?'close':(e?String(e).slice(0,5):null)};
+  var byVenue=new Map();
    for(var item of (s.schedule||[])){
      if(!item||!item.venue)continue;
      var existingGroup=byVenue.get(item.venue)||{weekly:[],oneTime:[]};
      if(item.tab==='weekly')for(var day of (item.days||[])){
        var idx=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].indexOf(day);
-       if(idx!==-1)existingGroup.weekly.push({day:idx,start:item.start,end:item.end});
+       if(idx!==-1)existingGroup.weekly.push({day:idx,start:item.start,end:normEnd(item.end)});
      }else if(item.tab==='once')existingGroup.oneTime.push(item);
      byVenue.set(item.venue,existingGroup);
    }
@@ -226,7 +227,7 @@ async function save(payload){
        var sessions=entry[1].weekly.slice(0,7);
        var existing=fail(await client().from('kj_host_submissions')
          .select('id,venue_name,sessions,status').eq('user_id',id).in('status',['pending','approved']).limit(200))||[];
-       var sameSessions=(rows)=>JSON.stringify((rows||[]).map(item=>[Number(item.day),String(item.start).slice(0,5),String(item.end).slice(0,5)]).sort((a,b)=>a[0]-b[0]));
+       var sameSessions=(rows)=>JSON.stringify((rows||[]).map(item=>[Number(item.day),String(item.start).slice(0,5),normEnd(item.end)]).sort((a,b)=>a[0]-b[0]));
        var duplicate=existing.some(x=>x.venue_name===v.name&&sameSessions(x.sessions)===sameSessions(sessions));
        if(!duplicate)fail(await client().from('kj_host_submissions').insert({
          user_id:id,venue_id:v.id||null,venue_name:text(v.name,150),venue_address:text(v.address_line1,240)||null,

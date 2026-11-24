@@ -32,7 +32,7 @@ publish to main.
 
 ## Live state (update when it changes)
 
-- **Main head:** `ac2f6ba7` (Nov 24, 2026) — permissions frontend fix published (Management button, portal open checks, venue save buttons, Special Events approval panel, KJ review moderation, and Badge Management open gate switched to `is_platform_admin()`).
+- **Main head:** `a7f1c1e5` (Nov 24, 2026) — System/Venues tab fix published (Management System tab opens for Super Admins with Founder-only actions locked inside; Venues/Members tab switching and `#manage/...` deep links fixed).
 - **Live site:** addictedtokaraoke.com (GitHub Pages; allow ~3 min after a
   push before the new files serve).
 
@@ -68,12 +68,47 @@ publish to main.
   enforcement untouched. Harness 15/15 (4 before-state reproductions + 11
   after-state checks, Founder / Super Admin / member personas). Published
   only after Steven's approval.
-- **Open-ended schedules fix (STAGED in push103/, NOT published, separate
-  build):** open-ended karaoke nights (start known, end unspecified) display
-  as "8:30 PM onwards" instead of dropping from the schedule. Touches the
-  index inline schedule renderer/editor — different regions from push102's
-  layer tags + V1.js, but the two bundles must be sequenced (push one,
-  re-base the other on the new head), not stacked blindly.
+- **Open-ended schedules fix (STAGED in push103/, NOT published; re-based
+  Nov 24, 2026 onto head `a7f1c1e5` after the push102 publish):** a venue
+  night with a start time but no end time used to vanish — the public
+  schedule renderer dropped any entry whose end wasn't HH:MM and the
+  management editor refused to save without both times. Live case: Dreamland
+  Lounge Omaha, Wednesday 8:30 PM, end unspecified (stored as `end: ""`),
+  host Jasmine Carter. Steven's spec, three formats: known end "8 PM –
+  12 AM" (unchanged), unspecified end "8 PM onwards", until close "8 PM
+  until close" (label only — never compute the venue's actual closing time).
+  **Stored representation (agreed here so both sides use the same values):**
+  `end: "HH:MM"` = fixed end; `end: null` or `""` = onwards; `end:
+  "close"` = until close. Same shape in `venues.karaoke_schedule` and
+  `kj_host_submissions.sessions`; for the KJ RPCs (`end_at`): null/`""` =
+  onwards, `"close"` = until close. No artificial end is ever invented or
+  stored — no 11:59 PM, no +4 hours. Fixed surfaces: public venue schedule
+  renderer (incl. the `atk_public_kj_schedule_hosts` merge — name-only
+  hosts now render as plain text, no profile link when there is no user
+  id), management schedule editor (per-night three-way end choice, saves
+  `null`/`"close"`/HH:MM), Find Karaoke today logic (both open-ended
+  variants count as karaoke today on their day), member profile Karaoke
+  Schedule pane, venue-management detail row, KJ setup-wizard weekly step
+  + inline KJ dialog, setup bridge `normEnd()` helper. Dedup keys and
+  sorting distinguish the variants (same day+start, different end kind =
+  different nights). Already OK, no change: Home Tonight (start-only),
+  venue-owner dashboard (never displays/edits schedules). Deliberately
+  unchanged: one-time events (timestamped events require a real end).
+  Engineering bound, display only: for "is this tonight" math, an
+  open-ended session counts as running to the end of its Chicago calendar
+  day — never displayed or stored. Harness 57/57 (12 before-state defect
+  reproductions + 45 after-state checks, incl. all three formats, mixed
+  schedules, dedup, editor saves, Find today, wizard, bridge unit test,
+  replica 0 new errors / 0 new failed requests). Files: index.html,
+  special-events.js (v241), desktop-members.js (v355),
+  venue-management-v2.js (v321), a2k-member-setup-live.js (v355),
+  member-setup-preview.html (v355). Published only after Steven's approval.
+  **Re-base note:** push102 and push103 both touched index.html but on
+  different lines (push102: CSS link line + management script line;
+  push103: renderer/editor/KJ-dialog regions + two cache-bump mega-lines);
+  the re-base carried push102's V3 tags + V1 `?v=2` into the push103 index
+  with no conflicts; merged index tag balance 67/67; full harness re-run
+  after the re-base.
 - **Milo's test account:** Milo AI (Super Admin, NOT founder — do not flip the
   founder flag). Member #000018, steven.g.droid@gmail.com.
 
@@ -148,6 +183,20 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
   stays founder-gated in this build; widening it is a follow-up with the
   Role & Permission Management work, not this bundle.
 - **For Milo:** nothing pending from Sophie right now.
+- **For Sophie (open-ended schedules — please confirm, no rush):**
+  (1) Is there any CHECK constraint on `venues.karaoke_schedule` or
+  `kj_host_submissions.sessions` that would reject an `end` of null/"" or
+  `"close"`? The frontend already accepts and saves those values (Dreamland
+  already stores `end: ""` live), but please confirm nothing server-side
+  will strip or reject them.
+  (2) Dreamland Lounge Omaha's Wednesday host Jasmine Carter appears in no
+  public read path (no host fields on the venue row;
+  `atk_public_kj_schedule_hosts` returns `[]` for Dreamland) — the site
+  shows "Host not confirmed for this night yet" until the host is linked or
+  approved on your side.
+  (3) For the KJ RPCs, please map an until-close session to `end_at:
+  "close"` (text) so the website's until-close rendering works for KJ
+  sessions too.
 
 ## Log
 
@@ -159,3 +208,5 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 - 2026-11-24 — Milo staged permissions frontend fix in push101/ (awaiting Steven's publish approval).
 - 2026-11-24 — Milo published permissions frontend fix (ac2f6ba7, 5 files).
 - 2026-11-24 — Milo staged System tab fix in push102/ (awaiting Steven's publish approval).
+- 2026-11-24 — Milo published System tab fix (a7f1c1e5, 5 files).
+- 2026-11-24 — Milo staged open-ended schedules fix in push103/ (awaiting Steven's publish approval); re-based onto head a7f1c1e5 after the push102 publish (V3 tags + V1 ?v=2 carried over, no conflicts, harness re-run 57/57).
