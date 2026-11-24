@@ -51,7 +51,7 @@
  };
  let installed=false,browseAll=false,dashboardSerial=0,contactSerial=0,overlayBusy=false;
  let overlay,overlayBody,overlayHeading,overlayFeedback,overlaySave,overlayCancel,overlaySaveHandler,contactCache=[];
- const defaultGenres=['All Genres','Pop','Rock','Country','R&B','Hip-Hop','Classic Rock','80s & 90s','Indie','Jazz','Blues','Latin'];
+ const defaultGenres=['All Genres','Pop','Rock','Country','R&B','Hip-Hop','Classic Rock','80s & 90s','Indie','Jazz','Blues','Latin','Today’s Hits','50s','Motown','Disco','K-Pop','Classical','Bluegrass','Americana','Ska','Grunge','Swing','Doo-Wop','World Music','Afrobeats','Disney','Christmas'];
  const statusLabels={submitted:'Submitted',under_review:'Under Review',published:'Published',archived:'Archived'};
  const statusLabel=x=>statusLabels[x]||'Submitted';
  function setText(id,t){const node=get(id);if(node)node.textContent=t??''}

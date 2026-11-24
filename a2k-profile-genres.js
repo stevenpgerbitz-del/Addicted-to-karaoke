@@ -9,11 +9,15 @@
   {label:'Popular Music Genres',values:[
     'Pop','Rock','Country','Hip-Hop','R&B','Latin','Dance/EDM','Classic Rock',
     'Alternative','Indie','Metal','Punk','Jazz','Blues','Gospel','Soul',
-    'Funk','Reggae','Folk','Show Tunes'
+    'Funk','Reggae','Folk','Show Tunes','Today\u2019s Hits'
   ]},
   {label:'Country Styles',values:['Country/Western','80s Country','90s Country','2000s Country']},
-  {label:'Decades & Oldies',values:['Oldies','60s','70s','80s','90s','2000s','2010s','2020s']},
-  {label:'Karaoke Favorites',values:['Duets','Singalongs']}
+  {label:'Decades & Oldies',values:['Oldies','50s','60s','70s','80s','90s','2000s','2010s','2020s']},
+  {label:'Karaoke Favorites',values:['Duets','Singalongs']},
+  {label:'More Genres',values:[
+    'Motown','Disco','K-Pop','Classical','Bluegrass','Americana','Ska',
+    'Grunge','Swing','Doo-Wop','World Music','Afrobeats','Disney','Christmas'
+  ]}
  ];
  const options=groups.flatMap(group=>group.values);
  let saving=false;

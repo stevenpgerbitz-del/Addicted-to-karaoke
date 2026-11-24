@@ -1,0 +1,27 @@
+/* A2K MEMBER V88 — Mobile member-number leak (Steven, Nov 23, 2026 rule:
+   hide member numbers everywhere member-facing; Member Since stays).
+   V83 hid the numbers only under html.a2k-desktop-live, which the site
+   only sets at desktop widths (desktop-vintage.js toggles it on
+   breakpoint + mouse input). On a phone the class is absent, so the
+   public profile's "Member #000001" fact showed (Nov 24 mobile video
+   walkthrough). These are the same three V83 hides without the desktop
+   scope, so they hold on mobile too. Display only — data, RPCs and
+   admin tools are untouched.
+   - Directory cards (.a2k-d-member-number): the renderer only fills
+     the number at min-width:1024px (desktop-members.js), so they do not
+     leak on mobile today; this rule is a safety net for any other
+     render path.
+   - Public profile (.a2k-d-profile-number): the leak. The renderer
+     fills it unconditionally via a2k_public_member_number and unhides
+     it once the lookup returns.
+   - Own profile hero / About-tab Member Number row: already hidden on
+     mobile by V77 (global .v71-fact-num rule + inline display:none on
+     the row) — no rule needed here.
+   - NOT covered on purpose: the review-author dialog
+     (review-experience.js "Member #..." meta) leaks on desktop too, so
+     it is a separate item, not a mobile leak; and the Founder badge's
+     own description text ("Exclusive Founder · Member #000001") is
+     badge copy on the data side. */
+#a2k-d-directory .a2k-d-member-number { display: none !important; }
+#a2k-d-directory .a2k-d-members-layout .a2k-d-members-grid .a2k-d-member-tile > .a2k-d-member-number:not([hidden]) { display: none !important; }
+#a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-sidebar .a2k-d-profile-number { display: none !important; }
