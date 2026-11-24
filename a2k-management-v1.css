@@ -1,0 +1,234 @@
+/* A2K Management Portal — desktop tabbed shell, piece 1 (management layer V1).
+   Anchored under the same scope desktop-vintage.css uses for the workspace
+   (html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog)
+   so nothing leaks to mobile or to any other page. All layer-owned nodes are
+   display:none unless the desktop workspace is active. */
+
+/* ---------- layer nodes are invisible unless the desktop portal is open ---------- */
+#mgmt-tabs,
+#mgmt-founder-pill,
+#mgmt-overview,
+#mgmt-filter-chips{display:none!important;}
+
+@media (min-width:1024px){
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-tabs{
+  display:flex!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-founder-pill{
+  display:inline-block!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-overview:not([hidden]){
+  display:block!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-filter-chips{
+  display:flex!important;
+ }
+
+ /* ---------- header: founder pill, top-right of the portal title ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-founder-pill{
+  position:absolute!important;top:14px!important;right:10px!important;
+  pointer-events:none!important; /* Decorative only: when a panel tab hides
+   the title/intro, the tab bar rises to the top of the dialog and the
+   pill would otherwise sit on top of the System tab and swallow its clicks. */
+  font:700 12px/1 Arial,sans-serif!important;letter-spacing:.14em!important;
+  color:#f3e2c8!important;background:linear-gradient(160deg,#4a1712,#2a0f0c)!important;
+  border:1.5px solid #ba9360!important;border-radius:999px!important;
+  padding:8px 14px!important;
+ }
+
+ /* ---------- tab bar: the profile's tab language (v71) ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-tabs{
+  gap:8px;flex-wrap:nowrap;width:100%;box-sizing:border-box;
+  padding:4px 2px 12px;margin:2px 0 4px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tab{
+  flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:Georgia,serif;font-size:15px;font-weight:700;
+  color:#f3e2c8;background:linear-gradient(160deg,#4a1712,#2a0f0c);
+  border:1.5px solid #a07c51;border-radius:10px;
+  padding:10px 6px;cursor:pointer;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tab:hover{
+  border-color:#d8b17b;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tab.mgmt-tab-active{
+  background:linear-gradient(160deg,#f6e7c9,#e6c998);
+  color:#3a130d;border-color:#d8b17b;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tab-badge{
+  display:inline-block;min-width:22px;text-align:center;
+  font:700 12px/1 Arial,sans-serif;color:#fff;
+  background:#b3271e;border-radius:999px;padding:4px 6px;margin-left:6px;
+  vertical-align:1px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tab.mgmt-tab-active .mgmt-tab-badge{
+  background:#8a1d16;
+ }
+
+ /* ---------- overview replaces the old home list on desktop ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active dialog#management-dialog[data-mgmt-tab="overview"] > .management-tools{
+  display:none!important;
+ }
+
+ /* ---------- overview: count cards ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-count-cards{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;
+  margin:6px 0 16px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-count-card{
+  display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+  text-align:left;min-width:0;cursor:pointer;
+  padding:18px 18px 14px;border:1.5px solid #b7915f;border-radius:13px;
+  background:linear-gradient(135deg,#3f1610,#1c0c09);
+  box-shadow:inset 0 0 0 1px #dab38125,0 3px 8px #0006;
+  color:#f8dfb9;font-family:Georgia,serif;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-count-card:hover{
+  border-color:#d8b17b;background:linear-gradient(135deg,#642218,#2a120e);
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-count-num{
+  font-size:42px;line-height:1;font-weight:700;color:#f5dfbb;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-count-label{
+  font-size:16px;font-weight:700;color:#f8dfb9;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-count-link{
+  font:700 13px Arial,sans-serif;color:#d8b17b;margin-top:4px;
+ }
+
+ /* ---------- overview: shortcuts row ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-shortcuts{
+  display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 18px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-shortcuts-label{
+  font:italic 700 15px Georgia,serif;color:#d9c4a5;margin-right:4px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-shortcut{
+  font:700 13px Arial,sans-serif;color:#f3e2c8;cursor:pointer;
+  background:linear-gradient(160deg,#4a1712,#2a0f0c);
+  border:1.5px solid #a07c51;border-radius:999px;padding:8px 16px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-shortcut:hover{
+  border-color:#d8b17b;
+ }
+
+ /* ---------- overview: two columns ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-overview-cols{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;
+  align-items:start;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-needs,
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-quick-tools{
+  border:1.5px solid #b7915f;border-radius:13px;
+  background:linear-gradient(135deg,#3f1610,#1c0c09);
+  box-shadow:inset 0 0 0 1px #dab38125,0 3px 8px #0006;
+  padding:18px 20px;min-width:0;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-section-title{
+  font:italic 700 24px Georgia,serif;color:#f5dfbb;margin:0 0 12px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-need-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 0;border-top:1px solid #5a2f28;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-need-row:first-child{
+  border-top:0;padding-top:2px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-need-copy{
+  display:flex;flex-direction:column;gap:2px;min-width:0;
+  font:14px/1.45 Arial,sans-serif;color:#e8d5bd;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-need-copy strong{
+  font:700 15px Georgia,serif;color:#f8dfb9;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-need-copy small{
+  color:#d9c4a5;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-need-review{
+  flex:none;font:700 13px Arial,sans-serif;color:#f8e5c7;cursor:pointer;
+  background:linear-gradient(180deg,#72251c,#50150e);
+  border:1.5px solid #ba8d5b;border-radius:9px;padding:9px 16px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-needs-empty{
+  font:italic 15px Georgia,serif;color:#d9c4a5;margin:4px 0;
+ }
+
+ /* ---------- overview: parchment tool rows ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tool-row{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(160deg,#f6e7c9,#e6c998);
+  border:1.5px solid #d8b17b;border-radius:12px;
+  padding:14px 16px;margin:0 0 12px;color:#3a130d;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tool-icon{
+  flex:none;display:flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:10px;font-size:22px;
+  background:linear-gradient(160deg,#4a1712,#2a0f0c);color:#f3e2c8;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tool-copy{
+  flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tool-copy strong{
+  font:700 17px Georgia,serif;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tool-copy small{
+  font:13px/1.4 Arial,sans-serif;color:#5c3a2a;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tool-open{
+  flex:none;font:700 13px Arial,sans-serif;color:#f8e5c7;cursor:pointer;
+  background:linear-gradient(180deg,#72251c,#50150e);
+  border:1.5px solid #ba8d5b;border-radius:9px;padding:9px 14px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tools-note{
+  font:italic 13px Georgia,serif;color:#d9c4a5;margin:2px 0 0;
+ }
+
+ /* ---------- approvals: filter chips replace the dropdown ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-approvals .atk-approval-filter-label{
+  display:none!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-filter-chips{
+  flex-wrap:wrap;gap:8px;margin:4px 0 16px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-chip{
+  font:700 13px Arial,sans-serif;color:#f3e2c8;cursor:pointer;white-space:nowrap;
+  background:linear-gradient(160deg,#4a1712,#2a0f0c);
+  border:1.5px solid #a07c51;border-radius:999px;padding:9px 15px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-chip:hover{
+  border-color:#d8b17b;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-chip.mgmt-chip-active{
+  background:linear-gradient(160deg,#f6e7c9,#e6c998);
+  color:#3a130d;border-color:#d8b17b;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-chip-count{
+  font-weight:400;opacity:.85;
+ }
+
+ /* Special-events pseudo-filter: only the events section shows. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-approvals.mgmt-events-only #atk-approval-results,
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-approvals.mgmt-events-only .atk-review-notification-section{
+  display:none!important;
+ }
+
+ /* Deep-link landing highlight on the exact item. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-deep-flash{
+  outline:2px solid #e0b052!important;outline-offset:3px;
+  background:linear-gradient(135deg,#5a2318,#2a120e)!important;
+  border-radius:12px;
+ }
+
+ /* Narrow desktop: two-across count cards, stacked overview columns. */
+ @media (min-width:1024px) and (max-width:1240px){
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-count-cards{
+   grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-overview-cols{
+   grid-template-columns:minmax(0,1fr);
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-tab{
+   font-size:13.5px;padding:9px 4px;
+  }
+ }
+}
