@@ -1,0 +1,84 @@
+/* Addicted to Karaoke - mobile bottom-nav fix, layer V89 (Milo, Nov 24, 2026).
+   Steven: "The scrolling feature is what I want. I want the menu bar to
+   stay there and everything slide behind it."
+   The menu bar is fixed to the viewport bottom on mobile; every scroll
+   container gets enough bottom padding that its last content scrolls
+   fully clear of the bar; the bar is opaque. The site footer is moved
+   into the scroll flow by the companion JS layer so it slides behind
+   the bar like any other content instead of dangling below it.
+   Mobile only: desktop uses the sidebar and hides this nav entirely. */
+@media (max-width: 1023px) {
+  /* 1. The bar: fixed to the viewport bottom on every mobile screen.
+     Two rules so the position beats both the home (relative!important)
+     and the other-screen (sticky) index rules. Widths are left to the
+     per-screen rules: home is full-width, other screens cap at 580px
+     and center via margin auto. */
+  html:not(.a2k-desktop-live) body:has(#home-screen:not([hidden])) #unified-nav,
+  html:not(.a2k-desktop-live) body:not(:has(#home-screen:not([hidden]))) #unified-nav {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    z-index: 60 !important;
+  }
+
+  /* 2. Opaque on Home too (was rgba(3,2,2,.98)). Other screens already
+     use opaque gradients. */
+  html:not(.a2k-desktop-live) body:has(#home-screen:not([hidden])) #unified-nav {
+    background: rgb(3, 2, 2) !important;
+  }
+
+  /* 3. Bottom clearance for every mobile scroll container. The tallest
+     nav variant is ~112px, so 132px + safe-area leaves breathing room
+     and the last content scrolls fully above the bar. */
+  html:not(.a2k-desktop-live) body:not(:has(#home-screen:not([hidden]))) #unified-pages {
+    padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  html:not(.a2k-desktop-live) body:has(#home-screen:not([hidden])) #home-screen {
+    padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  html:not(.a2k-desktop-live) body #venue-screen:not([hidden]) {
+    padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* 4. The scroll containers are flex columns so the footer (moved into
+     the flow by the JS layer) pins to the bottom on short pages via
+     margin-top:auto instead of dangling in empty space. :not([hidden])
+     keeps the display:none rules for the inactive container intact. */
+  html:not(.a2k-desktop-live) body #unified-pages:not([hidden]) {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  html:not(.a2k-desktop-live) body #venue-screen:not([hidden]) {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  /* #home-screen is the actual scroller on Home; it must also be a flex
+     column for the footer's margin-top:auto pinning to work (it renders
+     as block today, so the auto margin computes to 0 and the footer's
+     bottom padding ends up behind the bar at rest). */
+  html:not(.a2k-desktop-live) body:has(#home-screen:not([hidden])) #home-screen:not([hidden]) {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* 5. The content children must not shrink: a flex item's default
+     flex-shrink:1 lets a tall screen (or the home content, or the venue
+     body) shrink to fit the container, which strands the footer pinned
+     to the viewport bottom instead of following the content to its end. */
+  html:not(.a2k-desktop-live) body #unified-pages:not([hidden]) > .unified-screen,
+  html:not(.a2k-desktop-live) body #home-screen:not([hidden]) > :not(.a2k-site-footer),
+  html:not(.a2k-desktop-live) body #venue-screen:not([hidden]) > .body {
+    flex-shrink: 0 !important;
+  }
+
+  /* 6. The footer, once inside the scroll flow: pin to the bottom of
+     short pages. Its own 112px mobile bottom padding is no longer the
+     clearance mechanism (the containers above provide it), so restore
+     the base padding. */
+  html:not(.a2k-desktop-live) body .a2k-site-footer {
+    margin-top: auto !important;
+    padding-bottom: 34px !important;
+  }
+}
