@@ -1,6 +1,11 @@
 /* Addicted to Karaoke — member layer V86: profile-editing dedup cleanup.
    Companion: a2k-member-v86.js. Profile's existing card language
-   (burgundy / cream / gold); desktop-first, mobile inherits the stack. */
+   (burgundy / cream / gold); desktop-first, mobile inherits the stack.
+   push111 (Nov 24, 2026): Account Settings page redesign as TABS
+   (Steven: "tabs make it look nicer") — three tabs (Privacy / Public
+   Details / Account), one group visible at a time; compact rows and a
+   toggle switch for Public Details. Layout/theme only; every control,
+   save path and behaviour is unchanged. */
 
 /* The old About-tab Settings card goes away once the Account Settings
    page exists. It stays in the DOM (V71's placer re-asserts it) but is
@@ -29,10 +34,10 @@ html.a2k-desktop-live.v86-account-open #signin-screen #auth-profile:not([hidden]
    Re-assert the 18px size inside the Account page. */
 #v86-account-page .profile-privacy-title { display: inline-flex; align-items: center; gap: 7px; }
 #v86-account-page .profile-privacy-title svg { width: 18px; height: 18px; flex: none; }
-.v86-account-open #signin-screen .auth-wrap { max-width: 520px; }
 
-#v86-account-page { max-width: 520px; margin: 0 auto; padding: 6px 0 30px; }
-#v86-account-page .v86-acct-section { margin-bottom: 14px; }
+/* One tab visible at a time; the page is a centered 860px column
+   (the mockup's width) inside the sign-in wrap. */
+#v86-account-page { max-width: 860px; margin: 0 auto; padding: 6px 0 8px; }
 #v86-account-page .member-panel { width: 100%; box-sizing: border-box; }
 
 .v86-acct-head { padding: 6px 4px 16px; }
@@ -47,20 +52,179 @@ html.a2k-desktop-live.v86-account-open #signin-screen #auth-profile:not([hidden]
 .v86-acct-title { font: 700 22px Georgia, serif; color: #f5e5cc; margin: 0 0 8px; }
 .v86-acct-note { color: #d2b8af; font-size: 13px; line-height: 1.5; margin: 0 0 12px; }
 
-/* Public Details toggle rows (same tile language as Privacy & Visibility). */
-.v86-toggle-list { display: grid; gap: 12px; }
+/* ---- push111 tabs ---- */
+.v86-acct-tabs { display: flex; gap: 8px; margin: 0 0 16px; }
+.v86-acct-tab {
+  flex: 1 1 0; min-width: 0; padding: 11px 8px; border: 1px solid #a07b50;
+  border-radius: 10px; background: #1c110c; color: #f3e2c8;
+  font: 700 15px Georgia, serif; cursor: pointer;
+}
+.v86-acct-tab.on { background: linear-gradient(#722a26, #491b1d); border-color: #c89669; }
+.v86-acct-panel { display: none; }
+.v86-acct-panel.on { display: block; }
+
+/* ---- push111: one card per tab panel ----
+   V86 moved the Privacy, Contact, Notifications and Delete sections out
+   of .a2k-profile-settings-panel (and Privacy out of .member-about),
+   orphaning the scoped card/heading/button rules that styled them
+   there — that is why most sections rendered bare while Public Details
+   (which carries .member-panel) kept its card. The Privacy and Public
+   Details panels each carry one card; the Account panel IS one card
+   holding its sections as rows. Card language follows the mockup:
+   panel gradient, 1px #a07b50 border, 12px radius. The !important is
+   load-bearing: a2k-core.css gives every .member-panel the same card
+   with !important (which would also re-card the Account mirror row
+   unless the neutralizer below beats it). */
+#v86-account-page .v86-acct-panel-privacy > section,
+#v86-account-page .v86-acct-panel-details > section,
+#v86-account-page .v86-acct-panel-account {
+  background: var(--tpl-panel-grad) !important;
+  border: 1px solid #a07b50 !important;
+  border-radius: 12px !important;
+  padding: 14px 18px;
+  box-sizing: border-box;
+}
+/* The Privacy card's heading is the section's own title (shield +
+   "Privacy & Visibility"); the moved section lost its .member-about
+   ancestor, so the 15px title rule is orphaned — re-assert it here
+   at the mockup's 18px card-heading size. */
+#v86-account-page .profile-about-privacy .profile-section-top > strong {
+  font: 700 18px/1.3 Georgia, serif; color: #f5e5cc;
+}
+/* The tap-to-save hint only existed as an aria-label on
+   #member-privacy-summary, so it was never seen. v86.js now inserts it
+   as visible text (same wording). */
+#v86-account-page .v86-privacy-hint {
+  color: #d2b8af; font-size: 13px; line-height: 1.5; margin: 0 0 4px;
+}
+
+/* ---- push111: Privacy fieldsets as compact rows ----
+   Each fieldset is one row: legend (label) on the left, the tile group
+   on the right. The tile rules in a2k-members.css (Build 235) are
+   !important 3-across 46px buttons; these triple-ID selectors beat
+   them. The V85 badges fieldset's helper note wraps to its own line
+   below the row. */
+#v86-account-page #v86-panel-privacy #member-privacy-summary .profile-privacy-fieldset {
+  display: flex !important; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 4px 16px !important;
+  margin: 0 !important; padding: 11px 0 !important; border: 0 !important;
+}
+#v86-account-page #v86-panel-privacy #member-privacy-summary .profile-privacy-fieldset + .profile-privacy-fieldset {
+  border-top: 1px solid #4a3226 !important;
+}
+#v86-account-page #v86-panel-privacy #member-privacy-summary .profile-privacy-fieldset legend,
+#v86-account-page #v86-panel-privacy #member-privacy-summary .profile-privacy-fieldset .v86-privacy-legend {
+  flex: 1 1 auto !important; min-width: 0; padding: 0 !important;
+  font-size: 15px !important; font-weight: 700; color: #f7e6d9;
+}
+#v86-account-page #v86-panel-privacy #member-privacy-summary .a2k-privacy-tile-grid {
+  display: flex !important; flex: 0 0 auto !important; gap: 6px !important;
+  width: auto !important; max-width: none !important;
+  grid-template-columns: none !important; justify-content: flex-end !important;
+}
+#v86-account-page #v86-panel-privacy #member-privacy-summary .a2k-privacy-tile {
+  height: 36px !important; min-height: 36px !important; max-height: 36px !important;
+  padding: 5px 12px !important; width: auto !important; min-width: 0 !important;
+  flex-direction: row !important; gap: 6px !important; aspect-ratio: auto !important;
+  font-size: 13px !important;
+}
+#v86-account-page #v86-panel-privacy #member-privacy-summary .a2k-privacy-tile svg {
+  width: 15px !important; height: 15px !important; flex: 0 0 15px !important;
+}
+#v86-account-page #v86-panel-privacy #member-privacy-summary .a2k-privacy-tile strong {
+  font-size: 13px !important;
+}
+/* The pressed gradient loses to body .app .a2k-privacy-tile's !important
+   generic card background in a2k-core.css — re-assert it here (the
+   2px border is compensated by 1px less padding, border-box). */
+#v86-account-page #v86-panel-privacy #member-privacy-summary .a2k-privacy-tile[aria-pressed="true"] {
+  background: linear-gradient(145deg, #762a27, #531c1b) !important;
+  border: 2px solid #e0b17e !important;
+  box-shadow: inset 0 0 0 1px #a85f46 !important;
+  padding: 4px 11px !important;
+}
+#v86-account-page #v86-panel-privacy #member-privacy-summary .profile-privacy-note {
+  flex: 1 1 100% !important; margin: 2px 0 0 !important;
+  font-size: 12.5px; line-height: 1.5; color: #d2b8af;
+}
+
+/* ---- push111: Public Details rows + toggle switches ---- */
+.v86-toggle-list { display: grid; gap: 0; }
 .v86-toggle-row {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 10px 12px; border: 1px solid #965454; border-radius: 16px;
-  background: linear-gradient(#321c1f, #241214);
+  padding: 11px 0;
 }
+.v86-toggle-row + .v86-toggle-row { border-top: 1px solid #4a3226; }
 .v86-toggle-text { flex: 1; min-width: 0; }
 .v86-toggle-text strong { display: block; color: #f8e8db; font-size: 14px; }
 .v86-toggle-text small { display: block; color: #d2b8af; font-size: 12px; line-height: 1.4; margin-top: 3px; }
-.v86-toggle-grid { flex: 0 0 auto; }
-#v86-account-page .v86-toggle-grid .a2k-privacy-tile { min-width: 76px; }
+.v86-switch-wrap { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+.v86-switch {
+  flex: 0 0 auto; width: 46px; height: 26px; border-radius: 13px; padding: 0;
+  background: #3a2a20; border: 1px solid #a07b50; position: relative; cursor: pointer;
+}
+.v86-switch-knob {
+  position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+  border-radius: 50%; background: #cbb28a;
+}
+.v86-switch.on { background: linear-gradient(#722a26, #491b1d); border-color: #c89669; }
+.v86-switch.on .v86-switch-knob { left: 22px; background: #fbe6cc; }
+.v86-switch:disabled { opacity: .6; cursor: wait; }
+.v86-switch-state { font-size: 12.5px; color: #cbb28a; width: 52px; text-align: right; }
 .v86-toggle-feedback { color: #e8d0c7; font-size: 13px; margin: 10px 0 0; min-height: 18px; }
 .v86-toggle-feedback:empty { display: none; }
+
+/* ---- push111: Account tab — one card, sections as rows ---- */
+#v86-account-page .v86-acct-panel-account > .v86-acct-title { margin-bottom: 4px; }
+#v86-account-page .v86-acct-panel-account > section {
+  background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0; margin: 0;
+}
+#v86-account-page .v86-acct-panel-account > section + section {
+  border-top: 1px solid #4a3226; padding-top: 12px; margin-top: 12px;
+}
+/* Row labels inside the Account card (Setup, Contact, Notifications,
+   Account & Data) — the moved sections lost their .member-about /
+   .a2k-profile-settings-panel heading rules, so re-assert a small
+   label size here (not the 22px card-heading size). */
+#v86-panel-account .profile-section-top > strong {
+  font: 700 15px/1.35 Georgia, serif; color: #f7e7db;
+}
+#v86-panel-account .a2k-setup-settings-description,
+#v86-panel-account .a2k-delete-note {
+  color: #d2b8af; font-size: 13px; line-height: 1.5; margin: 3px 0 0;
+}
+#v86-panel-account #v86-setup-entry,
+#v86-panel-account .v86-account-mirror,
+#v86-panel-account #a2k-self-delete-entry {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px 16px;
+}
+#v86-panel-account .v86-row-text { flex: 1 1 auto; min-width: 0; }
+/* Account mirror on the Account Settings page: left-aligned like the
+   rest of the page (was centered while its heading was left). */
+.v86-account-mirror .v86-account-email,
+.v86-account-mirror .v86-account-provider { text-align: left; }
+.v86-account-mirror .v86-account-email { margin: 0; }
+.v86-account-mirror .v86-account-provider { margin: 3px 0 0; }
+.v86-account-signout { flex: 0 0 auto; margin-top: 0; }
+
+/* ---- push111: Delete My Account ----
+   The danger-button rules are scoped to .a2k-profile-settings-panel,
+   which the moved section no longer has — the button rendered as a
+   flat grey browser default. Re-assert them here. The button IS
+   disabled for the Founder account (is_platform_founder RPC), so the
+   disabled state keeps the red styling at reduced opacity instead of
+   falling back to grey: a protected danger action, not a dead control. */
+#v86-account-page .a2k-delete-self-button {
+  display: block; box-sizing: border-box; min-height: 42px; width: auto; max-width: 100%;
+  padding: 10px 17px; border: 1px solid #d18c79; border-radius: 8px;
+  background: linear-gradient(180deg,#a2352e 0%,#79221e 100%); color: #fff3e6;
+  box-shadow: inset 0 1px 0 #ffffff20; font: 700 13px/1.3 Arial, sans-serif;
+  letter-spacing: .015em; text-align: center; cursor: pointer; flex: 0 0 auto;
+}
+#v86-account-page .a2k-delete-self-button:hover:not(:disabled) {
+  border-color: #edb79d; background: linear-gradient(180deg,#b5443a 0%,#8d2b26 100%);
+}
+#v86-account-page .a2k-delete-self-button:disabled { opacity: .7; cursor: not-allowed; }
 
 /* KJ business / hosting-team editor dialogs (reuse .member-dialog). */
 .v86-dialog label { display: block; margin: 11px 0; font-size: 13px; }
@@ -84,14 +248,29 @@ html.a2k-desktop-live.v86-account-open #signin-screen #auth-profile:not([hidden]
 /* KJ Profile card: the Edit Business action sits beside Set Up Host. */
 .v86-kj-biz-edit { white-space: nowrap; }
 
-/* Account mirror on the Account Settings page. */
-.v86-account-mirror .v86-account-email,
-.v86-account-mirror .v86-account-provider { text-align: center; }
-.v86-account-signout { text-align: center; margin-top: 12px; }
-
 /* Setup & Preferences entry on the Account Settings page (moved here from
    the About tab's Settings card in push110; the wizard layer no longer
    creates it in the About panel). Same button language as the old entry
    (the grouped .a2k-setup-reopen rule is scoped to #auth-profile and
    #profile-section-dialog, so the account page needs its own copy). */
 #v86-account-page .a2k-setup-reopen{display:block;min-height:42px;margin:0;padding:10px 13px;border:1px solid #c89669;border-radius:9px;background:linear-gradient(#722a26,#491b1d);color:#fbe6cc;font:700 14px Georgia,serif;max-width:100%}
+
+/* ---- push111: narrow screens ---- */
+@media (max-width: 560px) {
+  .v86-acct-tab { font-size: 13px; padding: 10px 4px; }
+  /* Privacy rows stack: label above, tiles full-width below. */
+  #v86-account-page #v86-panel-privacy #member-privacy-summary .profile-privacy-fieldset {
+    flex-direction: column !important; align-items: stretch !important;
+  }
+  #v86-account-page #v86-panel-privacy #member-privacy-summary .a2k-privacy-tile-grid {
+    width: 100% !important;
+  }
+  #v86-account-page #v86-panel-privacy #member-privacy-summary .a2k-privacy-tile {
+    flex: 1 1 0 !important;
+  }
+  /* Account rows wrap: text full-width, button drops below. */
+  #v86-panel-account #v86-setup-entry,
+  #v86-panel-account .v86-account-mirror,
+  #v86-panel-account #a2k-self-delete-entry { flex-wrap: wrap; }
+  #v86-panel-account .v86-row-text { flex: 1 1 100%; }
+}

@@ -281,17 +281,23 @@
       tx.appendChild(el('strong', '', label));
       tx.appendChild(el('small', '', note));
       row.appendChild(tx);
-      var grid = el('div', 'a2k-privacy-tile-grid v86-toggle-grid');
-      [['shown', 'Shown', true], ['hidden', 'Hidden', false]].forEach(function (opt) {
-        var b = el('button', 'a2k-privacy-tile', null);
-        b.type = 'button';
-        b.dataset.toggleValue = opt[0];
-        b.setAttribute('aria-pressed', 'false');
-        b.appendChild(el('strong', '', opt[1]));
-        b.addEventListener('click', function () { saveFieldToggle(key, opt[2], row); });
-        grid.appendChild(b);
+      /* push111 tabs: one small toggle switch per field instead of two
+         Shown/Hidden pills. Same value, same save path (saveFieldToggle)
+         — presentation only. */
+      var wrap = el('div', 'v86-switch-wrap');
+      var sw = el('button', 'v86-switch', null);
+      sw.type = 'button';
+      sw.setAttribute('role', 'switch');
+      sw.setAttribute('aria-checked', 'true');
+      sw.setAttribute('aria-label', label + ' shown');
+      sw.appendChild(el('span', 'v86-switch-knob'));
+      sw.addEventListener('click', function () {
+        var on = sw.getAttribute('aria-checked') !== 'true';
+        saveFieldToggle(key, on, row);
       });
-      row.appendChild(grid);
+      wrap.appendChild(sw);
+      wrap.appendChild(el('span', 'v86-switch-state', 'Shown'));
+      row.appendChild(wrap);
       list.appendChild(row);
     });
     sec.appendChild(list);
@@ -310,33 +316,36 @@
       var row = page.querySelector('[data-toggle-key="' + key + '"]');
       if (!row) return;
       var on = !prefsData || prefsData[key] !== false; /* wizard/bridge default: shown */
-      row.querySelectorAll('[data-toggle-value]').forEach(function (b) {
-        b.setAttribute('aria-pressed', String(
-          (b.dataset.toggleValue === 'shown' && on) ||
-          (b.dataset.toggleValue === 'hidden' && !on)));
-      });
+      var sw = row.querySelector('.v86-switch');
+      if (sw) {
+        sw.setAttribute('aria-checked', String(on));
+        sw.classList.toggle('on', on);
+        sw.setAttribute('aria-label', def[1] + (on ? ' shown' : ' hidden'));
+      }
+      var state = row.querySelector('.v86-switch-state');
+      if (state) state.textContent = on ? 'Shown' : 'Hidden';
     });
   }
 
   function saveFieldToggle(key, value, row) {
     if (!client() || !signedIn()) return;
     var fb = $('v86-toggle-feedback');
-    var tiles = row ? row.querySelectorAll('[data-toggle-value]') : [];
-    tiles.forEach(function (t) { t.disabled = true; });
+    var controls = row ? row.querySelectorAll('.v86-switch') : [];
+    controls.forEach(function (t) { t.disabled = true; });
     if (fb) fb.textContent = 'Saving…';
     var payload = { user_id: uid(), updated_at: nowIso() };
     payload[key] = value;
     client().from('member_public_preferences').upsert(payload, { onConflict: 'user_id' })
       .select(key).single()
       .then(function (res) {
-        tiles.forEach(function (t) { t.disabled = false; });
+        controls.forEach(function (t) { t.disabled = false; });
         if (!res || res.error || !res.data || res.data[key] !== value) throw new Error('The saved setting could not be verified.');
         prefsData = Object.assign({}, prefsData || {}, res.data);
         renderFieldToggles();
         if (fb) fb.textContent = 'Saved.';
       })
       .catch(function (err) {
-        tiles.forEach(function (t) { t.disabled = false; });
+        controls.forEach(function (t) { t.disabled = false; });
         renderFieldToggles();
         if (fb) fb.textContent = 'Could not save this setting: ' + (err && err.message ? err.message : 'Please try again.');
       });
@@ -345,10 +354,14 @@
   function buildSetupEntry() {
     var sec = el('section', 'a2k-setup-settings-entry');
     sec.id = 'v86-setup-entry';
+    /* push111 tabs: the entry is the first row of the Account card —
+       label + description on the left, button on the right. */
+    var tx = el('div', 'v86-row-text');
     var top = el('div', 'profile-section-top');
     top.appendChild(el('strong', '', 'Setup & Preferences'));
-    sec.appendChild(top);
-    sec.appendChild(el('p', 'a2k-setup-settings-description', 'Review your karaoke interests and profile setup.'));
+    tx.appendChild(top);
+    tx.appendChild(el('p', 'a2k-setup-settings-description', 'Review your karaoke interests and profile setup.'));
+    sec.appendChild(tx);
     var b = el('button', 'a2k-setup-reopen', 'Run Setup Wizard');
     b.type = 'button';
     b.id = 'v86-setup-reopen';
@@ -371,13 +384,16 @@
 
   function buildAccountMirror() {
     var sec = el('section', 'member-panel member-about v86-acct-section v86-account-mirror');
-    sec.appendChild(el('h3', 'v86-acct-title', 'Account'));
+    /* push111 tabs: a row of the Account card (the panel carries the
+       "Account" heading) — email + provider on the left, Sign Out right. */
+    var tx = el('div', 'v86-row-text');
     var email = el('p', 'member-muted v86-account-email');
     email.id = 'v86-account-email';
-    sec.appendChild(email);
+    tx.appendChild(email);
     var provider = el('p', 'member-muted v86-account-provider');
     provider.id = 'v86-account-provider';
-    sec.appendChild(provider);
+    tx.appendChild(provider);
+    sec.appendChild(tx);
     var wrap = el('div', 'v86-account-signout');
     var out = el('button', 'member-button', 'Sign Out');
     out.type = 'button';
@@ -401,6 +417,60 @@
         var psrc = $('auth-display-provider');
         provider.textContent = (psrc && txt(psrc)) || '';
       }
+    } catch (e) {}
+  }
+
+  var activeAcctTab = 'privacy';
+  function setAcctTab(name) {
+    var page = accountPage();
+    if (!page) return;
+    activeAcctTab = name;
+    page.querySelectorAll('.v86-acct-tab').forEach(function (b) {
+      var on = b.dataset.v86Tab === name;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-selected', String(on));
+    });
+    page.querySelectorAll('.v86-acct-panel').forEach(function (p) {
+      p.classList.toggle('on', p.dataset.v86Panel === name);
+    });
+  }
+
+  /* Account tab: the Delete section becomes the last row of the single
+     Account card — heading + note on the left, button on the right.
+     The heading/note nodes carry no handlers; the button keeps its own. */
+  function wrapDeleteRow(del) {
+    try {
+      if (!del || del.querySelector('.v86-row-text')) return;
+      var top = del.querySelector('.profile-section-top');
+      var note = del.querySelector('.a2k-delete-note');
+      if (!top || !note) return;
+      var tx = el('div', 'v86-row-text');
+      top.parentNode.insertBefore(tx, top);
+      tx.appendChild(top);
+      tx.appendChild(note);
+    } catch (e) {}
+  }
+
+  /* push111 tabs: the Privacy fieldsets render as compact rows (label
+     left, tiles right). A <legend> cannot sit beside other content:
+     Chromium always reserves the fieldset's first line for the rendered
+     legend, in flex and grid layouts alike (verified in the harness) —
+     the tiles always wrapped below it. Swap each legend for a span
+     carrying the same text, and keep the group name accessible via
+     aria-label on the fieldset. Idempotent; re-run on every sync so a
+     late-added fieldset (V85's My Badges) is converted too. */
+  function compactPrivacyFieldsets() {
+    try {
+      var summary = document.getElementById('member-privacy-summary');
+      if (!summary) return;
+      summary.querySelectorAll('.profile-privacy-fieldset').forEach(function (fs) {
+        var leg = fs.querySelector('legend');
+        if (!leg) return;
+        var text = (leg.textContent || '').trim();
+        var span = el('span', 'v86-privacy-legend', text);
+        fs.setAttribute('aria-label', text);
+        fs.replaceChild(span, leg);
+      });
     } catch (e) {}
   }
 
@@ -430,38 +500,75 @@
     head.appendChild(el('p', 'v86-acct-sub', 'Privacy, contact details, notifications and your account.'));
     page.appendChild(head);
 
-    /* 0. Setup & Preferences (Run Setup Wizard). push110 (Steven Nov 24,
-       2026): the Settings and Account sections belong in settings, not
-       on About Me — and the wizard button was the one control with no
-       home here (V86 removed it from the About card as duplicating the
-       Overview's Profile Setup & Preferences card; the wizard layer no
-       longer creates it in the About panel). This is now its home on
-       the settings page. The button opens the same wizard the old
-       entry opened (setup-live's atkWelcomeStart, resolved at click
-       time, with the same dialog-close preamble). */
-    page.appendChild(buildSetupEntry());
-    /* 1. Privacy & Visibility (tiles + V85 Show My Badges switch travel
-       inside #member-privacy-summary). */
+    /* push111 tabs (Steven Nov 24, 2026: "tabs make it look nicer"):
+       three tabs across the top — Privacy / Public Details / Account —
+       one group visible at a time. The sections are the same nodes, in
+       the same order, with the same controls and save paths; they are
+       only grouped into panels. Default tab: Privacy. */
+    var tabs = el('div', 'v86-acct-tabs');
+    tabs.setAttribute('role', 'tablist');
+    tabs.setAttribute('aria-label', 'Account Settings sections');
+    [['privacy', 'Privacy'], ['details', 'Public Details'], ['account', 'Account']].forEach(function (def) {
+      var b = el('button', 'v86-acct-tab', def[1]);
+      b.type = 'button';
+      b.dataset.v86Tab = def[0];
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', def[0] === 'privacy' ? 'true' : 'false');
+      if (def[0] === 'privacy') b.classList.add('on');
+      b.addEventListener('click', function () { setAcctTab(def[0]); });
+      tabs.appendChild(b);
+    });
+    page.appendChild(tabs);
+
+    var panelPrivacy = el('div', 'v86-acct-panel v86-acct-panel-privacy on');
+    panelPrivacy.id = 'v86-panel-privacy';
+    panelPrivacy.dataset.v86Panel = 'privacy';
+    panelPrivacy.setAttribute('role', 'tabpanel');
+    var panelDetails = el('div', 'v86-acct-panel v86-acct-panel-details');
+    panelDetails.id = 'v86-panel-details';
+    panelDetails.dataset.v86Panel = 'details';
+    panelDetails.setAttribute('role', 'tabpanel');
+    var panelAccount = el('div', 'v86-acct-panel v86-acct-panel-account');
+    panelAccount.id = 'v86-panel-account';
+    panelAccount.dataset.v86Panel = 'account';
+    panelAccount.setAttribute('role', 'tabpanel');
+    page.appendChild(panelPrivacy);
+    page.appendChild(panelDetails);
+    page.appendChild(panelAccount);
+
+    /* Privacy tab: Privacy & Visibility (tiles + V85 Show My Badges
+       switch travel inside #member-privacy-summary). */
     privacy.classList.add('v86-acct-section');
-    page.appendChild(privacy);
-    /* 2. Public Details — the live per-field toggles (new home). */
-    page.appendChild(buildTogglesSection());
-    /* 3. Contact Visibility (its own save writes both stores). */
+    panelPrivacy.appendChild(privacy);
+    ensurePrivacyHint(privacy);
+    compactPrivacyFieldsets();
+    /* Public Details tab: the live per-field toggles (new home). */
+    panelDetails.appendChild(buildTogglesSection());
+    /* Account tab: one card holding Setup, Contact, Notifications,
+       Account and Account & Data as rows. Setup & Preferences (Run
+       Setup Wizard) is the first row — push110 (Steven Nov 24, 2026):
+       the Settings and Account sections belong in settings, not on
+       About Me. The button opens the same wizard the old entry opened
+       (setup-live's atkWelcomeStart, resolved at click time, with the
+       same dialog-close preamble). */
+    panelAccount.appendChild(el('h3', 'v86-acct-title', 'Account'));
+    panelAccount.appendChild(buildSetupEntry());
+    /* Contact Visibility (its own save writes both stores). */
     contact.classList.add('v86-acct-section');
-    page.appendChild(contact);
-    /* 4. Notifications (placeholder text moves as-is). */
+    panelAccount.appendChild(contact);
+    /* Notifications (placeholder text moves as-is). */
     notices.classList.add('v86-acct-section');
-    page.appendChild(notices);
-    /* 5. Account card (email display, Connected via Google, Sign Out).
+    panelAccount.appendChild(notices);
+    /* Account (email display, Connected via Google, Sign Out).
        The card itself is NOT moved: V71 owns its placement (it is in
        the About view's card list and its placer re-asserts it on every
        tab switch — moving it would ping-pong). It stays in the DOM,
        hidden (see .v86-account-card-hidden), and this page mirrors its
        live values, refreshed on every open. */
     if (accountCard) accountCard.classList.add('v86-account-card-hidden');
-    page.appendChild(buildAccountMirror());
-    /* 6. Account & Data (Delete My Account + Founder protection note). */
-    if (del) { del.classList.add('v86-acct-section'); page.appendChild(del); }
+    panelAccount.appendChild(buildAccountMirror());
+    /* Account & Data (Delete My Account + Founder protection note). */
+    if (del) { del.classList.add('v86-acct-section'); wrapDeleteRow(del); panelAccount.appendChild(del); }
 
     wrap.appendChild(page);
     /* Setup & Preferences is NOT moved: it duplicates the Overview's
@@ -471,6 +578,61 @@
     removeSetupPrefsSection();
     document.documentElement.classList.add('v86-account-ready');
     return true;
+  }
+
+  function ensurePrivacyHint(privacy) {
+    try {
+      var sec = privacy || (accountPage() && accountPage().querySelector('.profile-about-privacy'));
+      if (!sec || sec.querySelector('.v86-privacy-hint')) return;
+      var top = sec.querySelector('.profile-section-top');
+      if (!top) return;
+      var hint = el('p', 'v86-privacy-hint', 'Privacy settings. Tap any option to save it.');
+      top.after(hint);
+    } catch (e) {}
+  }
+
+  /* Desktop sidebar: an Account Settings entry after Profile, kept
+     highlighted while the page is open (push111 redesign). The sidebar
+     is built by desktop-vintage (IIFE, no shared icon helper), so the
+     gear is an inline SVG in the sidebar's own stroke style. Hidden
+     when signed out. */
+  function ensureSidebarEntry() {
+    try {
+      var sidebar = $('a2k-desktop-sidebar');
+      if (!sidebar) return;
+      var btn = sidebar.querySelector('[data-page="account-settings"]');
+      if (!btn) {
+        var profileBtn = sidebar.querySelector('.a2k-d-sidebar-profile');
+        btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'a2k-d-nav-btn';
+        btn.dataset.page = 'account-settings';
+        btn.setAttribute('aria-label', 'Account Settings');
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('aria-hidden', 'true');
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', 'M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z');
+        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', '12');
+        circle.setAttribute('cy', '12');
+        circle.setAttribute('r', '3');
+        svg.appendChild(path);
+        svg.appendChild(circle);
+        btn.appendChild(svg);
+        btn.appendChild(document.createTextNode('Account Settings'));
+        btn.addEventListener('click', function () { openAccount(); });
+        if (profileBtn && profileBtn.nextSibling) sidebar.insertBefore(btn, profileBtn.nextSibling);
+        else sidebar.appendChild(btn);
+      }
+      btn.hidden = !signedIn();
+      /* Vintage's activeMenu runs first on hashchange and points at
+         Home for this hash, so re-assert the highlight here. */
+      if (document.documentElement.classList.contains('v86-account-open')) {
+        sidebar.querySelectorAll('.a2k-d-nav-btn').forEach(function (b) { b.removeAttribute('aria-current'); });
+        btn.setAttribute('aria-current', 'page');
+      }
+    } catch (e) {}
   }
 
   function removeSetupPrefsSection() {
@@ -508,14 +670,20 @@
       window.scrollTo(0, 0);
     } catch (e) {}
     refreshAccountMirror();
+    setAcctTab('privacy');
     /* Fresh values every time the page opens. */
     getPublicPrefs().then(function () { renderFieldToggles(); }).catch(function () {});
     try { if (typeof window.a2kContactSettingsLoad === 'function') window.a2kContactSettingsLoad(); } catch (e) {}
+    ensureSidebarEntry();
     return true;
   }
 
   function hideAccountPage() {
     document.documentElement.classList.remove('v86-account-open');
+    try {
+      var sideBtn = document.querySelector('#a2k-desktop-sidebar [data-page="account-settings"]');
+      if (sideBtn) sideBtn.removeAttribute('aria-current');
+    } catch (e) {}
     /* Return to the tab the member was on (the hero/privacy handlers
        switch the hidden profile to About first — restore the view). */
     try {
@@ -970,6 +1138,9 @@
         observeTeamBody();
         if (accountPage()) removeSetupPrefsSection();
         else buildAccountPage();
+        ensurePrivacyHint();
+        compactPrivacyFieldsets();
+        ensureSidebarEntry();
         wrapMemberEdit();
         wrapMemberSubmit();
         wrapNavigate();
@@ -988,6 +1159,9 @@
       rewireHeroButton();
       ensureKjEditors();
       buildAccountPage();
+      ensurePrivacyHint();
+      compactPrivacyFieldsets();
+      ensureSidebarEntry();
       renderFieldToggles();
       if (signedIn()) {
         getSetupDetails().then(function (d) {
