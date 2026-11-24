@@ -1126,7 +1126,7 @@ if(LIVE){
        if(typeof pub[field]==='boolean')s.privacy[key]=pub[field];
      s.privacy.email=Boolean(pub.published_email);
      s.privacy.phone=Boolean(pub.published_phone);
-     s.kjBusiness=d.kj_business_name||'';s.kjEmail=d.kj_email||'';s.kjPhone=d.kj_phone||'';s.hosts=Array.isArray(d.kj_hosts)?d.kj_hosts.slice(1):[];
+     s.location=d.location_text||'';s.kjBusiness=d.kj_business_name||'';s.kjEmail=d.kj_email||'';s.kjPhone=d.kj_phone||'';s.hosts=Array.isArray(d.kj_hosts)?d.kj_hosts.slice(1):[];
      s.ownerBusiness=d.venue_business_name||'';s.ownerEmail=d.venue_email||'';s.ownerPhone=d.venue_phone||'';
      if(Array.isArray(m.payload.venues))venues=m.payload.venues.map(v=>({...v,city:[v.city,v.state].filter(Boolean).join(', ')}));
      render(false);return;

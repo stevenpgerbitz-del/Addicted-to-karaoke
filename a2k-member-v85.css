@@ -1,0 +1,144 @@
+/* Addicted to Karaoke — member layer V85 styles.
+   Report Member dialog + hero action, member-reports moderation group,
+   badge switch note. Scoped to the member profile scope so nothing
+   leaks onto other pages. */
+
+/* --- Report action: quiet text link beside Share, never a second button --- */
+html.a2k-desktop-live #a2k-d-directory .v74-hero-actions .v85-report-link {
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 2px !important;
+  margin: 0 !important;
+  color: #c9a35f !important;
+  font: 13px/1.4 Georgia, 'Times New Roman', serif !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  cursor: pointer !important;
+  align-self: center !important;
+  flex: 0 0 auto !important;
+}
+html.a2k-desktop-live #a2k-d-directory .v74-hero-actions .v85-report-link:hover {
+  color: #f3e2c8 !important;
+}
+html.a2k-desktop-live #a2k-d-directory .v74-hero-actions {
+  flex-wrap: wrap !important;
+}
+
+/* --- Location fact row (public profile) — inherits the fact language --- */
+html.a2k-desktop-live #a2k-d-directory .a2k-d-profile-fact.v85-location-fact .a2k-d-profile-fact-value {
+  font-weight: 600 !important;
+}
+
+/* --- Report dialog (follows review-reporting.css dark dialog language) --- */
+dialog.v85-report-dialog {
+  width: min(430px, calc(100vw - 28px));
+  border: 1px solid #98524b;
+  border-radius: 15px;
+  background: #211517;
+  color: #f5e4d2;
+  box-shadow: 0 18px 60px #000a;
+  padding: 20px 18px 16px;
+}
+dialog.v85-report-dialog::backdrop { background: #000c; }
+dialog.v85-report-dialog .v85-report-heading h2 {
+  font: italic 700 24px Georgia, serif;
+  color: #f5e4d2;
+  margin: 0 0 4px;
+}
+dialog.v85-report-dialog .v85-report-heading p {
+  margin: 0 0 10px;
+  color: #e0b89e;
+  font-size: 14px;
+}
+dialog.v85-report-dialog .v85-report-caption {
+  font-weight: 700;
+  color: #d6b48a;
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+dialog.v85-report-dialog .v85-report-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+dialog.v85-report-dialog .v85-report-option {
+  border: 1px solid #7b5a4f;
+  border-radius: 10px;
+  background: #2a181c;
+  color: #f5e4d2;
+  font: 14px Georgia, serif;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+dialog.v85-report-dialog .v85-report-option[aria-pressed="true"] {
+  background: #9b2020;
+  border-color: #e0b052;
+  color: #fff;
+  font-weight: 700;
+}
+dialog.v85-report-dialog .v85-report-label {
+  display: block;
+  font: 14px Georgia, serif;
+  color: #d6b48a;
+  margin: 2px 0 5px;
+}
+dialog.v85-report-dialog textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: #3a2329;
+  color: #f5e4d2;
+  border: 1px solid #7b5a4f;
+  border-radius: 9px;
+  padding: 10px;
+  font: 15px/1.5 Georgia, serif;
+  resize: vertical;
+}
+dialog.v85-report-dialog textarea::placeholder { color: #b79580; }
+dialog.v85-report-dialog .v85-report-feedback {
+  min-height: 1.3em;
+  margin: 9px 0 4px;
+  font: 13px Arial, sans-serif;
+  color: #e0b89e;
+}
+dialog.v85-report-dialog .v85-report-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+dialog.v85-report-dialog .v85-report-cancel {
+  background: transparent;
+  border: 1px solid #7b5a4f;
+  color: #f5e4d2;
+  border-radius: 9px;
+  padding: 8px 14px;
+  font: 15px Georgia, serif;
+  cursor: pointer;
+}
+dialog.v85-report-dialog .v85-report-submit {
+  background: linear-gradient(#b4162b, #65000f);
+  color: #fff7e1;
+  border: 1px solid #e0b052;
+  border-radius: 9px;
+  padding: 8px 16px;
+  font: bold 15px Georgia, serif;
+  cursor: pointer;
+}
+dialog.v85-report-dialog .v85-report-submit:disabled { opacity: .55; cursor: default; }
+
+/* --- Member reports group inside the Approval Center --- */
+#atk-approval-results .v85-member-reports-group {
+  margin-top: 18px;
+}
+#atk-approval-results .v85-member-reports-group .atk-approval-group-label {
+  margin-top: 0;
+}
+
+/* --- Badge switch note --- */
+.v85-badges-note {
+  font-size: 12.5px !important;
+  color: #b79580 !important;
+  margin-top: 6px !important;
+}

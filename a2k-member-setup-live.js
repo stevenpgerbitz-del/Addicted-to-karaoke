@@ -31,7 +31,7 @@ function open(isManual){
  overlay.setAttribute('aria-modal','true');
  frame=document.createElement('iframe');
  frame.title='Addicted to Karaoke Member Setup Wizard';
- frame.src='member-setup-preview.html?live=1&v=352';
+ frame.src='member-setup-preview.html?live=1&v=353';
  frame.setAttribute('referrerpolicy','same-origin');
  frame.onerror=function(){
    var m=manual;close();
@@ -165,7 +165,15 @@ async function save(payload){
     venue_show_email:roles.includes('owner')&&priv.email===true,venue_show_phone:roles.includes('owner')&&priv.phone===true,updated_at:now};
    fail(await client().from('member_setup_details').upsert(d,{onConflict:'user_id'}));
  }
- 
+ /* V85: save the location typed in the wizard. It was collected for months
+    and silently dropped — only the show_location flag was ever written.
+    Unconditional: singers never enter the kj/owner block above, and Steven
+    himself is singer-only. location_text lives in member_setup_details
+    (migration member_location_and_member_reports_v84); display is gated
+    server-side by a2k_public_member_location + show_location. */
+ fail(await client().from('member_setup_details').upsert(
+   {user_id:id,location_text:text(s.location,120)||null,updated_at:now},{onConflict:'user_id'}));
+
  // Persist optional visibility controls; never store unselected contact data in a publicly readable row.
  var publishEmail=priv.email===true?text(s.kjEmail||s.ownerEmail||user().email,254):null;
  var publishPhone=priv.phone===true?text(s.kjPhone||s.ownerPhone,40):null;
