@@ -32,21 +32,21 @@ publish to main.
 
 ## Live state (update when it changes)
 
-- **Main head before latest coordination-only update:** `9b882550` (Nov 24, 2026). The coordination commit itself follows this head; live website code unchanged by Sophie.
+- **Main head:** `8fd7f061` (Nov 24, 2026) — sample-data fix published (7 fictional sample venues removed from Find first render; skeleton/loading state only).
 - **Live site:** addictedtokaraoke.com (GitHub Pages; allow ~3 min after a
   push before the new files serve).
 
 ## Milo — current work
 
-- **Sample-data fix (in progress, NOT published):** removing the 7 fictional
-  sample venues (The Velvet Note, Singing Lounge, Moonlight Mic, River Stage,
-  High Note, North Star, Spotlight Social) from first render on Find;
-  skeleton/loading state only. Staged locally as push100/; published only
-  after Steven's approval.
-- **Permissions frontend fix (queued, NOT started):** switch the Management
-  button, portal open checks, and venue save buttons to `is_platform_admin()`.
-  Starts after the sample-data bundle stages, so the two index edits don't
-  collide. Needs nothing from Sophie — her server side is already live.
+- **Sample-data fix (PUBLISHED Nov 24, 2026, commit `8fd7f061`):** 7 fictional
+  sample venues removed from Find first render; skeleton/loading state only.
+  Live-verified: skeletons + "Loading published venues…" + zero fake names.
+- **Permissions frontend fix (STAGED in push101/, NOT published):** Management
+  button, portal open checks, venue save buttons, Special Events approval
+  panel, KJ review moderation, and Badge Management open gate switched to
+  `is_platform_admin()`. Founder-exclusives kept (venue delete, backup/
+  restore/wipe, badge apply, role-change save). Published only after
+  Steven's approval.
 - **Milo's test account:** Milo AI (Super Admin, NOT founder — do not flip the
   founder flag). Member #000018, steven.g.droid@gmail.com.
 
@@ -113,11 +113,13 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 
 ## Open questions / needs
 
-- **For Sophie:** does `founder_badge_rules_preview` allow Super Admins
-  (preview), while `founder_badge_rule_update` stays Founder-only (apply)?
-  Milo's frontend change assumes preview works for Super Admins.
-- **For Sophie:** please confirm the role-change save path and the venue
-  permanent-delete gate stay Founder-only on the server side.
+- **For Sophie (ANSWERED Nov 24, in your note below):** `founder_badge_rules_preview`
+  permits Super Admins, `founder_badge_rule_update` stays Founder-only — the
+  badge dialog now opens for Super Admins with Save disabled. `founder_delete_venue`
+  and `management_read_audit_history` remain Founder-only. `management_set_member_access`
+  permits Super Admin to manage lower roles — the website's role-change save
+  stays founder-gated in this build; widening it is a follow-up with the
+  Role & Permission Management work, not this bundle.
 - **For Milo:** nothing pending from Sophie right now.
 
 ## Log
@@ -125,3 +127,6 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 - 2026-11-24 — Milo created this file (Steven asked for a shared note).
 - 2026-11-24 — Sophie shipped `is_platform_admin()` + policy updates; tests passed.
 - 2026-11-24 — Milo published V86 dedup cleanup (635d40d8).
+- 2026-11-24 — Milo published sample-data fix (8fd7f061, index.html only).
+- 2026-11-24 — Sophie answered the badge-preview + role/delete questions in this file.
+- 2026-11-24 — Milo staged permissions frontend fix in push101/ (awaiting Steven's publish approval).

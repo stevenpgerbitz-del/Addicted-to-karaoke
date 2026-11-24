@@ -274,14 +274,14 @@ function ensureKjReviewManagementEntry(){
  var header=panel.querySelector('.mg3-heading');
  if(header)header.insertAdjacentElement('afterend',button);
  else panel.prepend(button);
- db()?.rpc('is_platform_founder').then(result=>{
+ db()?.rpc('is_platform_admin').then(result=>{
    button.hidden=result?.error || result?.data!==true;
  }).catch(()=>{button.hidden=true});
 }
 async function moderationOpen(){
  if(!db()||!user())return;
- var founder=await db().rpc('is_platform_founder');
- if(founder.error||founder.data!==true)return;
+ var admin=await db().rpc('is_platform_admin');
+ if(admin.error||admin.data!==true)return;
  moderationDialog.showModal();await refreshModeration();
 }
 async function refreshModeration(){

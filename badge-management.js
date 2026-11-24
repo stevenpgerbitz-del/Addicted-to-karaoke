@@ -8,7 +8,7 @@ const groups=[
 ['Venue Contributions','⌖',[['venue_1','Karaoke Scout'],['venue_10','Karaoke Discoverer'],['venue_25','Karaoke Pathfinder'],['venue_100','Karaoke Pioneer']]]];
 const $=id=>document.getElementById(id);
 const node=(tag,cl,t)=>{const e=document.createElement(tag);if(cl)e.className=cl;if(t!==undefined)e.textContent=t;return e};
-let rules=new Map(),choice=null,busy=false;
+let rules=new Map(),choice=null,busy=false,canApply=false;
 const css='\
 #abm-dialog{width:min(95vw,720px);max-height:92dvh;overflow:auto;border:2px solid #be925c;border-radius:15px;padding:0;background:#281317;color:#fff0db;box-shadow:0 12px 70px #000b}\
 #abm-dialog::backdrop{background:#000b}\
@@ -35,7 +35,7 @@ function ensure(){
  if($('abm-dialog'))return $('abm-dialog');
  const st=node('style');st.textContent=css;document.head.append(st);
  const d=node('dialog');d.id='abm-dialog';d.setAttribute('aria-label','Badge Management');
- const h=node('div','abm-head');h.append(node('h2','','Badge Management'),node('p','','Addicted to Karaoke · Founder-only achievement requirements'));
+ const h=node('div','abm-head');h.append(node('h2','','Badge Management'),node('p','','Addicted to Karaoke · Achievement requirements'));
  const body=node('div','abm-body');body.id='abm-body';
  body.append(node('p','abm-footnote','Preview each change before saving. Existing awards are protected when requirements rise. The approved 24-badge collection is now live; Favorite Venue achievements are active.'));
  const preview=node('section','abm-preview');preview.id='abm-preview';preview.hidden=true;
@@ -77,7 +77,7 @@ async function review(code,name,raw){
     'About '+data.new_awards_estimate+' additional members may qualify immediately.'));
   const buttons=node('div');buttons.style.cssText='display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap';
   const cancel=node('button','','Cancel');cancel.onclick=()=>{choice=null;preview.hidden=true;status.textContent='Canceled.'};
-  const save=node('button','','Save Requirement');save.onclick=saveChoice;buttons.append(cancel,save);preview.append(buttons);preview.hidden=false;
+  const save=node('button','','Save Requirement');save.onclick=saveChoice;if(!canApply){save.disabled=true;preview.append(node('p','','Only the Founder can apply badge changes. You can preview the effect here.'));}buttons.append(cancel,save);preview.append(buttons);preview.hidden=false;
   status.textContent='Confirm this change or cancel.';
  }catch(e){status.textContent='Could not preview: '+(e.message||'Unknown error')}
  finally{busy=false}
@@ -93,7 +93,8 @@ async function saveChoice(){
 }
 async function open(){
  if(!authClient||!authUser)return;
- const {data,error}=await authClient.rpc('is_platform_founder');if(error||data!==true){alert('Founder authorization required.');return}
+ const {data,error}=await authClient.rpc('is_platform_admin');if(error||data!==true){alert('Management access is unavailable for this account.');return}
+ const founderCheck=await authClient.rpc('is_platform_founder');canApply=!founderCheck.error&&founderCheck.data===true;
  const d=ensure();if(!d.open)d.showModal();await reload();
 }
 function init(){

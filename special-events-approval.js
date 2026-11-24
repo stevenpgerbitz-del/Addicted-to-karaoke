@@ -33,8 +33,8 @@
    const count=root.querySelector('.a2k-special-approval-count');
    count.textContent='Checking submissions…';
    try{
-     const [founder,suggestions,venues]=await Promise.all([
-       authClient.rpc('is_platform_founder'),
+     const [admin,suggestions,venues]=await Promise.all([
+       authClient.rpc('is_platform_admin'),
        authClient.from('karaoke_event_suggestions')
          .select('id,venue_name,city,state,address,title,start_at,end_at,host_name,notes,source_url,created_at')
          .in('status',['submitted','under_review'])
@@ -42,7 +42,7 @@
        authClient.from('venues').select('id,name,city,publication_status')
          .eq('published',true).order('name')
      ]);
-     if(founder.error||founder.data!==true){root.hidden=true;return;}
+     if(admin.error||admin.data!==true){root.hidden=true;return;}
      if(suggestions.error)throw suggestions.error;
      if(venues.error)throw venues.error;
      root.hidden=false;list.replaceChildren();
