@@ -1,0 +1,493 @@
+/*
+ A2K PROFILE V71 — logged-in profile, FULL V64 PREVIEW MATCH,
+ 2026-11-22. Companion to a2k-profile-v71.js. Supersedes the V70
+ layer (a2k-profile-v70.js/css stay in the repo, unused).
+
+ Everything V70 got right is carried forward unchanged in effect:
+ the tab bar and hero placed as full-width rows 1/2 of the profile
+ grid (desktop-vintage.css owns that grid at 2-2-1), the hero
+ template rule at 1-3-1 and zone rules at 1-4-1 that beat the
+ incumbents, the founder badge display rule at 2-3-0 (outranking
+ a2k-profile-grid.css's 2-0-0 hide), the stage-name typography at
+ 1-3-1, build-stamp suppression in the hero, the Favorite Music &
+ Eras split card with the genres module's own chip styles re-applied,
+ per-tab filtering, wizard rows, My Activity tiles.
+
+ V71's additions, per the approved preview match:
+ - Hero finish: the preview's radial burgundy glow background
+   (from A2K_Profile_Redesign_Interactive.html .profile-header:
+   radial-gradient(ellipse at 47% 1%, #50060a, #250306 64%, #1a0405));
+   the member facts STACKED (Member # / founder badge / Member
+   Since) — the badge restyled as the preview's wide gold bar
+   (.founder: 2px #bd904e border, #120307 ground, #efc56d text);
+   My Roles chips as real buttons with the preview's caption.
+ - Every card carries its own edit/action control in its header
+   (the preview's small burgundy pill), wired by the JS to the
+   site's existing editors.
+ - The About bundle is split: My Story and My Karaoke Interests
+   become their own cards for the About tab. Their inner styles are
+   scoped by the site to ".member-about …" (inline styles), so —
+   exactly like the genres card in V69/V70 — the split cards
+   re-apply those declarations scoped to themselves.
+ - Profile Information gains Member Number / Member Since rows,
+   shown only in the expanded About-tab presentation (where the
+   Karaoke Interests row steps aside, as in the preview).
+ - The Profile Setup card serves four tabs: all rows on Overview,
+   a single row (and the preview's per-tab title) on each role tab.
+
+ Palette per the approved design: burgundy / oxblood panels, antique
+ gold borders, cream text, Georgia italic headings, near-black
+ lounge ground.
+*/
+
+/* The profile is a grid on desktop (desktop-vintage.css owns that
+   and wins); V71 places its two full-width rows explicitly instead
+   of pretending the profile is block flow. */
+#auth-profile{max-width:100%;overflow-x:clip;min-width:0;}
+
+/* ---------- Tab bar: row 1 of the profile grid, full width ---------- */
+#auth-profile > .v71-tabs{
+  grid-column:1 / -1!important;
+  grid-row:1!important;
+  display:flex;gap:8px;flex-wrap:nowrap;
+  width:100%;max-width:100%;box-sizing:border-box;min-width:0;
+  overflow:hidden;
+  padding:4px 2px 12px;
+}
+#auth-profile .v71-tab{
+  flex:1 1 0;min-width:0;max-width:100%;
+  overflow:hidden;text-overflow:ellipsis;
+  font-family:Georgia,serif;font-size:15px;font-weight:700;
+  color:#f3e2c8;background:linear-gradient(160deg,#4a1712,#2a0f0c);
+  border:1.5px solid #a07c51;border-radius:10px;
+  padding:10px 6px;cursor:pointer;white-space:nowrap;
+}
+#auth-profile .v71-tab:hover{border-color:#d8b17b;}
+#auth-profile .v71-tab.v71-tab-active{
+  background:linear-gradient(160deg,#f6e7c9,#e6c998);
+  color:#3a130d;border-color:#d8b17b;
+}
+/* JS fit pass fallbacks, applied only if the bar still measures wide. */
+#auth-profile .v71-tabs.v71-tabs-tight{gap:6px;}
+#auth-profile .v71-tabs.v71-tabs-tight .v71-tab{font-size:13.5px;padding:9px 4px;}
+#auth-profile .v71-tabs.v71-tabs-tight2{gap:5px;}
+#auth-profile .v71-tabs.v71-tabs-tight2 .v71-tab{font-size:12.5px;padding:8px 3px;letter-spacing:-.01em;}
+
+/* ---------- Identity header (the existing hero, restructured) ---------- */
+#auth-profile > .member-hero.v71-hero{
+  grid-column:1 / -1!important;
+  grid-row:2!important;
+}
+/* The hero's own grid + the preview's finish. The
+   html.a2k-desktop-live twin below carries the template at 1-3-1,
+   which is what actually beats desktop-vintage.css's 1-2-1 rule. */
+#auth-profile .member-hero.v71-hero{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.85fr)!important;
+  grid-template-areas:"id roles tools"!important;
+  grid-template-rows:auto!important;
+  align-items:center;gap:14px 22px;
+  text-align:left!important;
+  max-width:100%;box-sizing:border-box;min-width:0;
+  min-height:0!important;height:auto!important;
+  padding:18px 22px!important;
+  /* The V64 preview's hero glow, verbatim from its stylesheet. */
+  background:radial-gradient(ellipse at 47% 1%,#50060a,#250306 64%,#1a0405)!important;
+  border:2px solid #ba894d!important;border-radius:15px!important;
+  box-shadow:inset 0 2px #f3d59855,0 4px 7px #0005!important;
+}
+html.a2k-desktop-live #auth-profile > .member-hero.v71-hero{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.85fr)!important;
+  grid-template-areas:"id roles tools"!important;
+  grid-template-rows:auto!important;
+}
+/* Zone placement via named areas at 1-4-1 (beats desktop-vintage's
+   last-child rule at 1-3-2 — see the V70 header for the full story). */
+html.a2k-desktop-live #auth-profile > .member-hero.v71-hero > .v71-hero-id{
+  grid-area:id!important;
+  display:flex!important;align-items:center;gap:16px;min-width:0;
+}
+html.a2k-desktop-live #auth-profile > .member-hero.v71-hero > .v71-hero-roles{
+  grid-area:roles!important;min-width:0;
+}
+html.a2k-desktop-live #auth-profile > .member-hero.v71-hero > .v71-hero-tools{
+  grid-area:tools!important;min-width:0;
+  display:flex!important;flex-direction:column;gap:8px;
+}
+#auth-profile .member-hero.v71-hero > .v71-hero-id{
+  grid-area:id;
+  display:flex;align-items:center;gap:16px;min-width:0;
+}
+#auth-profile .member-hero.v71-hero > .v71-hero-roles{grid-area:roles;min-width:0;}
+#auth-profile .member-hero.v71-hero > .v71-hero-tools{
+  grid-area:tools;min-width:0;
+  display:flex;flex-direction:column;gap:8px;
+}
+/* Any other direct hero child (a leftover shell, the stamp) is taken
+   out of the zone row entirely. */
+#auth-profile .member-hero.v71-hero > :not(.v71-hero-id):not(.v71-hero-roles):not(.v71-hero-tools){
+  display:none!important;
+}
+#auth-profile .v71-hero .member-avatar{
+  width:118px!important;height:118px!important;flex:none;
+}
+#auth-profile .v71-hero .member-identity-line{justify-content:flex-start!important;}
+/* STAGE NAME — the V64 preview's identity typography (verified live
+   since V69): bold italic Georgia in warm cream. 1-3-1 with
+   !important outranks a2k-vintage-global.css (1-1-1) and
+   desktop-vintage.css's html.a2k-desktop-live rule (1-2-2). */
+#auth-profile .member-hero.v71-hero .member-identity-line h2{
+  font:bold italic clamp(32px,3vw,44px)/1 Georgia,serif!important;
+  color:#fff0ce!important;
+  letter-spacing:-.025em;
+  white-space:nowrap;
+}
+#auth-profile .v71-hero-roles{
+  border-left:2px solid #bd9467;padding-left:22px;min-width:0;
+}
+#auth-profile .v71-hero-tools{
+  border-left:2px solid #bd9467;padding-left:22px;min-width:0;
+}
+#auth-profile .v71-hero-zone-title{
+  font-family:Georgia,serif;font-weight:700;color:#f3e2c8;
+  font-size:19px;margin-bottom:10px;
+}
+#auth-profile .v71-hero-tools .v71-hero-zone-title{margin-bottom:0;}
+#auth-profile .v71-role-chips{display:flex;flex-wrap:wrap;gap:7px;}
+/* Role chips are real buttons (they switch to the role's tab). */
+#auth-profile .v71-role-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#f3e2c8;
+  border:1.5px solid #a07c51;border-radius:999px;
+  padding:6px 12px;background:#3a1512;white-space:nowrap;cursor:pointer;
+}
+#auth-profile button.v71-role-chip:hover{border-color:#d8b17b;}
+#auth-profile .v71-role-chip-static{cursor:default;}
+#auth-profile .v71-roles-caption{
+  font:11px Arial,sans-serif;color:#c7a78a;margin-top:7px;
+}
+#auth-profile .v71-role-note{font-size:13px;color:#d6bea0;font-style:italic;}
+#auth-profile .v71-hero .profile-action-grid{width:100%;}
+/* profile-management-layout.css re-displays this label for founders
+   through a high-specificity :has() rule — pin it off with
+   !important. The tools zone shows only its "Account Tools" title
+   and the buttons, as in the preview. */
+#auth-profile .v71-hero .profile-management-label{display:none!important;}
+/* The interests line is not repeated inside the hero — the My Roles
+   chips beside it already say it, and the Profile Information card
+   mirrors the element's text. The element itself stays in the DOM,
+   untouched, for the code that reads and updates it. */
+#auth-profile .v71-hero #member-karaoke-interests{display:none!important;}
+
+/* ---------- Stacked member facts + the wide founder bar ----------
+   The facts container is a flex column; #auth-display-membership
+   becomes display:contents so its two spans (split from the site's
+   own text by the JS) order around the founder badge:
+   Member # (1) / badge (2) / Member Since (3) — the preview stack. */
+#auth-profile .v71-hero .member-identity-facts{
+  display:flex!important;flex-direction:column;align-items:stretch!important;gap:2px;
+  border-top:none;padding-top:2px;width:100%;
+}
+#auth-profile .v71-hero #auth-display-membership{display:contents;}
+#auth-profile .v71-hero .v71-fact-num{
+  order:1;font-size:14.5px;line-height:1.35;color:#e8cfa5;text-align:left;
+}
+#auth-profile .v71-hero .v71-fact-num{display:none!important;}
+#auth-profile .v71-hero .v71-fact-since{
+  order:3;font-size:14px;line-height:1.35;color:#dfc2a0;text-align:left;
+}
+/* FOUNDER BADGE — the preview's wide gold bar (.founder in the V64
+   stylesheet: 2px solid #bd904e, background #120307, color #efc56d),
+   spanning the name block. The display declaration keeps V69's
+   winning specificity (2-3-0, both IDs + hero scoping) over
+   a2k-profile-grid.css's two-ID hide rule (2-0-0); :not([hidden])
+   means the badge appears only when the site's own auth code has
+   unhidden it for the founder. The text is the site's own. */
+#auth-profile .member-hero.v71-hero #auth-founder-badge:not([hidden]){
+  display:flex!important;align-items:center;justify-content:center;
+  order:2;width:100%;box-sizing:border-box;
+  margin:5px 0 3px;padding:6px 14px;
+  border:2px solid #bd904e;border-radius:6px;
+  background:#120307;
+  color:#efc56d;font-weight:800;font-size:16.5px;letter-spacing:.05em;
+}
+#auth-profile .v71-tool-btn,
+#auth-profile .v71-hero .profile-action{
+  width:100%;text-align:center;
+  font-family:Georgia,serif;font-size:14.5px;font-weight:700;
+  color:#f3e2c8;background:linear-gradient(160deg,#4a1712,#2a0f0c);
+  border:1.5px solid #a07c51;border-radius:9px;
+  padding:9px 12px;cursor:pointer;
+}
+#auth-profile .v71-tool-btn:hover,
+#auth-profile .v71-hero .profile-action:hover{border-color:#d8b17b;}
+/* The build stamp never shows inside the profile hero. The JS tags
+   the stamp's wrapper with .v71-build-stamp; the :has() rule covers
+   the same node even before the tag lands. Hero only. */
+#auth-profile .member-hero.v71-hero > .v71-build-stamp{display:none!important;}
+#auth-profile .member-hero.v71-hero > div:has(> [data-build-version]){display:none!important;}
+
+/* ---------- V71 cards ---------- */
+#auth-profile .v71-card{
+  display:block;box-sizing:border-box;max-width:100%;min-width:0;
+  background:radial-gradient(ellipse at top left,#61241d40,transparent 60%),
+    linear-gradient(150deg,#2e1712,#160d0b);
+  border:1.5px solid #a07c51;border-radius:12px;
+  padding:16px 18px;margin:0 0 12px;
+  box-shadow:inset 0 0 0 2px #e1bc831c;
+}
+/* Grid columns from a2k-profile-grid.js never force width either. */
+#auth-profile .a2k-profile-column{min-width:0;}
+#auth-profile .v71-card-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  margin-bottom:10px;
+}
+#auth-profile .v71-setup-head{display:block;}
+#auth-profile .v71-card-title{
+  font-family:Georgia,serif;font-style:italic;font-weight:700;
+  color:#f5dfba;font-size:20px;margin:0;
+}
+#auth-profile .v71-card-sub{color:#d6bea0;font-size:13px;margin:4px 0 0;}
+/* The preview's per-card edit/action control: a small burgundy pill
+   in the card header. Used by V71's own buttons and by the REAL
+   section Edit buttons the JS moves into the split cards' headers. */
+#auth-profile .v71-card-edit,
+#auth-profile .v71-story-card .profile-section-edit,
+#auth-profile .v71-interests-card .profile-section-edit{
+  flex:none;cursor:pointer;line-height:1;
+  font-family:Georgia,serif;font-weight:700;font-size:13.5px;
+  color:#f6e7c9!important;background:linear-gradient(160deg,#681d19,#48120e);
+  border:1.5px solid #a07c51;border-radius:8px;padding:7px 12px;
+}
+#auth-profile .v71-card-edit:hover,
+#auth-profile .v71-story-card .profile-section-edit:hover,
+#auth-profile .v71-interests-card .profile-section-edit:hover{border-color:#d8b17b;}
+#auth-profile .v71-info-card .v71-card-edit{font-size:15px;padding:6px 11px;}
+
+/* Profile Information rows */
+#auth-profile .v71-info-row{
+  display:flex;gap:14px;padding:8px 0;
+  border-bottom:1px solid #5d4034;font-size:14.5px;
+}
+#auth-profile .v71-info-row:last-child{border-bottom:none;}
+#auth-profile .v71-info-label{color:#f3e2c8;font-weight:700;min-width:132px;}
+#auth-profile .v71-info-value{color:#e9d3ab;font-weight:400;}
+/* Expanded presentation (About tab only): the member-facts rows
+   appear and the Karaoke Interests row steps aside — the preview's
+   About-tab Profile Information (Display Name / Member Number /
+   Member Since; its Location row has no live field and is omitted). */
+#auth-profile .v71-info-row-extra{display:none;}
+#auth-profile[data-v71-view="about"] .v71-info-row-extra{display:flex;}
+#auth-profile[data-v71-view="about"] .v71-info-interests-row{display:none;}
+
+/* ---------- About split cards ----------
+   The moved sections' own header rows duplicate the card titles, so
+   they are hidden; their Edit buttons live in the card headers now.
+   The sections' inner styles are scoped by the site to
+   ".member-about …" — the declarations below re-apply them, scoped
+   to the split cards, so the sections look exactly as they did
+   inside About Me (the same treatment the genres card needed). */
+#auth-profile .v71-split-top{display:none!important;}
+#auth-profile .v71-story-card #member-bio{
+  padding:0;margin:9px 0 0;white-space:pre-wrap;
+  line-height:1.5;font-size:15px;color:#f7e8de;
+}
+#auth-profile .v71-interests-card .profile-interest-badges{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+  margin:10px 0 0;min-height:28px;
+}
+#auth-profile .v71-interests-card .profile-interest-chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 11px;border:1px solid #98534d;border-radius:999px;
+  background:#522124;color:#ffece0;
+  font-size:13px;font-weight:650;line-height:1.2;
+}
+#auth-profile .v71-interests-card .profile-interest-chip svg{
+  width:16px;height:16px;flex:none;stroke:currentColor;fill:none;
+  stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
+}
+#auth-profile .v71-interests-card .profile-interest-empty{color:#cdb7af;font-size:14px;}
+#auth-profile .v71-interests-card .profile-section-edit[hidden],
+#auth-profile .v71-story-card .profile-section-edit[hidden]{display:none!important;}
+
+/* Favorite Music & Eras — the split-out genres card (carried from
+   V70, including the re-applied module styles: a2k-profile-genres.css
+   scopes everything to ".member-about …"). */
+#auth-profile .v71-genres-card .a2k-member-genres-heading{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:10px;
+}
+#auth-profile .v71-genres-card .a2k-member-genres-heading strong{
+  font-family:Georgia,serif;font-style:italic;font-weight:700;
+  color:#f5dfba;font-size:20px;
+}
+#auth-profile .v71-genres-card .a2k-member-genre-chip{
+  border-color:#a07c51;color:#f3e2c8;background:#3a1512;
+}
+#auth-profile .v71-genres-card .a2k-member-genres-chips{
+  display:flex;flex-wrap:wrap;gap:8px;
+}
+#auth-profile .v71-genres-card .a2k-member-genre-chip,
+#auth-profile .v71-genres-card .a2k-member-genre-choice{
+  display:inline-flex;align-items:center;justify-content:center;
+  box-sizing:border-box;min-height:34px;padding:7px 14px;
+  border:1.5px solid #b68b54;border-radius:999px;
+  background:linear-gradient(180deg,#5a281d,#311610);
+  color:#f8ddbb;font:700 13px/1.2 Georgia,serif;
+  box-shadow:inset 0 1px 0 #7c4a30,0 1px 2px #0008;
+}
+#auth-profile .v71-genres-card .a2k-member-genre-choice{cursor:pointer}
+#auth-profile .v71-genres-card .a2k-member-genre-choice[aria-pressed="true"]{
+  background:linear-gradient(180deg,#932f22,#651b18);
+  border:2px solid #f4c08c;
+  padding:6px 13px;
+  box-shadow:inset 0 0 0 1px #b9654b;
+}
+#auth-profile .v71-genres-card .a2k-member-genres-choices{
+  display:grid;gap:15px;min-width:0;
+}
+#auth-profile .v71-genres-card .a2k-member-genre-group{
+  display:block;min-width:0;padding:11px 0 0;
+  border-top:1px solid #75503a;
+}
+#auth-profile .v71-genres-card .a2k-member-genre-group:first-child{
+  padding-top:0;border-top:0;
+}
+#auth-profile .v71-genres-card .a2k-member-genre-group-title{
+  display:block;margin:0 0 10px;color:#f3d5aa;
+  font:700 14px/1.25 Georgia,serif;
+}
+#auth-profile .v71-genres-card .a2k-member-genre-group-choices{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+}
+#auth-profile .v71-genres-card .a2k-member-genres-help{
+  margin:0 0 11px;color:#ddbea4;font:12px/1.45 Georgia,serif;
+}
+#auth-profile .v71-genres-card .a2k-member-genres-heading .profile-section-edit{
+  flex:none;min-height:36px;padding:7px 13px;
+}
+
+/* Favorite Venues: the Add Venue action sits at the panel's top
+   right, where the preview puts it. */
+#auth-profile .v71-fav-actions{display:flex;justify-content:flex-end;margin-bottom:6px;}
+
+/* My Activity stats */
+#auth-profile .v71-stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;
+}
+#auth-profile .v71-stat{
+  background:linear-gradient(160deg,#571d16,#38120e);
+  border:1.5px solid #a07c51;border-radius:10px;
+  padding:12px 8px;text-align:center;
+  display:flex;flex-direction:column;gap:3px;
+}
+#auth-profile .v71-stat-n{color:#f5dfba;font-size:19px;font-weight:700;}
+#auth-profile .v71-stat-label{color:#e9d3ab;font-size:12.5px;}
+
+/* Profile Setup & Preferences rows (parchment rows, like the preview) */
+#auth-profile .v71-setup-list{display:flex;flex-direction:column;gap:9px;}
+#auth-profile .v71-setup-row{
+  display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+  box-sizing:border-box;
+  background:linear-gradient(160deg,#f6e7c9,#ecd3a4);
+  border:1.5px solid #a07c51;border-radius:10px;
+  padding:11px 13px;cursor:pointer;color:#2c130d;
+}
+#auth-profile .v71-setup-row[hidden]{display:none!important;}
+#auth-profile .v71-setup-row:hover{border-color:#7c5a34;}
+#auth-profile .v71-setup-icon{
+  flex:none;width:42px;height:42px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  background:#38120e;color:#f3e2c8;border:1.5px solid #a07c51;
+}
+#auth-profile .v71-setup-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+/* !important + higher specificity — bare color declarations washed
+   out in the full multi-stylesheet cascade (learned in V68). */
+#auth-profile .v71-setup-card .v71-setup-row .v71-setup-name{
+  font-family:Georgia,serif;font-size:16.5px;color:#2c130d!important;
+}
+#auth-profile .v71-setup-card .v71-setup-row .v71-setup-desc{
+  font-size:12.5px;color:#4a3226!important;line-height:1.35;
+}
+#auth-profile .v71-setup-card .v71-setup-row .v71-setup-pill{
+  flex:none;font-family:Georgia,serif;font-weight:700;font-size:13.5px;
+  color:#f6e7c9!important;background:linear-gradient(160deg,#681d19,#48120e);
+  border:1.5px solid #a07c51;border-radius:8px;padding:7px 11px;white-space:nowrap;
+}
+
+/* ---------- Tab filtering ----------
+   EVERY tab shows exactly its own set, Overview included. Cards
+   keep their DOM/grid placement; non-members of the active set are
+   simply not displayed. Group classes are applied by the V71 script
+   at build, and a card may carry several groups (the genres card
+   and the setup card serve multiple tabs). */
+#auth-profile[data-v71-view="overview"] .profile-nav-card:not(.v71-g-overview),
+#auth-profile[data-v71-view="about"] .profile-nav-card:not(.v71-g-about),
+#auth-profile[data-v71-view="karaoke"] .profile-nav-card:not(.v71-g-karaoke),
+#auth-profile[data-v71-view="kj"] .profile-nav-card:not(.v71-g-kj),
+#auth-profile[data-v71-view="venue"] .profile-nav-card:not(.v71-g-venue){
+  display:none!important;
+}
+
+/* ---------- Narrow screens: single column, header stacks ----------
+   (Kept at V68–V70 behavior; the dedicated mobile redo is a later
+   phase.) */
+@media (max-width: 899px){
+  #auth-profile .member-hero.v71-hero{
+    grid-template-columns:1fr!important;
+    grid-template-areas:"id" "roles" "tools"!important;
+    justify-items:center;text-align:center!important;
+  }
+  #auth-profile .v71-hero .member-identity-facts{align-items:center!important;}
+  #auth-profile .v71-hero .v71-fact-num,
+  #auth-profile .v71-hero .v71-fact-since{text-align:center;}
+  #auth-profile .v71-hero #auth-founder-badge:not([hidden]){max-width:280px;margin-left:auto;margin-right:auto;}
+  #auth-profile .v71-hero-id{flex-direction:column;text-align:center;}
+  #auth-profile .v71-hero .member-identity-line{justify-content:center!important;}
+  #auth-profile .v71-hero h2,
+  #auth-profile .v71-hero .member-identity-line h2{text-align:center!important;}
+  #auth-profile .v71-hero .profile-badge-labels{justify-content:center;}
+  #auth-profile .v71-hero-roles,
+  #auth-profile .v71-hero-tools{
+    border-left:none;padding-left:0;width:100%;text-align:center;
+  }
+  #auth-profile .v71-role-chips{justify-content:center;}
+  #auth-profile .v71-tab{font-size:13px;padding:9px 3px;}
+}
+
+/* ---------- V74: View Member Profile link ---------- */
+#auth-profile .v74-view-member{display:block;justify-self:start;align-self:start;margin:0 0 2px 4px;color:#f3e2c8;font:italic 700 15px/1.3 Georgia,serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+#auth-profile:not([data-v71-view="overview"]) .v74-view-member{display:none!important}
+#auth-profile .v71-tab[hidden]{display:none!important}
+
+/* ---------- V75: KJ / Venue data cards ---------- */
+#auth-profile .v75-card-body{padding:2px 2px 4px}
+#auth-profile .v75-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:8px 0;border-bottom:1px solid rgba(176,141,87,.22)}
+#auth-profile .v75-row:last-child{border-bottom:none}
+#auth-profile .v75-row-label{color:#d6bea0;font:14.5px Georgia,serif}
+#auth-profile .v75-row-value{color:#f3e2c8;font:700 15px Georgia,serif;text-align:right}
+#auth-profile .v75-note{color:#d6bea0;font:14px/1.5 Georgia,serif;margin:6px 0 2px}
+#auth-profile .v75-sub-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:8px}
+#auth-profile .v75-sub-venue{color:#f3e2c8;font:700 15.5px Georgia,serif}
+#auth-profile .v75-status-chip{border:1px solid #a07c51;border-radius:999px;padding:2px 10px;font:700 11.5px Georgia,serif;color:#e6c998;text-transform:capitalize;white-space:nowrap}
+#auth-profile .v75-status-approved{border-color:#7ba05b;color:#b7d39a}
+#auth-profile .v75-status-rejected{border-color:#a05252;color:#d89a9a}
+#auth-profile .v75-session-line{color:#d6bea0;font:13.5px Georgia,serif;padding:3px 0 3px 2px}
+
+/* ---------- V75: pencil edit buttons ---------- */
+#auth-profile .v75-edit-pencil{width:34px!important;height:34px;min-width:34px;padding:0!important;display:inline-flex!important;align-items:center;justify-content:center;font-size:15px!important;line-height:1;border-radius:9px}
+
+/* Add Song wizard (Steven bundle, Nov 23, 2026): the flow already
+   is a 3-step wizard; give its progress line and step titles the
+   setup-wizard voice. Scoped to the song wizard's own hooks - the
+   sections exist only in this flow, other dialogs are untouched. */
+#member-dialog #member-wizard-progress{
+  display:inline-block;margin:0 0 14px;padding:5px 13px;border:1px solid #c9a86a;border-radius:999px;
+  font:700 12px Georgia,serif!important;letter-spacing:.09em;text-transform:uppercase;color:#e6c998;background:#2b130e;
+}
+#member-dialog [data-song-wizard-step] h4{
+  font:italic 700 19px Georgia,serif;color:#f3e2c8;margin:2px 0 10px;padding-bottom:8px;
+  border-bottom:1px solid rgba(230,201,152,.25);
+}
+#member-dialog [data-song-wizard-step] > p{color:rgba(243,226,200,.75);}

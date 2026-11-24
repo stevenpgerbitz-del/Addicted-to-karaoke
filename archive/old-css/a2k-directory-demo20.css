@@ -1,0 +1,272 @@
+/* A2K desktop-only density experiment: 20 fictional member cards and
+   the proposed horizontal filtering controls, leaving live members unchanged. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-launch{
+  flex:none!important;min-height:36px!important;
+  border:1px solid #bc935d!important;border-radius:8px!important;
+  padding:7px 13px!important;background:linear-gradient(#753121,#411611)!important;
+  color:#f9e4be!important;font:700 13px/1.2 Georgia,serif!important;
+  white-space:nowrap!important;cursor:pointer!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-launch:hover{
+  border-color:#f0c997!important;background:linear-gradient(#8f3825,#5a1c14)!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-toolbar:has(.a2k-d-demo-launch){
+  flex-wrap:wrap!important;column-gap:12px!important;row-gap:8px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-preview{
+  width:100%!important;max-width:none!important;min-width:0!important;
+  margin:0!important;padding:0 1px 28px!important;box-sizing:border-box!important;
+  color:#f2d8b4!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-notice{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex-wrap:wrap!important;gap:8px 12px!important;
+  width:100%!important;padding:11px 16px!important;margin:0 0 18px!important;
+  background:linear-gradient(90deg,#542016,#30120e)!important;
+  border:1px solid #e3b87d!important;border-radius:10px!important;
+  font:14px/1.3 Georgia,serif!important;color:#ffe2b9!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-notice strong{
+  background:#f1d7a5!important;color:#491810!important;
+  border-radius:5px!important;padding:4px 9px!important;
+  font:900 11px/1.2 Arial,sans-serif!important;letter-spacing:.09em!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-head{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:15px!important;padding:0 3px 14px!important;
+  border-bottom:1px solid #89603e!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-head h1{
+  font:italic 700 clamp(31px,3.2vw,46px)/1.1 Georgia,serif!important;
+  color:#f5d8aa!important;margin:0 0 7px!important;padding:0!important;
+  text-align:left!important;border:0!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-head p{
+  font:15px/1.4 Georgia,serif!important;color:#dabf9c!important;
+  margin:0!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-return{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  min-height:42px!important;flex:none!important;padding:9px 15px!important;
+  border:1px solid #bd9461!important;border-radius:9px!important;
+  background:linear-gradient(#75251b,#4c1710)!important;color:#f9dfba!important;
+  font:700 13px/1.2 Georgia,serif!important;cursor:pointer!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-toolbar{
+  display:flex!important;flex-direction:column!important;gap:12px!important;
+  margin:15px 0 18px!important;padding:15px 17px!important;
+  border:1.5px solid #b08a59!important;border-radius:13px!important;
+  background:linear-gradient(145deg,#451b16,#26120e)!important;
+  box-shadow:inset 0 1px 0 #fad79a1c!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-toolbar-top{
+  display:flex!important;align-items:center!important;gap:14px!important;flex-wrap:wrap!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-search{
+  appearance:none!important;flex:1 1 330px!important;width:auto!important;min-width:190px!important;
+  box-sizing:border-box!important;min-height:42px!important;margin:0!important;
+  padding:10px 13px!important;border:1px solid #be9565!important;border-radius:8px!important;
+  background:#210e0b!important;color:#ffe5c4!important;font:15px Georgia,serif!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-search::placeholder{color:#bda07d!important}
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-total{
+  flex:none!important;font:700 13px Georgia,serif!important;color:#edd0a5!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-sort{
+  min-height:42px!important;padding:9px 12px!important;flex:none!important;
+  border:1px solid #ba895c!important;border-radius:8px!important;
+  background:#2d130f!important;color:#f7d8b5!important;
+  font:700 13px Georgia,serif!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-filter-tabs{
+  display:flex!important;gap:8px!important;flex-wrap:wrap!important;align-items:center!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-filter{
+  flex:0 0 auto!important;min-height:38px!important;padding:8px 14px!important;
+  border:1px solid #ac865e!important;border-radius:999px!important;
+  background:#311711!important;color:#f0d2a9!important;
+  font:700 13px/1.2 Georgia,serif!important;cursor:pointer!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-filter[aria-pressed=true]{
+  border-color:#f1d8ab!important;background:linear-gradient(#f4d9a9,#dcb375)!important;
+  color:#4d1b13!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-grid{
+  display:grid!important;width:100%!important;min-width:0!important;
+  grid-template-columns:repeat(auto-fit,minmax(205px,1fr))!important;
+  gap:18px 14px!important;align-items:stretch!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-grid>.a2k-d-demo-member-tile{
+  box-sizing:border-box!important;min-width:0!important;max-width:none!important;
+  height:100%!important;min-height:0!important;
+  padding:11px 11px 14px!important;gap:9px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-grid .a2k-d-member-tile-head{
+  display:flex!important;flex-direction:column!important;
+  gap:10px!important;height:auto!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-grid .a2k-d-demo-member-tile .a2k-d-member-avatar{
+  position:relative!important;display:grid!important;place-items:center!important;
+  height:auto!important;width:100%!important;min-width:0!important;
+  aspect-ratio:1/1!important;margin:0!important;
+  border:1px solid #ddba83!important;border-radius:12px!important;
+  overflow:hidden!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-grid .a2k-d-member-avatar-image{
+  width:100%!important;height:100%!important;position:absolute!important;inset:0!important;
+  object-fit:cover!important;border-radius:11px!important;z-index:1!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-grid .a2k-d-member-tile-head h3{
+  text-align:center!important;font-size:clamp(18px,1.45vw,23px)!important;
+  line-height:1.2!important;overflow-wrap:anywhere!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-grid .a2k-d-directory-featured{
+  margin:0!important;padding:4px 0 2px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-grid .a2k-d-member-number{
+  margin-top:auto!important;padding-top:12px!important;
+  border-top:1px solid #89583a!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-grid .a2k-d-member-since{
+  margin:0 auto!important;text-align:center!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-empty{
+  padding:22px!important;border:1px solid #9c7251!important;border-radius:10px!important;
+  text-align:center!important;color:#f6d6ae!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile>.a2k-d-demo-return{margin:2px 0 19px!important}
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-columns{
+  display:grid!important;grid-template-columns:minmax(255px,310px) minmax(0,1fr)!important;
+  gap:22px!important;align-items:start!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-side{
+  padding:24px 18px!important;text-align:center!important;
+  background:linear-gradient(145deg,#59231a,#2b130e)!important;
+  border:1.5px solid #c29b68!important;border-radius:18px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-side>.a2k-d-member-avatar-large{
+  display:block!important;position:relative!important;
+  margin:0 auto 14px!important;width:145px!important;height:145px!important;
+  border:3px solid #d6af7c!important;border-radius:50%!important;overflow:hidden!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-side .a2k-d-member-avatar-image{
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+  object-fit:cover!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-side h1{
+  color:#ffe2b8!important;font:italic 700 30px/1.15 Georgia,serif!important;
+  margin:0 0 12px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-side p{
+  font:14px/1.4 Georgia,serif!important;margin:9px 0!important;color:#efd0a6!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-verification{color:#7acaff!important}
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-awards{
+  display:flex!important;flex-wrap:wrap!important;gap:8px!important;
+  justify-content:center!important;margin-top:18px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-section{
+  margin:0 0 15px!important;padding:23px 25px!important;
+  border:1px solid #9b7551!important;border-radius:15px!important;
+  background:linear-gradient(135deg,#341710,#1d0d0a)!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-section h2{
+  font:italic 700 24px/1.2 Georgia,serif!important;
+  color:#ffdfad!important;border-bottom:1px solid #81533b!important;
+  padding-bottom:12px!important;margin:0 0 13px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-section p{
+  font:16px/1.55 Georgia,serif!important;color:#ead4b4!important;margin:8px 0!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-preview button:focus-visible,
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-preview input:focus-visible,
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-preview select:focus-visible{
+  outline:3px solid #ffe0a6!important;outline-offset:2px!important;
+ }
+}
+@media(min-width:1024px) and (max-width:1199px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-grid{
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr))!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-profile-columns{
+  grid-template-columns:minmax(210px,270px) minmax(0,1fr)!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-member-tile{
+  transition:none!important;
+ }
+}
+
+/* A2K 338: award artwork only, up to four genuinely earned badges per
+   desktop directory card. Full badge descriptions stay on member profiles. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid .a2k-d-directory-featured{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex-wrap:nowrap!important;gap:5px!important;
+  margin:1px 0 3px!important;padding:3px 0!important;
+  min-width:0!important;width:100%!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid
+ .a2k-d-member-featured-chip.a2k-d-icon-only-badge{
+  position:relative!important;box-sizing:border-box!important;
+  display:inline-flex!important;flex:0 1 40px!important;
+  width:clamp(31px,2.55vw,40px)!important;max-width:40px!important;
+  height:43px!important;min-width:0!important;
+  align-items:center!important;justify-content:center!important;
+  padding:2px!important;margin:0!important;gap:0!important;
+  border:1px solid #c69b66!important;border-radius:8px!important;
+  background:linear-gradient(#55241c,#2b120e)!important;
+  box-shadow:inset 0 1px 0 #e8c39c22!important;
+  overflow:hidden!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-members-grid
+ .a2k-d-member-featured-chip.a2k-d-icon-only-badge img{
+  display:block!important;flex:none!important;
+  width:100%!important;max-width:37px!important;
+  height:100%!important;max-height:39px!important;
+  margin:0!important;object-fit:contain!important;
+  border:0!important;border-radius:0!important;
+ }
+}
+
+/* Fictional 1,000-member preview: compact, keyboard-friendly pagination. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-pagination{
+  display:flex!important;flex-wrap:wrap!important;align-items:center!important;
+  justify-content:center!important;gap:8px!important;margin:24px auto 10px!important;
+  padding:14px 10px!important;border-top:1px solid #946943!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-page-control{
+  font:700 14px/1.2 Georgia,serif!important;min-width:38px!important;min-height:38px!important;
+  padding:8px 12px!important;color:#f4dfbb!important;background:#54261d!important;
+  border:1px solid #b88e59!important;border-radius:8px!important;cursor:pointer!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-page-control.is-current{
+  color:#32150f!important;background:#e9c68a!important;border-color:#f8dfad!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-page-control:disabled{
+  opacity:.42!important;cursor:not-allowed!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-page-summary{
+  width:100%!important;text-align:center!important;color:#e5c49b!important;
+  font:13px/1.5 Georgia,serif!important;margin-top:4px!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-page-ellipsis{
+  color:#e5c49b!important;padding:0 2px!important;
+ }
+}
+
+/* Blue-check verified filter: preserve the existing burgundy/gold chip layout. */
+@media(min-width:1024px){
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-verified-filter{
+  border-color:#8bb9d9!important;
+  color:#afdafa!important;
+ }
+ html.a2k-desktop-live #a2k-d-directory .a2k-d-demo-verified-filter[aria-pressed="true"]{
+  background:#204a69!important;color:#fff3da!important;
+  border-color:#a9ddff!important;
+  box-shadow:inset 0 0 0 1px #8cc8ea77!important;
+ }
+}

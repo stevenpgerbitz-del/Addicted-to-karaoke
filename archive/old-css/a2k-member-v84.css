@@ -1,0 +1,125 @@
+/* Addicted to Karaoke — KJ polish + verification redesign layer (V84).
+   Same anchor as V83 (html.a2k-desktop-live #a2k-d-directory, one more
+   class, !important on contested properties) so these rules win the
+   cascade without touching load order. Desktop shell only. */
+
+@media (min-width: 900px) {
+
+  /* Stray "·" before "Member since": V83 adds it via ::before on the
+     joined fact. When no fact precedes it (member number hidden, no
+     location rendered), V84's JS tags the facts row and the separator
+     goes away. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v84-no-lead-fact .a2k-d-profile-joined::before {
+    content: none !important; margin: 0 !important;
+  }
+
+  /* Share is a labeled text button again (V83 made it a 36px glyph).
+     The guard svg V84's JS keeps inside the button is display:none. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-hero-actions .a2k-d-profile-share.v84-share-text {
+    width: auto !important; height: auto !important; min-height: 0 !important; flex: 0 0 auto !important;
+    display: inline-flex !important; align-items: center !important; justify-content: center !important;
+    background: linear-gradient(160deg, #571f1a, #3d130e) !important;
+    border: 1.5px solid #a07c51 !important; border-radius: 9px !important;
+    color: #f3e2c8 !important; font: 700 14px Georgia, serif !important;
+    padding: 8px 16px !important; margin: 0 !important; opacity: 1 !important;
+    text-decoration: none !important; cursor: pointer !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-hero-actions .a2k-d-profile-share.v84-share-text:hover {
+    color: #fff0ce !important; border-color: #c9a86a !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-share.v84-share-text svg {
+    display: none !important;
+  }
+
+  /* KJ Reviews: one heading only. The renderer's h2 hides once the
+     ratings mount exists; the mount's own summary carries the heading. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-kj-reviews.v84-reviews-mounted > h2 {
+    display: none !important;
+  }
+  /* The mounted ratings block reads as the card's content, not a
+     second card inside it. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-kj-reviews .a2k-kj-host-rating-section {
+    background: transparent !important; border: 0 !important; box-shadow: none !important;
+    padding: 0 !important; margin: 0 !important;
+  }
+
+  /* ---------- KJ Hosts directory: framed search panel + count ---------- */
+  html.a2k-desktop-live #a2k-d-directory .v84-hosts-panel {
+    box-sizing: border-box; display: block; width: 100%;
+    margin: 0 0 13px; padding: 13px 15px;
+    border: 1px solid #a87f55; border-radius: 12px;
+    background: linear-gradient(145deg, #411b16, #26120f);
+    box-shadow: inset 0 1px 0 #e7c28e24;
+  }
+  html.a2k-desktop-live #a2k-d-directory .v84-hosts-panel .a2k-d-directory-search {
+    width: 100% !important; max-width: none !important; margin: 0 !important;
+    min-height: 42px !important; padding: 9px 13px !important;
+    border: 1px solid #b18c5e !important; border-radius: 8px !important;
+    background: #21100d !important; color: #f8dfbd !important;
+    font: 15px/1.25 Georgia, serif !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .v84-hosts-panel .a2k-d-directory-search::placeholder {
+    color: #c9a681 !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .v84-hosts-count {
+    color: #e6c998 !important; font: 14px Georgia, serif !important; margin: 10px 2px 0 !important;
+  }
+
+  /* ---------- cream About / Favorite Music card ---------- */
+  /* A one-line bio against a tall genre column left a void under the
+     bio. Keep the headings top-aligned, but let the short side's body
+     settle into the middle of the leftover space instead of hanging
+     at the top above empty cream. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-public-profile-section {
+    display: flex !important; flex-direction: column !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-story {
+    margin-top: auto !important; margin-bottom: auto !important;
+  }
+
+  /* ---------- email verification prompt (setup wizard + KJ dialog) ---------- */
+  .v84-email-verify {
+    box-sizing: border-box; margin: 0 0 14px; padding: 13px 15px;
+    background: linear-gradient(168deg, #f8ecd4, #eedcae);
+    border: 1.5px solid #b08d57; border-radius: 12px;
+    color: #43302a;
+  }
+  .v84-email-verify-lead {
+    margin: 0 !important; font: 15px/1.5 Georgia, serif !important; color: #43302a !important;
+  }
+  .v84-email-verify-status {
+    margin: 8px 0 0 !important; font: italic 14px Georgia, serif !important; color: #6d5138 !important;
+    min-height: 0;
+  }
+  .v84-email-verify-status:not(:empty) { min-height: 18px; }
+  button.v84-email-resend {
+    margin-top: 10px !important; padding: 8px 16px !important; cursor: pointer;
+    background: linear-gradient(160deg, #571f1a, #3d130e) !important;
+    border: 1.5px solid #a07c51 !important; border-radius: 9px !important;
+    color: #f3e2c8 !important; font: 700 14px Georgia, serif !important;
+  }
+  button.v84-email-resend:disabled { opacity: .55 !important; cursor: default !important; }
+  .v84-email-ok {
+    margin: 0 0 10px !important; font: 14px Georgia, serif !important; color: #c9a86a !important;
+  }
+
+  /* ---------- founder KJ verification evidence ---------- */
+  .v84-kj-evidence {
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid rgba(176, 141, 87, .35);
+  }
+  .v84-kj-evidence-title {
+    font: 700 13px Georgia, serif !important; color: #e6c998 !important;
+    letter-spacing: .04em; text-transform: uppercase; margin: 0 0 8px !important;
+  }
+  .v84-kj-evidence-row {
+    margin: 0 0 7px !important; font: 14px/1.45 Georgia, serif !important; color: #f3e2c8 !important;
+  }
+  .v84-kj-evidence-row strong { color: #fff0ce !important; }
+  .v84-kj-evidence-status {
+    display: inline-block; margin-left: 6px; padding: 1px 9px;
+    border: 1px solid #a07c51; border-radius: 999px;
+    color: #e6c998 !important; font: 700 11.5px Georgia, serif !important;
+    text-transform: capitalize;
+  }
+}

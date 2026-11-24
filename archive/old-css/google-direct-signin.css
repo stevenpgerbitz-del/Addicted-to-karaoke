@@ -1,0 +1,9 @@
+/* A2K Build 188 — One official Google Identity Services button per sign-in mode.
+   No previous OAuth redirect button or legacy fallback link. */
+#auth-guest .atk-google-direct{
+ display:flex;align-items:center;justify-content:center;
+ width:100%;min-width:0;min-height:44px;
+ margin:0 0 5px;overflow:hidden;
+}
+#auth-guest .atk-google-direct>div{max-width:100%}
+#auth-guest .atk-google-direct:empty{display:none}

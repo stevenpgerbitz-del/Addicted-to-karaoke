@@ -1,0 +1,276 @@
+/*
+ A2K TEMPLATE V65 — master page template, 2026-11-22
+ Built from the approved V64 preview (A2K_Profile_Redesign_Interactive.html),
+ docs/approved-member-profile-design.md and a2k-profile-reference.css.
+
+ Purpose: make EVERY live view in index.html follow the same page style as
+ the approved V64 preview — same colors, cards, headings, buttons, chips,
+ inputs and dialogs — in one pass.
+
+ Purely presentational. This file changes no HTML structure, no JavaScript,
+ no data, no Supabase wiring and no functionality. Every page keeps doing
+ exactly what it did before; only its appearance is aligned to the template.
+ Load this stylesheet LAST so the template wins over older per-feature CSS.
+*/
+
+:root{
+  /* Palette — the V64 preview color scheme */
+  --tpl-ink:#0d0a09;
+  --tpl-bg:#0b0908;
+  --tpl-walnut:#211612;
+  --tpl-panel:#241712;
+  --tpl-panel-deep:#160f0d;
+  --tpl-panel-grad:linear-gradient(118deg,#251814,#130e0c 65%,#251511);
+  --tpl-wine-grad:linear-gradient(145deg,#321915,#150e0c);
+  --tpl-oxblood:#681d19;
+  --tpl-oxblood-dark:#421310;
+  --tpl-button-grad:linear-gradient(160deg,#74241f,#481512);
+  --tpl-header-grad:linear-gradient(100deg,#520b0d,#1a0b0a 28%,#0b0808 50%,#220b0b 74%,#540a0e);
+  --tpl-nav-grad:linear-gradient(155deg,#651c19,#390e0d 53%,#631b17);
+  --tpl-brass:#ba9360;
+  --tpl-brass-soft:#896a49;
+  --tpl-brass-bright:#d8b17b;
+  --tpl-gold-line:#a07b50;
+  --tpl-cream:#f3e2c8;
+  --tpl-cream-bright:#f5dfba;
+  --tpl-muted:#d6bea0;
+  --tpl-parchment:#e6c998;
+  --tpl-hairline:#674c32;
+  --tpl-frame:inset 0 0 0 1px #ead09e24,0 2px 2px #0009;
+  --tpl-card-border:1.5px solid var(--tpl-gold-line);
+  --tpl-radius:12px;
+  --tpl-radius-lg:15px;
+  --tpl-serif:Georgia,'Times New Roman',serif;
+}
+
+/* ---------- Page shell ---------- */
+html,body{background:var(--tpl-bg)!important;}
+body,body .app{color:var(--tpl-cream);}
+body .app{
+  background:
+    repeating-linear-gradient(140deg,transparent 0 28px,#a2773606 28px 29px),
+    linear-gradient(#0f0b0a,#100b09 55%,#0d0908)!important;
+}
+body .app>header{
+  background:var(--tpl-header-grad)!important;
+  border-bottom:2px solid #b48a56!important;
+  box-shadow:inset 0 -1px #f2d59f26,0 1px 0 #000!important;
+}
+
+/* Persistent navigation: burgundy bar, cream active pill */
+body #unified-nav{
+  background:var(--tpl-nav-grad)!important;
+  border:1px solid #ad8656!important;
+  border-bottom:0!important;
+  box-shadow:inset 0 2px #e2c38a29,0 -3px 10px #0009!important;
+}
+body #unified-nav button{color:var(--tpl-cream)!important;}
+body #unified-nav button.active{
+  color:#63221a!important;
+  background:
+    repeating-linear-gradient(120deg,transparent 0 27px,#8c56200b 27px 28px),
+    linear-gradient(#f0ddb6,#dcb986)!important;
+  border:1.5px solid #ad8855!important;
+  border-radius:9px!important;
+  box-shadow:inset 0 0 0 2px #fff0ca,0 2px 4px #0008!important;
+}
+
+/* Every screen sits on the same lounge background */
+body #unified-pages,
+body #venue-screen,
+body #home-screen,
+body #find-screen,
+body #signin-screen{
+  color:var(--tpl-cream)!important;
+  background:
+    radial-gradient(ellipse at 55% -15%,#602c2529,transparent 55%),
+    repeating-linear-gradient(140deg,transparent 0 27px,#cfa66805 27px 28px),
+    linear-gradient(160deg,#0f0c0a,#0b0a09 58%,#160f0c)!important;
+}
+body #unified-pages .unified-screen{color:var(--tpl-cream);}
+
+/* ---------- Typography ---------- */
+body .app h1,body .app h2,body .app h3,
+body dialog h1,body dialog h2,body dialog h3,
+#management-dialog h1,#management-dialog h2,#management-dialog h3,
+#atk-wizard h1,#atk-wizard h2,#atk-wizard h3{
+  font-family:var(--tpl-serif)!important;
+  color:var(--tpl-cream-bright)!important;
+  text-shadow:none!important;
+}
+body .app .muted,body .app .member-muted,body dialog .muted{
+  color:var(--tpl-muted)!important;
+}
+body .app a{color:var(--tpl-parchment);}
+body .app a:hover{color:var(--tpl-cream-bright);}
+
+/* ---------- Cards & panels (one treatment for every page) ---------- */
+body .app .a2k-b-card,
+body .app .member-panel,
+body .app .profile-nav-card,
+body .app button.profile-nav-card,
+body .app .profile-action,
+body .app .management-entry,
+body .app .management-detail-card,
+body .app .mv-edit-card,
+body .app .venue-teaser,
+body .app .a2k-b-section,
+body .app .a2k-privacy-tile,
+body .app .auth-card,
+#auth-guest.auth-card,
+#venue-screen .identity,
+#auth-profile .member-hero{
+  background:var(--tpl-panel-grad)!important;
+  border:var(--tpl-card-border)!important;
+  border-radius:var(--tpl-radius)!important;
+  box-shadow:var(--tpl-frame)!important;
+  color:var(--tpl-cream)!important;
+}
+body .app .venue-teaser .teaser-img,
+#venue-screen .identity img{
+  border:2px solid #c3a16f!important;
+  border-radius:8px!important;
+}
+body .app .profile-nav-title,
+body .app .management-entry .heading,
+body .app .amenity-title{
+  font-family:var(--tpl-serif)!important;
+  font-weight:700!important;
+  color:var(--tpl-cream)!important;
+}
+body .app .profile-ui-icon,
+body .app .management-entry-icon{
+  color:var(--tpl-brass)!important;
+  stroke:currentColor!important;
+}
+/* Gold flourish rule under section headings */
+body .app .profile-section-top,
+body .app .a2k-b-heading{
+  border-bottom:1px solid var(--tpl-hairline)!important;
+}
+
+/* ---------- Buttons ---------- */
+body .app .member-button,
+body .app button[type="submit"],
+body .app .song-wizard-primary,
+body .app .mg-edit-button,
+body .app .direction,
+#venue-screen .actions button:not(:disabled),
+#venue-screen .atk-venue-community-actions button,
+#atk-wizard-actions button,
+#management-dialog button[type="submit"]{
+  background:var(--tpl-button-grad)!important;
+  border:1px solid #c39862!important;
+  border-radius:9px!important;
+  color:var(--tpl-cream)!important;
+  box-shadow:inset 0 0 0 1px #f0d29a26!important;
+  text-shadow:none!important;
+  font-family:inherit;
+}
+/* Small edit actions stay the compact V64 pencil style where already icon-only;
+   text buttons keep their wording, only their colors align. */
+body .app .profile-section-edit,
+#profile-section-dialog .profile-section-edit{
+  background:linear-gradient(#5b2924,#321813)!important;
+  border:1px solid #9f7a51!important;
+  border-radius:8px!important;
+  color:var(--tpl-cream)!important;
+  box-shadow:none!important;
+}
+body .app button:disabled{opacity:.55;}
+
+/* Tabs: dark walnut inactive, burgundy gradient active */
+body .app .tabs button,
+#venue-screen .tabs button{
+  background:linear-gradient(#302019,#160f0d)!important;
+  border:1px solid #9e7e58!important;
+  color:var(--tpl-cream)!important;
+}
+body .app .tabs button.active,
+body .app .tabs button[aria-selected="true"],
+#venue-screen .tabs button.active,
+#venue-screen .tabs button[aria-selected="true"]{
+  background:var(--tpl-button-grad)!important;
+  border-color:#c39862!important;
+}
+
+/* ---------- Chips & pills ---------- */
+body .app .chip,
+#venue-screen .chip,
+#venue-screen .chips .chip{
+  color:#f4ddba!important;
+  border:1px solid #987349!important;
+  background:linear-gradient(#60231f,#341611)!important;
+  border-radius:999px!important;
+  box-shadow:none!important;
+}
+
+/* ---------- Forms (same parchment inputs on every page) ---------- */
+body .app input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body .app select,
+body .app textarea,
+body dialog input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body dialog select,
+body dialog textarea,
+#management-dialog input:not([type="checkbox"]):not([type="radio"]),
+#management-dialog select,
+#management-dialog textarea{
+  background:linear-gradient(#e8d0a8,#e0bf8e)!important;
+  color:#2d1914!important;
+  border:1.5px solid #a07b50!important;
+  border-radius:8px!important;
+  box-shadow:inset 0 0 0 1px #fff1d155!important;
+}
+body .app input::placeholder,body .app textarea::placeholder,
+body dialog input::placeholder,body dialog textarea::placeholder{
+  color:#775a45!important;opacity:1;
+}
+body .app label,body dialog label{color:var(--tpl-cream);}
+
+/* ---------- Dialogs, overlays & wizard ---------- */
+body dialog,
+#management-dialog,
+#profile-section-dialog,
+#member-dialog,
+.atk-wizard,
+#atk-wizard{
+  background:var(--tpl-wine-grad)!important;
+  border:var(--tpl-card-border)!important;
+  border-radius:var(--tpl-radius-lg)!important;
+  box-shadow:var(--tpl-frame)!important;
+  color:var(--tpl-cream)!important;
+}
+.mg-role-confirm-card,.mg-confirm-card,.atk-restore-confirm-card,
+.mv-amenities-modal,.atk-community-context{
+  background:var(--tpl-panel-grad)!important;
+  border:var(--tpl-card-border)!important;
+  border-radius:var(--tpl-radius)!important;
+  color:var(--tpl-cream)!important;
+}
+
+/* Management pages: entries already card-styled above; align tools/filters */
+.management-tools,.management-filters{
+  border-bottom:1px solid var(--tpl-hairline)!important;
+}
+.management-detail-note{color:var(--tpl-muted)!important;}
+
+/* Avatars & portraits: thin gold border, as approved */
+body .app .member-avatar,
+#auth-profile .member-avatar{
+  border:2px solid var(--tpl-brass-bright)!important;
+  background:#281712!important;
+  box-shadow:inset 0 0 0 2px #120a09,0 2px 5px #0009!important;
+}
+
+/* Focus visibility — same gold outline everywhere */
+body .app button:focus-visible,body .app a:focus-visible,
+body .app summary:focus-visible,body .app input:focus-visible,
+body .app select:focus-visible,body .app textarea:focus-visible,
+body dialog button:focus-visible,body dialog input:focus-visible,
+body dialog select:focus-visible,body dialog textarea:focus-visible{
+  outline:2px solid #f5d7a4!important;
+  outline-offset:2px!important;
+}
+
+/* Verified / founder semantic colors are intentionally preserved:
+   verified blue and founder gold badges keep their meaning. */

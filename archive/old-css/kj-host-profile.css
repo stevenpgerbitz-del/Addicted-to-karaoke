@@ -1,0 +1,270 @@
+/* Build 208: KJ links and natural-looking Founder-only profile preview. */
+.venue-live-schedule .a2k-kj-host-link{
+  display:inline-flex;align-items:center;justify-content:flex-start;
+  min-height:36px;max-width:100%;width:max-content;
+  margin:6px 0 1px;padding:5px 10px;
+  border:1px solid #c6a06c;border-radius:8px;
+  background:linear-gradient(135deg,#f0dab1,#dcbc8b);
+  color:#5d2119;font:700 14px/1.25 Georgia,serif;
+  text-align:left;cursor:pointer;white-space:normal;
+}
+.venue-live-schedule .a2k-kj-host-link:focus-visible,
+.a2k-kj-host-profile-dialog button:focus-visible{
+  outline:2px solid #eecb93;outline-offset:2px;
+}
+.venue-live-schedule .a2k-kj-founder-preview{
+  display:flex;align-items:center;justify-content:flex-start;
+  margin:4px 0 9px;padding:0;border:0;border-radius:0;background:none;
+}
+.venue-live-schedule .a2k-kj-founder-preview .a2k-kj-host-link{
+  margin:0;
+}
+.a2k-kj-host-profile-dialog{
+  box-sizing:border-box;width:min(92vw,440px);max-height:86dvh;
+  margin:auto;padding:0;border:1.5px solid #c09a6a;border-radius:15px;
+  background:linear-gradient(155deg,#34201a,#150d0b);
+  color:#f4dfbf;box-shadow:0 20px 60px #000b;
+}
+.a2k-kj-host-profile-dialog::backdrop{background:#000b}
+.a2k-kj-host-profile-inner{padding:18px 16px 15px}
+.a2k-kj-host-profile-dialog h2{
+  margin:0 0 15px;color:#eed7ae;
+  font:italic 700 24px/1.2 Georgia,serif;
+}
+.a2k-kj-host-profile-body{
+  max-height:calc(86dvh - 130px);overflow-y:auto;
+  color:#e9d6b7;
+}
+.a2k-kj-host-profile-heading{
+  display:flex;align-items:center;gap:12px;margin-bottom:14px;
+}
+.a2k-kj-host-profile-avatar{
+  flex:none;display:flex;align-items:center;justify-content:center;
+  box-sizing:border-box;width:68px;height:68px;overflow:hidden;
+  border:2px solid #bf9963;border-radius:12px;
+  background:#180e0c;font-size:30px;
+}
+.a2k-kj-host-profile-avatar img{width:100%;height:100%;object-fit:cover}
+.a2k-kj-host-profile-names{min-width:0;display:flex;flex-direction:column;gap:6px}
+.a2k-kj-host-profile-names strong{
+  color:#f5dfbb;overflow-wrap:anywhere;
+  font:italic 700 22px/1.2 Georgia,serif;
+}
+.a2k-kj-host-profile-chip{
+  width:max-content;padding:4px 8px;border:1px solid #af8656;
+  border-radius:6px;background:#541a18;color:#f0d5af;
+  font:700 11px/1 Arial,sans-serif;
+}
+.a2k-kj-host-profile-dialog h3{
+  margin:16px 0 8px;color:#f0d9b2;
+  font:700 16px/1.2 Georgia,serif;
+}
+.a2k-kj-host-profile-bio{
+  margin:0;color:#e8d2b0;white-space:pre-wrap;overflow-wrap:anywhere;
+  font:14px/1.5 Arial,sans-serif;
+}
+.a2k-kj-host-profile-venue{margin:0;color:#d4b58d;font:700 13px/1.4 Arial,sans-serif}
+.a2k-kj-host-profile-since{margin:16px 0 0;color:#d5b992;font:12px/1.4 Arial,sans-serif}
+.a2k-kj-profile-test-label{
+  margin:0 0 12px;padding:7px;border:1px dashed #c59c65;border-radius:7px;
+  color:#f4d4a4;font:700 11px/1.35 Arial,sans-serif;letter-spacing:.3px;
+}
+.a2k-kj-host-profile-disclaimer{
+  color:#d6b993;font:12px/1.45 Arial,sans-serif;
+}
+.a2k-kj-host-profile-close{
+  box-sizing:border-box;display:block;width:100%;min-height:45px;
+  margin-top:15px;padding:10px 12px;
+  border:1.5px solid #bc955f;border-radius:9px;
+  background:linear-gradient(145deg,#83251e,#521411);
+  color:#f4ddb6;font:700 16px Georgia,serif;cursor:pointer;
+}
+
+/* Build 209: clearly grouped venue + day + time in KJ profile dialog. */
+.a2k-kj-host-profile-schedule{
+  margin:4px 0 14px;
+  padding:11px 13px;
+  border:1px solid #896644;
+  border-radius:10px;
+  background:linear-gradient(145deg,#2d1a14,#20110d);
+}
+.a2k-kj-host-profile-schedule h3{
+  margin:0 0 7px!important;
+  color:#efd7ab;
+  font:700 15px/1.2 Georgia,serif!important;
+}
+.a2k-kj-host-profile-schedule .a2k-kj-host-profile-venue{
+  display:block;
+  margin:0 0 5px;
+  color:#f5e0c0;
+  font:italic 700 18px/1.25 Georgia,serif;
+}
+.a2k-kj-host-profile-schedule .a2k-kj-host-profile-hours{
+  margin:0;
+  color:#dfc29b;
+  font:700 14px/1.35 Arial,sans-serif;
+}
+
+
+/* Build 210 — KJ ratings integrated inside the existing profile popup. */
+.a2k-kj-host-rating-section{
+ margin:0 0 14px;
+ border:1px solid #a07b52;
+ border-radius:10px;
+ background:linear-gradient(145deg,#291811,#1b100d);
+ overflow:hidden;
+}
+.a2k-kj-host-rating-details{
+ display:block;margin:0;
+}
+.a2k-kj-host-rating-summary{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ gap:4px 10px;min-height:48px;padding:10px 12px;
+ list-style:none;cursor:pointer;color:#f4ddb8;
+}
+.a2k-kj-host-rating-summary::-webkit-details-marker{display:none}
+.a2k-kj-host-rating-summary strong{
+ font:italic 700 19px/1.2 Georgia,serif;color:#f4dfbc;
+}
+.a2k-kj-host-rating-summary span{
+ flex:1;text-align:right;
+ font:700 12px/1.3 Arial,sans-serif;color:#e1bf91;
+}
+.a2k-kj-host-rating-summary::after{
+ content:"⌄";color:#e1c19a;font:700 17px/1 Georgia,serif;
+}
+.a2k-kj-host-rating-details[open] .a2k-kj-host-rating-summary{
+ border-bottom:1px solid #785738;
+}
+.a2k-kj-host-rating-details[open] .a2k-kj-host-rating-summary::after{content:"⌃"}
+.a2k-kj-host-rating-summary:focus-visible{
+ outline:2px solid #efd3a1;outline-offset:-3px;
+}
+.a2k-kj-host-review-list{padding:4px 10px 10px;max-height:310px;overflow-y:auto}
+.a2k-kj-host-review-list[hidden],.a2k-kj-host-review-compose[hidden],.a2k-kj-host-rating-section button[hidden]{display:none!important}
+.a2k-kj-host-review-card{
+ padding:10px;margin:9px 0;
+ border:1px solid #9d7750;border-radius:9px;
+ background:#352018;
+}
+.a2k-kj-host-review-heading{display:flex;justify-content:space-between;gap:7px;align-items:center}
+.a2k-kj-host-review-heading strong{font:700 13px/1.3 Georgia,serif;color:#f4dfbc}
+.a2k-kj-host-review-location{
+ margin:7px 0 0;color:#dfbd91;
+ font:700 12px/1.35 Arial,sans-serif;
+}
+.a2k-kj-host-review-comment{
+ margin:8px 0 0;color:#e8d3b2;
+ font:13px/1.45 Arial,sans-serif;overflow-wrap:anywhere;white-space:pre-wrap;
+}
+.a2k-kj-host-review-details{margin:8px 0 0;padding-top:6px;border-top:1px solid #785c41}
+.a2k-kj-host-review-details summary{color:#eec89b;cursor:pointer;font:700 12px/1.4 Georgia,serif}
+.a2k-kj-host-review-scores{margin:8px 0;color:#e5cfb2;font:12px/1.6 Arial,sans-serif}
+.a2k-kj-host-review-more{
+ display:block;width:100%;min-height:40px;padding:8px 10px;
+ border:1px solid #bc9566;border-radius:8px;
+ background:#44241e;color:#f2d8b5;font:700 13px Georgia,serif;cursor:pointer;
+}
+.a2k-kj-host-review-empty{margin:10px 0;color:#e2c6a4;font:13px/1.4 Arial,sans-serif}
+.a2k-kj-rate-action{
+ display:block;width:calc(100% - 20px);min-height:41px;
+ margin:4px 10px 10px;padding:8px 12px;
+ border:1.5px solid #c6a06c;border-radius:9px;
+ background:linear-gradient(145deg,#852921,#511612);
+ color:#f4ddba;font:700 15px/1.25 Georgia,serif;
+ cursor:pointer;
+}
+.a2k-kj-host-review-compose{padding:12px;border-top:1px solid #785738}
+.a2k-kj-inline-review-form{display:flex;flex-direction:column;gap:11px}
+.a2k-kj-inline-review-form h3{
+ margin:0!important;font:700 19px/1.2 Georgia,serif;color:#f5dfbb;
+}
+.a2k-kj-inline-review-form label{
+ display:grid;gap:6px;margin:0;color:#f3d9b6;font:700 13px/1.35 Georgia,serif;
+}
+.a2k-kj-inline-review-form input,
+.a2k-kj-inline-review-form select,
+.a2k-kj-inline-review-form textarea{
+ box-sizing:border-box;display:block;width:100%;min-height:42px;
+ margin:0;padding:9px 11px;border:1px solid #c5a476;border-radius:8px;
+ background:linear-gradient(150deg,#f3ddbc,#ddbc8b);
+ color:#4d211b;font:14px Arial,sans-serif;
+}
+.a2k-kj-inline-review-form textarea{resize:vertical;min-height:74px}
+.a2k-kj-inline-category{
+ margin:0;padding:8px 0 10px;border:0;border-bottom:1px solid #89644670;min-width:0;
+}
+.a2k-kj-inline-category legend{
+ padding:0;margin-bottom:4px;color:#f4dfbb;
+ font:700 14px/1.35 Georgia,serif;
+}
+.a2k-kj-inline-choices{
+ display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;min-width:0;
+}
+.a2k-kj-inline-choices button{
+ min-width:0;min-height:39px;padding:5px 0;
+ border:1px solid #a3825e;border-radius:8px;
+ background:linear-gradient(145deg,#3a2019,#21130e);
+ color:#eddbc0;font:700 13px Arial,sans-serif;
+ cursor:pointer;
+}
+.a2k-kj-inline-choices button[aria-pressed="true"]{
+ border:2px solid #f5d7a4;
+ background:linear-gradient(145deg,#edd4ab,#d6ad77);
+ color:#54221c;
+}
+.a2k-kj-inline-note{
+ margin:0;color:#d9bb94;font:12px/1.45 Arial,sans-serif;
+}
+.a2k-kj-inline-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.a2k-kj-inline-actions button{
+ min-height:42px;padding:8px;
+ border:1px solid #c09b68;border-radius:8px;
+ background:linear-gradient(145deg,#842820,#521612);
+ color:#f6dfbf;font:700 14px Georgia,serif;
+}
+.a2k-kj-host-rating-feedback{
+ margin:0 11px 9px;color:#e9c895;
+ font:13px/1.4 Arial,sans-serif;
+}
+.a2k-kj-host-rating-feedback:empty{display:none}
+.a2k-kj-host-rating-section button:focus-visible,
+.a2k-kj-host-rating-section summary:focus-visible,
+.a2k-kj-host-rating-section :is(select,input,textarea):focus-visible{
+ outline:2px solid #f4daaf;outline-offset:2px;
+}
+@media(max-width:375px){
+ .a2k-kj-host-rating-summary strong{font-size:17px}
+ .a2k-kj-host-rating-summary span{font-size:11px}
+ .a2k-kj-inline-choices{gap:3px}
+ .a2k-kj-inline-choices button{font-size:12px}
+}
+
+
+/* Build 211 — KJ rating visible beside the host name on venue schedules. */
+.venue-live-schedule .a2k-kj-host-link{
+ display:inline-flex!important;
+ align-items:center!important;
+ flex-wrap:wrap!important;
+ justify-content:flex-start!important;
+ gap:4px 9px!important;
+ max-width:100%!important;
+ white-space:normal!important;
+}
+.venue-live-schedule .a2k-kj-host-link-name{
+ display:inline!important;
+ font:inherit!important;
+ color:inherit!important;
+}
+.venue-live-schedule .a2k-kj-host-link-score{
+ display:inline!important;
+ flex:none!important;
+ padding:3px 7px!important;
+ border:1px solid #ad7953!important;
+ border-radius:7px!important;
+ background:#51201a!important;
+ color:#f4dfb8!important;
+ font:700 12px/1.25 Arial,sans-serif!important;
+ white-space:nowrap!important;
+}
+.venue-live-schedule .a2k-kj-host-link-score:empty{display:none!important;}

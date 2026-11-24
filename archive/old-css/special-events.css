@@ -1,0 +1,763 @@
+
+/* A2K Special Events — integrated with Find Karaoke and venue detail, no extra nav */
+#find-screen .a2k-event-filter{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 12px}
+#find-screen .a2k-event-filter button{min-width:0;padding:11px 4px;min-height:42px;border:1.5px solid #c7a271;
+border-radius:11px;background:linear-gradient(145deg,#361d17,#1d120f);color:#f1dbb9;
+font:700 clamp(11px,2.8vw,14px)/1.25 Georgia,serif;}
+#find-screen .a2k-event-filter button[aria-pressed=true]{background:linear-gradient(150deg,#f2dfb7,#dfbe88);color:#4a1b17;border:2px solid #f2dbae}
+#find-screen .a2k-event-card{display:flex;align-items:center;gap:10px;padding:9px 10px;border:2px solid #c7a271;
+border-radius:16px;background:linear-gradient(145deg,#432018,#1d130f 73%,#381c16);
+box-shadow:inset 0 0 0 1px #f6dda728,0 2px 5px #0008;
+color:#f0d7b2;min-height:94px;cursor:pointer;}
+#find-screen .a2k-event-card[hidden]{display:none!important}
+#find-screen .a2k-event-card:focus-visible,#find-screen .a2k-event-filter button:focus-visible{outline:3px solid #efd4a1;outline-offset:2px}
+.a2k-event-card .a2k-event-date-tile{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
+width:80px;height:76px;padding:4px;background:linear-gradient(140deg,#edd3a4,#cc9b62);
+border:2px solid #f5e1b9;border-radius:11px;color:#481e18;text-align:center}
+.a2k-event-date-tile strong{font:800 13px Arial,sans-serif;letter-spacing:.7px}
+.a2k-event-date-tile b{font:800 30px/1 Georgia,serif}
+.a2k-event-date-tile small{font:700 11px Arial,sans-serif}
+.a2k-event-card .a2k-event-card-copy{min-width:0;display:flex;flex-direction:column;gap:3px}
+.a2k-event-card-copy .a2k-event-tag{font:800 10px Arial,sans-serif;letter-spacing:1px;color:#e8bb80}
+.a2k-event-card-copy b{font:700 clamp(16px,4vw,20px)/1.17 Georgia,serif;color:#ffe0b4;overflow-wrap:anywhere}
+.a2k-event-card-copy small{font:13px/1.35 Arial,sans-serif;color:#e3c8a9}
+.a2k-event-card-copy span{font:12px/1.35 Arial,sans-serif;color:#dcb48b}
+.a2k-special-entry{display:block;width:100%;margin:0 0 9px;min-height:42px;
+border:1.5px solid #b8915e;border-radius:11px;background:linear-gradient(140deg,#73221d,#481613);
+color:#f7e2c2;font:700 17px Georgia,serif}
+.a2k-special-dialog{width:min(95vw,580px);max-height:88dvh;padding:0;border:1.5px solid #d1af79;border-radius:17px;
+background:linear-gradient(155deg,#342019,#140e0b);color:#f6ddbc;box-shadow:0 15px 50px #000b}
+.a2k-special-dialog::backdrop{background:#000b}
+.a2k-special-dialog .a2k-special-shell{padding:20px 16px 15px;max-height:88dvh;overflow-y:auto}
+.a2k-special-dialog h2{font:700 clamp(22px,5.5vw,29px) Georgia,serif;color:#f6dfbb;margin:0 0 10px}
+.a2k-special-dialog h3{font:700 19px Georgia,serif;color:#eac797;margin:5px 0}
+.a2k-special-dialog p{font:14px/1.5 Arial,sans-serif;color:#e0c5a8;margin:9px 0}
+.a2k-special-dialog .a2k-special-status{font:700 12px Arial,sans-serif;letter-spacing:.7px;color:#eec98c}
+.a2k-special-dialog label{display:grid;gap:5px;margin:10px 0;font:700 14px Georgia,serif;color:#edd3ae}
+.a2k-special-dialog input,.a2k-special-dialog textarea,.a2k-special-dialog select{
+width:100%;box-sizing:border-box;min-height:43px;border:1.5px solid #c7a674;border-radius:10px;
+background:linear-gradient(145deg,#f5e4c2,#dfbb86);color:#46221b;padding:10px;font:15px Arial,sans-serif}
+.a2k-special-dialog textarea{min-height:72px;resize:vertical}
+.a2k-special-dialog .a2k-special-actions{display:grid;gap:8px;margin-top:18px}
+.a2k-special-actions button{padding:10px;min-height:43px;border:1.5px solid #b99969;border-radius:11px;
+background:linear-gradient(145deg,#78251f,#491614);color:#f5dfbf;font:700 16px Georgia,serif}
+.a2k-special-actions button:disabled{opacity:.6}
+.a2k-special-dialog .a2k-special-feedback{min-height:15px;font:14px/1.45 Arial,sans-serif;color:#ffdaaa}
+.a2k-special-dialog [hidden]{display:none!important}
+.a2k-venue-events{border:1px solid #a88452;border-radius:14px;margin:12px auto;padding:12px;max-width:840px;
+background:linear-gradient(145deg,#341b17,#1b120f);color:#e9d3b1}
+.a2k-venue-events[hidden]{display:none!important}
+.a2k-venue-events h3{margin:0 0 8px;font:700 20px Georgia,serif;color:#f8dfb6}
+.a2k-venue-events button{display:block;width:100%;text-align:left;margin:6px 0;padding:10px;
+border:1px solid #ac8b61;border-radius:10px;background:#492119;color:#e8d5b3;font:700 14px/1.4 Georgia,serif}
+#a2k-special-event-dialog .a2k-event-datetime{font:700 18px Georgia,serif;color:#f9d5a0}
+
+/* Special-event queue inside the existing Founder Approval Center. */
+.a2k-special-approval{margin:16px 0;padding:12px;border:1px solid #b08b57;border-radius:14px;background:linear-gradient(145deg,#301a15,#18100d)}
+.a2k-special-approval[hidden]{display:none!important}
+.a2k-special-approval h3{color:#f2d6aa;font:700 21px Georgia,serif;margin:0 0 7px}
+.a2k-special-approval p{color:#d9c0a1;font:14px/1.4 Arial,sans-serif;margin:5px 0 9px}
+.a2k-special-approval .a2k-special-approval-card{background:#2e1b16;border:1px solid #ad8757;border-radius:12px;padding:10px;margin:10px 0}
+.a2k-special-approval-card strong{color:#f2d8aa;font:700 17px Georgia,serif}
+.a2k-special-approval-card label{display:grid;gap:5px;font:700 13px Georgia,serif;color:#f4ddb9;margin:8px 0}
+.a2k-special-approval-card select{width:100%;min-height:42px;border:1.5px solid #bd975f;border-radius:10px;background:#f0d8ac;color:#422016;padding:9px}
+.a2k-special-approval-buttons{display:flex;gap:8px}
+.a2k-special-approval-buttons button{flex:1;min-height:44px;background:linear-gradient(135deg,#792820,#441815);color:#f4d7ae;border:1px solid #b69263;border-radius:10px;font:700 15px Georgia,serif}
+.a2k-special-approval-buttons button:disabled{opacity:.5}
+.a2k-special-approval-card a{font:700 14px Arial,sans-serif;color:#f3d39d;text-decoration:underline}
+
+/* The next karaoke start is prominent even on compact venue cards. */
+#find-screen.atk-vintage .venue-teaser .teaser-copy .a2k-next-session{
+ display:block!important;
+ font:700 12px/1.35 Arial,sans-serif!important;
+ color:#f1c68e!important;
+ margin-top:4px;
+ overflow-wrap:anywhere;
+}
+#find-screen.atk-vintage #results-count{
+ margin-top:8px;
+}
+
+
+/* Build 199 — The one-time cards now share the exact venue-card structure and
+   the Find Karaoke controls use parchment/oxblood rather than OS-native menus. */
+#find-screen.atk-vintage .filterline{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:9px 10px!important;
+ align-items:end!important;
+}
+#find-screen.atk-vintage .filterline label{
+ display:block!important;
+ min-width:0!important;
+ font:700 12px/1.35 Georgia,serif!important;
+ color:#edd6b0!important;
+}
+#find-screen.atk-vintage .filterline select.a2k-native-filter-hidden{
+ display:none!important;
+}
+#find-screen.atk-vintage .filterline .a2k-vintage-select-trigger{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ width:100%!important;
+ min-width:0!important;
+ min-height:44px!important;
+ margin:5px 0 0!important;
+ padding:9px 10px!important;
+ border:1.5px solid #b58d58!important;
+ border-radius:10px!important;
+ background:linear-gradient(155deg,#f2dfb8,#dfbf8b)!important;
+ color:#572017!important;
+ box-shadow:inset 0 0 0 1.5px #ffefcc,0 2px 2px #0006!important;
+ font:700 clamp(12px,3.2vw,14px)/1.2 Georgia,serif!important;
+ text-align:left!important;
+ cursor:pointer;
+}
+#find-screen.atk-vintage .a2k-vintage-select-value{
+ overflow:hidden;
+ white-space:nowrap;
+ text-overflow:ellipsis;
+}
+#find-screen.atk-vintage .a2k-vintage-select-arrow{
+ flex:none;
+ margin-left:5px;
+ color:#6c291d;
+ font:700 19px/1 Georgia,serif;
+}
+#find-screen.atk-vintage .a2k-vintage-select-trigger:focus-visible{
+ outline:2px solid #f2d7a4!important;
+ outline-offset:2px!important;
+}
+
+/* Unified venue and special-event search cards. */
+#find-screen.atk-vintage .a2k-event-card{
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:minmax(86px,29%) minmax(0,1fr)!important;
+ align-items:center!important;
+ column-gap:10px!important;
+ width:100%!important;
+ height:auto!important;
+ min-height:80px!important;
+ padding:5px!important;
+ margin:0!important;
+ border:1.5px solid #c8a473!important;
+ border-radius:14px!important;
+ background:radial-gradient(ellipse at 0 0,#391b1840,transparent 58%),
+   linear-gradient(105deg,#1b1511,#0b0a09 55%,#15100d)!important;
+ box-shadow:inset 0 0 0 2px #b88d5038,0 2px 1px #0008!important;
+ color:#f5e4c4!important;
+ text-align:left!important;
+}
+#find-screen.atk-vintage .a2k-event-card .a2k-event-date-tile{
+ box-sizing:border-box!important;
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:100%!important;
+ height:65px!important;
+ min-height:0!important;
+ padding:3px!important;
+ margin:0!important;
+ border:1.5px solid #bfa16e!important;
+ border-radius:9px!important;
+ background:linear-gradient(145deg,#ecd4a5,#d9b27b)!important;
+ box-shadow:inset 0 0 0 1.5px #f6e6c5!important;
+ color:#4f2419!important;
+}
+#find-screen.atk-vintage .a2k-event-date-tile strong{
+ font:800 11px/1.1 Arial,sans-serif!important;
+ letter-spacing:.6px!important;
+}
+#find-screen.atk-vintage .a2k-event-date-tile b{
+ font:800 28px/1 Georgia,serif!important;
+ color:#4f2419!important;
+}
+#find-screen.atk-vintage .a2k-event-date-tile small{
+ font:700 10px/1.1 Arial,sans-serif!important;
+ color:#6d3c26!important;
+}
+#find-screen.atk-vintage .a2k-event-card-copy{
+ box-sizing:border-box!important;
+ min-width:0!important;
+ display:flex!important;
+ flex-direction:column!important;
+ justify-content:center!important;
+ gap:3px!important;
+ padding:2px 5px 2px 0!important;
+}
+#find-screen.atk-vintage .a2k-event-card-copy b{
+ font:italic 700 clamp(17px,4.3vw,22px)/1.13 Georgia,serif!important;
+ color:#f5e4c4!important;
+ text-shadow:0 1px #000b!important;
+}
+#find-screen.atk-vintage .a2k-event-card-copy small{
+ font:500 clamp(10px,2.7vw,12px)/1.26 Arial,sans-serif!important;
+ color:#e1cbaa!important;
+}
+#find-screen.atk-vintage .a2k-event-card-copy span{
+ font:500 clamp(10px,2.7vw,12px)/1.26 Arial,sans-serif!important;
+ color:#cfb78e!important;
+}
+#find-screen.atk-vintage .a2k-event-card-copy .a2k-event-tag{
+ font:800 10px/1.2 Arial,sans-serif!important;
+ letter-spacing:.9px!important;
+ color:#e6bd80!important;
+}
+#find-screen.atk-vintage .a2k-event-card:focus-visible{
+ outline:2px solid #efd4a1!important;
+ outline-offset:2px!important;
+}
+@media(max-width:390px){
+ #find-screen.atk-vintage .a2k-event-card{
+   grid-template-columns:minmax(73px,28%) minmax(0,1fr)!important;
+   column-gap:8px!important;
+ }
+ #find-screen.atk-vintage .a2k-event-card .a2k-event-date-tile{height:60px!important;}
+ #find-screen.atk-vintage .a2k-event-card-copy b{font-size:clamp(16px,4.2vw,20px)!important;}
+}
+
+/* Dialog-like, color-blind-accessible option selection: no system gray sheets. */
+.a2k-vintage-picker{
+ box-sizing:border-box!important;
+ width:min(94vw,430px)!important;
+ max-height:min(82dvh,680px)!important;
+ padding:0!important;
+ border:1.5px solid #c8a473!important;
+ border-radius:15px!important;
+ background:linear-gradient(145deg,#311b17,#150d0b)!important;
+ color:#f4dfbf!important;
+ box-shadow:0 18px 56px #000b!important;
+}
+.a2k-vintage-picker::backdrop{background:#000b!important;}
+.a2k-vintage-picker-shell{
+ box-sizing:border-box;
+ display:flex;
+ flex-direction:column;
+ gap:9px;
+ padding:16px;
+ max-height:min(82dvh,680px);
+ overflow:hidden;
+}
+.a2k-vintage-picker h2{
+ margin:0 0 4px!important;
+ color:#f1d9b1!important;
+ font:700 23px/1.2 Georgia,serif!important;
+}
+.a2k-vintage-picker-search{
+ box-sizing:border-box;
+ flex:none;
+ width:100%;
+ min-height:43px;
+ border:1.5px solid #c8a473;
+ border-radius:9px;
+ padding:10px 12px;
+ background:#f0dcb5;
+ color:#4b2019;
+ font:15px Arial,sans-serif;
+}
+.a2k-vintage-picker-list{
+ display:flex;
+ flex:1 1 auto;
+ flex-direction:column;
+ gap:7px;
+ min-height:0;
+ overflow-y:auto;
+ overscroll-behavior:contain;
+ padding:2px 4px 2px 0;
+}
+.a2k-vintage-picker-option{
+ flex:none;
+ display:block;
+ width:100%;
+ min-height:43px;
+ padding:10px 13px;
+ border:1.5px solid #9e784b;
+ border-radius:9px;
+ background:linear-gradient(150deg,#36201a,#22120f);
+ color:#f5dfbf;
+ text-align:left;
+ font:700 15px/1.25 Georgia,serif;
+ cursor:pointer;
+}
+.a2k-vintage-picker-option[aria-pressed="true"]{
+ background:linear-gradient(150deg,#f2ddb5,#dfbd84);
+ color:#4d1a15;
+ border:2px solid #f8e6c2;
+}
+.a2k-vintage-picker-option[aria-pressed="true"]::before{
+ content:"✓ ";
+ color:#6f251c;
+ font-weight:900;
+}
+.a2k-vintage-picker-option[hidden]{display:none!important;}
+.a2k-vintage-picker-close{
+ flex:none;
+ min-height:44px;
+ width:100%;
+ margin-top:5px;
+ border:1.5px solid #c49c67;
+ border-radius:10px;
+ background:linear-gradient(140deg,#7d2520,#501613);
+ color:#f5dfbf;
+ font:700 16px Georgia,serif;
+ cursor:pointer;
+}
+.a2k-vintage-picker :is(button,input):focus-visible{
+ outline:2px solid #f7d7a1;
+ outline-offset:2px;
+}
+
+
+/* Build 200 — correction: simple vintage controls, never pills-inside-pills. */
+#find-screen.atk-vintage .filterline .a2k-vintage-select-trigger{
+ box-sizing:border-box!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ gap:8px!important;
+ width:100%!important;
+ min-width:0!important;
+ height:44px!important;
+ min-height:44px!important;
+ margin-top:5px!important;
+ padding:8px 12px!important;
+ border:1.5px solid #b58d58!important;
+ border-radius:10px!important;
+ background:linear-gradient(160deg,#f2dfb8,#dfbf8b)!important;
+ color:#572017!important;
+ box-shadow:inset 0 0 0 1px #fff1d1,0 2px 2px #0006!important;
+ font:700 14px/1.2 Georgia,serif!important;
+ text-align:left!important;
+ white-space:nowrap!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+}
+#find-screen.atk-vintage .filterline .a2k-vintage-select-trigger::after{
+ content:"⌄";
+ display:block;
+ flex:none;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ color:#653027!important;
+ font:700 20px/1 Georgia,serif!important;
+}
+#find-screen.atk-vintage .filterline label{
+ font-size:13px!important;
+ line-height:1.2!important;
+}
+#find-screen.atk-vintage p#results-count{
+ font-size:clamp(13px,3.6vw,16px)!important;
+ line-height:1.3!important;
+ text-align:center!important;
+ padding:8px 18px!important;
+ margin:3px 0 12px!important;
+}
+
+
+/* Build 201 — calmer Find Karaoke controls and single public contribution entry. */
+#find-screen.atk-vintage .a2k-submit-source-hidden,
+#find-screen.atk-vintage .a2k-submit-source-hidden.atk-suggest-venue-cta{
+ display:none!important;
+}
+#find-screen.atk-vintage #a2k-search-filters{
+ margin:7px 0 10px!important;
+ padding:0!important;
+ border:1px solid #ae8858!important;
+ border-radius:10px!important;
+ background:linear-gradient(145deg,#251713,#160e0b)!important;
+ box-shadow:inset 0 0 0 1px #e2bf8530!important;
+}
+#find-screen.atk-vintage #a2k-search-filters > summary{
+ display:flex!important;
+ justify-content:space-between!important;
+ align-items:center!important;
+ flex-wrap:wrap!important;
+ column-gap:9px!important;
+ row-gap:3px!important;
+ min-height:43px!important;
+ padding:8px 12px!important;
+ list-style:none!important;
+ color:#f4ddb5!important;
+ cursor:pointer!important;
+}
+#find-screen.atk-vintage #a2k-search-filters > summary::-webkit-details-marker{display:none!important;}
+#find-screen.atk-vintage #a2k-search-filters > summary:focus-visible{
+ outline:2px solid #f1d8a7!important;
+ outline-offset:2px!important;
+}
+#find-screen.atk-vintage .a2k-search-filters-title{
+ font:700 15px/1.2 Georgia,serif!important;
+ color:#f6e2bf!important;
+}
+#find-screen.atk-vintage .a2k-search-filters-title::before{
+ content:"☷";
+ margin-right:8px;
+ color:#e2b980;
+}
+#find-screen.atk-vintage .a2k-search-filters-caption{
+ display:block!important;
+ flex:1!important;
+ min-width:125px!important;
+ overflow:hidden!important;
+ white-space:nowrap!important;
+ text-overflow:ellipsis!important;
+ color:#d5b997!important;
+ font:500 12px/1.3 Arial,sans-serif!important;
+ text-align:right!important;
+}
+#find-screen.atk-vintage #a2k-search-filters > summary::after{
+ content:"⌄";
+ margin-left:2px;
+ color:#ebc997;
+ font:700 18px/1 Georgia,serif;
+}
+#find-screen.atk-vintage #a2k-search-filters[open] > summary{
+ border-bottom:1px solid #775535!important;
+}
+#find-screen.atk-vintage #a2k-search-filters[open] > summary::after{content:"⌃";}
+#find-screen.atk-vintage #a2k-search-filters:not([open]) > .filterline{
+ display:none!important;
+}
+#find-screen.atk-vintage #a2k-search-filters[open] > .filterline{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ padding:12px!important;
+ margin:0!important;
+ gap:10px!important;
+}
+#find-screen.atk-vintage .a2k-event-filter{
+ margin:2px 0 8px!important;
+ gap:6px!important;
+}
+#find-screen.atk-vintage .a2k-event-filter button{
+ min-height:40px!important;
+ padding:7px 3px!important;
+ font-size:clamp(11px,2.8vw,13px)!important;
+}
+#find-screen.atk-vintage p#results-count{
+ display:block!important;
+ border:0!important;
+ background:none!important;
+ box-shadow:none!important;
+ border-radius:0!important;
+ margin:0 0 10px!important;
+ padding:2px 3px!important;
+ color:#d4bfa2!important;
+ text-align:left!important;
+ text-shadow:none!important;
+ font:600 13px/1.35 Arial,sans-serif!important;
+}
+#find-screen.atk-vintage p#results-count::before,
+#find-screen.atk-vintage p#results-count::after{
+ content:none!important;
+ display:none!important;
+}
+#find-screen.atk-vintage #a2k-community-submit-entry{
+ display:block!important;
+ width:100%!important;
+ min-height:44px!important;
+ margin:1px 0 12px!important;
+ padding:9px 12px!important;
+ border:1.5px solid #b99160!important;
+ border-radius:10px!important;
+ background:linear-gradient(155deg,#74221e,#4c1714)!important;
+ box-shadow:inset 0 0 0 1px #f3dba82b,0 2px 4px #0007!important;
+ color:#f5e2c2!important;
+ font:700 17px/1.25 Georgia,serif!important;
+ cursor:pointer!important;
+}
+#find-screen.atk-vintage #a2k-community-submit-entry:focus-visible{
+ outline:2px solid #eed1a1!important;
+ outline-offset:2px!important;
+}
+.a2k-submit-choice-dialog{
+ box-sizing:border-box!important;
+ width:min(94vw,430px)!important;
+ max-height:85dvh!important;
+ padding:0!important;
+ border:1.5px solid #c19b69!important;
+ border-radius:15px!important;
+ background:linear-gradient(145deg,#2b1b15,#150e0c)!important;
+ color:#f4dfbf!important;
+ box-shadow:0 18px 48px #000b!important;
+}
+.a2k-submit-choice-dialog::backdrop{background:#000b!important;}
+.a2k-submit-choice-shell{padding:19px 16px 15px;}
+.a2k-submit-choice-dialog h2{
+ margin:0 0 8px!important;
+ color:#f2deb9!important;
+ font:700 clamp(21px,5.2vw,27px)/1.2 Georgia,serif!important;
+}
+.a2k-submit-choice-dialog p{
+ margin:0 0 16px!important;
+ color:#d9c3a5!important;
+ font:13px/1.5 Arial,sans-serif!important;
+}
+.a2k-submit-choice-options{display:grid;gap:10px;}
+.a2k-submit-choice-option{
+ display:flex;
+ flex-direction:column;
+ align-items:flex-start;
+ gap:5px;
+ box-sizing:border-box;
+ width:100%;
+ min-height:71px;
+ padding:12px 14px;
+ border:1.5px solid #bc9462;
+ border-radius:10px;
+ background:linear-gradient(145deg,#392018,#251410);
+ color:#f5dfbc;
+ text-align:left;
+ cursor:pointer;
+}
+.a2k-submit-choice-option strong{
+ font:700 19px/1.2 Georgia,serif;
+ color:#f6dfbb;
+}
+.a2k-submit-choice-option small{
+ font:500 13px/1.3 Arial,sans-serif;
+ color:#dcc6a8;
+}
+.a2k-submit-choice-close{
+ display:block;
+ box-sizing:border-box;
+ width:100%;
+ min-height:44px;
+ margin-top:16px;
+ padding:9px 12px;
+ border:1.5px solid #b99160;
+ border-radius:9px;
+ background:linear-gradient(155deg,#74221e,#481713);
+ color:#f4dfbb;
+ font:700 16px Georgia,serif;
+ cursor:pointer;
+}
+.a2k-submit-choice-dialog button:focus-visible{
+ outline:2px solid #f3d8a8;
+ outline-offset:2px;
+}
+
+
+/* Build 202: Honor actual filtering. Several legacy vintage selectors use
+   display:grid!important; these specificity-safe rules prevent cards excluded
+   by City, State, Genre, Rating or search from remaining visually visible. */
+#find-screen.atk-vintage #find-results .venue-teaser[hidden],
+#find-screen.atk-vintage #find-results .a2k-event-card[hidden]{
+ display:none!important;
+}
+
+
+/* Build 206 — compact, genuinely uniform venue and special-event cards.
+   Do not let one long card stretch every other row (old grid-auto-rows:1fr).
+   Two-line title limit keeps names identifiable; tapping reveals full details. */
+#find-screen.atk-vintage #find-results{
+ grid-auto-rows:100px!important;
+ align-items:stretch!important;
+}
+#find-screen.atk-vintage #find-results > :is(.venue-teaser,.a2k-event-card):not([hidden]){
+ box-sizing:border-box!important;
+ height:100px!important;
+ min-height:100px!important;
+ max-height:100px!important;
+ align-self:stretch!important;
+ overflow:hidden!important;
+}
+#find-screen.atk-vintage #find-results :is(.teaser-copy,.a2k-event-card-copy){
+ min-height:0!important;
+ gap:2px!important;
+}
+#find-screen.atk-vintage #find-results :is(.teaser-copy,.a2k-event-card-copy) > b{
+ font-size:clamp(16px,4.2vw,18px)!important;
+ line-height:1.08!important;
+ display:-webkit-box!important;
+ -webkit-box-orient:vertical!important;
+ -webkit-line-clamp:2!important;
+ line-clamp:2;
+ overflow:hidden!important;
+}
+#find-screen.atk-vintage #find-results :is(.teaser-copy,.a2k-event-card-copy) > small,
+#find-screen.atk-vintage #find-results :is(.teaser-copy,.a2k-event-card-copy) > span:not(.a2k-next-session):not(.a2k-event-tag){
+ font-size:11px!important;
+ line-height:1.15!important;
+}
+#find-screen.atk-vintage #find-results .venue-teaser .teaser-copy .a2k-next-session{
+ font-size:11px!important;
+ line-height:1.18!important;
+ margin-top:2px!important;
+ display:-webkit-box!important;
+ -webkit-box-orient:vertical!important;
+ -webkit-line-clamp:2!important;
+ line-clamp:2;
+ overflow:hidden!important;
+}
+#find-screen.atk-vintage #find-results .a2k-event-card-copy .a2k-event-tag{
+ font-size:9px!important;
+ line-height:1.12!important;
+ letter-spacing:.65px!important;
+}
+#find-screen.atk-vintage #find-results .a2k-event-card .a2k-event-date-tile{
+ height:65px!important;
+}
+
+
+/* Schedule tab: one-time events use the same date tile as Find Karaoke. */
+#venue-screen #content .a2k-venue-events{
+  width:100%;max-width:none;min-width:0;
+  margin:22px 0 0;padding:16px 0 0;
+  border:0;border-top:1px solid #956b42;border-radius:0;
+  background:transparent;box-shadow:none;
+}
+#venue-screen #content .a2k-venue-events h3{
+  font:italic 700 22px/1.2 Georgia,serif;
+  color:#f6d7a5;margin:0 0 13px;
+}
+#venue-screen #content .a2k-venue-events-items{
+  display:grid;gap:10px;grid-template-columns:1fr;
+}
+#venue-screen #content .a2k-venue-events .a2k-event-card{
+  display:flex;align-items:center;gap:12px;
+  width:100%;min-width:0;min-height:93px;
+  margin:0;padding:9px 12px;
+  border:1.5px solid #bb965f;border-radius:12px;
+  background:linear-gradient(115deg,#3b1610,#1c0b09);
+  color:#f1daba;text-align:left;
+  font:inherit;
+}
+#venue-screen #content .a2k-venue-events .a2k-event-date-tile{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:75px;height:73px;min-width:75px;
+  background:linear-gradient(#f2dcae,#d0a169);
+  border:1px solid #f9e4bb;border-radius:9px;color:#4b2015;
+}
+#venue-screen #content .a2k-venue-events .a2k-event-card-copy{
+  min-width:0;display:flex;flex-direction:column;gap:3px;
+}
+#venue-screen #content .a2k-venue-events .a2k-event-card-copy b{
+  font:700 17px/1.25 Georgia,serif;color:#f8debb;
+}
+#venue-screen #content .a2k-venue-events .a2k-event-card-copy small,
+#venue-screen #content .a2k-venue-events .a2k-event-card-copy span:last-child{
+  font:13px/1.4 Arial,sans-serif;color:#dec5a6;
+}
+
+/* A2K City picker: compact rows and live counts, without changing the other filters. */
+.a2k-vintage-picker-city .a2k-vintage-picker-list{gap:5px;}
+.a2k-vintage-picker-city .a2k-vintage-picker-option{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  min-height:43px!important;
+  padding:8px 11px!important;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-place{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-count{
+  flex:none;
+  padding:5px 9px;
+  border-radius:7px;
+  border:1px solid #b58d63;
+  background:#2b1713;
+  color:#f8e4c3;
+  font:700 12px/1.2 Arial,sans-serif;
+  white-space:nowrap;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-option[aria-pressed="true"] .a2k-vintage-picker-count{
+  background:#69362a;
+  border-color:#a66f50;
+  color:#fff0d5;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-option[aria-pressed="true"]::before{
+  content:none!important;
+}
+
+/* A2K City picker v2: two compact columns with plain parenthesized counts. */
+.a2k-vintage-picker-city{
+  width:min(96vw,500px)!important;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-list{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-auto-rows:minmax(44px,auto);
+  align-content:start;
+  gap:7px!important;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-option{
+  min-width:0!important;
+  min-height:44px!important;
+  padding:8px 9px!important;
+  gap:5px!important;
+  font-size:clamp(12px,3.6vw,15px)!important;
+  line-height:1.3!important;
+  border-radius:9px!important;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-place{
+  flex:1 1 auto;
+  min-width:0;
+  overflow-wrap:normal;
+  word-break:normal;
+  hyphens:auto;
+}
+.a2k-vintage-picker-city .a2k-vintage-picker-count,
+.a2k-vintage-picker-city .a2k-vintage-picker-option[aria-pressed="true"] .a2k-vintage-picker-count{
+  flex:0 0 auto;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font:700 12px/1.2 Arial,sans-serif!important;
+  white-space:nowrap;
+}
+
+/* Build 239 — state picker matches the established two-column City picker. */
+.a2k-vintage-picker-state{
+ width:min(96vw,510px)!important;
+}
+.a2k-vintage-picker-state .a2k-vintage-picker-list{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ grid-auto-rows:minmax(44px,auto);
+ gap:7px!important;
+ align-content:start!important;
+}
+.a2k-vintage-picker-state .a2k-vintage-picker-option{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ min-width:0!important;
+ min-height:44px!important;
+ padding:8px 10px!important;
+ gap:6px!important;
+ font-size:clamp(12px,3.4vw,15px)!important;
+ line-height:1.2!important;
+}
+.a2k-vintage-picker-state .a2k-vintage-picker-place{
+ flex:1 1 auto;min-width:0;overflow-wrap:anywhere;
+}
+.a2k-vintage-picker-state .a2k-vintage-picker-count{
+ flex:none;color:inherit;font:700 12px Georgia,serif;
+ white-space:nowrap;
+}
+.a2k-vintage-picker-state .a2k-vintage-picker-option[aria-pressed="true"]::before{
+ content:none!important;
+}
+@media(max-width:380px){
+ .a2k-vintage-picker-state .a2k-vintage-picker-option{
+   padding:7px 6px!important;
+   font-size:12px!important;
+ }
+}
+/* Discovery begins intentionally: no initial forced list or false "no results". */
+#find-screen.atk-vintage #find-results :is(.venue-teaser,.a2k-event-card)[hidden]{
+ display:none!important;
+}

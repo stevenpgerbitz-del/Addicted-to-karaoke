@@ -1,0 +1,114 @@
+/* A2K venue grid choice — familiar red/cream, accessible without color alone. */
+#a2k-find-layout-bar{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ flex-wrap:wrap;margin:0 0 14px;min-width:0;
+}
+#a2k-find-layout-bar #results-count{
+ margin:0!important;min-width:0;flex:1 1 auto;
+}
+#a2k-find-layout-bar .a2k-find-layout-choices{
+ display:none;align-items:center;gap:6px;flex:none;
+}
+#a2k-find-layout-bar .a2k-find-layout-label{
+ color:#ebc7ac;font:700 13px/1.2 Georgia,serif;margin-right:2px;
+}
+#a2k-find-layout-bar .a2k-find-layout-button{
+ display:inline-flex;align-items:center;justify-content:center;gap:7px;
+ min-width:94px;min-height:35px;padding:7px 9px;
+ border:1px solid #92694f;border-radius:9px;
+ background:#2c1714;color:#edd5b8;
+ font:700 12px/1.15 Georgia,serif;cursor:pointer;
+}
+#a2k-find-layout-bar .a2k-find-layout-button[aria-pressed="true"]{
+ border:2px solid #deb580;background:#762723;color:#fff0d6;
+ padding:6px 8px;box-shadow:inset 0 0 0 1px #a36343;
+}
+#a2k-find-layout-bar .a2k-find-layout-button:hover:not([aria-pressed="true"]){
+ background:#42201d;
+}
+#a2k-find-layout-bar .a2k-find-layout-button:focus-visible{
+ outline:2px solid #fff1c9;outline-offset:2px;
+}
+#a2k-find-layout-bar .a2k-find-layout-icon{
+ display:inline-flex;gap:2px;align-items:center;height:14px;flex:none;
+}
+#a2k-find-layout-bar .a2k-find-layout-icon i{
+ display:block;width:7px;height:12px;border:1px solid currentColor;border-radius:2px;
+}
+@media(min-width:1320px){
+ html.a2k-desktop-live #a2k-find-layout-bar .a2k-find-layout-choices{
+   display:inline-flex!important;
+ }
+ html.a2k-desktop-live body #find-screen.atk-vintage[data-venue-layout="3"] #find-results{
+   grid-template-columns:repeat(3,minmax(0,1fr))!important;
+   gap:10px!important;
+ }
+ html.a2k-desktop-live body #find-screen.atk-vintage[data-venue-layout="3"] #find-results > *{
+   min-width:0!important;
+ }
+ html.a2k-desktop-live body #find-screen.atk-vintage[data-venue-layout="3"] .venue-teaser{
+   min-width:0!important;
+   display:flex!important;align-items:center!important;gap:9px!important;
+   padding:7px!important;min-height:111px!important;
+ }
+ html.a2k-desktop-live body #find-screen.atk-vintage[data-venue-layout="3"] .venue-teaser .teaser-img{
+   width:clamp(98px,8vw,140px)!important;
+   max-width:140px!important;
+   flex:0 0 clamp(98px,8vw,140px)!important;
+   height:96px!important;
+ }
+ html.a2k-desktop-live body #find-screen.atk-vintage[data-venue-layout="3"] .venue-teaser .teaser-img img{
+   display:block;width:100%!important;height:100%!important;object-fit:cover!important;
+ }
+ html.a2k-desktop-live body #find-screen.atk-vintage[data-venue-layout="3"] .venue-teaser .teaser-copy{
+   min-width:0!important;flex:1 1 0!important;gap:3px!important;
+   padding:4px 2px!important;
+ }
+ html.a2k-desktop-live body #find-screen.atk-vintage[data-venue-layout="3"] .venue-teaser .teaser-copy b{
+   font-size:clamp(16px,1.22vw,20px)!important;line-height:1.12!important;
+   overflow-wrap:break-word!important;
+ }
+ html.a2k-desktop-live body #find-screen.atk-vintage[data-venue-layout="3"] .venue-teaser .teaser-copy small,
+ html.a2k-desktop-live body #find-screen.atk-vintage[data-venue-layout="3"] .venue-teaser .teaser-copy span{
+   font-size:12px!important;line-height:1.22!important;overflow-wrap:anywhere!important;
+ }
+}
+/* Phones and narrower tablets keep the site's normal responsive venue layout. */
+
+/* Build 239 — Submit Karaoke belongs with the compact list controls, not in a full-width banner. */
+#find-screen #a2k-find-layout-bar{
+ align-items:center!important;
+ row-gap:8px!important;
+}
+#find-screen #a2k-find-layout-bar #a2k-community-submit-entry{
+ box-sizing:border-box!important;
+ display:inline-flex!important;
+ flex:0 0 auto!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:auto!important;
+ max-width:100%!important;
+ min-width:160px!important;
+ min-height:39px!important;
+ height:auto!important;
+ margin:0!important;
+ padding:8px 15px!important;
+ border:1.5px solid #d8ae75!important;
+ border-radius:9px!important;
+ background:linear-gradient(135deg,#7e2822,#571a17)!important;
+ color:#ffe9c8!important;
+ font:700 13px/1.2 Georgia,serif!important;
+ box-shadow:none!important;
+ cursor:pointer;
+}
+#find-screen #a2k-find-layout-bar #a2k-community-submit-entry:focus-visible{
+ outline:2px solid #ffe8b4!important;outline-offset:2px!important;
+}
+@media(max-width:540px){
+ #find-screen #a2k-find-layout-bar #a2k-community-submit-entry{
+   min-width:0!important;
+   min-height:38px!important;
+   font-size:12px!important;
+   padding:8px 11px!important;
+ }
+}

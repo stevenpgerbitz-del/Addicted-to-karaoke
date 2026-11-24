@@ -1,0 +1,74 @@
+/* v179 — My Reviews: the same walnut/brass language as Venue Details. */
+#atk-my-reviews{min-width:0;padding:0 2px 2px}
+#atk-my-reviews .atk-my-reviews-count{
+ margin:0 0 12px!important;padding:0!important;color:#d6bea0!important;
+ font:700 14px/1.5 Georgia,serif!important;
+}
+#atk-my-reviews .atk-my-reviews-message{
+ margin:6px 0 13px!important;color:#d6bea0!important;
+ font:400 14px/1.55 Arial,sans-serif!important;
+}
+#atk-my-reviews .atk-my-reviews-list{display:grid;gap:10px}
+#atk-my-reviews .atk-my-review-card{
+ border:1.5px solid #a17d52;border-radius:12px;overflow:hidden;
+ background:linear-gradient(135deg,#2c1d16,#190f0d);
+ box-shadow:inset 0 0 0 1px #edc89025;
+}
+#atk-my-reviews .atk-my-review-summary{
+ min-width:0;display:flex;justify-content:space-between;align-items:center;
+ gap:9px;padding:12px 10px;list-style:none;cursor:pointer;
+}
+#atk-my-reviews .atk-my-review-summary::-webkit-details-marker{display:none}
+#atk-my-reviews .atk-my-review-identity{min-width:0;display:grid;gap:3px}
+#atk-my-reviews .atk-my-review-identity strong{
+ font:700 16px/1.2 Georgia,serif;color:#f3e2c8;overflow-wrap:anywhere;
+}
+#atk-my-reviews .atk-my-review-identity small{
+ font:400 11px/1.4 Arial,sans-serif;color:#d6bea0;
+}
+#atk-my-reviews .atk-my-review-score{
+ white-space:nowrap;color:#f3e2c8;font:700 13px Georgia,serif;
+}
+#atk-my-reviews .atk-my-review-card[open]>.atk-my-review-summary{
+ border-bottom:1px solid #896b46;
+}
+#atk-my-reviews .atk-my-review-body{padding:12px 11px 14px}
+#atk-my-reviews .atk-my-review-comment,#atk-my-reviews .atk-my-review-muted{
+ font:400 14px/1.55 Arial,sans-serif;color:#eddbc3;margin:0 0 12px;
+ white-space:pre-wrap;overflow-wrap:anywhere;
+}
+#atk-my-reviews .atk-my-review-ratings{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px;
+ padding:5px 10px;border:1px solid #846442;border-radius:9px;
+ background:linear-gradient(145deg,#38261e,#241812);margin:0 0 12px;
+}
+#atk-my-reviews .atk-my-review-rating{
+ display:flex;justify-content:space-between;gap:7px;min-width:0;
+ padding:8px 0;border-bottom:1px solid #63482e;color:#d6bea0;
+ font:400 11px/1.3 Arial,sans-serif;
+}
+#atk-my-reviews .atk-my-review-rating strong{white-space:nowrap;color:#f3e2c8}
+#atk-my-reviews .atk-my-review-open,
+#atk-my-reviews .atk-my-reviews-pager button{
+ display:block;min-height:42px;padding:9px 12px;
+ border:1.5px solid #b99160;border-radius:9px;
+ background:linear-gradient(160deg,#74241f,#481512);
+ color:#f3e2c8;font:700 13px Georgia,serif;
+ box-shadow:inset 0 0 0 1px #edc89032;
+}
+#atk-my-reviews .atk-my-review-feedback:empty{display:none}
+#atk-my-reviews .atk-my-review-feedback{color:#e0c09a;font:12px/1.4 Arial,sans-serif;margin:9px 0 0}
+#atk-my-reviews .atk-my-reviews-pager{
+ display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+ gap:7px;margin-top:13px;
+}
+#atk-my-reviews .atk-my-reviews-pager span{
+ color:#d6bea0;font:12px Georgia,serif;text-align:center;white-space:nowrap;
+}
+#atk-my-reviews button:disabled{opacity:.5;cursor:default}
+@media(max-width:400px){
+ #atk-my-reviews .atk-my-review-ratings{grid-template-columns:1fr}
+ #atk-my-reviews .atk-my-review-summary{padding:10px 8px}
+ #atk-my-reviews .atk-my-review-identity strong{font-size:14px}
+ #atk-my-reviews .atk-my-review-score{font-size:12px}
+}

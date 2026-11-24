@@ -1,0 +1,307 @@
+/* Build 222: Profile simplification and organized settings. */
+/* Display selected interests as plain words; editing still uses the approved selection tiles. */
+#auth-profile .member-about .profile-interest-badges,
+#profile-section-dialog .member-about .profile-interest-badges{
+ display:flex!important;flex-wrap:wrap!important;align-items:baseline!important;
+ gap:0!important;margin-top:9px!important;
+}
+#auth-profile .member-about .profile-interest-chip,
+#profile-section-dialog .member-about .profile-interest-chip{
+ display:inline-flex!important;align-items:baseline!important;gap:0!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ font:500 15px/1.5 Arial,sans-serif!important;color:#f8e4d1!important;
+}
+#auth-profile .member-about .profile-interest-chip svg,
+#profile-section-dialog .member-about .profile-interest-chip svg{display:none!important}
+#auth-profile .member-about .profile-interest-chip+.profile-interest-chip::before,
+#profile-section-dialog .member-about .profile-interest-chip+.profile-interest-chip::before{
+ content:"·";display:inline-block;padding:0 9px;color:#cba37a;font-weight:700;
+}
+/* Badges have an independent profile section; no redundant section title inside it. */
+#auth-profile .a2k-profile-awards-panel .profile-about-awards>.profile-section-top,
+#profile-section-dialog .a2k-profile-awards-panel .profile-about-awards>.profile-section-top{display:none!important}
+#auth-profile .a2k-profile-awards-panel .profile-about-awards,
+#profile-section-dialog .a2k-profile-awards-panel .profile-about-awards{
+ border:0!important;margin:0!important;padding:2px 0!important;
+}
+#auth-profile .a2k-profile-awards-panel .profile-about-awards>.member-muted,
+#profile-section-dialog .a2k-profile-awards-panel .profile-about-awards>.member-muted{
+ margin:0 0 13px!important;color:#dec0ab;font-size:13px;
+}
+#auth-profile .a2k-profile-awards-panel .profile-award-list,
+#profile-section-dialog .a2k-profile-awards-panel .profile-award-list{
+ display:flex;gap:12px;flex-wrap:wrap;
+}
+/* The standard About Me panel no longer carries privacy controls or awards. */
+#auth-profile .a2k-profile-settings-panel .a2k-settings-privacy{
+ margin:0;padding:0 0 17px;border:0;border-bottom:1px solid #795047;
+}
+#auth-profile .a2k-profile-settings-panel,
+#profile-section-dialog .a2k-profile-settings-panel{min-width:0}
+.a2k-profile-settings-panel .a2k-settings-privacy{
+ border:0!important;padding:2px 0 18px!important;margin:0 0 19px!important;
+ border-bottom:1px solid #70463d!important;
+}
+.a2k-profile-settings-panel .a2k-contact-settings,
+.a2k-profile-settings-panel .a2k-notification-settings{
+ border:0;border-bottom:1px solid #70463d;margin:0 0 20px;padding:0 0 20px;
+}
+.a2k-profile-settings-panel .a2k-notification-settings{border-bottom:0;padding-bottom:0;margin-bottom:0}
+.a2k-profile-settings-panel .a2k-contact-settings>.profile-section-top,
+.a2k-profile-settings-panel .a2k-notification-settings>.profile-section-top{
+ margin-bottom:11px;
+}
+.a2k-profile-settings-panel .profile-section-top>strong{color:#f7e7db;font:700 16px/1.3 Georgia,serif}
+.a2k-profile-settings-panel .a2k-settings-explain{
+ color:#dfc6b5;font:14px/1.5 Arial,sans-serif;margin:4px 0 13px;
+}
+.a2k-profile-settings-panel .a2k-settings-not-active{
+ color:#eecdb2;border-left:3px solid #ac7456;padding:8px 12px;
+ font:13px/1.5 Arial,sans-serif;background:#34201e;border-radius:0 8px 8px 0;
+}
+.a2k-settings-contact-group{display:grid;gap:11px;margin:13px 0 22px}
+.a2k-settings-contact-group h3{
+ font:700 16px/1.35 Georgia,serif;color:#f5d7b5;margin:0;
+}
+.a2k-settings-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.a2k-settings-field strong{font:700 13px Arial,sans-serif;color:#ead9cb}
+.a2k-settings-field input{
+ display:block;width:100%;box-sizing:border-box;min-height:44px;padding:9px 11px;
+ background:#36201d!important;color:#fae8d3!important;border:1px solid #a47455!important;
+ border-radius:10px!important;font:14px Arial,sans-serif!important;
+}
+.a2k-settings-field input:focus-visible{outline:2px solid #f0c797;outline-offset:2px}
+.a2k-settings-helper{font:13px/1.5 Arial,sans-serif;color:#d9bca8;margin:1px 0}
+.a2k-settings-tile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.a2k-settings-tile{
+ width:100%;min-height:74px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+ gap:7px;padding:12px;border:1px solid #936452;border-radius:11px;
+ background:#2e1b1b;color:#f5ddc4;font:700 14px Arial,sans-serif;cursor:pointer;
+}
+.a2k-settings-tile[aria-pressed="true"]{
+ border:2px solid #e1bc86;background:linear-gradient(145deg,#752c27,#4d201e);
+ padding:11px;
+}
+.a2k-settings-tile:focus-visible{outline:2px solid #f9e0b4;outline-offset:2px}
+.a2k-settings-tile-symbol{font:22px/1 Arial,sans-serif;color:#efc59e}
+#a2k-contact-settings-actions[hidden]{display:none!important}
+.a2k-settings-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.a2k-settings-actions button{
+ min-height:43px;padding:9px;border:1px solid #c38f68;border-radius:9px;
+ background:linear-gradient(#7a2924,#4c1b1b);color:#fae2cb;font:700 14px Georgia,serif;cursor:pointer;
+}
+#a2k-contact-settings-status{font:13px/1.5 Arial,sans-serif;color:#e9c5aa}
+#a2k-contact-settings-status:empty{display:none}
+@media(max-width:520px){
+ .a2k-settings-tile{font-size:12px;min-height:70px}
+ .a2k-settings-tile-symbol{font-size:19px}
+}
+
+/* A2K 231: compact amenities-style Privacy tiles inside the existing Settings card.
+   Real buttons, single selected choice per group; no radio/check visuals. */
+:is(#member-privacy-editor,#member-privacy-summary){min-width:0;width:100%;box-sizing:border-box;margin-top:12px}
+:is(#member-privacy-editor,#member-privacy-summary) .profile-privacy-fieldset{
+ display:block!important;min-width:0;width:100%;margin:0 0 14px!important;
+ padding:0!important;border:0!important;box-sizing:border-box
+}
+:is(#member-privacy-editor,#member-privacy-summary) .profile-privacy-fieldset legend{
+ padding:0 0 7px!important;margin:0;color:#f2dbc5;
+ font:700 14px/1.25 Georgia,serif
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:7px!important;width:100%;min-width:0
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid.directory{
+ grid-template-columns:repeat(2,minmax(0,1fr))!important
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
+ appearance:none;box-sizing:border-box;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:5px;min-width:0;width:100%;
+ min-height:74px;aspect-ratio:1.18;padding:9px 3px;
+ border:1px solid #95654f;border-radius:10px;background:#2a1b1a;color:#f4ddc6;
+ text-align:center;font:700 12px/1.16 Georgia,serif;
+ overflow-wrap:break-word;cursor:pointer;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{
+ display:block;flex:none;width:21px;height:21px;max-width:100%;
+ stroke:#e6c49f;fill:none
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{
+ display:block;max-width:100%;font:700 clamp(11px,1.1vw,13px)/1.12 Georgia,serif;
+ white-space:normal;overflow-wrap:normal;word-break:normal
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"]{
+ background:linear-gradient(145deg,#762a27,#531c1b);
+ border:2px solid #e0b17e;padding:8px 2px;
+ box-shadow:inset 0 0 0 1px #a85f46
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"] svg{stroke:#f6deb8}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile:hover:not([aria-pressed="true"]){background:#3d2421}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile:focus-visible{
+ outline:2px solid #f8e4b8;outline-offset:2px
+}
+:is(#member-privacy-editor,#member-privacy-summary) .profile-interests-buttons{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+ margin-top:11px
+}
+:is(#member-privacy-editor,#member-privacy-summary) .profile-interests-buttons button{min-width:0}
+@media(max-width:430px){
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid{gap:5px!important}
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
+  min-height:70px;aspect-ratio:1.07;padding:7px 2px;gap:4px
+ }
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{width:19px;height:19px}
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{font-size:11px}
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"]{padding:6px 1px}
+}
+
+/* A2K 232: section cards already have titled headers (desktop summary or mobile dialog).
+   Keep headings for subsections, but remove repeated card titles within their panels. */
+#auth-profile #atk-about-profile-entry .member-about>.member-about-heading,
+#profile-section-dialog .member-about>.member-about-heading,
+#auth-profile #a2k-profile-awards .profile-about-awards>.profile-section-top,
+#profile-section-dialog .profile-about-awards>.profile-section-top{
+ display:none!important
+}
+#auth-profile #atk-singer-songs-entry>.member-panel>.member-heading>h3,
+#profile-section-dialog .profile-song-panel>.member-heading>h3{
+ display:none!important
+}
+#auth-profile #atk-singer-songs-entry>.member-panel>.member-heading,
+#profile-section-dialog .profile-song-panel>.member-heading{
+ justify-content:flex-end!important
+}
+#auth-profile #atk-about-profile-entry>.member-panel,
+#profile-section-dialog .member-about{
+ min-width:0
+}
+
+/* Exact title duplicates are identified by the Settings module. */
+#auth-profile .a2k-duplicate-heading,#profile-section-dialog .a2k-duplicate-heading{display:none!important}
+
+/* Saved Privacy selections are real controls; each tile saves as soon as it is tapped. */
+#member-privacy-summary.a2k-privacy-saved{min-width:0;width:100%;margin-top:13px;display:grid;gap:0}
+#member-privacy-summary .a2k-privacy-legacy-values[hidden]{display:none!important}
+#member-privacy-summary .a2k-privacy-tile{cursor:pointer!important;pointer-events:auto!important}
+#member-privacy-summary .a2k-privacy-tile:disabled{
+ cursor:progress!important;opacity:.72!important
+}
+#member-privacy-summary .a2k-privacy-tile[aria-pressed="true"]{
+ background:linear-gradient(145deg,#762a27,#531c1b);
+ border:2px solid #e0b17e;
+ padding:8px 2px;
+ box-shadow:inset 0 0 0 1px #a85f46;
+}
+#member-privacy-summary .a2k-privacy-tile[aria-pressed="true"] svg{stroke:#f6deb8}
+#member-privacy-summary .a2k-privacy-tile:hover{background:#2a1b1a}
+#member-privacy-summary .a2k-privacy-tile[aria-pressed="true"]:hover{background:linear-gradient(145deg,#762a27,#531c1b)}
+@media(max-width:430px){
+ #member-privacy-summary .a2k-privacy-tile[aria-pressed="true"]{padding:6px 1px}
+}
+
+/* Build 234: compact tiles. The prior aspect-ratio was making each tile huge on desktop. */
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
+ aspect-ratio:auto!important;
+ width:100%!important;height:82px!important;min-height:82px!important;
+ max-height:82px!important;padding:7px 4px!important;gap:5px!important;
+ flex:none;align-self:stretch;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"],
+#member-privacy-summary .a2k-privacy-tile[aria-pressed="true"]{
+ padding:6px 3px!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{
+ width:22px!important;height:22px!important
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{
+ font-size:12px!important;line-height:1.14!important
+}
+@media(max-width:520px){
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
+   height:72px!important;min-height:72px!important;max-height:72px!important;
+   padding:5px 2px!important;gap:4px!important
+ }
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{
+   width:19px!important;height:19px!important
+ }
+ :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{font-size:11px!important}
+}
+
+/* Build 235 — compact, left-aligned amenities-sized Privacy tiles.
+   Never stretch them into the full-width, oversized cards seen in Build 234. */
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid{
+  width:100%!important;
+  max-width:520px!important;
+  grid-template-columns:repeat(3,minmax(0,164px))!important;
+  gap:7px!important;
+  justify-content:start!important;
+  align-items:stretch!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid.directory{
+  max-width:348px!important;
+  grid-template-columns:repeat(2,minmax(0,164px))!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  width:100%!important;
+  height:46px!important;
+  min-height:46px!important;
+  max-height:46px!important;
+  padding:4px 8px!important;
+  aspect-ratio:auto!important;
+  border-radius:8px!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"],
+#member-privacy-summary .a2k-privacy-tile[aria-pressed="true"]{
+  padding:3px 7px!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{
+  display:block!important;
+  flex:0 0 17px!important;
+  width:17px!important;
+  height:17px!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{
+  display:block!important;
+  font:700 12px/1.12 Georgia,serif!important;
+  text-align:center!important;
+  white-space:normal!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .profile-privacy-fieldset{
+  margin:0 0 12px!important;
+}
+:is(#member-privacy-editor,#member-privacy-summary) .profile-privacy-fieldset legend{
+  font-size:14px!important;
+  padding:0 0 5px!important;
+}
+@media(max-width:540px){
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid{
+    max-width:100%!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile-grid.directory{
+    max-width:75%!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile{
+    height:52px!important;min-height:52px!important;max-height:52px!important;
+    flex-direction:column!important;gap:2px!important;padding:4px 2px!important;
+  }
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile[aria-pressed="true"],
+  #member-privacy-summary .a2k-privacy-tile[aria-pressed="true"]{
+    padding:3px 1px!important;
+  }
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile svg{
+    width:16px!important;height:16px!important;flex:0 0 16px!important;
+  }
+  :is(#member-privacy-editor,#member-privacy-summary) .a2k-privacy-tile strong{
+    font-size:10.5px!important;line-height:1.14!important;
+  }
+}
