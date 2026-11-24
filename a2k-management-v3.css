@@ -1,0 +1,23 @@
+/* A2K Management Portal — System tab for Super Admins (management layer V3).
+   Desktop only, same gate as the V1/V2 layers. The Founder-only note is a
+   cream card in the site's language; locked entries dim and lose their
+   chevron. The Activity History filter UI hides while the log is locked. */
+html.a2k-desktop-live #management-dialog .mgmt-v3-founder-note{
+  margin:12px 0;padding:12px 14px;border:1px solid #b08d57;border-radius:10px;
+  background:#f3e2c8;color:#4a1f1a;font-size:14px;line-height:1.5;
+}
+html.a2k-desktop-live #management-dialog #management-history-list .mgmt-v3-founder-note{
+  margin:0;
+}
+html.a2k-desktop-live #management-dialog .mgmt-v3-locked{
+  opacity:.55;cursor:not-allowed;
+}
+html.a2k-desktop-live #management-dialog .mgmt-v3-locked .mgmt-v2-row-chev{
+  display:none;
+}
+html.a2k-desktop-live #management-dialog #management-history.mgmt-v3-history-locked #atk-history-categories,
+html.a2k-desktop-live #management-dialog #management-history.mgmt-v3-history-locked .atk-history-field,
+html.a2k-desktop-live #management-dialog #management-history.mgmt-v3-history-locked .atk-history-filters,
+html.a2k-desktop-live #management-dialog #management-history.mgmt-v3-history-locked #atk-history-count{
+  display:none !important;
+}

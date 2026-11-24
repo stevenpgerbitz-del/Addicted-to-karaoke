@@ -32,7 +32,7 @@ publish to main.
 
 ## Live state (update when it changes)
 
-- **Main head:** `8fd7f061` (Nov 24, 2026) — sample-data fix published (7 fictional sample venues removed from Find first render; skeleton/loading state only).
+- **Main head:** `ac2f6ba7` (Nov 24, 2026) — permissions frontend fix published (Management button, portal open checks, venue save buttons, Special Events approval panel, KJ review moderation, and Badge Management open gate switched to `is_platform_admin()`).
 - **Live site:** addictedtokaraoke.com (GitHub Pages; allow ~3 min after a
   push before the new files serve).
 
@@ -41,12 +41,39 @@ publish to main.
 - **Sample-data fix (PUBLISHED Nov 24, 2026, commit `8fd7f061`):** 7 fictional
   sample venues removed from Find first render; skeleton/loading state only.
   Live-verified: skeletons + "Loading published venues…" + zero fake names.
-- **Permissions frontend fix (STAGED in push101/, NOT published):** Management
+- **Permissions frontend fix (PUBLISHED Nov 24, 2026, commit `ac2f6ba7`):** Management
   button, portal open checks, venue save buttons, Special Events approval
   panel, KJ review moderation, and Badge Management open gate switched to
   `is_platform_admin()`. Founder-exclusives kept (venue delete, backup/
-  restore/wipe, badge apply, role-change save). Published only after
-  Steven's approval.
+  restore/wipe, badge apply, role-change save). Live-verified: served index
+  carries all 7 `is_platform_admin` uses; end-to-end test as Milo AI (Super
+  Admin) confirmed the portal opens and 5 of 6 tabs load real data.
+- **System tab fix (STAGED in push102/, NOT published):** the end-to-end test
+  found the System tab never opens for Super Admins (click, deep link, and
+  reload only move the URL hash) and the Venues tab is flaky on first click.
+  Root causes, both in the website code: (1) the System entry path runs
+  `managementBackupFounder()` first, which throws for non-founders before
+  the Backups section is ever shown; (2) switching to Venues/Members never
+  hid the previous panel, so the tab switch derived from the visible panel
+  kept reporting the old tab; (3) a fresh load with a `#manage/...` hash
+  never reached the portal at all — the page's own router rewrites an
+  unrecognised hash to `#home` before the portal layer's init runs. Fix:
+  new layer `a2k-management-v3.js/css` opens System for Super Admins with
+  Founder-only actions locked inside (backup/restore/inspect/Reset Test
+  Data/Go Live buttons disabled with a Founder-only note; Activity History
+  shows a Founder-only note and `management_read_audit_history` is never
+  called for non-founders); `a2k-management-v1.js` now hides other panels
+  on tab switch and captures the load-time hash so deep links survive the
+  page router. Founder path unchanged. No RPC widened; server-side
+  enforcement untouched. Harness 15/15 (4 before-state reproductions + 11
+  after-state checks, Founder / Super Admin / member personas). Published
+  only after Steven's approval.
+- **Open-ended schedules fix (STAGED in push103/, NOT published, separate
+  build):** open-ended karaoke nights (start known, end unspecified) display
+  as "8:30 PM onwards" instead of dropping from the schedule. Touches the
+  index inline schedule renderer/editor — different regions from push102's
+  layer tags + V1.js, but the two bundles must be sequenced (push one,
+  re-base the other on the new head), not stacked blindly.
 - **Milo's test account:** Milo AI (Super Admin, NOT founder — do not flip the
   founder flag). Member #000018, steven.g.droid@gmail.com.
 
@@ -130,3 +157,5 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 - 2026-11-24 — Milo published sample-data fix (8fd7f061, index.html only).
 - 2026-11-24 — Sophie answered the badge-preview + role/delete questions in this file.
 - 2026-11-24 — Milo staged permissions frontend fix in push101/ (awaiting Steven's publish approval).
+- 2026-11-24 — Milo published permissions frontend fix (ac2f6ba7, 5 files).
+- 2026-11-24 — Milo staged System tab fix in push102/ (awaiting Steven's publish approval).

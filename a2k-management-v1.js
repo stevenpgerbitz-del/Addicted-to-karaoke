@@ -37,9 +37,31 @@
   'management-backups':'system','management-history':'system'
  };
  var PANEL_IDS=Object.keys(PANEL_TABS);
+ /* Panels belonging to each tab. The V2 split views keep a tab's detail
+    panel beside its list, so switching tabs hides every panel except the
+    target tab's own panels. */
+ var TAB_PANELS={
+  approvals:['management-approvals'],
+  venues:['management-venues','management-venue-details'],
+  members:['management-users','management-member-details'],
+  reviews:['management-reviews'],
+  system:['management-backups','management-history']
+ };
+ function hideOtherPanels(tab){
+  var keep=TAB_PANELS[tab]||[];
+  PANEL_IDS.forEach(function(id){
+   if(keep.indexOf(id)===-1){var s=$(id);if(s&&!s.hidden)s.hidden=true;}
+  });
+ }
 
  var built=false, overviewSerial=0, itemTimer=null, routing=false;
  var currentFilter='all';
+ /* The page's own router rewrites an unrecognised hash to #home on
+    DOMContentLoaded, before this layer's init runs — so a #manage/...
+    deep link would be lost on a fresh load. Capture the load-time hash
+    here, while this script tag executes during parsing and the hash is
+    still the one the visitor opened. */
+ var loadHash=(typeof location!=='undefined'?location.hash||'':'');
 
  function $(id){return document.getElementById(id);}
  function isDesktop(){
@@ -335,6 +357,15 @@
  function openTab(tab){
   if(!isActive()&&tab!=='overview')return;
   setHashForTab(tab,tab==='approvals'?currentFilter:null);
+  /* Hide the previous tab's panels first. The per-tab open functions
+     never hid them — only approvalCenterOpen and managementReviewsOpen
+     reset — so visiblePanelTab() (first visible panel wins) kept
+     reporting the old tab and the switch never landed. Approvals to
+     Venues/Members failed this way for every role; Overview worked only
+     because it resets. System is excluded: its opener does its own
+     founder-gated reset, and hiding first would flash the Overview while
+     its async check runs. */
+  if(tab!=='overview'&&tab!=='system')hideOtherPanels(tab);
   if(tab==='overview'){
    if(typeof managementResetNavigation==='function')managementResetNavigation();
   }else if(tab==='approvals'){
@@ -657,8 +688,8 @@
   try{history.replaceState(null,'',hash);}catch(e){}
  }
 
- function parseRoute(){
-  var h=location.hash||'';
+ function parseRoute(hash){
+  var h=(typeof hash==='string'?hash:(location.hash||''));
   if(h.indexOf('#manage')!==0)return null;
   var parts=h.slice(1).split('/').filter(Boolean);
   /* parts: ['manage', tab, extra?, id?] */
@@ -692,7 +723,22 @@
     clearInterval(iv);
     if(!hasAuth())return;
     if(typeof managementOpen==='function')managementOpen();
-    setTimeout(function(){if(isActive())applyRoute(route);},150);
+    /* managementOpen awaits the admin RPC, so the portal may not be
+       active yet when a single 150ms timer fires — on a slow connection
+       the route was silently dropped and the deep link landed on
+       Overview. Poll briefly instead, and only apply while the portal
+       still sits on its default tab (a manual tab click must win over
+       the pending route). */
+    var rtries=0;
+    var riv=setInterval(function(){
+     rtries++;
+     var d=dialog();
+     var cur=d?d.dataset.mgmtTab:null;
+     if(isActive()||rtries>10){
+      clearInterval(riv);
+      if(isActive()&&(cur==='overview'||cur===route.tab))applyRoute(route);
+     }
+    },150);
    }
   },200);
  }
@@ -830,7 +876,7 @@
  function init(){
   build();
   sync();
-  var route=parseRoute();
+  var route=parseRoute(loadHash);
   if(route&&isDesktop()){
    if(isActive())applyRoute(route);
    else openFromRoute(route);
