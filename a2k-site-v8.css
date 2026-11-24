@@ -1,0 +1,125 @@
+/* Addicted to Karaoke — site layer V8: empty-state polish (Milo, Nov 24, 2026).
+   Thin pages must read as intentional, not broken. Presentation only:
+   no data, no copy that states facts beyond what the page already shows,
+   no invented venues/members/songs/badges. Desktop only (>=1024px);
+   mobile layout is untouched (phase 2).
+   What V8 does:
+     - KJ Hosts / Members directories with 1-2 cards: a note tile fills
+       the rest of the grid row (JS inserts it; see a2k-site-v8.js), plus
+       a small star ornament closes the column under the grid.
+     - Bare "No ... yet." lines on member profiles (songs, schedule,
+       badges, interests) become framed empty-state cards.
+     - Venue Amenities with 1-2 items: framed tiles in a 1-2 column
+       grid, so two tiles read as a complete row, not a sparse grid.
+   Deliberately NOT changed (verified in the V8 harness, see check_v8.py):
+     - The About Me one-line bio: V84 already vertically centers the
+       story in the cream card (3px of dead space below it). Nothing left.
+     - The page-end gap below the footer: there is none (voidBelowFooter
+       is 0 on every harness page — the V7 footer already sits at the
+       bottom of .app). The remaining space between short content and
+       the footer is the full-height sidebar's breathing room; stretching
+       content to fill it would be fake content. The note tile +
+       closing ornament is the restrained finish instead.
+     - Find Karaoke's default state: out of scope (today-default shipped). */
+
+@media (min-width: 1024px) {
+
+  /* ---------- Directory note tile (KJ Hosts + Members) ---------- */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-grid > article.v8-dir-note {
+    box-sizing: border-box;
+    display: flex !important; flex-direction: column !important;
+    justify-content: center !important; gap: 8px !important;
+    min-height: 180px !important;
+    padding: 20px 22px !important;
+    border: 1.5px solid #b08d57 !important; border-radius: 12px !important;
+    background: linear-gradient(150deg, #3a1512, #22100d) !important;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, .45) !important;
+    color: #f3debe !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-grid > article.v8-dir-note .v8-dir-note-star {
+    color: #c9a86a !important; font: 700 16px Georgia, serif !important;
+    letter-spacing: .35em !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-grid > article.v8-dir-note h3 {
+    margin: 0 !important; font: italic 700 21px Georgia, serif !important;
+    color: #f3d6a7 !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-grid > article.v8-dir-note p {
+    margin: 0 !important; font: 14.5px/1.55 Georgia, serif !important;
+    color: #dcc9ae !important;
+  }
+
+  /* ---------- Closing ornament under a thin directory grid ---------- */
+  html.a2k-desktop-live #a2k-d-directory .v8-dir-close {
+    display: flex !important; align-items: center !important; gap: 14px !important;
+    margin: 22px 4px 2px !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .v8-dir-close::before,
+  html.a2k-desktop-live #a2k-d-directory .v8-dir-close::after {
+    content: "" !important; flex: 1 1 auto !important; height: 1px !important;
+    background: rgba(230, 201, 152, .28) !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .v8-dir-close span {
+    color: #c9a86a !important; font: 700 14px Georgia, serif !important;
+  }
+
+  /* ---------- Framed empty states on public member profiles ---------- */
+  /* The honest one-line empties the renderers already write, given a
+     proper card: calm, centered, brass-framed. The selectors name the
+     exact containers, so a populated list (song rows, schedule cards,
+     badge icons) never matches. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-songs > .a2k-d-profile-muted,
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-published-kj-sessions > .a2k-d-profile-muted,
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-schedule-pane > .a2k-d-profile-muted,
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-badges > .a2k-d-profile-muted {
+    display: block !important;
+    text-align: center !important;
+    margin: 6px 0 2px !important;
+    padding: 18px 16px !important;
+    border: 1px solid rgba(176, 141, 87, .55) !important;
+    border-radius: 10px !important;
+    background: rgba(43, 23, 18, .55) !important;
+    color: #e6c998 !important;
+    font: italic 15px/1.5 Georgia, serif !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-songs > .a2k-d-profile-muted::before,
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-published-kj-sessions > .a2k-d-profile-muted::before,
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-schedule-pane > .a2k-d-profile-muted::before,
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .a2k-d-public-badges > .a2k-d-profile-muted::before {
+    content: "\2605  " !important; color: #c9a86a !important;
+  }
+  /* The same line on the cream card (no genres shared): keep the
+     cream-card ink instead of the dark-card gold. */
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-interests > .a2k-d-profile-muted {
+    display: block !important;
+    text-align: center !important;
+    margin: 6px 0 2px !important;
+    padding: 18px 16px !important;
+    border: 1px solid rgba(109, 20, 32, .3) !important;
+    border-radius: 10px !important;
+    background: rgba(255, 253, 247, .5) !important;
+    color: #6d5138 !important;
+    font: italic 15px/1.5 Georgia, serif !important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-interests > .a2k-d-profile-muted::before {
+    content: "\2605  " !important; color: #b98a2f !important;
+  }
+
+  /* ---------- Venue Amenities with 1-2 items ---------- */
+  /* Two tiles in a 3-column grid left an empty third cell. With one or
+     two items the grid becomes 1-2 columns and each tile is framed, so
+     the row reads complete. Venues with 3+ amenities are untouched. */
+  html.a2k-desktop-live body #venue-screen .a2k-d-venue-main #content .amenities:has(> .amenity:nth-child(2):last-child) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  html.a2k-desktop-live body #venue-screen .a2k-d-venue-main #content .amenities:has(> .amenity:only-child) {
+    grid-template-columns: minmax(0, 360px) !important;
+  }
+  html.a2k-desktop-live body #venue-screen .a2k-d-venue-main #content .amenities:has(> .amenity:nth-child(2):last-child) > .amenity,
+  html.a2k-desktop-live body #venue-screen .a2k-d-venue-main #content .amenities:has(> .amenity:only-child) > .amenity {
+    border: 1px solid rgba(176, 141, 87, .6) !important;
+    border-radius: 10px !important;
+    background: rgba(43, 23, 18, .5) !important;
+    padding: 14px 8px !important;
+  }
+}

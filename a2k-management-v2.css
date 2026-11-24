@@ -1,0 +1,213 @@
+/* A2K Management Portal — desktop Venues/Members/System rebuild, piece 2 (management layer V2).
+   Anchored under the same scope V1 and desktop-vintage.css use for the workspace
+   (html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog)
+   so nothing leaks to mobile or to any other page. All layer-owned nodes are
+   display:none unless the desktop workspace is active. The panels themselves
+   stay direct children of the dialog (moving them would break the :has rules
+   in venue-management-v2.css and desktop-vintage.css that size the dialog),
+   so the side-by-side views are built with float + margin, not a wrapper. */
+
+/* ---------- layer nodes are invisible unless the desktop portal is open ---------- */
+.mgmt-v2-close-pane,
+#mgmt-v2-backups-title,
+#mgmt-v2-golive,
+.mgmt-v2-eyebrow{display:none!important;}
+
+@media (min-width:1024px){
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-venues .mgmt-v2-close-pane,
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-members .mgmt-v2-close-pane{
+  display:inline-block!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-v2-backups-title{
+  display:block!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-v2-golive{
+  display:flex!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-v2-eyebrow{
+  display:block!important;
+ }
+
+ /* ---------- shared split chrome ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-v2-close-pane{
+  font:700 13px Arial,sans-serif;color:#f3e2c8;cursor:pointer;
+  background:linear-gradient(160deg,#4a1712,#2a0f0c);
+  border:1.5px solid #a07c51;border-radius:999px;padding:8px 16px;margin:0 0 12px;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-v2-close-pane:hover{
+  border-color:#d8b17b;
+ }
+ /* Clearfix: the list column floats, so the dialog must clear it before the footer. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-venues::after,
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-members::after{
+  content:'';display:block;clear:both;
+ }
+ /* The row whose details are showing. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-v2-selected{
+  outline:2px solid #e0b052!important;outline-offset:2px;
+  background:linear-gradient(135deg,#5a2318,#2a120e)!important;
+ }
+
+ /* ---------- Venues split: list left, details right ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-venues > #management-venues{
+  float:left!important;width:400px!important;max-width:400px!important;
+  max-height:calc(100dvh - 190px)!important;overflow-y:auto!important;
+  box-sizing:border-box!important;
+  border:1.5px solid #b7915f!important;border-radius:13px!important;
+  background:linear-gradient(135deg,#3f1610,#1c0c09)!important;
+  box-shadow:inset 0 0 0 1px #dab38125,0 3px 8px #0006!important;
+  padding:18px 16px!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-venues > #management-venue-details{
+  margin-left:424px!important;width:auto!important;
+  max-height:calc(100dvh - 190px)!important;overflow-y:auto!important;
+  box-sizing:border-box!important;min-width:0!important;
+  border:1.5px solid #b7915f!important;border-radius:13px!important;
+  background:linear-gradient(135deg,#3f1610,#1c0c09)!important;
+  box-shadow:inset 0 0 0 1px #dab38125,0 3px 8px #0006!important;
+  padding:18px 20px!important;
+ }
+ /* The details pane is one scrolling column; its sections keep their own
+    Edit buttons (the v2 detail groups) and the danger zone stays at the
+    bottom inside Advanced actions. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-venues > #management-venue-details .mv2-advanced-actions{
+  margin-top:16px!important;border:1.5px solid #8a2f28!important;border-radius:12px!important;
+  padding:12px 14px!important;background:#2a1210!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-venues > #management-venue-details .mv2-advanced-actions summary{
+  font:700 15px Georgia,serif!important;color:#f0b9a8!important;cursor:pointer!important;
+ }
+
+ /* ---------- Members split: directory left, member file right ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-members > #management-users{
+  float:left!important;width:400px!important;max-width:400px!important;
+  max-height:calc(100dvh - 190px)!important;overflow-y:auto!important;
+  box-sizing:border-box!important;
+  border:1.5px solid #b7915f!important;border-radius:13px!important;
+  background:linear-gradient(135deg,#3f1610,#1c0c09)!important;
+  box-shadow:inset 0 0 0 1px #dab38125,0 3px 8px #0006!important;
+  padding:18px 16px!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-members > #management-member-details{
+  margin-left:424px!important;width:auto!important;
+  max-height:calc(100dvh - 190px)!important;overflow-y:auto!important;
+  box-sizing:border-box!important;min-width:0!important;
+  border:1.5px solid #b7915f!important;border-radius:13px!important;
+  background:linear-gradient(135deg,#3f1610,#1c0c09)!important;
+  box-shadow:inset 0 0 0 1px #dab38125,0 3px 8px #0006!important;
+  padding:18px 20px!important;
+ }
+ /* The desktop 3-column toolbar (130px + 2x240px) does not fit a 400px
+    column; the v2 modules' own flexible grid does. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-members > #management-users .mg2-toolbar{
+  grid-template-columns:90px minmax(0,1fr) minmax(0,1fr)!important;
+ }
+ /* desktop-vintage.css forces the member directory to 2 columns at >=1024px
+    (repeat(2,minmax(0,1fr))); inside the 400px split column that makes
+    ~175px cards with names wrapping letter-by-letter. Single column here.
+    (The full-width list, before a member is picked, keeps the live 2-col.) */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-members > #management-users .mg2-recent-list,
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-members > #management-users .mg2-results{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ /* Section eyebrow for the Recognition group. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .mgmt-v2-eyebrow{
+  font:700 11px Arial,sans-serif!important;letter-spacing:.16em!important;
+  text-transform:uppercase!important;color:#d8b17b!important;margin:0 0 8px!important;
+ }
+
+ /* ---------- System tab: merged Backups area ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-v2-backups-title{
+  font:italic 700 24px Georgia,serif!important;color:#f5dfbb!important;margin:18px 0 12px!important;
+ }
+ /* The three backup flows become three rows in one area (single column,
+    overriding the desktop 2-column entry grid). */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-backups #atk-backup-home:not([hidden]){
+  grid-template-columns:minmax(0,1fr)!important;gap:10px!important;margin:0 0 16px!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-backups #atk-backup-home .management-entry{
+  display:flex!important;align-items:center!important;gap:14px!important;
+  min-height:0!important;padding:14px 18px!important;text-align:left!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-backups #atk-backup-home .management-entry .mgmt-v2-row-copy{
+  flex:1!important;min-width:0!important;display:flex!important;flex-direction:column!important;gap:3px!important;
+  font:700 17px Georgia,serif!important;color:#f8dfb9!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-backups #atk-backup-home .management-entry .mgmt-v2-row-copy small{
+  font:13px/1.4 Arial,sans-serif!important;color:#e1c4a0!important;margin-top:0!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-backups #atk-backup-home .management-entry .mgmt-v2-row-chev{
+  flex:none!important;font-size:26px!important;line-height:1!important;color:#d8b17b!important;
+ }
+ /* The duplicate Activity Log door inside System Maintenance is gone on
+    desktop: the log lives in its own section below. Mobile keeps it. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-backups #atk-backup-home .mgmt-v2-activity-door{
+  display:none!important;
+ }
+
+ /* ---------- System tab: Prepare to Go Live row ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-v2-golive{
+  align-items:center!important;gap:14px!important;
+  background:linear-gradient(160deg,#f6e7c9,#e6c998)!important;
+  border:1.5px solid #d8b17b!important;border-radius:12px!important;
+  padding:14px 16px!important;margin:0 0 16px!important;color:#3a130d!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-v2-golive .management-entry{
+  flex:1!important;min-width:0!important;
+  display:flex!important;align-items:center!important;gap:14px!important;
+  min-height:0!important;padding:0!important;text-align:left!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  color:#3a130d!important;font:700 17px Georgia,serif!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-v2-golive .management-entry .mgmt-v2-row-copy{
+  flex:1!important;min-width:0!important;display:flex!important;flex-direction:column!important;gap:3px!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-v2-golive .management-entry .mgmt-v2-row-copy small{
+  font:13px/1.4 Arial,sans-serif!important;color:#5c3a2a!important;margin-top:0!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-v2-golive .management-entry .mgmt-v2-row-chev{
+  flex:none!important;font-size:26px!important;line-height:1!important;color:#7a2d1e!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-v2-golive-status{
+  flex:none!important;max-width:230px!important;text-align:right!important;
+  font:700 13px/1.4 Arial,sans-serif!important;color:#7a2d1e!important;
+ }
+ /* While a backup flow is open (home hidden), the menu rows step aside
+    so the wizard has the area to itself — as before, only the menu's
+    home list used to hide; now its heading and Go Live row hide too. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-backups:has(> #atk-backup-home[hidden]) #mgmt-v2-backups-title,
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-backups:has(> #atk-backup-home[hidden]) #mgmt-v2-golive{
+  display:none!important;
+ }
+
+ /* ---------- System tab: Activity Log is one card below ---------- */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-history{
+  border:1.5px solid #b7915f!important;border-radius:13px!important;
+  background:linear-gradient(135deg,#3f1610,#1c0c09)!important;
+  box-shadow:inset 0 0 0 1px #dab38125,0 3px 8px #0006!important;
+  padding:18px 20px!important;margin:0 0 16px!important;
+ }
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #management-history > h2{
+  font:italic 700 24px Georgia,serif!important;color:#f5dfbb!important;margin:0 0 8px!important;
+ }
+
+ /* ---------- Founder pill hides off the Overview tab ---------- */
+ /* On panel tabs the title/intro are hidden and the tab bar rises to the
+    top of the dialog, where the absolutely-positioned pill would sit on
+    the System tab label. The pill is a title ornament: no title, no pill. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open][data-mgmt-tab]:not([data-mgmt-tab="overview"]) #mgmt-founder-pill{
+  display:none!important;
+ }
+
+ /* ---------- narrow desktop: slimmer list columns ---------- */
+ @media (min-width:1024px) and (max-width:1240px){
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-venues > #management-venues,
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-members > #management-users{
+   width:340px!important;max-width:340px!important;
+  }
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-venues > #management-venue-details,
+  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open].mgmt-v2-split-members > #management-member-details{
+   margin-left:360px!important;
+  }
+ }
+}
