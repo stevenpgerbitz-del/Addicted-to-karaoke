@@ -24,6 +24,14 @@
   display:flex!important;
  }
 
+ /* ---------- desktop: no Close button (leftover from the phone dialog) ---------- */
+ /* On desktop the portal is a tabbed page, not a dialog: the sidebar already
+    takes you elsewhere, so the Close button at the bottom of every tab is
+    redundant. Mobile keeps it — the phone dialog still needs a way out. */
+ html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] .management-close{
+  display:none!important;
+ }
+
  /* ---------- header: founder pill, top-right of the portal title ---------- */
  html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-founder-pill{
   position:absolute!important;top:14px!important;right:10px!important;
