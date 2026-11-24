@@ -153,10 +153,36 @@ async function saveContacts(){
   contactRecord={...(contactRecord||{}),...payload};
   original=fromRecord(contactRecord);editing={...original};
   renderContacts();
-  changeStatus('Contact preferences saved. Public contact display still requires the appropriate verification.');
+  /* V86 (dedup, Steven Nov 24 2026): the public profile reads contact
+     from member_public_preferences.published_email/phone ONLY — the
+     setup-details columns above are never displayed publicly. The
+     wizard writes BOTH stores, so Settings must too, or a contact
+     saved here never appears on the public profile. Published values
+     follow the same rule as the wizard: only an address the member
+     chose to show is published. KJ contact wins when both kinds show
+     an address; when neither shows, publish nothing. A failed publish
+     leaves the setup-details save intact and is reported, not hidden. */
+  try{
+   const merged=contactRecord;
+   const pubEmail=merged.kj_show_email&&merged.kj_email?merged.kj_email
+     :merged.venue_show_email&&merged.venue_email?merged.venue_email:null;
+   const pubPhone=merged.kj_show_phone&&merged.kj_phone?merged.kj_phone
+     :merged.venue_show_phone&&merged.venue_phone?merged.venue_phone:null;
+   const pub=await authClient.from('member_public_preferences')
+     .upsert({user_id:uid,published_email:pubEmail||null,published_phone:pubPhone||null,
+       updated_at:new Date().toISOString()},{onConflict:'user_id'});
+   if(pub.error)throw pub.error;
+   changeStatus('Contact preferences saved. Public contact display still requires the appropriate verification.');
+  }catch(pubErr){
+   changeStatus('Contact preferences saved, but the public listing could not be updated: '+(pubErr.message||'Please retry.'));
+  }
  }catch(e){changeStatus('Could not save contact preferences: '+(e.message||'Please retry.'))}
  finally{contactBusy=false;if(b)b.disabled=false;}
 }
+/* V86: the contact editor moved to the Account Settings page, where no
+   Settings-card open event fires to trigger the load. Expose the loader
+   so the Account page can call it when it opens. */
+window.a2kContactSettingsLoad=function(){void loadContacts();};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup,{once:true});
 else setup();
 })();

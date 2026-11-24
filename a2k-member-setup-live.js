@@ -31,7 +31,7 @@ function open(isManual){
  overlay.setAttribute('aria-modal','true');
  frame=document.createElement('iframe');
  frame.title='Addicted to Karaoke Member Setup Wizard';
- frame.src='member-setup-preview.html?live=1&v=353';
+ frame.src='member-setup-preview.html?live=1&v=354';
  frame.setAttribute('referrerpolicy','same-origin');
  frame.onerror=function(){
    var m=manual;close();
@@ -129,8 +129,8 @@ async function save(payload){
  if(name.length<3)throw Error('Please enter a display name with at least three characters.');
  if(roles.includes('kj')&&s.kjBusiness&&!text(s.kjEmail)&&!text(s.kjPhone))throw Error('KJ business requires an email or phone number.');
  if(roles.includes('owner')&&s.ownerBusiness&&!text(s.ownerEmail)&&!text(s.ownerPhone)&&!user().email)throw Error('Venue staff contact requires an email or phone number.');
- var profileUpdate={stage_name:name,bio:text(s.bio,300),karaoke_interests:rls,
-    favorite_genres:roles.includes('singer')?(s.singerGenres||[]).filter(x=>typeof x==='string').slice(0,30):old.favorite_genres||[],
+ var profileUpdate={stage_name:name,bio:text(s.bio,500),karaoke_interests:rls,
+    favorite_genres:roles.includes('singer')?(s.singerGenres||[]).filter(x=>typeof x==='string').slice(0,16):old.favorite_genres||[],
     song_visibility:priv.songs===true?'public':'private',updated_at:now};
  // Never grant verified identities or management roles from self-declared interests.
  if(['public','members','private'].includes(priv.audience)&&!payload.skipPrivacy){
@@ -175,14 +175,19 @@ async function save(payload){
    {user_id:id,location_text:text(s.location,120)||null,updated_at:now},{onConflict:'user_id'}));
 
  // Persist optional visibility controls; never store unselected contact data in a publicly readable row.
+ // V86 (dedup, Steven Nov 24 2026): song_visibility is the single songs
+ // gate — show_songs is no longer written here (and no longer read by
+ // desktop-members.js). show_reviews / show_venues were written but
+ // never read anywhere; they are dropped too. No show_songs toggle is
+ // added anywhere.
  var publishEmail=priv.email===true?text(s.kjEmail||s.ownerEmail||user().email,254):null;
  var publishPhone=priv.phone===true?text(s.kjPhone||s.ownerPhone,40):null;
  fail(await client().from('member_public_preferences').upsert({
    user_id:id,show_display_name:priv.displayName!==false,show_photo:priv.photo!==false,
    show_location:priv.location!==false,show_member_since:priv.memberSince!==false,
-   show_genres:priv.genres!==false,show_reviews:priv.reviews!==false,
-   show_songs:priv.songs===true,show_kj_schedule:priv.kjSchedule!==false,
-   show_venues:priv.venues!==false,published_email:publishEmail||null,published_phone:publishPhone||null,
+   show_genres:priv.genres!==false,
+   show_kj_schedule:priv.kjSchedule!==false,
+   published_email:publishEmail||null,published_phone:publishPhone||null,
    updated_at:now
  },{onConflict:'user_id'}));
  if(roles.includes('singer')){
@@ -257,7 +262,7 @@ async function save(payload){
      if(!oldClaims.length)fail(await client().from('venue_claim_requests').insert({
        venue_id:candidate.id,claimant_user_id:id,contact_name:text(s.ownerBusiness,120)||name,
        contact_email:text(s.ownerEmail||user().email,254),contact_phone:text(s.ownerPhone,40)||null,relationship:s.ownerRelationship,
-       verification_details:'Claim requested through Addicted to Karaoke member setup. Venue preferences (pending verification): '+text((s.ownerGenres||[]).join(', '),200),status:'pending'
+       verification_details:'Claim requested through Addicted to Karaoke member setup.',status:'pending'
      }));
    }else{
      var city=parseCity(choice.city,'');
@@ -265,7 +270,7 @@ async function save(payload){
      if(localStorage.getItem(newVenueKey)!=='submitted'){
        fail(await client().from('venue_suggestions').insert({
          name:text(choice.name,120),city:city.city,state:city.state,status:'submitted',submitted_by:id,
-         karaoke_details:'Venue Staff-proposed venue via member setup. Business: '+text(s.ownerBusiness,120)+'; amenities: '+text((s.ownerAmenities||[]).join(', '),150)+'; genres: '+text((s.ownerGenres||[]).join(', '),150)+'; schedule posting: '+text(s.postPolicy,15)
+         karaoke_details:'Venue Staff-proposed venue via member setup. Business: '+text(s.ownerBusiness,120)
        }));
        localStorage.setItem(newVenueKey,'submitted');
      }

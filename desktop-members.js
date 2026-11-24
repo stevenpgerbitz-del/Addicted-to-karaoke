@@ -732,8 +732,13 @@
        if(isCurrent())badges.replaceChildren(elem('p','a2k-d-profile-muted','Badges are not available to this viewer.'));
      }
      // The saved visibility choices are public / members / private.
-     // A member can always see their own songs; others must pass both this gate and RLS.
-     const songsAllowed=roles.includes('Singer')&&(isSelf||member._prefs?.show_songs!==false)&&
+     // V86 (dedup, Steven Nov 24 2026): member_profiles.song_visibility
+     // is the single gate. The old wizard-only member_public_preferences
+     // .show_songs flag is no longer read here — a member who hid songs
+     // in the wizard and later set the card tile to Public was stuck
+     // hidden with no UI explaining why. A member can always see their
+     // own songs; others must pass this gate and RLS.
+     const songsAllowed=roles.includes('Singer')&&
        (isSelf||member.song_visibility==='public'||(member.song_visibility==='members'&&signed()));
      if(songsAllowed){
        const section=elem('section','a2k-d-public-profile-section a2k-d-profile-songs');
@@ -808,7 +813,7 @@
            let expanded=false;
            function drawFavorites(){
              list.replaceChildren();
-             for(const v of (expanded?places:places.slice(0,3))){
+             for(const v of (expanded?places:places.slice(0,1))){
                const entry=elem('button','a2k-d-profile-venue-item');
                entry.type='button';
                const icon=elem('span','a2k-d-venue-icon','⌂');

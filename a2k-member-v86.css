@@ -1,0 +1,90 @@
+/* Addicted to Karaoke — member layer V86: profile-editing dedup cleanup.
+   Companion: a2k-member-v86.js. Profile's existing card language
+   (burgundy / cream / gold); desktop-first, mobile inherits the stack. */
+
+/* The old About-tab Settings card goes away once the Account Settings
+   page exists. It stays in the DOM (V71's placer re-asserts it) but is
+   never shown again; the class is only added after the page is built,
+   so a JS failure can never hide settings with nowhere to go. The
+   Account card gets the same treatment: V71 owns its placement too,
+   so it stays hidden in place while the page mirrors its values. */
+.v86-account-ready #a2k-profile-settings,
+.v86-account-ready .v86-account-card-hidden { display: none !important; }
+
+/* Account Settings page: hidden until opened, then it replaces the
+   profile view (hero + tabs) inside the sign-in screen. */
+#v86-account-page { display: none; }
+.v86-account-open #v86-account-page { display: block; }
+.v86-account-open #auth-profile,
+.v86-account-open #signin-screen .auth-heading { display: none !important; }
+/* The live desktop rule (html.a2k-desktop-live #signin-screen
+   #auth-profile:not([hidden]){display:grid!important}, specificity 2,2,1)
+   beats the plain .v86-account-open rule (1,1,0) above, so on desktop the
+   whole profile rendered over the Account page. Raise above it (2,3,1).
+   .v86-account-open lives on <html> (see openAccountPage in the JS). */
+html.a2k-desktop-live.v86-account-open #signin-screen #auth-profile:not([hidden]) { display: none !important; }
+/* The moved Privacy section loses its .member-about ancestor, so the
+   inline <style> sizing for the privacy-title shield is orphaned and the
+   bare SVG (viewBox only, no width/height) sizes to 100% of its block.
+   Re-assert the 18px size inside the Account page. */
+#v86-account-page .profile-privacy-title { display: inline-flex; align-items: center; gap: 7px; }
+#v86-account-page .profile-privacy-title svg { width: 18px; height: 18px; flex: none; }
+.v86-account-open #signin-screen .auth-wrap { max-width: 520px; }
+
+#v86-account-page { max-width: 520px; margin: 0 auto; padding: 6px 0 30px; }
+#v86-account-page .v86-acct-section { margin-bottom: 14px; }
+#v86-account-page .member-panel { width: 100%; box-sizing: border-box; }
+
+.v86-acct-head { padding: 6px 4px 16px; }
+.v86-acct-back {
+  border: 0; background: none; color: #f5b4a5; font: inherit; font-size: 14px;
+  padding: 4px 0; cursor: pointer; text-decoration: underline;
+}
+.v86-acct-heading {
+  font: 700 clamp(26px, 7vw, 34px) Georgia, serif; color: #f5e5cc; margin: 8px 0 4px;
+}
+.v86-acct-sub { color: #d2b8af; font-size: 14px; line-height: 1.5; margin: 0; }
+.v86-acct-title { font: 700 22px Georgia, serif; color: #f5e5cc; margin: 0 0 8px; }
+.v86-acct-note { color: #d2b8af; font-size: 13px; line-height: 1.5; margin: 0 0 12px; }
+
+/* Public Details toggle rows (same tile language as Privacy & Visibility). */
+.v86-toggle-list { display: grid; gap: 12px; }
+.v86-toggle-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 12px; border: 1px solid #965454; border-radius: 16px;
+  background: linear-gradient(#321c1f, #241214);
+}
+.v86-toggle-text { flex: 1; min-width: 0; }
+.v86-toggle-text strong { display: block; color: #f8e8db; font-size: 14px; }
+.v86-toggle-text small { display: block; color: #d2b8af; font-size: 12px; line-height: 1.4; margin-top: 3px; }
+.v86-toggle-grid { flex: 0 0 auto; }
+#v86-account-page .v86-toggle-grid .a2k-privacy-tile { min-width: 76px; }
+.v86-toggle-feedback { color: #e8d0c7; font-size: 13px; margin: 10px 0 0; min-height: 18px; }
+.v86-toggle-feedback:empty { display: none; }
+
+/* KJ business / hosting-team editor dialogs (reuse .member-dialog). */
+.v86-dialog label { display: block; margin: 11px 0; font-size: 13px; }
+.v86-dialog input {
+  width: 100%; margin-top: 5px; background: #2c1719; border: 1px solid #9c5d55;
+  border-radius: 9px; padding: 11px; color: #fff; font: inherit; font-size: 16px;
+  box-sizing: border-box;
+}
+.v86-dialog-note { color: #d2b8af; font-size: 13px; line-height: 1.5; margin: 12px 0 0; }
+.v86-dialog-error { color: #ffb0a8; font-size: 13px; min-height: 18px; margin: 10px 0 0; }
+.v86-dialog-error:empty { display: none; }
+.v86-team-list { display: grid; gap: 8px; margin-top: 12px; }
+.v86-team-row { display: flex; gap: 8px; }
+.v86-team-row input { flex: 1; min-width: 0; margin: 0; }
+.v86-team-remove, .v86-team-add {
+  border: 1px solid #a45c56; background: #352022; color: #f5e4d2; border-radius: 10px;
+  padding: 8px 12px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap;
+}
+.v86-team-add { margin-top: 10px; }
+
+/* KJ Profile card: the Edit Business action sits beside Set Up Host. */
+.v86-kj-biz-edit { white-space: nowrap; }
+
+/* Account mirror on the Account Settings page. */
+.v86-account-mirror .v86-account-email,
+.v86-account-mirror .v86-account-provider { text-align: center; }
+.v86-account-signout { text-align: center; margin-top: 12px; }
