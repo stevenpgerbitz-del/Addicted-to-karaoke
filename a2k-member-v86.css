@@ -88,3 +88,10 @@ html.a2k-desktop-live.v86-account-open #signin-screen #auth-profile:not([hidden]
 .v86-account-mirror .v86-account-email,
 .v86-account-mirror .v86-account-provider { text-align: center; }
 .v86-account-signout { text-align: center; margin-top: 12px; }
+
+/* Setup & Preferences entry on the Account Settings page (moved here from
+   the About tab's Settings card in push110; the wizard layer no longer
+   creates it in the About panel). Same button language as the old entry
+   (the grouped .a2k-setup-reopen rule is scoped to #auth-profile and
+   #profile-section-dialog, so the account page needs its own copy). */
+#v86-account-page .a2k-setup-reopen{display:block;min-height:42px;margin:0;padding:10px 13px;border:1px solid #c89669;border-radius:9px;background:linear-gradient(#722a26,#491b1d);color:#fbe6cc;font:700 14px Georgia,serif;max-width:100%}

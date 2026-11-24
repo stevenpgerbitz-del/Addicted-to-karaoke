@@ -342,6 +342,33 @@
       });
   }
 
+  function buildSetupEntry() {
+    var sec = el('section', 'a2k-setup-settings-entry');
+    sec.id = 'v86-setup-entry';
+    var top = el('div', 'profile-section-top');
+    top.appendChild(el('strong', '', 'Setup & Preferences'));
+    sec.appendChild(top);
+    sec.appendChild(el('p', 'a2k-setup-settings-description', 'Review your karaoke interests and profile setup.'));
+    var b = el('button', 'a2k-setup-reopen', 'Run Setup Wizard');
+    b.type = 'button';
+    b.id = 'v86-setup-reopen';
+    b.addEventListener('click', function () {
+      try {
+        var dlg = document.getElementById('profile-section-dialog');
+        if (dlg && dlg.open && typeof profileCloseSection === 'function') profileCloseSection();
+      } catch (e) {}
+      try {
+        if (typeof window.atkWelcomeStart === 'function') { window.atkWelcomeStart(true); return; }
+      } catch (e) {}
+      try {
+        var old = document.getElementById('a2k-setup-reopen');
+        if (old) old.click();
+      } catch (e) {}
+    });
+    sec.appendChild(b);
+    return sec;
+  }
+
   function buildAccountMirror() {
     var sec = el('section', 'member-panel member-about v86-acct-section v86-account-mirror');
     sec.appendChild(el('h3', 'v86-acct-title', 'Account'));
@@ -403,6 +430,16 @@
     head.appendChild(el('p', 'v86-acct-sub', 'Privacy, contact details, notifications and your account.'));
     page.appendChild(head);
 
+    /* 0. Setup & Preferences (Run Setup Wizard). push110 (Steven Nov 24,
+       2026): the Settings and Account sections belong in settings, not
+       on About Me — and the wizard button was the one control with no
+       home here (V86 removed it from the About card as duplicating the
+       Overview's Profile Setup & Preferences card; the wizard layer no
+       longer creates it in the About panel). This is now its home on
+       the settings page. The button opens the same wizard the old
+       entry opened (setup-live's atkWelcomeStart, resolved at click
+       time, with the same dialog-close preamble). */
+    page.appendChild(buildSetupEntry());
     /* 1. Privacy & Visibility (tiles + V85 Show My Badges switch travel
        inside #member-privacy-summary). */
     privacy.classList.add('v86-acct-section');
@@ -439,7 +476,9 @@
   function removeSetupPrefsSection() {
     try {
       var s = $('a2k-setup-settings-entry');
-      if (s) s.remove();
+      /* Only the stale entry inside the About tab's Settings card — the
+         Account page's own entry (v86-setup-entry) must never be removed. */
+      if (s && s.closest && s.closest('#a2k-profile-settings')) s.remove();
     } catch (e) {}
   }
 

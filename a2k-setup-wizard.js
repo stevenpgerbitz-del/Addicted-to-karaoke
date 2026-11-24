@@ -477,46 +477,18 @@
    if(typeof authStatus==='function')authStatus(message);
   }catch(e){busy=false;render(true);report('Could not finish setup: '+(e.message||'Please retry.'));}
  }
+ /* push110 (Steven Nov 24, 2026): the "Setup & Preferences / Run Setup
+    Wizard" entry no longer lives in the About tab's Settings card — it
+    moved to the Account Settings page (v86's buildAccountPage), so the
+    About panel can never show it again. The wizard itself is untouched;
+    open it via window.atkWelcomeStart(true). */
  function installReopen(){
-  // Keep the existing setup action in Settings, not About Me.
-  const settings=$('a2k-profile-settings')?.querySelector('.a2k-profile-settings-panel');
-  if(!settings)return;
-  let b=$('a2k-setup-reopen');
-  if(!b){
-   b=makeButton('Run Setup Wizard',()=>{
-    if($('profile-section-dialog')?.open&&typeof profileCloseSection==='function')profileCloseSection();
-    queueMicrotask(()=>open(true));
-   },'a2k-setup-reopen');
-   b.id='a2k-setup-reopen';
-  }
-  let section=$('a2k-setup-settings-entry');
-  if(!section){
-   section=el('section','a2k-setup-settings-entry');
-   section.id='a2k-setup-settings-entry';
-   section.append(el('div','profile-section-top'));
-   section.firstElementChild.append(el('strong','','Setup & Preferences'));
-   section.append(el('p','a2k-setup-settings-description','Review your karaoke interests and profile setup.'));
-  }
-  section.append(b);
-  // Never display the internal design sizing link in member Settings.
+  // No-op kept for the demo-link cleanup: the internal design sizing
+  // link must never display in member Settings.
   $('a2k-wizard-size-demo-link')?.remove();
-  settings.insertBefore(section,settings.firstElementChild);
  }
- // Settings can be mounted after this script's initial DOM readiness callback.
- function syncReopen(){
-  installReopen();
-  if(!$('a2k-setup-reopen')||!$('a2k-setup-settings-entry')){
-   const root=$('auth-profile');
-   if(root){
-    const observer=new MutationObserver(()=>{
-     if($('a2k-profile-settings')?.querySelector('.a2k-profile-settings-panel')){
-      observer.disconnect();installReopen();
-     }
-    });
-    observer.observe(root,{childList:true,subtree:true});
-   }
-  }
- }
+ // No observer: there is no longer an entry to wait for the panel for.
+ function syncReopen(){ installReopen(); }
  window.atkWelcomeStart=open;
  window.atkWelcomeMaybeStart=maybeStart;
  window.atkWelcomeRender=render;
