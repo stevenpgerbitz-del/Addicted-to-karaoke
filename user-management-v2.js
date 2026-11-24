@@ -62,8 +62,7 @@
  function roleBadges(member){
   const badges=make('span','mg2-badges');
   if(member.verified)badges.append(make('span','mg2-badge mg2-badge-verified','✓ Verified'));
-  if(member.role==='founder')badges.append(make('span','mg2-badge mg2-badge-founder','★ Founder'));
-  else if(member.role&&member.role!=='member')badges.append(make('span','mg2-badge',roleName(member.role)));
+  if(member.role&&member.role!=='member')badges.append(make('span','mg2-badge',roleName(member.role)));
   if(member.is_host)badges.append(make('span','mg2-badge','KJ / Host'));
   if(member.is_owner)badges.append(make('span','mg2-badge','Venue Staff'));
   if(!badges.childElementCount)badges.append(make('span','mg2-badge','Member'));

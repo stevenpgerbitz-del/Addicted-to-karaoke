@@ -32,7 +32,7 @@ publish to main.
 
 ## Live state (update when it changes)
 
-- **Main head:** `a7f1c1e5` (Nov 24, 2026) — System/Venues tab fix published (Management System tab opens for Super Admins with Founder-only actions locked inside; Venues/Members tab switching and `#manage/...` deep links fixed).
+- **Main head:** `e96a3e1a` (Nov 24, 2026) — Open-ended karaoke schedules published (Dreamland Lounge Omaha now shows "Wednesday — 8:30 PM onwards"; management schedule editor redesigned as week strip + focused rows).
 - **Live site:** addictedtokaraoke.com (GitHub Pages; allow ~3 min after a
   push before the new files serve).
 
@@ -48,7 +48,7 @@ publish to main.
   restore/wipe, badge apply, role-change save). Live-verified: served index
   carries all 7 `is_platform_admin` uses; end-to-end test as Milo AI (Super
   Admin) confirmed the portal opens and 5 of 6 tabs load real data.
-- **System tab fix (STAGED in push102/, NOT published):** the end-to-end test
+- **System tab fix (PUBLISHED Nov 24, 2026, commit `a7f1c1e5`):** the end-to-end test
   found the System tab never opens for Super Admins (click, deep link, and
   reload only move the URL hash) and the Venues tab is flaky on first click.
   Root causes, both in the website code: (1) the System entry path runs
@@ -66,10 +66,10 @@ publish to main.
   on tab switch and captures the load-time hash so deep links survive the
   page router. Founder path unchanged. No RPC widened; server-side
   enforcement untouched. Harness 15/15 (4 before-state reproductions + 11
-  after-state checks, Founder / Super Admin / member personas). Published
-  only after Steven's approval.
-- **Open-ended schedules fix (STAGED in push103/, NOT published; re-based
-  Nov 24, 2026 onto head `a7f1c1e5` after the push102 publish):** a venue
+  after-state checks, Founder / Super Admin / member personas). Live-verified:
+  cache-busted live index refs V3 tags ?v=1 + V1 ?v=2, all files 200.
+- **Open-ended schedules fix (PUBLISHED Nov 24, 2026, commit `e96a3e1a`; re-based
+  onto head `a7f1c1e5` after the push102 publish):** a venue
   night with a start time but no end time used to vanish — the public
   schedule renderer dropped any entry whose end wasn't HH:MM and the
   management editor refused to save without both times. Live case: Dreamland
@@ -108,7 +108,26 @@ publish to main.
   push103: renderer/editor/KJ-dialog regions + two cache-bump mega-lines);
   the re-base carried push102's V3 tags + V1 `?v=2` into the push103 index
   with no conflicts; merged index tag balance 67/67; full harness re-run
-  after the re-base.
+  after the re-base. Live-verified: Dreamland's live Schedule tab shows
+  "Wednesday — 8:30 PM onwards" (Steven's own screenshot, Nov 24, 2026).
+  Host still "not confirmed" until Sophie links Jasmine Carter — see her
+  open items below.
+- **Founder pill removal (STAGED in push104/, NOT published):** Steven asked for
+  the gold "★ Founder ★" pill/bar removed everywhere, including his own
+  profile (it had leaked onto Super Admin profiles because the V71 layer
+  unhid it whenever the Management button was visible). Display removal only
+  — no data, roles, RPCs, or gates changed. Removed renders: the V71 layer
+  (a2k-profile-v77.js) no longer moves/unhides/rewrites the hero badge; the
+  portal pill render is gone from a2k-management-v1.js; the member-card pill
+  is gone from user-management-v2.js (founder falls through to the plain
+  "Founder" role chip); the review-author pill is gone from
+  review-experience.js; the portal member detail/list role text reads plain
+  "Founder". New layer a2k-member-v87.js/css hides the pill elements as a
+  safety net on desktop AND mobile. The "Super Administrator" database badge
+  (profile_badge_awards) is untouched and still shows for Super Admins. The
+  Founder badge award tile and the founder medal in Featured Badges are
+  badge-award displays, not pills — untouched. Published only after Steven's
+  approval.
 - **Milo's test account:** Milo AI (Super Admin, NOT founder — do not flip the
   founder flag). Member #000018, steven.g.droid@gmail.com.
 
@@ -210,3 +229,4 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 - 2026-11-24 — Milo staged System tab fix in push102/ (awaiting Steven's publish approval).
 - 2026-11-24 — Milo published System tab fix (a7f1c1e5, 5 files).
 - 2026-11-24 — Milo staged open-ended schedules fix in push103/ (awaiting Steven's publish approval); re-based onto head a7f1c1e5 after the push102 publish (V3 tags + V1 ?v=2 carried over, no conflicts, harness re-run 57/57).
+- 2026-11-24 — System tab fix published (a7f1c1e5); open-ended schedules published (e96a3e1a, Dreamland live-confirmed by Steven). Milo staged Founder pill removal in push104/ (awaiting Steven's publish approval).

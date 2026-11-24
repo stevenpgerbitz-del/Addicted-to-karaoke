@@ -485,7 +485,6 @@
      CONTENTS, not just zone order. It only writes to the DOM when
      something is actually out of place, so it cannot loop with the
      MutationObserver calling it. */
-  var FOUNDER_ID = '491e4116-52cc-4b4a-837f-cb5a28e74e53'; // the id the site's own badge code checks
   function syncHero() {
     try {
       var hero = els.hero;
@@ -499,34 +498,17 @@
       var actionGrid = hero.querySelector('.profile-action-grid');
       if (actionGrid && tZ && actionGrid.parentNode !== tZ) tZ.appendChild(actionGrid);
 
-      // Facts: membership line, then founder badge, inside the name block.
+      // Facts: membership line inside the name block. (Founder badge
+      // removed Nov 24, 2026 — it is no longer placed here.)
       var facts = els.facts;
       if (facts && nameBlock && facts.parentNode !== nameBlock) nameBlock.appendChild(facts);
       if (facts) {
         var membership = $('auth-display-membership');
         if (membership && membership.parentNode !== facts) facts.appendChild(membership);
-        var founder = $('auth-founder-badge');
-        if (founder) {
-          // Mirror the site's own founder verdict if its render has not
-          // landed yet: the badge is unhidden only for the founder id
-          // the site itself checks (or when the founder-only Management
-          // button is visible). Never unhide it for anyone else.
-          try {
-            if (founder.hidden) {
-              var mgmt = $('management-open');
-              var isFounder = (typeof authUser !== 'undefined' && authUser && authUser.id === FOUNDER_ID) ||
-                              (mgmt && !mgmt.hidden);
-              if (isFounder) founder.hidden = false;
-            }
-          } catch (e) {}
-          if (founder.parentNode !== facts) facts.appendChild(founder);
-          if (!founder.hidden && founder.textContent !== '★ FOUNDER ★') founder.textContent = '★ FOUNDER ★';
-          if (membership && facts.contains(membership) && facts.contains(founder) &&
-              (founder.compareDocumentPosition(membership) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-            facts.appendChild(membership);
-            facts.appendChild(founder);
-          }
-        }
+        // Founder pill removed Nov 24, 2026 (Steven: remove it everywhere,
+        // including his own profile). #auth-founder-badge stays where the
+        // site put it (Account card, hidden by CSS); it is never moved into
+        // the hero, never unhidden, and its text is never rewritten here.
       }
       // Any other .member-identity-facts shell (V66 leaves one as a
       // direct hero child): harvest anything left in it, then remove
@@ -639,14 +621,14 @@
     if (avatarWrap) idZone.appendChild(avatarWrap);
     if (nameBlock) idZone.appendChild(nameBlock);
 
-    // Member number/since + founder badge under the name (existing
-    // elements; syncFacts stacks the text, CSS bars the badge).
+    // Member number/since under the name (existing element; syncFacts
+    // stacks the text). Founder badge removed Nov 24, 2026.
     var membership = $('auth-display-membership');
     if (membership && nameBlock) {
       var facts = nameBlock.querySelector('.member-identity-facts') || el('div', 'member-identity-facts');
       facts.appendChild(membership);
-      var founder = $('auth-founder-badge');
-      if (founder) facts.appendChild(founder);
+      // Founder pill removed Nov 24, 2026 — #auth-founder-badge is not
+      // moved into the hero (see syncHero note above).
       nameBlock.appendChild(facts);
       els.facts = facts;
     }

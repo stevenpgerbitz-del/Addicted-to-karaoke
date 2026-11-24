@@ -92,11 +92,10 @@
   if(!d)return;
   built=true;
 
-  /* Founder pill, top-right of the portal header (CSS-gated to desktop). */
-  var pill=el('span','mgmt-founder-pill','★ Founder ★');
-  pill.id='mgmt-founder-pill';
+  /* Founder pill removed Nov 24, 2026 — the pill render that used to sit
+     here is gone. `title` is still declared: the observer setup below
+     watches it. */
   var title=$('management-title');
-  if(title&&title.parentNode)title.parentNode.insertBefore(pill,title.nextSibling);
 
   /* Tab bar, in the profile's tab language (v71: dark gradient tabs,
      cream active tab). Inserted after the intro paragraph. */

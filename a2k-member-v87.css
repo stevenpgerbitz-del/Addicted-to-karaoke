@@ -1,0 +1,20 @@
+/* A2K MEMBER V87 — Founder pill removal (Steven, Nov 24, 2026).
+   The gold "★ Founder ★" pill is gone everywhere, including the Founder's
+   own profile. The "Super Administrator" database badge (profile_badge_awards)
+   is untouched and still shows for Super Admins.
+   - #auth-founder-badge: the hero gold bar. The site's auth code unhides it
+     for the Founder and the V66 layer moves it into the hero; the V71 hero
+     rule displays it as a wide gold bar. These rules beat that rule in
+     every placement, on desktop and mobile.
+   - #member-founder: founder medal image in the hero (no live render found;
+     hidden as a safeguard).
+   - #mgmt-founder-pill / .atk-review-founder / .mg2-badge-founder: the
+     renders were removed from their modules; these rules are a safety net
+     for any other render path. */
+html body #auth-profile .member-hero.v71-hero #auth-founder-badge:not([hidden]){display:none!important}
+html body #auth-profile #auth-founder-badge{display:none!important}
+html body #auth-profile #member-founder{display:none!important}
+html.a2k-desktop-live body.a2k-desktop-management-active #management-dialog[open] #mgmt-founder-pill{display:none!important}
+#mgmt-founder-pill{display:none!important}
+.atk-review-founder{display:none!important}
+.mg2-badge-founder{display:none!important}

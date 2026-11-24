@@ -197,7 +197,6 @@
    head.append(avatar,identity);content.append(head);
    const badges=element('div','atk-review-author-badges');
    if(data.verified)badges.append(element('span','','✓ Verified'));
-   if(data.founder)badges.append(element('span','atk-review-founder','★ Founder'));
    const publishedReviews=Math.max(0,Math.floor(Number(data.published_review_count)||0));
    badges.append(element('span','atk-review-posted',
     publishedReviews.toLocaleString()+' '+(publishedReviews===1?'Review':'Reviews')+' Posted'));
