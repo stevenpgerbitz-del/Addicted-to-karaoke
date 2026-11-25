@@ -233,6 +233,7 @@ Founder requested a living list of songs paired with humorous karaoke performer 
 |---|---|---|
 | Baby Got Back | Sir Mix-a-Lot | The quiet regular who suddenly knows every word and becomes the life of the party. |
 | Because I Got High | Afroman | The singer who forgot they were next but somehow remembered the entire song. |
+| Achy Breaky Heart | Billy Ray Cyrus | The singer who turns the entire karaoke bar into a line-dance floor. |
 
 **Previously suggested starter songs (draft hooks, expandable):**
 
