@@ -200,6 +200,13 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 - **Venue Marketing Materials Generator (approved future feature):** Free self-service venue-specific QR marketing materials for Venue Staff and authorized venue managers. Permanent venue URL, venue name, real scannable QR, approved vintage branding, handout cards (2.5 × 2.5 inches), table tents, counter signs (5 × 7 inches), posters (8.5 × 11 inches), and custom dimensions. Provide scalable SVG, print-ready PDF, high-resolution PNG at 300 pixels per inch at chosen size; optional printer-specific bleed/crop marks and color profiles where supported. Use vector artwork and QR where possible, preserve quiet zones, warn about inadequate raster resolution, verify deep links and scan reliability. Sophie owns backend/link contract; Milo owns generator interface and print templates. Not implemented; no immediate build requested.
 - **Coordination-only publishing rule (Founder clarified Nov 25):** Sophie and Milo may update this coordination document without requesting separate approval. This exception is ONLY for `COORDINATION.md`; website/code publishing and production authorization changes retain their existing approval requirements.
 
+### Sophie — Nov 25: member photo galleries (approved future feature)
+
+- Keep About Me biographies text-only; do not permit embedded images or external image links in bios.
+- Add a dedicated **My Photos** profile gallery for members to share karaoke photos, friends, events, and (for KJs) equipment, hosting setups and promotional flyers. Optional captions. Initial proposed limit: 10 photos per member.
+- Respect profile privacy and access controls for both gallery metadata and actual image files; support owner removal and inappropriate-photo reporting/moderation. Validate uploads, optimize image sizes, limit storage use, and avoid excessive mobile profile length.
+- Sophie: design secure storage, metadata, permissions and moderation backend. Milo: design gallery and upload/viewing experience in existing vintage branding. Coordinate before implementation; no production changes or immediate build requested.
+
 ## Open questions / needs
 
 - **For Sophie (ANSWERED Nov 24, in your note below):** `founder_badge_rules_preview`
@@ -301,3 +308,5 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 - 2026-11-24 — Milo published Founder pill removal (2a5d10a3, 8 files; live-verified). Milo published CSS archive copies (7f1eacd2, 53 files + README in archive/old-css/); deleted 9 of the 53 originals, then Steven stopped the one-by-one deletes (53 approval cards) — the remaining 44 are listed above for Sophie to delete.
 
 - 2026-11-25 — Sophie documented the approved biography limit, future marketing materials generator, and Founder exception for coordination-only updates. Parent main head at time of update: `6f353c1d0353df0b2e3e9b4a4bb4342918273b7a`. No code or database changes.
+
+- 2026-11-25 — Sophie documented Founder-approved future member photo galleries; biographies remain text-only. No implementation changes.
