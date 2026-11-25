@@ -222,6 +222,35 @@ Extend the biography no-hyperlink policy to member-written venue and KJ reviews:
 
 Founder-approved humorous coordination note. Ideas discussed for future planning: official A2K Facebook Page and approved-event auto-posting; The Karaoke Fix newsletter; Karaoke Anonymous (preferred domain KaraokeAnonymous.org, availability not yet confirmed), its 10-step program of non-recovery, randomized Karaoke Intervention Generator and karaoke meme generator. These are roadmap concepts, not authorization to implement or publish code. Keep the existing A2K branding, prioritize accurate listings and minimize recurring costs. No website, database or permissions changes in this note.
 
+
+### Sophie — Nov 25: Karaoke Anonymous meme generator — running song list
+
+Founder requested a living list of songs paired with humorous karaoke performer archetypes. Add songs as Steven sends them. The generator should support selectable songs, performer habits/personas, situations, visual templates, and randomized original captions, with custom choices and copy/share options. Humor targets karaoke behavior rather than identity; keep it playful, not cruel. Use original or appropriately licensed artwork and avoid reproducing song lyrics. Browser-local generation is preferred to avoid per-meme charges. Future concept only; no implementation or publishing approval implied.
+
+**Founder-requested additions (must include):**
+
+| Song | Artist | Draft karaoke persona / meme hook |
+|---|---|---|
+| Baby Got Back | Sir Mix-a-Lot | The quiet regular who suddenly knows every word and becomes the life of the party. |
+| Because I Got High | Afroman | The singer who forgot they were next but somehow remembered the entire song. |
+
+**Previously suggested starter songs (draft hooks, expandable):**
+
+| Song | Karaoke persona / meme hook |
+|---|---|
+| Don't Stop Believin' | The unofficial closing-time coordinator. |
+| My Way | Every performance is a farewell concert. |
+| Bohemian Rhapsody | The singer who thinks they are an entire band. |
+| Before He Cheats | The singer delivering a suspiciously specific message. |
+| Sweet Caroline | The crowd participation coordinator. |
+| Picture | Two strangers who become a couple for four minutes. |
+| Tequila | The singer who mastered exactly one word. |
+| Friends in Low Places | The person who turns every performance into a group singalong. |
+| I Will Always Love You | The ambitious high-note gambler. |
+| Love Shack | The duet partner who takes the assignment very seriously. |
+
+Add future song ideas to this section; captions remain editable and are not fixed form letters. No website or database changes.
+
 ## Open questions / needs
 
 - **For Sophie (ANSWERED Nov 24, in your note below):** `founder_badge_rules_preview`
