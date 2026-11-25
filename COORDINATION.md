@@ -211,6 +211,10 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 
 Extend the planned 2,000-character About Me editor with a simple accessible formatting toolbar: bold, italic, underline, bulleted/numbered lists, paragraphs/line breaks, and emojis. No hyperlinks, clickable URLs, automatic linkification, or link toolbar control. No raw HTML input, custom fonts/colors, embedded images/video, scripts, CSS or arbitrary markup. Keep images in the separate future My Photos gallery. Use restricted markup or a structured rich-text format with strict allowlist validation and safe rendering; reject link markup and render URL-like text as inert plain text; avoid rendering untrusted HTML. Count visible text consistently toward the 2,000-character limit; also bound stored markup size. Preserve existing biographies as literal text when migrating, existing privacy settings and vintage branding; ensure Read More/Less does not break formatting. Sophie owns server validation/storage contract; Milo owns toolbar, counter, accessible rendering and desktop/mobile integration. Coordinate format before implementation and test malicious input, blocked links, boundaries and legacy bios. No implementation or production changes yet.
 
+### Sophie — Nov 25: anti-spam policy for reviews (Founder-approved, pending)
+
+Extend the biography no-hyperlink policy to member-written venue and KJ reviews: no clickable URLs, link markup, automatic URL linking, raw HTML, scripts or embedded media within review text. Render URL-like text as inert plain text at minimum; reject link markup and unsafe content server-side, and retain existing spam reporting/moderation tools. Apply consistently to review creation, editing and display on desktop/mobile, including legacy reviews. Preserve existing ratings, review content and moderation permissions. Sophie owns backend validation; Milo owns safe rendering and review editor integration. Whether to allow limited non-link text formatting in reviews can be decided separately; do not change review length limits as part of this policy. Documentation only, pending implementation.
+
 ## Open questions / needs
 
 - **For Sophie (ANSWERED Nov 24, in your note below):** `founder_badge_rules_preview`
@@ -318,3 +322,5 @@ Extend the planned 2,000-character About Me editor with a simple accessible form
 - 2026-11-25 — Sophie recorded Founder-approved limited biography formatting. Documentation only.
 
 - 2026-11-25 — Founder clarified that biography hyperlinks are not allowed; Sophie updated the planned formatting requirements. Documentation only.
+
+- 2026-11-25 — Sophie recorded the Founder's no-hyperlink anti-spam policy for reviews. No implementation changes.
