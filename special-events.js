@@ -555,8 +555,10 @@
       '<p id="a2k-special-detail-description"></p>'+
       '<div class="a2k-special-actions">'+
       '<button type="button" id="a2k-special-view-venue">View Venue</button>'+
+      '<button type="button" id="a2k-special-share">↗ Share</button>'+
       '<button type="button" id="a2k-special-detail-close">Close</button>'+
-      '</div></div>';
+      '</div>'+
+      '<p class="a2k-special-feedback" id="a2k-special-share-feedback" aria-live="polite"></p></div>';
     document.body.append(detailsDialog);
     byId('a2k-special-detail-close').onclick=()=>detailsDialog.close();
     byId('a2k-special-view-venue').onclick=()=>{
@@ -565,12 +567,33 @@
       detailsDialog.close();
       if(place)openVenue(place.id);
     };
+    byId('a2k-special-share').onclick=async()=>{
+      const title=byId('a2k-special-detail-title').textContent.trim();
+      const when=byId('a2k-special-detail-datetime').textContent.trim();
+      const venueName=byId('a2k-special-detail-venue').textContent.trim();
+      const slug=detailsDialog.dataset.venueSlug||'';
+      const url=location.origin+(slug?'/#venue/'+encodeURIComponent(slug):'/');
+      const text=title+' · '+when+' at '+venueName;
+      const feedback=byId('a2k-special-share-feedback');
+      if(navigator.share){
+        try{await navigator.share({title:title+' — Addicted to Karaoke',text:text,url});}
+        catch(error){/* The visitor closed the share sheet. */}
+        return;
+      }
+      try{
+        await navigator.clipboard.writeText(text+' — '+url);
+        if(feedback)feedback.textContent='Link copied — paste it anywhere to share this event.';
+      }catch(error){
+        if(feedback)feedback.textContent='Share this link: '+url;
+      }
+    };
   }
   function openDetails(id){
     const event=rows.find(row=>row.id===id);if(!event)return;
     buildDetails();
     const place=venue(event);
     detailsDialog.dataset.venueId=event.venue_id;
+    detailsDialog.dataset.venueSlug=place?(place.shareSlug||place.slug||''):'';
     byId('a2k-special-detail-title').textContent=displayEventTitle(event.title);
     byId('a2k-special-detail-datetime').textContent=dateLine(event);
     byId('a2k-special-detail-venue').textContent=place?.name||'Karaoke venue';
@@ -579,6 +602,7 @@
     byId('a2k-special-detail-host').textContent=event.host_name?'Host: '+event.host_name:'Host not listed';
     byId('a2k-special-detail-description').textContent=event.description||'Contact the venue for details.';
     byId('a2k-special-view-venue').hidden=!place;
+    byId('a2k-special-share-feedback').textContent='';
     if(!detailsDialog.open)detailsDialog.showModal();
   }
   // Venue-specific one-time nights belong INSIDE Schedule, alongside
