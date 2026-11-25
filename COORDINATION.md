@@ -249,6 +249,18 @@ Founder requested a living list of songs paired with humorous karaoke performer 
 | I Will Always Love You | The ambitious high-note gambler. |
 | Love Shack | The duet partner who takes the assignment very seriously. |
 
+**Sophie’s additional draft candidates (not yet Founder-approved):**
+
+| Song | Artist | Draft karaoke persona / meme hook |
+|---|---|---|
+| The Bad Touch | Bloodhound Gang | The singer who makes the room collectively blush. |
+| Barbie Girl | Aqua | The duet nobody saw coming. |
+| I Touch Myself | Divinyls | The performer making awkward amounts of eye contact. |
+| I'm Too Sexy | Right Said Fred | The person treating the karaoke stage like a fashion runway. |
+| Tubthumping | Chumbawamba | The singer who refuses to go home. |
+| The Humpty Dance | Digital Underground | The person whose dance moves deserve their own warning label. |
+| What's Up? | 4 Non Blondes | The singer who can be heard three blocks away. |
+
 Add future song ideas to this section; captions remain editable and are not fixed form letters. No website or database changes.
 
 ## Open questions / needs
