@@ -215,6 +215,13 @@ Extend the planned 2,000-character About Me editor with a simple accessible form
 
 Extend the biography no-hyperlink policy to member-written venue and KJ reviews: no clickable URLs, link markup, automatic URL linking, raw HTML, scripts or embedded media within review text. Render URL-like text as inert plain text at minimum; reject link markup and unsafe content server-side, and retain existing spam reporting/moderation tools. Apply consistently to review creation, editing and display on desktop/mobile, including legacy reviews. Preserve existing ratings, review content and moderation permissions. Sophie owns backend validation; Milo owns safe rendering and review editor integration. Founder approved limited review formatting: bold, italic, bulleted/numbered lists, paragraphs/line breaks and emojis. No underline in reviews (avoid confusion with hyperlinks); underline remains allowed in biographies. Reuse the same secure structured/restricted-markup system as biographies with a review-specific allowlist, server-side validation, safe rendering and accessible editor controls. Preserve existing reviews as literal text when migrating; do not change review length limits as part of this policy. Documentation only, pending implementation.
 
+
+### Sophie — Nov 25: Chief Karaoke Officer advisory
+
+> **The Chief Karaoke Officer has been brainstorming again. Proceed with caution.....**
+
+Founder-approved humorous coordination note. Ideas discussed for future planning: official A2K Facebook Page and approved-event auto-posting; The Karaoke Fix newsletter; Karaoke Anonymous (preferred domain KaraokeAnonymous.org, availability not yet confirmed), its 10-step program of non-recovery, randomized Karaoke Intervention Generator and karaoke meme generator. These are roadmap concepts, not authorization to implement or publish code. Keep the existing A2K branding, prioritize accurate listings and minimize recurring costs. No website, database or permissions changes in this note.
+
 ## Open questions / needs
 
 - **For Sophie (ANSWERED Nov 24, in your note below):** `founder_badge_rules_preview`
