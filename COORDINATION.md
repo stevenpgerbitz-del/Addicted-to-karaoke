@@ -213,7 +213,7 @@ Extend the planned 2,000-character About Me editor with a simple accessible form
 
 ### Sophie — Nov 25: anti-spam policy for reviews (Founder-approved, pending)
 
-Extend the biography no-hyperlink policy to member-written venue and KJ reviews: no clickable URLs, link markup, automatic URL linking, raw HTML, scripts or embedded media within review text. Render URL-like text as inert plain text at minimum; reject link markup and unsafe content server-side, and retain existing spam reporting/moderation tools. Apply consistently to review creation, editing and display on desktop/mobile, including legacy reviews. Preserve existing ratings, review content and moderation permissions. Sophie owns backend validation; Milo owns safe rendering and review editor integration. Whether to allow limited non-link text formatting in reviews can be decided separately; do not change review length limits as part of this policy. Documentation only, pending implementation.
+Extend the biography no-hyperlink policy to member-written venue and KJ reviews: no clickable URLs, link markup, automatic URL linking, raw HTML, scripts or embedded media within review text. Render URL-like text as inert plain text at minimum; reject link markup and unsafe content server-side, and retain existing spam reporting/moderation tools. Apply consistently to review creation, editing and display on desktop/mobile, including legacy reviews. Preserve existing ratings, review content and moderation permissions. Sophie owns backend validation; Milo owns safe rendering and review editor integration. Founder approved limited review formatting: bold, italic, bulleted/numbered lists, paragraphs/line breaks and emojis. No underline in reviews (avoid confusion with hyperlinks); underline remains allowed in biographies. Reuse the same secure structured/restricted-markup system as biographies with a review-specific allowlist, server-side validation, safe rendering and accessible editor controls. Preserve existing reviews as literal text when migrating; do not change review length limits as part of this policy. Documentation only, pending implementation.
 
 ## Open questions / needs
 
@@ -324,3 +324,5 @@ Extend the biography no-hyperlink policy to member-written venue and KJ reviews:
 - 2026-11-25 — Founder clarified that biography hyperlinks are not allowed; Sophie updated the planned formatting requirements. Documentation only.
 
 - 2026-11-25 — Sophie recorded the Founder's no-hyperlink anti-spam policy for reviews. No implementation changes.
+
+- 2026-11-25 — Sophie recorded Founder-approved limited formatting for venue and KJ reviews, excluding underline and hyperlinks. Documentation only.
