@@ -2781,6 +2781,12 @@ body:has(#find-screen.atk-vintage:not([hidden])) .app>header::after{
   html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-event-card > .a2k-d-directory-action{
     grid-column:1/-1;margin:0!important;
   }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-directory-event-card > .a2k-d-card-actions{
+    grid-column:1/-1;display:flex;gap:10px;margin:0!important;
+  }
+  html.a2k-desktop-live #a2k-d-directory .a2k-d-card-actions .a2k-d-directory-action{
+    flex:1 1 0;margin:0!important;
+  }
 }
 
 

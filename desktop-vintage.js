@@ -200,6 +200,26 @@
    return new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',
      weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(date);
  }
+ // Share text for an event card: present ALL-CAPS submitted titles in the
+ // same style as the special-events layer, and give the full date + time span.
+ function shareEventTitle(title){
+   const raw=String(title||'').trim();
+   if(!raw||raw!==raw.toLocaleUpperCase('en-US'))return raw;
+   return raw.toLocaleLowerCase('en-US')
+     .replace(/(^|[\s-])([a-z])/g,(_m,sep,ch)=>sep+ch.toLocaleUpperCase('en-US'))
+     .replace(/\b(Kj|Dj|Usa|A2k)\b/g,w=>w.toLocaleUpperCase('en-US'));
+ }
+ function eventShareWhen(event){
+   const start=new Date(event.start_at);
+   if(Number.isNaN(start.getTime()))return dateAndTime(event.start_at);
+   const day=new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',
+     weekday:'short',month:'short',day:'numeric',year:'numeric'}).format(start);
+   const timeFmt=new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',
+     hour:'numeric',minute:'2-digit'});
+   const t=(d)=>timeFmt.format(d).replace(':00','');
+   const end=event.end_at?new Date(event.end_at):null;
+   return day+' · '+t(start)+(end&&!Number.isNaN(end.getTime())?'–'+t(end):'');
+ }
  async function drawDirectory(kind){
    const shell=directoryView();if(!shell)return;
    const headline=kind==='hosts'?'KJ Hosts':'Upcoming Karaoke Events';
@@ -320,11 +340,34 @@
            card.append(dateTile,copy);
          }
          if(event.host_name)card.querySelector('.a2k-d-event-info, .a2k-d-directory-card')?.append(el('p','a2k-d-directory-meta','Host: '+event.host_name));
+         const actions=el('div','a2k-d-card-actions');
          if(venue&&typeof openVenue==='function'){
            const action=el('button','a2k-d-directory-action','View Venue');
            action.type='button';action.onclick=()=>openVenue(venue.id);
-           card.append(action);
+           actions.append(action);
          }
+         const share=el('button','a2k-d-directory-action a2k-d-share-action','↗ Share');
+         share.type='button';
+         share.onclick=async()=>{
+           const slug=venue?(venue.shareSlug||venue.slug||''):'';
+           const url=location.origin+(slug?'/#venue/'+encodeURIComponent(slug):'/');
+           const name=shareEventTitle(event.title||'Karaoke Event');
+           const text=name+' · '+eventShareWhen(event)+(venue?' at '+venue.name:'');
+           if(navigator.share){
+             try{await navigator.share({title:name+' — Addicted to Karaoke',text,url});}
+             catch(error){/* The visitor closed the share sheet. */}
+             return;
+           }
+           try{
+             await navigator.clipboard.writeText(text+' — '+url);
+             share.textContent='✓ Link copied';
+             setTimeout(()=>{share.textContent='↗ Share';},2500);
+           }catch(error){
+             share.textContent='Copy link: '+url;
+           }
+         };
+         actions.append(share);
+         card.append(actions);
          cards.push(card);
        }
        list.replaceChildren(...cards);

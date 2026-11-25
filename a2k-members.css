@@ -2872,6 +2872,12 @@ html.a2k-desktop-live #a2k-d-directory .a2k-d-public-profile-main .a2k-d-songboo
  #a2k-d-directory .a2k-d-directory-event-card .a2k-d-directory-action{
   flex-basis:100%;width:100%;
  }
+ #a2k-d-directory .a2k-d-directory-event-card .a2k-d-card-actions{
+  flex-basis:100%;width:100%;display:flex;gap:10px;
+ }
+ #a2k-d-directory .a2k-d-directory-event-card .a2k-d-card-actions .a2k-d-directory-action{
+  flex:1 1 0;width:auto;flex-basis:auto;
+ }
  #a2k-d-directory .a2k-mobile-review-card h2{
   margin:0;color:#ffe1b8;font:italic 700 20px/1.2 Georgia,serif;
  }
