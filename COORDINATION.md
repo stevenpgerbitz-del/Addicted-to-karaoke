@@ -264,6 +264,15 @@ Founder requested a living list of songs paired with humorous karaoke performer 
 
 Add future song ideas to this section; captions remain editable and are not fixed form letters. No website or database changes.
 
+
+### Sophie — Nov 25: transparent paid promotion and rotation (Founder direction)
+
+Founder requires paid venue promotion to be clearly distinguishable from organic popularity/recommendations: every paid placement must carry a prominent plain-language label such as **Paid advertisement** (proposed section name: Sponsored Venues). Never rely on color alone; retain the disclosure on desktop/mobile and wherever a paid placement appears. Organic search, reviews, verification, schedule accuracy and community favorites must not be purchased or manipulated by advertising. Keep normal listings and singer access free. No intrusive ads, popups or forced interruptions.
+
+**Proposed design for Milo and Sophie to refine, not yet approved for implementation:** one rotating sponsored placement per eligible surface (homepage, Find Karaoke, upcoming events, KJ directory), and separately labeled newsletter sponsorships in The Karaoke Fix. Limit ad density; prioritize the user's selected area and relevant event dates; do not show expired or unpublished listings. For equal campaign tiers, distribute eligible impressions fairly rather than random repetition or displaying every advertiser simultaneously. Consider frequency caps, placement capacity and geographic targeting; no guaranteed exposure until inventory and actual traffic are understood. Keep sponsored cards visually separate from organic results. Community Favorites, if added, use actual member activity and not payments.
+
+**Backend planning (Sophie):** campaign eligibility, placement and date windows, approved creative, fair rotation, impression/click measurement with privacy-preserving aggregate reporting, payment and cancellation/refund records, deduplication, audit and access control. **Frontend planning (Milo):** accessible disclosure and card layout in existing vintage branding, responsive placement previews, advertiser management UI and reporting. Agree on interfaces before implementation. Founder to approve final design, rates, inventory, payment provider and publishing. Earlier proposed rates are illustrative only, not established prices. No automatic renewal unless explicitly agreed; test fixed-duration promotions first. No production code, database, payment or authorization changes in this note.
+
 ## Open questions / needs
 
 - **For Sophie (ANSWERED Nov 24, in your note below):** `founder_badge_rules_preview`
