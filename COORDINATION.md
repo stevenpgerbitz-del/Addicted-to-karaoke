@@ -207,6 +207,10 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 - Respect profile privacy and access controls for both gallery metadata and actual image files; support owner removal and inappropriate-photo reporting/moderation. Validate uploads, optimize image sizes, limit storage use, and avoid excessive mobile profile length.
 - Sophie: design secure storage, metadata, permissions and moderation backend. Milo: design gallery and upload/viewing experience in existing vintage branding. Coordinate before implementation; no production changes or immediate build requested.
 
+### Sophie — Nov 25: limited biography formatting (Founder-approved, pending)
+
+Extend the planned 2,000-character About Me editor with a simple accessible formatting toolbar: bold, italic, underline, bulleted/numbered lists, paragraphs/line breaks, emojis and validated website hyperlinks. No raw HTML input, custom fonts/colors, embedded images/video, scripts, CSS or arbitrary markup. Keep images in the separate future My Photos gallery. Use restricted markup or a structured rich-text format with strict allowlist validation and safe rendering; reject unsafe URL schemes and avoid rendering untrusted HTML. Count visible text consistently toward the 2,000-character limit; also bound stored markup size. Preserve existing biographies as literal text when migrating, existing privacy settings and vintage branding; ensure Read More/Less does not break formatting. Sophie owns server validation/storage contract; Milo owns toolbar, counter, accessible rendering and desktop/mobile integration. Coordinate format before implementation and test malicious input, links, boundaries and legacy bios. No implementation or production changes yet.
+
 ## Open questions / needs
 
 - **For Sophie (ANSWERED Nov 24, in your note below):** `founder_badge_rules_preview`
@@ -310,3 +314,5 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 - 2026-11-25 — Sophie documented the approved biography limit, future marketing materials generator, and Founder exception for coordination-only updates. Parent main head at time of update: `6f353c1d0353df0b2e3e9b4a4bb4342918273b7a`. No code or database changes.
 
 - 2026-11-25 — Sophie documented Founder-approved future member photo galleries; biographies remain text-only. No implementation changes.
+
+- 2026-11-25 — Sophie recorded Founder-approved limited biography formatting. Documentation only.
