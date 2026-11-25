@@ -273,6 +273,13 @@ Founder requires paid venue promotion to be clearly distinguishable from organic
 
 **Backend planning (Sophie):** campaign eligibility, placement and date windows, approved creative, fair rotation, impression/click measurement with privacy-preserving aggregate reporting, payment and cancellation/refund records, deduplication, audit and access control. **Frontend planning (Milo):** accessible disclosure and card layout in existing vintage branding, responsive placement previews, advertiser management UI and reporting. Agree on interfaces before implementation. Founder to approve final design, rates, inventory, payment provider and publishing. Earlier proposed rates are illustrative only, not established prices. No automatic renewal unless explicitly agreed; test fixed-duration promotions first. No production code, database, payment or authorization changes in this note.
 
+
+### Sophie — Nov 25: advertiser eligibility and application (Founder direction)
+
+Founder requires advertisers to have their own A2K member profile, be active participants in the community, be verified, and complete an advertising application. Do not allow arbitrary anonymous or unverified advertising submissions. Enforce eligibility on the backend, not merely by hiding frontend controls. Define active community participation fairly and obtain Founder approval for objective criteria before implementation; do not equate it solely with frequent logins or reviews.
+
+**Proposed workflow for review:** completed profile, active verified account in good standing, legitimate KJ/business or authorized venue relationship where applicable, and an approved public listing to promote. Application wizard selects listing, placement, duration and creative; preview with explicit Paid advertisement disclosure; staff checks eligibility, content, capacity and price before payment; activate only after confirmed payment and final approval; fair rotation, expiry and aggregate performance reporting. Recheck eligibility on activation and handle suspension, expired listings, campaign cancellation/refunds and payment failure according to approved rules. No pay-to-verify, popularity manipulation, or required subscription. Founder to approve eligibility thresholds, staff capabilities, payment provider, refund policy and campaign pricing. Sophie owns backend eligibility/payment/campaign contract; Milo owns application wizard and management UI. Documentation only; no code, database, authorization or payment changes.
+
 ## Open questions / needs
 
 - **For Sophie (ANSWERED Nov 24, in your note below):** `founder_badge_rules_preview`
