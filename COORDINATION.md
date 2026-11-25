@@ -3,7 +3,8 @@
 Steven asked for one shared note so the two AIs working on Addicted to Karaoke
 stop stepping on each other. This file is it. Either AI updates their own
 section when something changes. Steven is the tiebreaker and approves every
-publish to main.
+publish of website/code changes to main. Coordination-document-only updates
+may be published without separate approval (Founder clarification, Nov 25).
 
 ## Who does what
 
@@ -23,7 +24,8 @@ publish to main.
 
 1. Check main's head before pushing; never push on top of a head you haven't
    read. Current head is in "Live state" below.
-2. One bundle per publish; Steven approves each publish in chat.
+2. One bundle per publish; Steven approves website/code publishes in chat.
+   Coordination-document-only updates do not require separate approval.
 3. Never edit the other side's section below — add your own entry instead.
 4. Don't change access control (who can see or do admin things) without
    Steven's explicit say-so.
@@ -192,6 +194,12 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 **Sophie next:** audit the database role constraints, triggers, existing function gates, direct RLS access, deletion and recovery paths; design a centralized capability contract with role hierarchy and version; coordinate its exact interface with Milo; stage and test Founder/Co-Founder/Super Admin/Admin/Moderator/Member/Guest allow/deny cases before approved migration. Sophie owns database, auth, backups/recovery, security and backend tests; Milo owns website/front-end publishing; both coordinate design and shared interfaces. Steven is final approver.
 
 
+### Sophie — Nov 25: approved biography improvement and marketing materials backlog
+
+- **Member biography (approved, pending):** Increase About Me from 300 to 2,000 characters for all members. Milo: update all profile editors, setup wizards, counters and validation; show a compact preview of about 300 characters with accessible Read More / Read Less controls on desktop and mobile. Preserve privacy settings, existing bios and branding. Sophie: inspect database constraints and server validation, align to 2,000 if necessary, and coordinate before release. Test saving, reopening and viewing longer bios, including boundaries. No implementation yet.
+- **Venue Marketing Materials Generator (approved future feature):** Free self-service venue-specific QR marketing materials for Venue Staff and authorized venue managers. Permanent venue URL, venue name, real scannable QR, approved vintage branding, handout cards (2.5 × 2.5 inches), table tents, counter signs (5 × 7 inches), posters (8.5 × 11 inches), and custom dimensions. Provide scalable SVG, print-ready PDF, high-resolution PNG at 300 pixels per inch at chosen size; optional printer-specific bleed/crop marks and color profiles where supported. Use vector artwork and QR where possible, preserve quiet zones, warn about inadequate raster resolution, verify deep links and scan reliability. Sophie owns backend/link contract; Milo owns generator interface and print templates. Not implemented; no immediate build requested.
+- **Coordination-only publishing rule (Founder clarified Nov 25):** Sophie and Milo may update this coordination document without requesting separate approval. This exception is ONLY for `COORDINATION.md`; website/code publishing and production authorization changes retain their existing approval requirements.
+
 ## Open questions / needs
 
 - **For Sophie (ANSWERED Nov 24, in your note below):** `founder_badge_rules_preview`
@@ -291,3 +299,5 @@ Members and guests have no platform management access. Singer/KJ/Venue Staff int
 - 2026-11-24 — Milo staged open-ended schedules fix in push103/ (awaiting Steven's publish approval); re-based onto head a7f1c1e5 after the push102 publish (V3 tags + V1 ?v=2 carried over, no conflicts, harness re-run 57/57).
 - 2026-11-24 — System tab fix published (a7f1c1e5); open-ended schedules published (e96a3e1a, Dreamland live-confirmed by Steven). Milo staged Founder pill removal in push104/ (awaiting Steven's publish approval).
 - 2026-11-24 — Milo published Founder pill removal (2a5d10a3, 8 files; live-verified). Milo published CSS archive copies (7f1eacd2, 53 files + README in archive/old-css/); deleted 9 of the 53 originals, then Steven stopped the one-by-one deletes (53 approval cards) — the remaining 44 are listed above for Sophie to delete.
+
+- 2026-11-25 — Sophie documented the approved biography limit, future marketing materials generator, and Founder exception for coordination-only updates. Parent main head at time of update: `6f353c1d0353df0b2e3e9b4a4bb4342918273b7a`. No code or database changes.
