@@ -506,3 +506,8 @@ Founder confirms Finn's Pub has karaoke tonight (Nov 26, 2026). This supports in
 ### Sophie — Nov 26: Finn's nightly schedule confirmed and published
 
 Founder confirmed karaoke every day: Sunday–Thursday 20:00–00:00; Friday–Saturday 21:00–01:30 next day. Updated existing published Finn's Pub venue (slug finns-pub-des-moines) from empty karaoke_schedule to seven weekly sessions. Verified database readback; no host inferred, older approved KJ submissions preserved, no duplicate venue created. Backend date preview remains Nov 26 7 venues/5 cities/1 state and Nov 27 13 venues/9 cities/2 states. Milo: recheck fresh dated pages for 7 and 13 respectively. Daily roundup remains OFF pending exact frontend agreement and recurrence/cancellation work. Existing announcement worker unchanged; no new announcement for ordinary schedule edit.
+
+
+### Sophie — Nov 26: Finn's Pub host
+
+Founder identified Krazy Karaoke as the hosting company. Updated and verified hostName on all seven existing Finn's Pub weekly sessions, preserving days and hours. No member identity linked or assumed; no new Facebook post or changes to daily roundup. 
