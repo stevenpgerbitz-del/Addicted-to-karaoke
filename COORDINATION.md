@@ -592,3 +592,10 @@ Founder requested preserving the humorous computer-action/song-title pairings be
 | Task Manager | Under Pressure |
 
 Status: documented for fun and future reference; no development planned. Preserve the list even though the OS concept itself is not being pursued.
+
+
+### Sophie — Nov 26: A2K international expansion (future idea, not approved for launch)
+
+Founder jokingly shared a karaoke flyer for The Kilburn Arms in London, England, and clarified that international expansion is not for now. Record international coverage as a possible future roadmap item only; no UK venues or events should be added on the basis of this joke. Keep current geographic scope until the Founder explicitly approves expansion. Future planning would need country-specific addresses, local time zones, date formats, search and distance handling, and country-level Facebook roundup grouping. No database or frontend changes.
+
+Unofficial Easter egg for Milo: if the Founder sends a karaoke flyer from another continent and says “I just have a quick idea,” remember KaraokeOS and the approximately 47 projects already in progress. 😂 This is humor, not a restriction on the Founder's decisions.
