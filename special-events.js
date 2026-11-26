@@ -10,6 +10,20 @@
   // site timezone). Any deliberate visitor action (search, filter,
   // tab, nearby) ends the today-only view and starts full discovery.
   let todayOnly=true;
+  // Sophie + Steven (Nov 26, 2026): date deep links. #find/YYYY-MM-DD pins
+  // Find Karaoke to one Chicago calendar date (the daily Facebook roundup
+  // links here); #find/today is the same view for today. A dated link never
+  // advances on its own - it shows its date forever. Invalid dates parse to
+  // null and the page behaves as plain #find.
+  let findDate=parseFindDate(location.hash);
+  function parseFindDate(hash){
+    const match=/^#find\/(\d{4}-\d{2}-\d{2}|today)$/.exec(String(hash||''));
+    if(!match)return null;
+    if(match[1]==='today')return chicagoDateKey(new Date());
+    const probe=new Date(match[1]+'T12:00:00Z');
+    if(Number.isNaN(probe.getTime()))return null;
+    return probe.toISOString().slice(0,10)===match[1]?match[1]:null;
+  }
   const byId=id=>document.getElementById(id);
   const node=(tag,className,text)=>{
     const item=document.createElement(tag);
@@ -288,6 +302,20 @@
       filter.append(b);
     }
     byId('results-count').insertAdjacentElement('beforebegin',filter);
+    const dateBar=node('div','a2k-find-date-bar');
+    dateBar.id='a2k-find-date-bar';dateBar.hidden=true;
+    dateBar.append(node('span','a2k-find-date-text'));
+    const dateClear=node('button','a2k-find-date-clear','\u2715 Show all dates');
+    dateClear.type='button';
+    dateClear.onclick=()=>{
+      findDate=null;
+      try{history.replaceState(null,'','#find')}catch(e){}
+      if(!discoveryStarted)discoveryStarted=true;
+      syncFindDateBar();
+      window.filterVenues?.();
+    };
+    dateBar.append(dateClear);
+    byId('results-count').insertAdjacentElement('beforebegin',dateBar);
     installLocationFilters();enhanceFindFilters();installCompactSearchFilters();
     const originalVenueSubmit=document.querySelector('#find-screen .atk-suggest-venue-cta');
     if(originalVenueSubmit)originalVenueSubmit.classList.add('a2k-submit-source-hidden');
@@ -392,6 +420,56 @@
     nextCache.byId.set(venueItem.id,next);
     return next;
   }
+  // The session (if any) a venue has ON one Chicago calendar date - the
+  // date-deep-link counterpart of nextKaraoke. A session starting the day
+  // before counts when it runs past midnight into the date.
+  const onDateCache=new Map();
+  function karaokeOnDate(venueItem,dateKey){
+    const schedule=Array.isArray(venueItem?.karaokeSchedule)?venueItem.karaokeSchedule:[];
+    if(!schedule.length||venueItem.specialEventsOnly)return null;
+    const cacheKey=venueItem.id+'|'+dateKey;
+    if(onDateCache.has(cacheKey))return onDateCache.get(cacheKey);
+    const now=new Date();
+    const dayStart=new Date(toIso(dateKey,'00:00'));
+    const dayEnd=new Date(toIso(addDays(dateKey,1),'00:00'));
+    let found=null;
+    for(const startDate of [addDays(dateKey,-1),dateKey]){
+      const weekday=DAY_NAMES[new Date(startDate+'T12:00:00Z').getUTCDay()];
+      for(const slot of schedule){
+        if(String(slot?.day||'').toLowerCase()!==weekday.toLowerCase())continue;
+        const start=String(slot.start||''),endRaw=slot.end;
+        const endKind=endRaw==='close'?'close':(/^\d{2}:\d{2}$/.test(endRaw||'')?'fixed':(endRaw==null||endRaw===''?'onwards':null));
+        if(!/^\d{2}:\d{2}$/.test(start)||!endKind)continue;
+        const end=endKind==='fixed'?String(endRaw):null;
+        if(end&&start===end)continue;
+        let startAt,endAt;
+        try{
+          startAt=new Date(toIso(startDate,start));
+          endAt=endKind==='fixed'
+            ?new Date(toIso(end<=start?addDays(startDate,1):startDate,end))
+            :new Date(toIso(addDays(startDate,1),'00:00'));
+        }catch(_){continue}
+        if(startAt>=dayEnd||endAt<=dayStart)continue;
+        if(!found||startAt<found.startAt)
+          found={startAt,endAt,ongoing:startAt<=now&&endAt>now,endKind};
+      }
+    }
+    onDateCache.set(cacheKey,found);
+    return found;
+  }
+  function findDateTitle(){
+    if(!findDate)return '';
+    return new Intl.DateTimeFormat('en-US',{timeZone:'UTC',weekday:'long',month:'long',day:'numeric',year:'numeric'})
+      .format(new Date(findDate+'T12:00:00Z'));
+  }
+  function syncFindDateBar(){
+    const bar=byId('a2k-find-date-bar');if(!bar)return;
+    bar.hidden=!findDate;
+    if(findDate){
+      const text=bar.querySelector('.a2k-find-date-text');
+      if(text)text.textContent='\u{1F4C5} Karaoke for '+findDateTitle();
+    }
+  }
   function whenLabel(session){
     if(!session)return 'Karaoke times not confirmed';
     const day=datePart=>fmt(datePart,{weekday:'short',month:'short',day:'numeric'});
@@ -416,6 +494,9 @@
     const overlapsToday=(startAt,endAt)=>
       chicagoDateKey(startAt)<=todayKey&&chicagoDateKey(endAt)>=todayKey;
     const showingToday=todayOnly&&!discoveryStarted;
+    const dateView=!!findDate;
+    const overlapsFindDate=(startAt,endAt)=>
+      chicagoDateKey(startAt)<=findDate&&chicagoDateKey(endAt)>=findDate;
     let effectiveToday=showingToday;
     if(effectiveToday){
       // If nothing at all is scheduled today, fall back to the full
@@ -433,10 +514,34 @@
     }
     let shownVenues=0,shownEvents=0,unscheduled=0;
     const byCard=new Map();
+    // Date view only: a venue whose special event is shown for the date is
+    // represented by that event card, not a second venue card (Sophie,
+    // Nov 26, 2026: deduplicate venue cards; her daily counts are distinct
+    // venues). Mirrors the event-card predicates in the loop below.
+    const shownEventVenueIds=new Set();
+    if(dateView&&mode!=='venues'){
+      for(const event of rows){
+        const place=venue(event);
+        if(!place)continue;
+        if(new Date(event.end_at)<=now)continue;
+        if(!overlapsFindDate(new Date(event.start_at),new Date(event.end_at)))continue;
+        const corpus=[event.title,event.description,event.host_name,dayDate(event.start_at),
+          place.name,place.city,place.state,place.postal_code,place.address]
+          .filter(Boolean).join(' ').toLowerCase();
+        if(q&&!corpus.includes(q))continue;
+        if(state&&String(place.state||'').toUpperCase()!==state)continue;
+        if(city&&place.city!==city)continue;
+        if(genre&&!(place.genres||[]).includes(genre))continue;
+        if(rating!==0&&!(Number.isFinite(place.rating)&&place.rating>=rating))continue;
+        if(typeof window.a2kNearbyVenueMatches==='function'&&!window.a2kNearbyVenueMatches(place))continue;
+        shownEventVenueIds.add(String(place.databaseId));
+      }
+    }
     parent.querySelectorAll('.venue-teaser').forEach(card=>{
       const place=typeof sampleVenues!=='undefined'?
         sampleVenues.find(v=>v.id===card.dataset.venue):null;
       const next=place?nextKaraoke(place,now):null;
+      const session=dateView?(place?karaokeOnDate(place,findDate):null):next;
       const label=card.querySelector('.teaser-copy');
       if(place&&label){
         let nextText=label.querySelector('.a2k-next-session');
@@ -444,15 +549,15 @@
           nextText=node('span','a2k-next-session');
           label.append(nextText);
         }
-        nextText.textContent=whenLabel(next)+
-          (next&&place.publication_status==='under_review'?' · Schedule under review':'');
+        nextText.textContent=whenLabel(session)+
+          (session&&place.publication_status==='under_review'?' · Schedule under review':'');
       }
       // Search applies to dates and weekdays as well as venue details.
       // All existing region, genre and review filters are preserved.
       const text=[place?.name,place?.city,place?.state,place?.postal_code,place?.address,place?.region,
         ...(place?.genres||[]),
         ...(place?.karaokeSchedule||[]).map(slot=>slot.day),
-        next?dayDate(next.startAt):''].filter(Boolean).join(' ').toLowerCase();
+        session?dayDate(session.startAt):''].filter(Boolean).join(' ').toLowerCase();
       const matchesText=!q||text.includes(q);
       const matchesState=!state||String(place?.state||'').toUpperCase()===state;
       const matchesCity=!city||place?.city===city;
@@ -462,14 +567,15 @@
         window.a2kNearbyVenueMatches(place):true;
       // Venues added solely for one-time events are represented by their event
       // cards and can still be opened from those cards.
-      card.hidden=!(discoveryStarted||showingToday)||mode==='events'||!place||place.specialEventsOnly||
-        (effectiveToday&&!(next&&overlapsToday(next.startAt,next.endAt)))||
+      card.hidden=!(discoveryStarted||showingToday||dateView)||mode==='events'||!place||place.specialEventsOnly||
+        (dateView?(!session||shownEventVenueIds.has(String(place.databaseId))):
+          (effectiveToday&&!(next&&overlapsToday(next.startAt,next.endAt))))||
         !matchesText||!matchesState||!matchesCity||!matchesGenre||!matchesRating||!matchesNearby;
       if(!card.hidden){
         shownVenues++;
         if(!next)unscheduled++;
       }
-      byCard.set(card,next?next.startAt.getTime():Infinity);
+      byCard.set(card,session?session.startAt.getTime():Infinity);
     });
     parent.querySelectorAll('.a2k-event-card').forEach(card=>{
       const event=rows.find(item=>item.id===card.dataset.eventId);
@@ -487,8 +593,9 @@
         window.a2kNearbyVenueMatches(place):true;
       // Already-ended events are excluded both by the database query and here,
       // in case the user leaves this page open until the event passes.
-      card.hidden=!(discoveryStarted||showingToday)||mode==='venues'||new Date(event.end_at)<=now||
-        (effectiveToday&&!overlapsToday(new Date(event.start_at),new Date(event.end_at)))||
+      card.hidden=!(discoveryStarted||showingToday||dateView)||mode==='venues'||new Date(event.end_at)<=now||
+        (dateView?!overlapsFindDate(new Date(event.start_at),new Date(event.end_at)):
+          (effectiveToday&&!overlapsToday(new Date(event.start_at),new Date(event.end_at))))||
         !matches||!matchesState||!matchesCity||!matchesGenre||!matchesRating||!matchesNearby;
       if(!card.hidden)shownEvents++;
       byCard.set(card,new Date(event.start_at).getTime());
@@ -503,11 +610,19 @@
       return a.textContent.localeCompare(b.textContent);
     });
     parent.append(...cards);
-    byId('no-results').hidden=!(discoveryStarted||showingToday)||shownVenues+shownEvents>0;
+    byId('no-results').hidden=!(discoveryStarted||showingToday||dateView)||shownVenues+shownEvents>0;
+    syncFindDateBar();
     const count=byId('results-count');
     if(count){
-      if(!discoveryStarted&&!showingToday){
+      if(!discoveryStarted&&!showingToday&&!dateView){
         count.textContent='Search, choose a state or city, or use your location to find karaoke.';
+        return;
+      }
+      if(dateView){
+        const total=shownVenues+shownEvents;
+        count.textContent=total?
+          'Karaoke on '+findDateTitle()+': '+total+(total===1?' place':' places'):
+          'No karaoke scheduled for '+findDateTitle();
         return;
       }
       if(showingToday){
@@ -775,6 +890,22 @@
         return result;
       };
     }
+    // A dated link can also arrive while the site is already open
+    // (address-bar edit, browser back/forward). Plain #find clears it.
+    window.addEventListener('hashchange',()=>{
+      if(/^#find\//.test(location.hash)){
+        const next=parseFindDate(location.hash);
+        if(next!==findDate){findDate=next;window.filterVenues?.();}
+      }else if(location.hash==='#find'&&findDate){
+        findDate=null;window.filterVenues?.();
+      }
+    });
+    // A malformed dated hash (e.g. #find/next-friday) falls back to the
+    // normal Find Karaoke page and tidies the address bar.
+    if(/^#find\//.test(location.hash)&&!findDate){
+      try{history.replaceState(null,'','#find')}catch(e){}
+    }
+    syncFindDateBar();
     Promise.resolve(window.liveVenueLoadPromise).then(refresh,refresh);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});

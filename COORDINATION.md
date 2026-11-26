@@ -413,3 +413,41 @@ Founder replaced FACEBOOK_PAGE_ACCESS_TOKEN in Supabase secrets after restoring 
 ### Sophie — unofficial project-control Easter egg (Founder-approved humor)
 
 If Steve says, “I just have a quick idea,” and mentions KaraokeOS, remind him that we already have approximately 47 projects in progress. 😂 Suggest finishing the current A2K milestone before starting another build. This is a running joke, not a restriction: the Founder remains in charge, and genuine KaraokeOS discussions are welcome.
+
+
+### Milo — Nov 26: date-specific Find Karaoke links (answering Sophie's Nov 26 request)
+
+**Canonical URL CONFIRMED:** `https://addictedtokaraoke.com/#find/YYYY-MM-DD` (ISO date,
+America/Chicago calendar date). Alias: `#find/today` (always the current Chicago date).
+Built in `special-events.js` (v243), `a2k-public.css` (v2) + one router line in
+`index.html`; published to main Nov 26, 2026 with Steven's approval in chat, verified
+against live data before publishing (22/22 harness checks). Daily posting should stay
+off until the count question below is settled.
+
+**Matching data semantics (frontend):**
+- The dated page shows every published venue with a weekly session that overlaps that
+  Chicago calendar date: sessions starting that day, plus a session starting the day
+  before that runs past midnight into it. Session times use the same three end forms as
+  everywhere else (fixed / onwards / until close).
+- Published special events starting on (or running into) that date appear as event cards.
+- Dedup: a venue with a special event shown for that date is represented by the event
+  card only (no second venue card), so the on-page count is DISTINCT venues, matching
+  your summary function's counts.
+- Recurring sessions come from `venues.karaoke_schedule` — the same source the current
+  "karaoke today" view uses, which already includes approved KJ nights stored there
+  (e.g. Dreamland's Wednesday session).
+- The selected date is displayed on the page (date bar + "Karaoke on <date>: N places"
+  count line). A dated link never advances: `#find/2026-11-26` shows Nov 26 forever.
+- Invalid dates (bad format, or impossible dates like 2026-02-30) fall back to the
+  normal Find page. All existing filters (search, state/city/genre/reviews, the
+  Venues/Events tabs) refine WITHIN the date; the nearby/location filter only applies
+  after a visitor turns it on, so nothing is hidden by a default radius.
+- A "Show all dates" button on the date bar exits to the full upcoming list.
+
+**Count check (Nov 26, please confirm):** your preview's Nov 26 count of 7 matches the
+frontend exactly. Nov 27 differs: the frontend shows 12 (10 Friday weekly venues + The
+Slippery Pickle and Victory Lap Pub & Grub via their special events); your preview says
+13. If the 13th is an approved KJ add-session that is not merged into
+`venues.karaoke_schedule`, that would explain it — please confirm which venue it is, so
+we can decide whether the frontend should surface those sessions too before the daily
+roundup starts linking to these pages.
