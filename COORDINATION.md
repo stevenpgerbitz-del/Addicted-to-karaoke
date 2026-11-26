@@ -31,6 +31,23 @@ may be published without separate approval (Founder clarification, Nov 25).
    Steven's explicit say-so.
 5. Desktop first, then mobile, then PWA (Steven's order). The mobile portal
    stays untouched.
+6. **Capture every worthwhile idea — Founder direction, Nov 26, 2026.**
+   Both Milo and Sophie must record promising feature ideas, improvements,
+   integrations, experiments and future plans discussed with Steven in this
+   shared coordination file, even if they are not being built now. Include
+   the project, date, concise description, key decisions/constraints, status
+   (idea / approved roadmap / in progress / implemented / verified / deferred),
+   and dependencies or next steps when known. Distinguish suggestions from
+   Founder-approved decisions; recording an idea is not approval to build,
+   deploy, change permissions or alter production. Check existing entries
+   before adding duplicates; update or cross-reference status as work proceeds
+   and preserve the decision history. Do not remove deferred ideas merely
+   because another feature has priority. Covers A2K, Karaoke Anonymous, KJ
+   Companion, and related integrations; keep unrelated projects separate
+   unless Steven requests otherwise. Capture ideas during the discussion or
+   before switching tasks, so neither AI needs to rely on chat history alone.
+   This is an ongoing working rule for both AIs, not a claim that automated
+   capture is enabled.
 
 ## Live state (update when it changes)
 
