@@ -573,3 +573,22 @@ Future KJ Companion module, alongside Music Bingo; not an immediate A2K website 
 - Approved scoring concept: faster correct answers earn more points, not merely a speed tiebreaker. Proposed default schedule for a 20-second round: 1,000 points within 0–2 seconds; then 50 points lost per second through 20 seconds (5s=850, 10s=600, 15s=350, 20s=100); wrong, late or missing answer=0. Maximum 10,000 for 10 rounds. Scale the curve consistently if the host selects a different timer. One locked submission per player per question. Server-authoritative timing and scoring, no correct answer delivered to player/audience before lock, and duplicate submissions rejected. Account for normal network latency in future implementation/testing; exact transport and abuse controls TBD.
 - Show leaderboard between singers, announce highest total at the end, and use a sudden-death trivia question for ties if needed. Prize supplied by the venue (e.g. appetizer, gift certificate, merchandise or bragging rights); no required paid entry. Host can end the session. Include reconnect/session recovery and nickname moderation in implementation planning. No subscription requirement.
 - Architecture direction: separate KJ Companion tablet control, audience display and customer phone interfaces; Karaoke Anonymous supplies trivia content; A2K remains the community/venue/schedule/KJ directory. Existing singer rotation, digital requests and Music Bingo remain planned companion modules. No repository/app/backend/live feature created or changed by this roadmap entry; future implementation, design preview and publish subject to Founder approval.
+
+### Sophie — Nov 26: KaraokeOS song-title Easter eggs (reference only)
+
+Founder requested preserving the humorous computer-action/song-title pairings below. KaraokeOS is a joke, not a project the Founder wants to build. These are creative reference ideas only; no implementation, product rename, or audio playback is authorized. Song titles are listed as references, not lyrics or recordings.
+
+| Computer action | Song title |
+| --- | --- |
+| Empty Recycle Bin | Another One Bites the Dust |
+| Restart | Here I Go Again |
+| Shut Down | Closing Time |
+| Wi-Fi Disconnected | All by Myself |
+| System Update | A Change Is Gonna Come |
+| Forgot Password | Who Are You |
+| Restore File | I Want You Back |
+| Computer Frozen | Cold as Ice |
+| Low Battery | Livin' on a Prayer |
+| Task Manager | Under Pressure |
+
+Status: documented for fun and future reference; no development planned. Preserve the list even though the OS concept itself is not being pursued.
