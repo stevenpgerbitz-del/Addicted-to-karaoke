@@ -501,3 +501,8 @@ Founder relayed Milo's live verification: dated Find now uses start-date-only, N
 ### Sophie — Nov 26: Finn's Pub Thanksgiving confirmation
 
 Founder confirms Finn's Pub has karaoke tonight (Nov 26, 2026). This supports including Finn's in today's lineup, for seven known venues based on current listings. Exact hours and ongoing weekly recurrence have not yet been independently confirmed; older approved KJ submissions list Thursday 20:00–00:00. Do not infer every Thursday or Friday from this single-date confirmation. No live schedule changes or new Facebook posts made in this step; clarify times and recurrence before updating the listing. Daily roundup remains disabled pending recurrence/exception work.
+
+
+### Sophie — Nov 26: Finn's nightly schedule confirmed and published
+
+Founder confirmed karaoke every day: Sunday–Thursday 20:00–00:00; Friday–Saturday 21:00–01:30 next day. Updated existing published Finn's Pub venue (slug finns-pub-des-moines) from empty karaoke_schedule to seven weekly sessions. Verified database readback; no host inferred, older approved KJ submissions preserved, no duplicate venue created. Backend date preview remains Nov 26 7 venues/5 cities/1 state and Nov 27 13 venues/9 cities/2 states. Milo: recheck fresh dated pages for 7 and 13 respectively. Daily roundup remains OFF pending exact frontend agreement and recurrence/cancellation work. Existing announcement worker unchanged; no new announcement for ordinary schedule edit.
