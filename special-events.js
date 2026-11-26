@@ -420,9 +420,10 @@
     nextCache.byId.set(venueItem.id,next);
     return next;
   }
-  // The session (if any) a venue has ON one Chicago calendar date - the
-  // date-deep-link counterpart of nextKaraoke. A session starting the day
-  // before counts when it runs past midnight into the date.
+  // The session (if any) a venue has STARTING ON one Chicago calendar
+  // date - the date-deep-link counterpart of nextKaraoke. Steven's call
+  // (Nov 26, 2026, matching Sophie's roundup counts): a show belongs to
+  // the date it starts; last night's after-midnight tail is yesterday's.
   const onDateCache=new Map();
   function karaokeOnDate(venueItem,dateKey){
     const schedule=Array.isArray(venueItem?.karaokeSchedule)?venueItem.karaokeSchedule:[];
@@ -433,7 +434,7 @@
     const dayStart=new Date(toIso(dateKey,'00:00'));
     const dayEnd=new Date(toIso(addDays(dateKey,1),'00:00'));
     let found=null;
-    for(const startDate of [addDays(dateKey,-1),dateKey]){
+    for(const startDate of [dateKey]){
       const weekday=DAY_NAMES[new Date(startDate+'T12:00:00Z').getUTCDay()];
       for(const slot of schedule){
         if(String(slot?.day||'').toLowerCase()!==weekday.toLowerCase())continue;
@@ -495,8 +496,7 @@
       chicagoDateKey(startAt)<=todayKey&&chicagoDateKey(endAt)>=todayKey;
     const showingToday=todayOnly&&!discoveryStarted;
     const dateView=!!findDate;
-    const overlapsFindDate=(startAt,endAt)=>
-      chicagoDateKey(startAt)<=findDate&&chicagoDateKey(endAt)>=findDate;
+    const startsOnFindDate=startAt=>chicagoDateKey(startAt)===findDate;
     let effectiveToday=showingToday;
     if(effectiveToday){
       // If nothing at all is scheduled today, fall back to the full
@@ -524,7 +524,7 @@
         const place=venue(event);
         if(!place)continue;
         if(new Date(event.end_at)<=now)continue;
-        if(!overlapsFindDate(new Date(event.start_at),new Date(event.end_at)))continue;
+        if(!startsOnFindDate(new Date(event.start_at)))continue;
         const corpus=[event.title,event.description,event.host_name,dayDate(event.start_at),
           place.name,place.city,place.state,place.postal_code,place.address]
           .filter(Boolean).join(' ').toLowerCase();
@@ -594,7 +594,7 @@
       // Already-ended events are excluded both by the database query and here,
       // in case the user leaves this page open until the event passes.
       card.hidden=!(discoveryStarted||showingToday||dateView)||mode==='venues'||new Date(event.end_at)<=now||
-        (dateView?!overlapsFindDate(new Date(event.start_at),new Date(event.end_at)):
+        (dateView?!startsOnFindDate(new Date(event.start_at)):
           (effectiveToday&&!overlapsToday(new Date(event.start_at),new Date(event.end_at))))||
         !matches||!matchesState||!matchesCity||!matchesGenre||!matchesRating||!matchesNearby;
       if(!card.hidden)shownEvents++;

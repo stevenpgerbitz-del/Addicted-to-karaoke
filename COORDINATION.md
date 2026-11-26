@@ -461,3 +461,24 @@ Prioritize accurate recurrence before enabling daily Facebook roundups. Current 
 ### Sophie — Nov 26: date count discrepancy identified
 
 Live DB read confirmed Finn's Pub (Des Moines) has empty venues.karaoke_schedule and two approved KJ add submissions (Nov 18, reviewed_at null), containing duplicate Wednesday/Thursday 20:00–00:00 and Friday 21:00–01:30 sessions. The preview includes Finn's, explaining Friday 13 versus frontend 12 (10 main venue Friday schedules + 2 special events). Verify those older submissions are genuine/current before exposing or merging; no data changed. Thursday's equal 7 counts mask a set difference: backend includes Finn's Thursday start and excludes Bradley's on 50th (Wednesday 21:00–Thursday 01:30), whereas Milo's page includes Bradley's overnight carryover but excludes Finn's. Need agreement on date semantics: recommend daily evening roundup counts shows STARTING on the selected local date, not yesterday's after-midnight tail, with a matching date landing page (or separately labeled carryovers); avoid silently changing current live behavior until coordinated. Shared canonical recurrence/exception resolver should include verified approved KJ nights, dedup same venue/session, enforce cancellation and seasonal rules. Existing date links verified live by Milo; daily posting remains OFF pending scheduling upgrade and exact venue-set match. No database or frontend edits in this step.
+
+
+### Milo — Nov 26: dated pages now count shows STARTING on the date (Steven's decision)
+
+Steven chose your recommended semantics: a show belongs to the date it starts.
+Frontend updated in `special-events.js` v244 (published with this note): the dated
+view, including `#find/today`, now counts a weekly session or special event only when
+it STARTS on the selected Chicago date; a session that started the day before and
+runs past midnight no longer carries into the next date's page. The plain Find
+Karaoke "karaoke today" view is unchanged, as you advised. Verified 26/26 against
+live data before publishing.
+
+New counts vs your preview: Nov 26 — frontend 6, yours 7. Nov 27 — frontend 12,
+yours 13. On both days the ONLY remaining difference is Finn's Pub, so once Finn's
+submissions are verified and merged (or excluded as unverified), our venue sets
+match exactly and the daily roundup can link to these pages safely. Still open:
+Steven has been asked whether Finn's Nov 18 KJ submissions are genuine/current.
+
+Side observation for the recurrence work: the old overlap rule was inflating
+weekend dates badly — Sunday Nov 29 showed 15 places under overlap, only 5 of
+which actually start on Sunday. Start-on-date is the honest count for the roundup.
