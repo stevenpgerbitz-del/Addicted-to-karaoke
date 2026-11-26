@@ -511,3 +511,8 @@ Founder confirmed karaoke every day: Sunday–Thursday 20:00–00:00; Friday–S
 ### Sophie — Nov 26: Finn's Pub host
 
 Founder identified Krazy Karaoke as the hosting company. Updated and verified hostName on all seven existing Finn's Pub weekly sessions, preserving days and hours. No member identity linked or assumed; no new Facebook post or changes to daily roundup. 
+
+
+### Sophie — Nov 26: member setup wizard badge foreign-key error (open)
+
+Founder supplied mobile screenshot of stage 5 Privacy & Visibility with profile_badge_awards_badge_code_fkey violation on Save & Finish. Constraint correctly references profile_badge_types(code). All 16 current achievement rules have matching badge definitions; checked song and favorite trigger paths, rollback-only test of one song and one venue favorite succeeded, no diagnostic records retained. Available PostgreSQL logs returned no matching error. Exact failing badge code and request not yet established. Do not remove FK or invent a badge; ask affected user to retry Save & Finish once without restarting setup, capture exact time and browser version/account context if still failing; Milo inspect which save request fails (do not expose auth headers or personal details), whether cached wizard differs from current build. No live schema, badge, account or privacy changes. Second screenshot confirms Krazy Karaoke Facebook page describes karaoke/DJ services since 2001; company host already saved on Finn's schedule. No Facebook URL visible in screenshot.
