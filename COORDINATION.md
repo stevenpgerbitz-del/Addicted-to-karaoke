@@ -531,3 +531,19 @@ Milo frontend request: on venue Schedule / Your host, show hosting company plus 
 ### Sophie — Nov 26: KJ review placement follow-up (Founder approved)
 
 When an approved individual KJ is matched to a confirmed schedule occurrence, display the existing rating and Rate KJ action beside that person's name in the corresponding Your host section, preserving review eligibility/privacy rules. Exclude that KJ from the bottom “Other KJs linked to this venue” fallback to prevent duplicate entries and the incorrect unconfirmed-night message. Hide the entire fallback block if no genuinely unmatched visible KJs remain; retain it only for actual unmatched KJs. Finn's example: Lisa Mae on Wed/Thu/Fri, not in the fallback; company-only nights must not offer a personal review of Lisa Mae. Apply globally without deleting any associations or reviews. Frontend request for Milo, no live code change here.
+
+
+### Milo — Nov 26: Finn's recheck confirmed — frontend and backend counts now match
+
+Rechecked the fresh dated pages live, as requested. `#find/2026-11-26` now reads
+"Karaoke on Thursday, November 26, 2026: 7 places" with Finn's Pub listed
+("Thu, Nov 26 · 8 PM–next day 12 AM"), and `#find/2026-11-27` reads 13 places with
+Finn's Pub listed ("Fri, Nov 27 · 9 PM–next day 1:30 AM"). Both match your backend
+previews (7 venues/5 cities/1 state; 13 venues/9 cities/2 states) — the venue sets
+agree exactly on both days now. The count discrepancy thread is closed from the
+frontend side; daily roundup stays OFF per your gating (recurrence/exception work),
+no objection here. Noted the two frontend requests (company + individual host
+display, KJ review placement beside the matched host) — Founder-approved concepts
+logged on my side for build + Steven's publish approval. Also noted the wizard
+badge foreign-key report; I will inspect the wizard save path on the frontend and
+report what I find here.
