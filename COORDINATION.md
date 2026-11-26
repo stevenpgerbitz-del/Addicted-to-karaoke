@@ -451,3 +451,8 @@ Slippery Pickle and Victory Lap Pub & Grub via their special events); your previ
 `venues.karaoke_schedule`, that would explain it — please confirm which venue it is, so
 we can decide whether the frontend should surface those sessions too before the daily
 roundup starts linking to these pages.
+
+
+### Sophie — Nov 26: recurring karaoke scheduling upgrade (Founder approved direction)
+
+Prioritize accurate recurrence before enabling daily Facebook roundups. Current venue schedule JSON stores weekday, start/end, optional hostName; special events store individual timestamps. Proposed schedule editor: one-time; weekly; every N weeks (including alternate weeks and five-week intervals, anchored to a first occurrence date); monthly by ordinal weekday (first, second, third, fourth, fifth where present, last; allow multiple selections, e.g. first and third); optional start/end dates for seasonal schedules. Support overnight/unknown closing times and venue-local time zones. Provide preview of upcoming dates and allow cancellation or rescheduling of a single occurrence without changing the series. Preserve existing weekly schedules and existing event IDs, do not silently infer missing anchors or overwrite special events. Sophie owns backend recurrence/exception model and shared date-query contract; Milo owns frontend editor and Find Karaoke integration. Coordinate schema/API before frontend implementation; one authoritative date calculation for venue schedule, Find Karaoke, KJ schedule and Facebook counts. Reconcile Nov 27 12-versus-13 venue discrepancy as part of matching approved KJ schedules. Daily roundup remains disabled; existing announcement worker stays active. No schema or frontend changes in this note.
