@@ -599,3 +599,8 @@ Status: documented for fun and future reference; no development planned. Preserv
 Founder jokingly shared a karaoke flyer for The Kilburn Arms in London, England, and clarified that international expansion is not for now. Record international coverage as a possible future roadmap item only; no UK venues or events should be added on the basis of this joke. Keep current geographic scope until the Founder explicitly approves expansion. Future planning would need country-specific addresses, local time zones, date formats, search and distance handling, and country-level Facebook roundup grouping. No database or frontend changes.
 
 Unofficial Easter egg for Milo: if the Founder sends a karaoke flyer from another continent and says “I just have a quick idea,” remember KaraokeOS and the approximately 47 projects already in progress. 😂 This is humor, not a restriction on the Founder's decisions.
+
+
+### Sophie — Nov 26: geographic scope (Founder directive)
+
+A2K is United States only for now. Do not add or publish venues or events outside the United States, including international flyers shared in chat, unless the Founder explicitly changes this policy. Existing regional rollout priorities remain in place; US-only is the geographic ceiling, not an instruction to expand immediately to every state. International expansion is deferred, not permanently ruled out. The Kilburn Arms in London was shared jokingly and is not approved for listing. No database or frontend changes in this step.
