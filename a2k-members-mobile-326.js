@@ -43,7 +43,13 @@
     const rail=selected?.querySelector('.a2k-d-profile-content-rail');
     const main=rail?.querySelector('.a2k-d-public-profile-main');
     const awards=side?.querySelector('.a2k-d-public-profile-awards');
-    if(!selected||!side||!main||!awards)return;
+    /* Milo fix (Nov 27, 2026): awards used to be required to proceed.
+       The V74 profile moved the badges card into the main column, so
+       the sidebar has no awards node and this guard silently stopped
+       every decorate pass - the tab bar never gained Songs / Venues /
+       Reviews tabs for panes mounted after the first render. Only the
+       badge decoration below needs awards; guard that block instead. */
+    if(!selected||!side||!main)return;
 
     // The existing public contact information is optional. Give it a
     // mobile-only layout hook without changing its contents or privacy gates.
@@ -61,6 +67,7 @@
       if(role)role.after(badge);
     }
 
+    if(awards){
     let mobileHeading=awards.querySelector('.a2k-d-mobile-badge-heading');
     if(!mobileHeading){
       mobileHeading=el('div','a2k-d-mobile-badge-heading');
@@ -110,6 +117,7 @@
           if(slot.childNodes.length)slot.replaceChildren();
         }
       }
+    }
     }
 
     let nav=rail.querySelector('.a2k-d-mobile-profile-tabs');

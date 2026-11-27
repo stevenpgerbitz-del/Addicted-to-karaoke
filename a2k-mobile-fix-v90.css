@@ -1,6 +1,7 @@
 /* Addicted to Karaoke - mobile fix layer V90 (Milo, Nov 27, 2026).
-   Venue page + footer round. Every rule is scoped to the mobile shell
-   (html:not(.a2k-desktop-live)); the desktop site is untouched.
+   Round 1: venue page + footer. Round 2: Home headings + Spotlight
+   banner. Round 3: public member profile. Every rule is scoped to
+   the mobile shell (html:not(.a2k-desktop-live)); desktop untouched.
 
    1. FOOTER: the site footer no longer renders on mobile at all
       (Founder decision, Nov 24, 2026: "DROP the footer on mobile").
@@ -41,4 +42,317 @@ html:not(.a2k-desktop-live) body #venue-screen .tabs button[aria-selected="true"
 html:not(.a2k-desktop-live) body #venue-screen .tabs button[aria-selected="true"] svg {
   color: #67231b !important;
   stroke: currentColor !important;
+}
+
+/* 4. HOME SECTION HEADINGS: .a2k-b-section carries a border but no
+      padding, so the heading row ("Tonight Near You", "Featured Venue")
+      sits flush on the card's top border, its text starting at the
+      border itself. Give the heading row breathing room inside the
+      card, aligned with the cards below it. */
+html:not(.a2k-desktop-live) body .a2k-b-section .a2k-b-heading {
+  margin: 10px 12px 8px !important;
+}
+
+/* 5. COMMUNITY SPOTLIGHT BANNER: the heading pill pairs pale-cream text
+      (#f5dfba) with a pale-gold gradient background - cream on gold,
+      nearly illegible. Everywhere else the site pairs gold with the
+      dark oxblood red (selected tabs, date chips); use the same. */
+html:not(.a2k-desktop-live) body .a2k-b-spotlight-heading {
+  color: #67231b !important;
+}
+
+/* =====================================================================
+   Round 3: the public member profile (Nov 27, 2026).
+   The profile was built desktop-only: it renders inside the members
+   directory's 248px rail column, and every content pane is display:none
+   outside html.a2k-desktop-live - the mobile tab nav exists and its
+   data-selected state updates, but no mobile CSS ever showed a pane.
+   Below: a full-width stacked layout, Sophie's cream/dark card design
+   in one column, Share/Report as icon buttons (Founder direction,
+   Nov 24), and pane switching keyed off the nav's data-selected.
+   ===================================================================== */
+
+/* --- width chain: stop shrink-wrapping to the sidebar's 248px --- */
+html:not(.a2k-desktop-live) body #find-screen:has(> #a2k-d-directory) {
+  width: 100% !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory,
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-members-profile-layout,
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-members-main,
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-public-profile-overview,
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-profile-content-rail,
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-public-profile-main {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-members-profile-layout,
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-public-profile-overview,
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-profile-content-rail {
+  flex-direction: column !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-public-profile-main {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  height: auto !important;
+  margin: 0 !important;
+}
+
+/* --- hero: full-width card, roomier two columns, actions row below --- */
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-public-profile-sidebar {
+  width: 100% !important;
+  grid-template-columns: 84px minmax(0, 1fr) !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .v74-role-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  width: auto !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .v74-role-chip {
+  display: inline-block !important;
+  white-space: nowrap !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .v74-hero-actions {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  gap: 10px !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* --- Share / Report: true icon buttons --- */
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-profile-share,
+html:not(.a2k-desktop-live) body #a2k-d-directory .v85-report-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  padding: 0 !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+  border-radius: 10px !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .v85-report-link {
+  background: linear-gradient(#763128, #471914) !important;
+  border: 1.5px solid #c09a66 !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-profile-share::before {
+  content: "↗";
+  font-size: 21px;
+  color: #f3e2c8;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .v85-report-link::before {
+  content: "⚑";
+  font-size: 19px;
+  color: #f3e2c8;
+}
+
+/* --- panes: show the selected view, hide the other --- */
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-profile-schedule-pane {
+  display: none !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-profile-content-rail:has(> .a2k-d-mobile-profile-tabs[data-selected="schedule"]) > .a2k-d-profile-schedule-pane {
+  display: block !important;
+  background: linear-gradient(165deg, #2b130e, #1d0f0c) !important;
+  border: 1.5px solid #a07c51 !important;
+  border-radius: 14px !important;
+  padding: 18px !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .35) !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-profile-content-rail:has(> .a2k-d-mobile-profile-tabs[data-selected="schedule"]) > .a2k-d-public-profile-main {
+  display: none !important;
+}
+
+/* --- cream About card: Sophie's design, one column ---
+   The build-326 view rule hides every main child that is not the
+   about/interests sections themselves; the V83 cream wrapper is a
+   child too, so the about view must re-show it explicitly (the
+   view-qualified selector below outranks the hide rule). In other
+   views the hide rules still win and the card stays hidden. */
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-cream-card {
+  flex-direction: column !important;
+  gap: 18px !important;
+  background: linear-gradient(168deg, #f8ecd4, #eedcae) !important;
+  border: 1.5px solid #b08d57 !important;
+  border-radius: 14px !important;
+  padding: 18px !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .35) !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main[data-a2k-mobile-view="about"] > .v74-cream-card {
+  display: flex !important;
+}
+
+/* The badges card also lives in main now (it sat in the sidebar when
+   the view system was written, always visible). No view names it, so
+   without this it is unreachable on mobile; the About view is its
+   natural home, under the cream card. */
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main[data-a2k-mobile-view="about"] > .a2k-d-public-profile-awards {
+  display: block !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-public-profile-section {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main .v74-cream-card h2 {
+  color: #4a1712 !important;
+  font: italic 700 20px Georgia, serif !important;
+  margin: 0 0 10px !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-story {
+  color: #43302a !important;
+  font: 15.5px/1.55 Georgia, serif !important;
+  margin: 0 !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-muted {
+  color: #6d5138 !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-interest-tiles {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-cream-card .a2k-d-profile-interest-tile {
+  background: #fffaf0 !important;
+  color: #4a1712 !important;
+  border: 1px solid #a07c51 !important;
+  border-radius: 999px !important;
+  padding: 5px 14px !important;
+  font: 700 13.5px Georgia, serif !important;
+}
+
+/* --- dark content cards: songs, venues, KJ reviews, badges ---
+   Chrome only: display belongs to the build-326 view system
+   (data-a2k-mobile-view shows one pane at a time). */
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main > .a2k-d-public-profile-section,
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main > .a2k-d-public-profile-awards {
+  background: linear-gradient(165deg, #2b130e, #1d0f0c) !important;
+  border: 1.5px solid #a07c51 !important;
+  border-radius: 14px !important;
+  padding: 18px !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .35) !important;
+  margin: 0 !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main h2 {
+  color: #f3e2c8 !important;
+  font: italic 700 20px Georgia, serif !important;
+  margin: 0 0 8px !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-section-heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-more {
+  background: #571f1a !important;
+  color: #f3e2c8 !important;
+  border: 1.5px solid #a07c51 !important;
+  border-radius: 9px !important;
+  padding: 7px 14px !important;
+  font: 700 13.5px Georgia, serif !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 10px 2px !important;
+  border-bottom: 1px solid rgba(176, 141, 87, .25) !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-item:last-child {
+  border-bottom: none !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-heart {
+  color: #c8554d !important;
+  font-size: 17px !important;
+  width: 20px !important;
+  text-align: center !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-copy {
+  display: flex !important;
+  flex-direction: column !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-copy strong {
+  color: #f3e2c8 !important;
+  font: 700 15.5px Georgia, serif !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-copy small {
+  color: #d6bea0 !important;
+  font: 13px Georgia, serif !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-songbook-type {
+  margin-left: auto !important;
+  color: #e6c998 !important;
+  border: 1px solid #a07c51 !important;
+  border-radius: 999px !important;
+  padding: 3px 11px !important;
+  font: 700 12px Georgia, serif !important;
+  white-space: nowrap !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-public-profile-main .a2k-d-profile-muted {
+  color: #d6bea0 !important;
+  font: 14px Georgia, serif !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-venue-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  text-align: left !important;
+  background: none !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(176, 141, 87, .25) !important;
+  padding: 10px 2px !important;
+  color: #f3e2c8 !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-profile-venue-item:last-child {
+  border-bottom: none !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-venue-icon {
+  color: #ba9360 !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-venue-copy {
+  display: flex !important;
+  flex-direction: column !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-venue-copy strong {
+  font: 700 15.5px Georgia, serif !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .a2k-d-venue-copy small {
+  color: #d6bea0 !important;
+  font: 13px Georgia, serif !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-badges-card {
+  position: relative !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-badges-card .a2k-d-public-badges {
+  display: none !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-badges-card.v74-open .a2k-d-public-badges {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  margin-top: 10px !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-badges-card .a2k-d-illustrated-badge {
+  width: 72px !important;
+  height: 72px !important;
+  min-width: 72px !important;
+  min-height: 72px !important;
+}
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-selected-member .v74-badges-toggle {
+  position: absolute !important;
+  top: 12px !important;
+  right: 16px !important;
+  background: none !important;
+  border: none !important;
+  color: #e6c998 !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  padding: 4px 8px !important;
 }

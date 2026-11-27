@@ -258,6 +258,27 @@ while leaving the dark-red text, making the active tab nearly
 invisible. No data or behavior changes; index.html gains only the one
 stylesheet link.
 
+### Milo — Nov 27: mobile Home + public profile fix published (push120)
+
+Extends a2k-mobile-fix-v90.css (mobile shell only; desktop untouched) and
+repairs a2k-members-mobile-326.js (?v=328). Home: the section headings
+(Tonight Near You / Featured Venue) get breathing room inside their
+cards — the section border ran through the heading text; the Community
+Spotlight banner switches to dark oxblood text on its gold pill (was
+cream on pale gold, illegible). Public member profile: full-width
+layout (it shrink-wrapped to the hero sidebar's intrinsic 248px); role
+pills no longer collide; Share / Report are 46px icon buttons (Founder
+direction Nov 24). Two regressions from the desktop V74/V83 work
+repaired: (1) the cream About card — the V83 wrapper hid the About
+pane from the mobile tab view rules; the about view now shows Sophie's
+cream card in one column, with the badges card under it; (2)
+decorateProfile in the 326 script required a sidebar awards node that
+V74 moved into the main column, so every decorate pass after the first
+render bailed and Songs / Venues / Reviews tabs were never added — the
+guard now covers only the badge decoration itself. Verified at Pixel 7
+size against live data (MrSteve: About / Songs; Ty Powers: About /
+Reviews / Schedule). No data or permission changes.
+
 ## Sophie — current work
 
 - **Done Nov 24, 2026:** new RPC `is_platform_admin()` (Founder true, Super
