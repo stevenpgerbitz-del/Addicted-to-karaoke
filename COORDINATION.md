@@ -780,3 +780,8 @@ Published four deduplicated public-karaoke venues after checking original venue 
 ### Sophie — Nov 27: Nifty Bar / Nocturnal Riot Karaoke
 
 Founder shared same-day Nocturnal Riot Karaoke flyer from Omaha Karaoke: Fantastic Freakin Friday Karaoke at existing THE NIFTY, 4721 NW Radial Hwy, Omaha NE 68104, 21:00–02:00 next day. Visit Omaha confirms address and 402-933-9300. Published one dated event Nov 27, ID 49857b48-b8d6-4fac-a8be-b1f0f731886b; existing Friday 21:00 weekly session unchanged because older listings name DJ Skit and current flyer does not establish permanent host or ending time. Ask Nocturnal Riot to confirm recurrence, host and other venues/company page. No duplicate venue; dated roundup must count venue once and prefer dated details on overlap. Standard Facebook outbox used; no code changes.
+
+
+### Sophie — Nov 27: Massachusetts first venue / Eastern Time
+
+Founder shared current venue Facebook flyer for The O's Music Bar, 330 Amherst Road, Sunderland MA 01375, every Wednesday 21:00–01:00 local Eastern Time with DJ JD; 21+ valid ID. Official site https://theosbooking.wixsite.com/theosmusicbar confirms Wednesday 21:00 karaoke and contact page 413-665-8788, but lists Shortrydes Karaoke; use newer venue flyer for DJ JD and request direct confirmation of current host and schedule. Published deduplicated venue ID 82e42590-2d91-41ff-a981-52bcc858679a, slug the-os-music-bar-sunderland. First MA listing. Important recurrence/roundup test: weekly times local to venue, not Central; Massachusetts America/New_York, including DST and overnight date handling. Coordinates and direct confirmation pending. Existing venue Facebook trigger used; milestone/new-state automation not yet implemented. No code changes.
