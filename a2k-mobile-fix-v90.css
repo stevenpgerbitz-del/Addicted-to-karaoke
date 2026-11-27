@@ -139,15 +139,22 @@ html:not(.a2k-desktop-live) body #a2k-d-directory .v85-report-link {
   background: linear-gradient(#763128, #471914) !important;
   border: 1.5px solid #c09a66 !important;
 }
+/* Drawn line icons (Founder: "buttons need more graphic", Nov 27) -
+   the site's line-icon style, cream stroke on the button gradient. */
+html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-profile-share::before,
+html:not(.a2k-desktop-live) body #a2k-d-directory .v85-report-link::before {
+  content: "";
+  width: 25px;
+  height: 25px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
 html:not(.a2k-desktop-live) body #a2k-d-directory .a2k-d-profile-share::before {
-  content: "↗";
-  font-size: 21px;
-  color: #f3e2c8;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f3e2c8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='6' cy='12' r='2.7'/%3E%3Ccircle cx='17.5' cy='5.5' r='2.7'/%3E%3Ccircle cx='17.5' cy='18.5' r='2.7'/%3E%3Cpath d='M8.4 10.7l6.8-3.9M8.4 13.3l6.8 3.9'/%3E%3C/svg%3E");
 }
 html:not(.a2k-desktop-live) body #a2k-d-directory .v85-report-link::before {
-  content: "⚑";
-  font-size: 19px;
-  color: #f3e2c8;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f3e2c8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.5 21.5v-17'/%3E%3Cpath d='M5.5 4.8c4.3-2.1 7.2 1.9 13 0v8.6c-5.8 1.9-8.7-2.1-13 0'/%3E%3C/svg%3E");
 }
 
 /* --- panes: show the selected view, hide the other --- */

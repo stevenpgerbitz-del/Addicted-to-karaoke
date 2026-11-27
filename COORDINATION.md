@@ -279,6 +279,14 @@ guard now covers only the badge decoration itself. Verified at Pixel 7
 size against live data (MrSteve: About / Songs; Ty Powers: About /
 Reviews / Schedule). No data or permission changes.
 
+### Milo — Nov 27: profile Share/Report icons upgraded (push121)
+
+Follow-up to push120 per Founder feedback ("buttons need more
+graphic"): the mobile profile Share and Report buttons now use drawn
+SVG line icons (share-nodes and flag, cream stroke in the site's
+line-icon style) instead of the plain ↗ / ⚑ text glyphs. V90 layer
+?v=7; CSS-only, mobile shell only.
+
 ## Sophie — current work
 
 - **Done Nov 24, 2026:** new RPC `is_platform_admin()` (Founder true, Super
