@@ -186,6 +186,60 @@ may be published without separate approval (Founder clarification, Nov 25).
   One follow-up, not touched: the member setup wizard's one-time
   event step still invents a 23:00 end when the field is empty
   (a2k-member-setup-live.js) — left as-is for a later decision.
+- **Recurring schedules — SHARED FORMAT DRAFT for schema agreement
+  (Milo, Nov 27, 2026; Steven approved sending this draft):** Per the
+  agreed order, schema coordination comes first — Sophie owns the
+  backend model, Milo owns the editor + Find integration, and ONE
+  shared date resolver serves venue pages, Find, KJ schedules and
+  Facebook counts. The 3 PM CT Facebook roundup stays gated on this.
+  Nothing is built; please agree or amend the shape below.
+  **Test cases:** (1) Victory Lap Pub & Grub — last Friday monthly,
+  8:30 PM–12:30 AM overnight; (2) Carol's Pub (Chicago) — 1st & 3rd
+  Tuesdays, held un-entered; (3) Arrogant Frog (Chicago) — last
+  Sunday, held un-entered.
+  **Why `last` must be explicit (verified calendar math):** Nov 2026
+  Fridays 6/13/20/27 (last = 27th, also 4th); Dec 2026 Fridays
+  4/11/18/25 (last = Dec 25, Christmas Day, also 4th); Jan 2027
+  Fridays 1/8/15/22/29 (last = Jan 29, the 5th, NOT the 4th). A
+  4th-Friday implementation would silently drop Jan 29, 2027 — the
+  ordinal list needs a distinct `last` value alongside 1–5. Carol's
+  Dec check: Tuesdays 1/8/15/22/29 → 1st & 3rd = Dec 1 and 15.
+  Arrogant Frog Dec check: Sundays 6/13/20/27 → last = Dec 27.
+  **Proposed shape — each recurring schedule carries:**
+  - `pattern`: `weekly` | `every_n_weeks` | `monthly_ordinal`
+  - For `monthly_ordinal`: `weekday` + `ordinals` list; an ordinal
+    is 1, 2, 3, 4, 5, or `last` (Victory Lap = Friday + [`last`];
+    Carol's = Tuesday + [1, 3]; Arrogant Frog = Sunday + [`last`])
+  - `interval_weeks` for `every_n_weeks`, anchored to a known start date
+  - Optional seasonal range: `season_start` / `season_end` (Chicago dates)
+  - `start_time` / `end_time` in America/Chicago; an end earlier than
+    the start means the show ends the next calendar day (Victory Lap
+    20:30 → 00:30 next day)
+  - `end_time` may be null (the no-end-time support published
+    Nov 27) — a no-end occurrence belongs to its start date only
+  - `exceptions`: per-occurrence entries keyed by the occurrence's
+    start date — `cancelled` (does not happen), `moved` (different
+    date/time; original date suppressed), `tentative` (generated but
+    NOT published or counted until confirmed)
+  **Shared resolver rules (all four consumers must agree):**
+  1. An occurrence belongs to its start date (Chicago) — the
+     start-on-date rule Steven decided and published Nov 26; an
+     overnight show ending 12:30 AM does not appear on, or count
+     for, the following day.
+  2. Exceptions are applied before any consumer renders or counts —
+     no consumer re-implements recurrence on its own.
+  3. `tentative` occurrences render nowhere public and count
+     nowhere until confirmed.
+  4. Counts come from resolved occurrences, so venue page, Find and
+     Facebook can no longer disagree.
+  **Dec 25:** Victory Lap's last-Friday date IS Christmas Day. Per
+  your flag: do not auto-publish. Proposal: generate it as
+  `tentative` now; it goes live only if the venue confirms a
+  Christmas Day show.
+  **Next step:** your agreement/amendments on the shape, then Milo
+  builds the editor + Find integration against it, tested against
+  the three cases (including Jan 29, 2027 and the Dec 25 hold).
+  No publish before Steven's usual preview-and-approve step.
 
 ## Sophie — current work
 
