@@ -1,0 +1,44 @@
+/* Addicted to Karaoke - mobile fix layer V90 (Milo, Nov 27, 2026).
+   Venue page + footer round. Every rule is scoped to the mobile shell
+   (html:not(.a2k-desktop-live)); the desktop site is untouched.
+
+   1. FOOTER: the site footer no longer renders on mobile at all
+      (Founder decision, Nov 24, 2026: "DROP the footer on mobile").
+      It was being moved into each screen's scroll flow, where on the
+      venue screen it stacked on top of the Schedule panel's content.
+
+   2. VENUE OVERLAP: #venue-screen is a flex column whose children may
+      shrink. The tab-content article has a 180px min-height, so the flex
+      algorithm squeezed it to 180px while its Schedule content needs
+      ~334px - the Upcoming Special Events section spilled out of the
+      article and the Call/Share bar, the fine print, and the footer all
+      laid out on top of it. The V89 layer already pins flex-shrink:0 on
+      other screens' children; the venue screen's own children were
+      missed because #venue-screen itself carries the .body class.
+      Children of the venue screen now keep their natural height and the
+      screen scrolls, like every other screen.
+
+   3. SELECTED VENUE TAB: a late template rule in a2k-core.css replaces
+      the selected tab's cream gradient background with the dark vintage
+      button gradient but leaves the dark-red text color from the cream
+      design - dark on dark, nearly invisible. Restore the cream
+      selected look (same pairing as the mobile bottom nav's active tab).
+*/
+
+html:not(.a2k-desktop-live) body .a2k-site-footer {
+  display: none !important;
+}
+
+html:not(.a2k-desktop-live) body #venue-screen:not([hidden]) > * {
+  flex-shrink: 0 !important;
+}
+
+html:not(.a2k-desktop-live) body #venue-screen .tabs button[aria-selected="true"] {
+  background: linear-gradient(#f2dfb8, #dfbc86) !important;
+  color: #67231b !important;
+}
+
+html:not(.a2k-desktop-live) body #venue-screen .tabs button[aria-selected="true"] svg {
+  color: #67231b !important;
+  stroke: currentColor !important;
+}

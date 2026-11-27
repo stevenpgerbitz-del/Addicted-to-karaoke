@@ -241,6 +241,23 @@ may be published without separate approval (Founder clarification, Nov 25).
   the three cases (including Jan 29, 2027 and the Dec 25 hold).
   No publish before Steven's usual preview-and-approve step.
 
+### Milo — Nov 27: mobile venue page + footer fix published (push119)
+
+New layer `a2k-mobile-fix-v90.css`, mobile shell only
+(html:not(.a2k-desktop-live)); desktop untouched. Three fixes from the
+Founder's mobile sweep: (1) the site footer no longer renders on mobile
+(Founder decision Nov 24) — it was being moved into each screen's scroll
+flow and stacked on top of venue content; (2) venue screen flex children
+no longer shrink — the tab-content article was squeezed to its 180px
+min-height, spilling the Schedule panel's Upcoming Special Events
+section over the Call/Share bar and fine print (verified fixed: content
+takes its natural height, bar sits below the card); (3) the selected
+venue tab restores its cream background with dark text — a late
+template rule in a2k-core.css had swapped in the dark button gradient
+while leaving the dark-red text, making the active tab nearly
+invisible. No data or behavior changes; index.html gains only the one
+stylesheet link.
+
 ## Sophie — current work
 
 - **Done Nov 24, 2026:** new RPC `is_platform_admin()` (Founder true, Super
