@@ -319,8 +319,23 @@
      }else{
        const now=encodeURIComponent(new Date().toISOString());
        const events=await getPublishedRows('karaoke_special_events?select=id,venue_id,title,start_at,end_at,host_name,description,status&status=eq.published&end_at=gt.'+now+'&order=start_at.asc&limit=150');
+       // Events with no announced end time never satisfy end_at > now;
+       // fetch them by start date and merge them in.
+       try{
+         const since=encodeURIComponent(new Date(Date.now()-172800000).toISOString());
+         const extra=await getPublishedRows('karaoke_special_events?select=id,venue_id,title,start_at,end_at,host_name,description,status&status=eq.published&end_at=is.null&start_at=gt.'+since+'&order=start_at.asc&limit=150');
+         if(Array.isArray(events)&&Array.isArray(extra)){
+           const seen=new Set(events.map(e=>e.id));
+           for(const e of extra)if(!seen.has(e.id))events.push(e);
+           events.sort((a,b)=>new Date(a.start_at)-new Date(b.start_at));
+         }
+       }catch(_){/* The end_at query above already returned the rest. */}
        if(!shell.isConnected||selectedDesktopTab!==kind)return;
-       const rows=Array.isArray(events)?events:[];
+       // A no-end-time event belongs to the day it starts; once that
+       // Chicago day has passed, it is over.
+       const dayKey=v=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(v));
+       const todayKey=dayKey(new Date());
+       const rows=(Array.isArray(events)?events:[]).filter(e=>e.end_at||dayKey(e.start_at)>=todayKey);
        for(const event of rows){
          const venue=typeof sampleVenues==='undefined'?null:sampleVenues.find(v=>String(v.databaseId)===String(event.venue_id)&&v.publication_status==='published');
          const city=venue?[venue.name,venue.city,venue.state].filter(Boolean).join(' · '):'Published karaoke event';

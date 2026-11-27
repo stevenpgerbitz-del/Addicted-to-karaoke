@@ -210,7 +210,20 @@
     if(typeof sampleVenues==='undefined')return null;
     return sampleVenues.find(v=>v.databaseId===event.venue_id)||null;
   };
+  // A special event may have no announced end time (end_at null). For
+  // liveness and overlap math only, such an event runs to the end of
+  // the Chicago day it starts - the same convention open-ended weekly
+  // sessions use. The missing end is never displayed as a time.
+  function eventEndAt(event){
+    if(event.end_at)return new Date(event.end_at);
+    const start=new Date(event.start_at);
+    if(Number.isNaN(start.getTime()))return start;
+    try{return new Date(toIso(addDays(chicagoDateKey(start),1),'00:00'));}
+    catch(_){return start;}
+  }
   function dateLine(event){
+    if(!event.end_at)
+      return dayDate(event.start_at)+' · Starts at '+time(event.start_at)+' · End time not announced';
     const a=fmt(event.start_at,{year:'numeric',month:'2-digit',day:'2-digit'});
     const b=fmt(event.end_at,{year:'numeric',month:'2-digit',day:'2-digit'});
     return dayDate(event.start_at)+' · '+time(event.start_at)+'–'+(a!==b?'Next day ':'')+time(event.end_at);
@@ -353,7 +366,7 @@
       node('span','a2k-event-tag','✦ ONE-TIME EVENT'),
       node('b','',displayEventTitle(event.title)),
       node('small','',(v?v.name+' · ':'')+(v?.city||'Iowa')+', '+(v?.state||'IA')),
-      node('span','',time(event.start_at)+'–'+time(event.end_at)+(event.host_name?' · '+event.host_name:''))
+      node('span','',(event.end_at?time(event.start_at)+'–'+time(event.end_at):'Starts at '+time(event.start_at))+(event.host_name?' · '+event.host_name:''))
     );
     card.append(date,copy);
     card.onclick=()=>openDetails(event.id);
@@ -508,8 +521,8 @@
           return !!next&&overlapsToday(next.startAt,next.endAt);
         });
       const anyEvent=rows.some(event=>
-        new Date(event.end_at)>now&&
-        overlapsToday(new Date(event.start_at),new Date(event.end_at)));
+        eventEndAt(event)>now&&
+        overlapsToday(new Date(event.start_at),eventEndAt(event)));
       effectiveToday=anyVenue||anyEvent;
     }
     let shownVenues=0,shownEvents=0,unscheduled=0;
@@ -523,7 +536,7 @@
       for(const event of rows){
         const place=venue(event);
         if(!place)continue;
-        if(new Date(event.end_at)<=now)continue;
+        if(eventEndAt(event)<=now)continue;
         if(!startsOnFindDate(new Date(event.start_at)))continue;
         const corpus=[event.title,event.description,event.host_name,dayDate(event.start_at),
           place.name,place.city,place.state,place.postal_code,place.address]
@@ -593,9 +606,9 @@
         window.a2kNearbyVenueMatches(place):true;
       // Already-ended events are excluded both by the database query and here,
       // in case the user leaves this page open until the event passes.
-      card.hidden=!(discoveryStarted||showingToday||dateView)||mode==='venues'||new Date(event.end_at)<=now||
+      card.hidden=!(discoveryStarted||showingToday||dateView)||mode==='venues'||eventEndAt(event)<=now||
         (dateView?!startsOnFindDate(new Date(event.start_at)):
-          (effectiveToday&&!overlapsToday(new Date(event.start_at),new Date(event.end_at))))||
+          (effectiveToday&&!overlapsToday(new Date(event.start_at),eventEndAt(event))))||
         !matches||!matchesState||!matchesCity||!matchesGenre||!matchesRating||!matchesNearby;
       if(!card.hidden)shownEvents++;
       byCard.set(card,new Date(event.start_at).getTime());
@@ -650,6 +663,19 @@
         +'&status=eq.published&end_at=gt.'+now+'&order=start_at.asc&limit=250';
       const data=await supabaseRead(url);
       if(!Array.isArray(data))throw Error('Could not read special events.');
+      // Events with no announced end time can never satisfy
+      // end_at > now, so fetch them by start instead (from two days
+      // ago onward; the draw filters decide what is still current).
+      try{
+        const since=encodeURIComponent(new Date(Date.now()-172800000).toISOString());
+        const extra=await supabaseRead('karaoke_special_events?select=id,venue_id,title,start_at,end_at,host_name,description,status,source_url'
+          +'&status=eq.published&end_at=is.null&start_at=gt.'+since+'&order=start_at.asc&limit=250');
+        if(Array.isArray(extra)&&extra.length){
+          const seen=new Set(data.map(e=>e.id));
+          for(const e of extra)if(!seen.has(e.id))data.push(e);
+          data.sort((a,b)=>new Date(a.start_at)-new Date(b.start_at));
+        }
+      }catch(_){/* The end_at query above already returned the rest. */}
       rows=data;loaded=true;draw();
     }catch(error){
       console.warn('Special karaoke events currently unavailable',error);
@@ -779,7 +805,7 @@
       '<label>Street address (optional)<input name="address" maxlength="220"></label>'+
       '<label>Date<input type="date" name="day" required></label>'+
       '<label>Starts<input type="time" name="start" required></label>'+
-      '<label>Ends<input type="time" name="end" required></label>'+
+      '<label>Ends (if known)<input type="time" name="end"></label>'+
       '<label>KJ or host (optional)<input name="host_name" maxlength="100"></label>'+
       '<label>Event details (optional)<textarea name="notes" maxlength="900"></textarea></label>'+
       '<label>Source link (optional)<input name="source_url" type="url" maxlength="500" placeholder="https://"></label>'+
@@ -800,10 +826,10 @@
     const data=new FormData(form),day=String(data.get('day')||''),
       start=String(data.get('start')||''),end=String(data.get('end')||''),
       status=byId('a2k-special-feedback'),button=byId('a2k-special-save');
-    let start_at,end_at;
+    let start_at,end_at=null;
     try{
       start_at=toIso(day,start);
-      end_at=toIso(end<=start?incrementDate(day):day,end);
+      if(end)end_at=toIso(end<=start?incrementDate(day):day,end);
     }catch(_){status.textContent='Choose a valid event date and time.';return}
     const payload={
       title:String(data.get('title')||'').trim(),
@@ -821,7 +847,7 @@
     if(!US_STATES.some(([code])=>code===payload.state)){
       status.textContent='Enter a valid two-letter U.S. state code.';return;
     }
-    if(new Date(end_at)-new Date(start_at)>86400000){
+    if(end_at&&new Date(end_at)-new Date(start_at)>86400000){
       status.textContent='One-time events must be less than 24 hours.';return;
     }
     if(typeof authClient==='undefined'||!authClient){

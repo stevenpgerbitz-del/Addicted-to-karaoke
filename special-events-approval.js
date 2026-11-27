@@ -52,7 +52,7 @@
        const card=el('article','a2k-special-approval-card');
        card.append(el('strong','',row.title));
        card.append(el('p','',row.venue_name+' · '+row.city+', '+(row.state||'IA')));
-       card.append(el('p','',date(row.start_at)+' – '+date(row.end_at)));
+       card.append(el('p','',date(row.start_at)+(row.end_at?' – '+date(row.end_at):' – End time not announced')));
        if(row.host_name)card.append(el('p','', 'KJ/Host: '+row.host_name));
        if(row.notes)card.append(el('p','',row.notes));
        if(row.source_url){

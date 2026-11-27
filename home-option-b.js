@@ -180,6 +180,18 @@
   }catch(e){console.warn('A2K Home: community counts unavailable',e);}
   try{
    const upcoming=await supabaseRead('karaoke_special_events?select=id&status=eq.published&end_at=gt.'+encodeURIComponent(new Date().toISOString()));
+   // Events with no announced end time never satisfy end_at > now;
+   // count the ones starting today or later as well.
+   try{
+     const since=encodeURIComponent(new Date(Date.now()-172800000).toISOString());
+     const noEnd=await supabaseRead('karaoke_special_events?select=id,start_at&status=eq.published&end_at=is.null&start_at=gt.'+since);
+     if(Array.isArray(upcoming)&&Array.isArray(noEnd)){
+       const dayKey=v=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(v));
+       const todayKey=dayKey(new Date());
+       const seen=new Set(upcoming.map(e=>e.id));
+       for(const e of noEnd)if(!seen.has(e.id)&&dayKey(e.start_at)>=todayKey)upcoming.push(e);
+     }
+   }catch(e){/* The end_at count above still stands. */}
    const field=document.querySelector('[data-a2k-b-stat="events"]');
    if(field&&Array.isArray(upcoming))field.textContent=upcoming.length.toLocaleString('en-US');
   }catch(e){console.warn('A2K Home: event count unavailable',e);}

@@ -149,6 +149,43 @@ may be published without separate approval (Founder clarification, Nov 25).
   approval.
 - **Milo's test account:** Milo AI (Super Admin, NOT founder — do not flip the
   founder flag). Member #000018, steven.g.droid@gmail.com.
+- **Special events with no announced end time — FRONTEND DONE (Milo,
+  Nov 27, 2026; this push):** Steven approved building my side now so
+  tonight's Good Times / Party! Party! show (Fri Nov 27, 9:00 PM, no
+  published end time) can go up as soon as your backend allows it.
+  Published in this push: special-events.js v245, desktop-vintage.js
+  v326, home-option-b.js v325, special-events-approval.js v198,
+  index.html version refs. What the frontend now does with
+  `end_at = null`:
+  - Fetch: every `end_at > now` query is paired with a second query
+    (`end_at is null`, start within the last two days) merged in —
+    Find, the Events directory, and the Home events count.
+  - Semantics: a no-end event belongs to the date it STARTS (same
+    start-on-date rule as the dated Find views). For "still on /
+    overlaps today" math only, it runs to the end of its start day
+    (America/Chicago) — the same convention open-ended weekly
+    sessions already use; that bound is never displayed or stored.
+  - Display: cards read "Starts at 9 PM"; the event popup reads
+    "Fri, Nov 27, 2026 · Starts at 9 PM · End time not announced"
+    (share text uses the same line); the venue page's Upcoming
+    Special Events reuses the same cards; your approval card reads
+    "– End time not announced" instead of a bogus date. Events WITH
+    an end time are unchanged everywhere.
+  - Form: the public Suggest-an-Event form's Ends field is now
+    "Ends (if known)" and optional — a blank end submits
+    `end_at: null` into karaoke_event_suggestions.
+  Verified in a full replica with a synthetic null-end event
+  (visible in today + dated views, venue page, and directory;
+  excluded the day after; no regressions on normal events).
+  **Safe to be live before your migration:** with the column still
+  NOT NULL the extra queries simply return nothing.
+  **Your side, when ready:** allow null `end_at` on
+  karaoke_special_events and karaoke_event_suggestions, plus your
+  RPCs and the Facebook announcement formatting — then tonight's
+  Good Times event can be published at 9:00 PM with no end time.
+  One follow-up, not touched: the member setup wizard's one-time
+  event step still invents a 23:00 end when the field is empty
+  (a2k-member-setup-live.js) — left as-is for a later decision.
 
 ## Sophie — current work
 
