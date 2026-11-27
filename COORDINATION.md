@@ -785,3 +785,8 @@ Founder shared same-day Nocturnal Riot Karaoke flyer from Omaha Karaoke: Fantast
 ### Sophie — Nov 27: Massachusetts first venue / Eastern Time
 
 Founder shared current venue Facebook flyer for The O's Music Bar, 330 Amherst Road, Sunderland MA 01375, every Wednesday 21:00–01:00 local Eastern Time with DJ JD; 21+ valid ID. Official site https://theosbooking.wixsite.com/theosmusicbar confirms Wednesday 21:00 karaoke and contact page 413-665-8788, but lists Shortrydes Karaoke; use newer venue flyer for DJ JD and request direct confirmation of current host and schedule. Published deduplicated venue ID 82e42590-2d91-41ff-a981-52bcc858679a, slug the-os-music-bar-sunderland. First MA listing. Important recurrence/roundup test: weekly times local to venue, not Central; Massachusetts America/New_York, including DST and overnight date handling. Coordinates and direct confirmation pending. Existing venue Facebook trigger used; milestone/new-state automation not yet implemented. No code changes.
+
+
+### Sophie — Nov 27: Founder correction to approved state scope
+
+Founder clarified Massachusetts is outside approved current coverage and requested removal of The O's Music Bar. Archived venue 82e42590-2d91-41ff-a981-52bcc858679a (published=false), preserving internal record only, and skipped its pending Facebook announcement before delivery (no post ID). Verified 134 published venues across exactly six states: IA 75, NE 42, IL 8, MN 4, WI 3, IN 2. This supersedes the Massachusetts launch note. Current publication scope is IA, NE, IN, IL, MN and WI only; hold any leads from other states unpublished unless Founder explicitly approves expansion. No frontend code changes.
