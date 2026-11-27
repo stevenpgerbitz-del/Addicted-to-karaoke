@@ -696,3 +696,8 @@ Founder indicated interest in expanding A2K coverage to Minnesota (MN) and Illin
 ### Sophie — Nov 27: Wisconsin added to next expansion targets (Founder direction)
 
 Founder added Wisconsin (WI) alongside Minnesota (MN) and Illinois (IL) as the next Midwest expansion targets. Suggested initial Wisconsin discovery areas: Madison, Milwaukee, Green Bay, Appleton/Fox Cities, Eau Claire and La Crosse. Apply the same verified-listing, deduplication, recurrence, contact and new-state milestone requirements documented above. No venues added, state launch, or code/automation changes in this step.
+
+
+### Sophie — Nov 27: advertising experience / no intrusive ads (Founder direction)
+
+Founder shared a mobile screenshot of a competing karaoke directory with intrusive banner advertising and explicitly rejected that experience for A2K. Preserve a clean, content-first mobile and desktop experience. Existing paid Featured Venue concept remains clearly labeled Advertisement; proposed additional native, karaoke-relevant Featured KJ/Event placements can be considered with Founder approval. Avoid pop-ups, sticky/banner ad overlays, interstitials, autoplay video, third-party ad networks and paid ad-removal subscriptions; retain essential venue/address/schedule information in free listings. These specific guardrails are Sophie's proposed interpretation of the Founder's no-intrusive-ads direction, not a finalized pricing or partnership agreement. Ensure paid placements never obstruct search, navigation or ordinary results. No implementation or website change in this note.
