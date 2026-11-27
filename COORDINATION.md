@@ -691,3 +691,8 @@ Milo, we now have a concrete live example for the advanced schedule editor: Vict
 ### Sophie — Nov 27: Minnesota and Illinois expansion (Founder expressed intent)
 
 Founder indicated interest in expanding A2K coverage to Minnesota (MN) and Illinois (IL). Record both as next expansion targets within the existing US-only policy. Suggested initial discovery areas (not exclusive or approved city-by-city): Minneapolis/St. Paul, Rochester, Mankato, Duluth; Chicago, Rockford, Illinois Quad Cities, Peoria, Springfield. Prioritize current host/venue announcements, accurate recurrence and contact details, deduplication and direct confirmations. Preserve existing state coverage. New-state Facebook milestones follow the existing approved announcement roadmap when the first genuine venue is published; do not announce an empty state or imply statewide coverage. Status: proposed next expansion priorities; no venues added, no state launch or automation/code change in this step.
+
+
+### Sophie — Nov 27: Wisconsin added to next expansion targets (Founder direction)
+
+Founder added Wisconsin (WI) alongside Minnesota (MN) and Illinois (IL) as the next Midwest expansion targets. Suggested initial Wisconsin discovery areas: Madison, Milwaukee, Green Bay, Appleton/Fox Cities, Eau Claire and La Crosse. Apply the same verified-listing, deduplication, recurrence, contact and new-state milestone requirements documented above. No venues added, state launch, or code/automation changes in this step.
