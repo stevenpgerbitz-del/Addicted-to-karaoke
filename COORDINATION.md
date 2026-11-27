@@ -287,6 +287,16 @@ SVG line icons (share-nodes and flag, cream stroke in the site's
 line-icon style) instead of the plain ↗ / ⚑ text glyphs. V90 layer
 ?v=7; CSS-only, mobile shell only.
 
+### Milo — Nov 27: bottom nav unified across mobile screens (push122)
+
+Founder flagged that the mobile bottom menu rendered differently per
+screen (near-black bar with small labels on Home; burgundy bar with
+inflated 25px labels on Find/profiles) from layered per-screen rules
+in a2k-public.css plus the V89 Home override. V90 layer round 4 pins
+one presentation shell-wide: burgundy gradient bar, gold active pill,
+14px labels, 25px icons, 88px bar on every screen. V90 at ?v=8;
+CSS-only, mobile shell only; desktop nav untouched.
+
 ## Sophie — current work
 
 - **Done Nov 24, 2026:** new RPC `is_platform_admin()` (Founder true, Super
