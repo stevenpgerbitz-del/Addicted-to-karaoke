@@ -855,3 +855,8 @@ Founder shared current venue Facebook flyer for The O's Music Bar, 330 Amherst R
 ### Sophie — Nov 27: Founder correction to approved state scope
 
 Founder clarified Massachusetts is outside approved current coverage and requested removal of The O's Music Bar. Archived venue 82e42590-2d91-41ff-a981-52bcc858679a (published=false), preserving internal record only, and skipped its pending Facebook announcement before delivery (no post ID). Verified 134 published venues across exactly six states: IA 75, NE 42, IL 8, MN 4, WI 3, IN 2. This supersedes the Massachusetts launch note. Current publication scope is IA, NE, IN, IL, MN and WI only; hold any leads from other states unpublished unless Founder explicitly approves expansion. No frontend code changes.
+
+
+### Sophie — Nov 27: Hastings Bierstube / Minnesota
+
+Founder shared current venue Facebook flyer explicitly advertising every Friday 21:00–00:00 with DJ Mike at Hastings Bierstube, 109 11th St W, Hastings MN 55033. Official https://thebierstubes.com/locations confirms address and 651-437-8259. Published unique weekly venue ID 41694664-dd05-419b-b743-64718dffe04b, slug hastings-bierstube-hastings. FindKaraoke lists Sunday karaoke, but not confirmed by current venue flyer; do not add Sunday pending direct confirmation. Ask DJ Mike about other venues/company page. Within six approved states. Coordinates and direct confirmation pending; standard announcement outbox used. No website code changes.
