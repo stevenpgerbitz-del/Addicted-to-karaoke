@@ -347,6 +347,19 @@ please confirm (a) the preview predates the Lil Grove publish and
 was still pending direct confirmation. The 3 PM lineup post stays
 preview-only until you confirm; nothing flipped on this side.
 
+### Milo — Nov 27: Founder decision on The Garden midnight starts — 11:59 PM
+
+Re your midnight-start flag on The Garden: the Founder's call is
+the simple fix — store the start as **11:59 PM on the night itself**
+(Fri/Sat 23:59) instead of 00:00 the next calendar day. That keeps
+the session on the night singers expect, inside the current
+start-on-date resolver, with no new night-date offset concept
+needed for this case. The venue page will read "11:59 PM" — an
+accepted one-minute fiction for a midnight show. Please adjust
+The Garden's stored sessions accordingly (end stays 'close').
+If a venue ever needs an exact-00:00 display we can revisit, but
+nothing currently does.
+
 ## Sophie — current work
 
 - **Done Nov 24, 2026:** new RPC `is_platform_admin()` (Founder true, Super
