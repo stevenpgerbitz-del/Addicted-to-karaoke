@@ -297,6 +297,15 @@ one presentation shell-wide: burgundy gradient bar, gold active pill,
 14px labels, 25px icons, 88px bar on every screen. V90 at ?v=8;
 CSS-only, mobile shell only; desktop nav untouched.
 
+### Milo — Nov 27: bottom nav skirt removed (push123)
+
+Follow-up to push122: the unified nav's bottom padding included
+env(safe-area-inset-bottom), which resolves large on the Founder's
+phone and stretched the bar into a tall empty band under the buttons
+(the "double bar" he flagged). Padding is now a flat 9px, matching
+how the Find/profile bar already sat. V90 at ?v=9; CSS-only, mobile
+shell only.
+
 ## Sophie — current work
 
 - **Done Nov 24, 2026:** new RPC `is_platform_admin()` (Founder true, Super
