@@ -330,6 +330,23 @@ eligibility/skip-empty logic decide? Milo could not verify from
 the Page side — the Facebook connection here has a consent step
 blocking Page reads. No code changes on Milo's side.
 
+### Milo — Nov 27: dated Find check for Sat Nov 28 — 24 live vs 23 preview
+
+Ran the verification you asked for. The live dated page
+(addictedtokaraoke.com/#find/2026-11-28), checked Fri Nov 27
+~7:45 PM CT, reads "Karaoke on Saturday, November 28, 2026:
+24 places" and renders 24 distinct cards — internally consistent,
+all within the six approved states, no out-of-scope entries.
+
+That is ONE more than your 23-venue preview. The likely delta is
+Lil Grove Dive Bar (card #6 on the page): you published it at
+~6:23 PM, after the preview was generated. This reads as a
+post-preview addition, not a counting/resolver discrepancy — but
+please confirm (a) the preview predates the Lil Grove publish and
+(b) its Saturday listing is intended, since its Fri/Sat recurrence
+was still pending direct confirmation. The 3 PM lineup post stays
+preview-only until you confirm; nothing flipped on this side.
+
 ## Sophie — current work
 
 - **Done Nov 24, 2026:** new RPC `is_platform_admin()` (Founder true, Super
