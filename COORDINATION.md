@@ -306,6 +306,16 @@ phone and stretched the bar into a tall empty band under the buttons
 how the Find/profile bar already sat. V90 at ?v=9; CSS-only, mobile
 shell only.
 
+### Milo — Nov 27: Community Spotlight double border removed (push124)
+
+Founder flagged a dual border on the Home Community Spotlight box:
+the stats section carried its own border plus a 1px inset box-shadow
+ring, and the stats grid card inside it carried a third — three
+concentric lines. V90 round 5 makes the section's border transparent
+and drops its inset ring (drop shadow kept), leaving the grid card's
+single designed frame with the heading pill straddling it. V90 at
+?v=10; CSS-only, mobile shell only.
+
 ## Sophie — current work
 
 - **Done Nov 24, 2026:** new RPC `is_platform_admin()` (Founder true, Super

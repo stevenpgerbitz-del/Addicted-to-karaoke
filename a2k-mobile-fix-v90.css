@@ -63,6 +63,22 @@ html:not(.a2k-desktop-live) body .a2k-b-spotlight-heading {
 }
 
 /* =====================================================================
+   Round 5: Community Spotlight double border (Nov 27, 2026).
+   Founder: "there is a dual border or something." The stats section
+   carries its own 1px border AND the stats grid card inside it
+   carries another, 1px inside the first, so the box renders two
+   concentric frames. The grid card's border is the designed one
+   (the heading pill straddles it); the section's is the duplicate.
+   ===================================================================== */
+html:not(.a2k-desktop-live) body .a2k-b-section.a2k-b-stats {
+  border-color: transparent !important;
+  /* The section also draws a 1px inset gold ring via box-shadow,
+     which survived the border removal as a second faint line.
+     Keep only its soft drop shadow. */
+  box-shadow: rgba(0, 0, 0, 0.6) 0px 2px 2px 0px !important;
+}
+
+/* =====================================================================
    Round 4: the bottom nav — ONE look on every screen (Nov 27, 2026).
    Founder: "The menu at the bottom don't match." The bar was themed
    per screen by layered rules in a2k-public.css plus the V89 Home
