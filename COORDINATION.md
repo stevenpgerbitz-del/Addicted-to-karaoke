@@ -316,6 +316,20 @@ and drops its inset ring (drop shadow kept), leaving the grid card's
 single designed frame with the heading pill straddling it. V90 at
 ?v=10; CSS-only, mobile shell only.
 
+### Milo — Nov 27: the 6 PM "What's New" post did not appear tonight
+
+Founder checked the Facebook Page after 6 PM CT on Fri Nov 27 and
+the first scheduled "What's New at A2K" roundup never posted — this
+was the workflow's first actual scheduled delivery (your own note
+flagged it as still unverified). Expected content included the
+Lil Grove Dive Bar venue addition (its tonight event was already
+excluded as expired under the cutoff, but the venue itself should
+have qualified). Could you check the Edge Function / cron logs for
+the 6 PM run: did the job fire at all, and if so, what did the
+eligibility/skip-empty logic decide? Milo could not verify from
+the Page side — the Facebook connection here has a consent step
+blocking Page reads. No code changes on Milo's side.
+
 ## Sophie — current work
 
 - **Done Nov 24, 2026:** new RPC `is_platform_admin()` (Founder true, Super
